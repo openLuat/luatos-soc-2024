@@ -23,7 +23,7 @@ jobs:
   #     - name: 克隆 ec7xx-csdk 代码库
   #       run: | 
   #         git clone --depth=1 https://github.com/openLuat/luatos-soc-2024.git
-  #         sudo chmod +x /luatos-soc-2024/PLAT/tools/fcelf
+  #         sudo chmod +x luatos-soc-2024/PLAT/tools/fcelf
   #     - name: 下载GCC工具链
   #       run: |
   #         mkdir /home/runner/toolchains
@@ -63,7 +63,7 @@ jobs:
       - name: 克隆 ec7xx-csdk 代码库
         run: | 
           git clone --depth=1 https://github.com/openLuat/luatos-soc-2024.git
-          sudo chmod +x /luatos-soc-2024/PLAT/tools/fcelf
+          sudo chmod +x luatos-soc-2024/PLAT/tools/fcelf
       - name: 下载GCC工具链
         run: |
           mkdir /home/runner/toolchains
@@ -127,7 +127,7 @@ jobs:
       - name: 克隆 ec7xx-csdk 代码库
         run: | 
           git clone --depth=1 https://github.com/openLuat/luatos-soc-2024.git
-          sudo chmod +x /luatos-soc-2024/PLAT/tools/fcelf
+          sudo chmod +x luatos-soc-2024/PLAT/tools/fcelf
       - name: 下载GCC工具链
         run: |
           mkdir /home/runner/toolchains
