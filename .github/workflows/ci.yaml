@@ -139,7 +139,7 @@ jobs:
           # curl -fsSL https://xmake.io/shget.text | bash -s v2.8.9
           xmake g --pkg_searchdirs=/home/runner/toolchains
       - name: 构建指定项目
-        if: ${{ ! ( (matrix.csdk_project == 'example_audio' || matrix.csdk_project == 'example_camera') && matrix.csdk_chip == 'ec716s' ) }}
+        if: ${{ ! ( (matrix.csdk_project == 'example_audio' || matrix.csdk_project == 'example_camera' || matrix.csdk_project == 'luatos') && matrix.csdk_chip == 'ec716s' ) }}
         run: |
           cd luatos-soc-2024/project/${{matrix.csdk_project}} 
           xmake f --chip_target=${{matrix.csdk_chip}} -y
