@@ -1,0 +1,8 @@
+
+/* SDK ID */
+
+#ifndef AISOUND_5_0_SDK_CONSISTENCE__H
+#define AISOUND_5_0_SDK_CONSISTENCE__H
+
+#endif /* !AISOUND_SDK_CONSISTENCE__H */
+

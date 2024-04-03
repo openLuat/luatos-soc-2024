@@ -1,0 +1,111 @@
+{
+ "TheseAreComments!":[
+  {"Comment": "'capacity' in 'FotaCapability' is the largest size of all images in one fota processing (0-4MB;1-8MB)!"},
+  {"Comment": "'diffMode' in 'FotaCapability' is the flag for handling compressed section(s) in bianary file (0-no zip;1-has zip)!"},
+  {"Comment": "'attr' in 'SysImageMem' must be set with one of these choices('BINPKG/AP/CP/APP/APP2/APP3/SYS'), which are forbidden to be redefined!"},
+  {"Comment": "'attr' in 'ExtenOtaMem' must be set with one of these choices('EF/SD'), which are forbidden to be redefined!"},
+  {"Comment": "'name' in 'StorageDevice' must be set with one of these choices('AP/CP/EF/SD'), which are forbidden to be redefined!"},
+  {"Comment": "'base' in 'StorageDevice' is the global unique starting address, and it can not be modified!"},
+  {"Comment": "However, other fields can be redefined to whatever you want, including the name of this config file!"}
+ ],
+ "CompanyName": "EiGENCOMM",
+ "ProductName": "EC718S",
+ "FotaCoreVer": "2.5",
+ "FotaCapability": {
+   "capacity": 0,
+   "diffMode": 1,
+   "zipMethSel": 0,
+   "hasPkgHlc": 0,
+   "bkupMemSize": 98304,
+   "deltaMemSize": 217088,
+   "avlbRamSize": 204800
+ },
+ "HuluSuite": {
+   "ver": 1,
+   "enable": 1,
+   "adjust": 1,
+   "wkspSize": 450560
+ },
+ "FotaAtCmd": {
+   "mode": 0,
+   "ate": 0,
+   "ver": 1,
+   "name": "",
+   "pmss": 1024,
+   "dmwt": 300
+ },
+ "SysImageMem": [
+  {
+   "attr": "BINPKG",
+   "addr": 0,
+   "size": 0
+  },
+  {
+   "attr": "AP",
+   "addr": 8855552,
+   "size": 1261568
+  },
+  {
+   "attr": "CP",
+   "addr": 8495104,
+   "size": 360448
+  },
+  {
+   "attr": "APP",
+   "addr": 0,
+   "size": 0
+  },
+  {
+   "attr": "SYS",
+   "addr": 8392704,
+   "size": 4096
+  }
+ ],
+ "ExtenOtaMem": [
+  {
+   "attr": "EF",
+   "addr": 2147483648,
+   "size": 10240
+  }
+ ],
+ "StorageDevice": [
+  {
+   "name": "AP",
+   "base": 8388608,
+   "size": 2097152
+  },
+  {
+   "name": "CP",
+   "base": 8388608,
+   "size": 2097152
+  },
+  {
+   "name": "EF",
+   "base": 2147483648,
+   "size": 8388608
+  }
+ ],
+ "CustFeature": {
+   "ResizeMem": [
+    {
+     "enable": 0,
+     "attr": "AP",
+     "size": 1261568
+    },
+    {
+     "enable": 0,
+     "attr": "CP",
+     "size": 360448
+    },
+    {
+     "enable": 0,
+     "attr": "APP",
+     "size": 0
+    }
+   ]
+ },
+ "MiscSetting": {
+   "pollRx": 30,
+   "patMemSel": 0
+ } 
+}

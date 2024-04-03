@@ -1,0 +1,76 @@
+{
+  "memfile":"mem_map.txt",
+  "flashloadAddr": "AP_FLASH_LOAD_ADDR",
+  "flashloadSize": "AP_FLASH_LOAD_SIZE",
+  "flashxipEnding": "flashXIPLimit",
+  "unzipGrpMaxSize": 176128,
+  "sectGrp":[
+    {
+      "grpId":0,
+      "grpSize":24576,
+      "sect":[
+        {
+          "secname":"load_apos",
+          "sectype":"SECTIONAP_LOAD_APOS",
+          "isCompressed":true
+        },
+        {
+          "secname":"load_bootcode",
+          "sectype":"SECTIONAP_LOAD_BOOTCODE",
+          "isCompressed":true
+        },
+        {
+          "secname":"load_ap_piram_asmb",
+          "sectype":"SECTIONAP_LOAD_AP_PIRAM_ASMB",
+          "isCompressed":true
+        },
+        {
+          "secname":"load_ap_firam_asmb",
+          "sectype":"SECTIONAP_LOAD_AP_FIRAM_ASMB",
+          "isCompressed":true
+        },
+        {
+          "secname":"load_ap_rwdata_asmb",
+          "sectype":"SECTIONAP_LOAD_AP_RWDATA_ASMB",
+          "isCompressed":true
+        },
+        {
+          "secname":"load_ps_rwdata_asmb",
+          "sectype":"SECTIONAP_LOAD_PS_RWDATA_ASMB",
+          "isCompressed":true
+        },
+        {
+          "secname":"load_ap_piram_msmb",
+          "sectype":"SECTIONAP_LOAD_AP_PIRAM_MSMB",
+          "isCompressed":true
+        }
+      ]
+    },
+    {
+      "grpId":1,
+      "grpSize":98304,
+      "sect":[
+        {
+          "secname":"load_ap_firam_msmb",
+          "sectype":"SECTIONAP_LOAD_AP_FIRAM_MSMB",
+          "isCompressed":true
+        },
+        {
+          "secname":"load_ap_ps_firam_msmb",
+          "sectype":"SECTIONAP_LOAD_AP_PS_FIRAM_MSMB",
+          "isCompressed":true
+        },
+        {
+          "secname":"load_dram_bsp",
+          "sectype":"SECTIONAP_LOAD_DRAM_BSP",
+          "isCompressed":false
+        },
+        {
+          "secname":"load_dram_shared",
+          "sectype":"SECTIONAP_LOAD_DRAM_SHARED",
+          "isCompressed":true
+        }
+      ]
+    }
+  ]
+}

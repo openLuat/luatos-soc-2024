@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <header>
+        <title>移芯差分工具</title>
+    </header>
+    <body>
+        <div>
+            <h2>差分过程会需要1~2分钟,取决于机器性能,提交表单后请耐心等待</h2>
+        </div>
+        <div>
+            <h2>本html里固定生成了CSDK差分,兼容CSDK和LuatOS固件</h2>
+        </div>
+        <div>
+            <form method="post" enctype="multipart/form-data" action="/api/diff/csdk">
+                原有版本(老版本) <input type="file" name="old"> <p/>
+                待升级版本(新版本) <input type="file" name="new"> <p/>
+                <button type="submit">提交,开始生成</button>
+            </form>
+        </div>
+    </body>
+</html>
