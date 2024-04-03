@@ -40,7 +40,7 @@ jobs:
       - name: 构建指定项目
         run: |
           cd luatos-soc-2024/project/example
-          xmake -y f --chip_target=${{matrix.csdk_project}}
+          xmake f --chip_target=${{matrix.csdk_project}} -y
           xmake -y --root
 
   # # LuatOS固件编译
