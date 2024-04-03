@@ -26,3 +26,6 @@ out/
 /PLAT/core/ld/ec7xx_0h00_flash.ld
 /PLAT/core/ld/ec7xx_0h00_flash_bl.ld
 
+libdriver_private_drv.a
+/PLAT/libs/*
+!metas.json
