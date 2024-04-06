@@ -61,7 +61,7 @@ luat_rtos_task_handle g_s_fota_task;
 
 #define SFUD_SPI	    SPI_ID0
 #define SFUD_SPI_CS	    8
-
+const uint8_t spiflash_power_pin = 0xff;	//根据实际情况写
 static luat_spi_device_t sfud_spi_dev = {
     .bus_id = SFUD_SPI,
     .spi_config.CPHA = 0,
@@ -71,7 +71,8 @@ static luat_spi_device_t sfud_spi_dev = {
     .spi_config.master = 1,
     .spi_config.mode = 0,
     .spi_config.bandrate = 51200000,
-    .spi_config.cs = SFUD_SPI_CS
+    .spi_config.cs = SFUD_SPI_CS,
+	.user_data = (void *)&spiflash_power_pin,
 };
 
 #define PROJECT_VERSION  "1.0.0"                  		 //使用合宙iot升级的话此字段必须存在，并且强制固定格式为x.x.x, x可以为任意的数字
