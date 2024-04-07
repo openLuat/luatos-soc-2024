@@ -26,7 +26,6 @@
 #include "luat_gpio.h"
 
 luat_rtos_task_handle i2c_task_handle;
-uint8_t CRC8Cal(void *Data, uint16_t Len, uint8_t CRC8Last, uint8_t CRCRoot, uint8_t IsReverse);
 
 #define I2C_ID                  1
 #define AHT10_ADDRESS_ADR_LOW   0x38
