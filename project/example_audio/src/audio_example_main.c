@@ -608,7 +608,7 @@ static void demo_task(void *arg)
 					}
 					amr_play_data_backup[last_play_buf].len = 0;
 					dummy_encode_len = done_len;
-					cur_decode_buf = (cur_play_buf + 1) & 3;
+					cur_decode_buf = (cur_play_buf + 2) & 3;
 					pcm_data = &buff[cur_decode_buf * 640 * (RECORD_ONCE_LEN)];
 
 					memcpy(amr_play_data_backup[cur_decode_buf].data, amr_buff, dummy_encode_len);
