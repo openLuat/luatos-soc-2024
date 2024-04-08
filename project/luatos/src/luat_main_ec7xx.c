@@ -43,6 +43,12 @@
 #include "luat_errdump.h"
 
 #include "cmisim.h"
+#include "reset.h"
+#include "cms_util.h"
+
+extern void ShareInfoWakeupCP4Version(void);
+extern void luat_audio_global_init(void);
+extern void net_lwip_init(void);
 
 extern int luat_main(void);
 extern void luat_heap_init(void);
