@@ -266,35 +266,35 @@ function description_common()
         assert (chip_target == "ec718e" or chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718s" or chip_target == "ec716s" or chip_target == "ec716e" ,"target only support ec718e/ec718p/ec718pv/ec718s/ec716s/ec716e")
         
         if target:name()== target:values("project_name") then
-            assert(os.isdir(target:values("luatos_root")),"luatos_root:"..target:values("luatos_root").." not exist")
-            local plat_url = "http://cdndownload.openluat.com/xmake/libs/%s/%s.7z"
             cprint(format("${cyan}CPU : ${magenta}%s",os.cpuinfo("model_name")))
             cprint(format("${cyan}MEM : ${magenta}%sG",math.ceil(os.meminfo("totalsize")/1024)))
             cprint(format("${cyan}project_name : ${magenta}%s",target:values("project_name")))
             cprint(format("${cyan}chip_target : ${magenta}%s",chip_target))
             cprint(format("${cyan}lspd_mode : ${magenta}%s",get_config("lspd_mode")))
             cprint(format("${cyan}denoise_force : ${magenta}%s",get_config("denoise_force")))
-
-            local libs_plat = (chip_target=="ec718e"and"ec718p"or chip_target)..(target:values("lib_ps_plat")=="mid"and"-mid"or"")
-            cprint(format("${cyan}libs_plat : ${magenta}%s",libs_plat))
-            local libs_plat_dir = csdk_root.."/PLAT/libs/"..libs_plat
-            import("core.base.json")
-            local metas_table = json.loadfile(csdk_root.."/PLAT/libs/metas.json")
-            local plat_sha1 = metas_table["libs"][libs_plat]["sha1"]
-            
-            if not os.isfile(csdk_root.."/PLAT/libs/"..plat_sha1..".7z") or plat_sha1 ~= hash.sha1(csdk_root.."/PLAT/libs/"..plat_sha1..".7z") then
-                import("net.http")
-                if os.isdir(libs_plat_dir) then os.rmdir(libs_plat_dir) end
-                http.download(format(plat_url,libs_plat,plat_sha1), csdk_root.."/PLAT/libs/"..plat_sha1..".7z")
-            end
-            assert(os.isfile(csdk_root.."/PLAT/libs/"..plat_sha1..".7z"),csdk_root.."/PLAT/libs/"..plat_sha1..".7z".." not exist , mabe download failed")
-
-            if not os.isdir(libs_plat_dir) then
-                import("utils.archive")
-                archive.extract(csdk_root.."/PLAT/libs/"..plat_sha1..".7z", libs_plat_dir)
-            end
         end
+
+        assert(os.isdir(target:values("luatos_root")),"luatos_root:"..target:values("luatos_root").." not exist")
+        local plat_url = "http://cdndownload.openluat.com/xmake/libs/%s/%s.7z"
+        local libs_plat = (chip_target=="ec718e"and"ec718p"or chip_target)..(target:values("lib_ps_plat")=="mid"and"-mid"or"")
+        -- print("libs_plat:",libs_plat)
+        local libs_plat_dir = csdk_root.."/PLAT/libs/"..libs_plat
+        import("core.base.json")
+        local metas_table = json.loadfile(csdk_root.."/PLAT/libs/metas.json")
+        local plat_sha1 = metas_table["libs"][libs_plat]["sha1"]
         
+        if not os.isfile(csdk_root.."/PLAT/libs/"..plat_sha1..".7z") or plat_sha1 ~= hash.sha1(csdk_root.."/PLAT/libs/"..plat_sha1..".7z") then
+            import("net.http")
+            if os.isdir(libs_plat_dir) then os.rmdir(libs_plat_dir) end
+            http.download(format(plat_url,libs_plat,plat_sha1), csdk_root.."/PLAT/libs/"..plat_sha1..".7z")
+        end
+        assert(os.isfile(csdk_root.."/PLAT/libs/"..plat_sha1..".7z"),csdk_root.."/PLAT/libs/"..plat_sha1..".7z".." not exist , mabe download failed")
+
+        if not os.isdir(libs_plat_dir) then
+            import("utils.archive")
+            archive.extract(csdk_root.."/PLAT/libs/"..plat_sha1..".7z", libs_plat_dir)
+        end
+
         for _, filepath in ipairs(os.files(target:values("project_dir").."/**/mem_map_7xx.h")) do
             print(filepath)
             if path.filename(filepath) == "mem_map_7xx.h" then
