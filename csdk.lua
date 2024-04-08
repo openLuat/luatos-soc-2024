@@ -295,6 +295,24 @@ function description_common()
             archive.extract(csdk_root.."/PLAT/libs/"..plat_sha1..".7z", libs_plat_dir)
         end
 
+        local prebuild_url = "http://cdndownload.openluat.com/xmake/libs/%s/%s.7z"
+        local libs_prebuild_dir = csdk_root.."/PLAT/prebuild/"
+        local prebuild_metas_table = json.loadfile(csdk_root.."/PLAT/prebuild/metas.json")
+        local prebuild_sha1 = prebuild_metas_table["prebuild"]["sha1"]
+
+        if not os.isfile(csdk_root.."/PLAT/prebuild/"..prebuild_sha1..".7z") or prebuild_sha1 ~= hash.sha1(csdk_root.."/PLAT/prebuild/"..prebuild_sha1..".7z") then
+            import("net.http")
+            if os.isdir(libs_prebuild_dir.."FW") then os.rmdir(libs_prebuild_dir.."FW") os.rmdir(libs_prebuild_dir.."PLAT") os.rmdir(libs_prebuild_dir.."PS") end
+            http.download(format(plat_url,"prebuild",prebuild_sha1), csdk_root.."/PLAT/prebuild/"..prebuild_sha1..".7z")
+        end
+        assert(os.isfile(csdk_root.."/PLAT/prebuild/"..prebuild_sha1..".7z"),csdk_root.."/PLAT/prebuild/"..prebuild_sha1..".7z".." not exist , mabe download failed")
+        
+        if not os.isdir(libs_prebuild_dir.."FW") then
+            import("utils.archive")
+            archive.extract(csdk_root.."/PLAT/prebuild/"..prebuild_sha1..".7z", libs_prebuild_dir)
+        end
+
+
         for _, filepath in ipairs(os.files(target:values("project_dir").."/**/mem_map_7xx.h")) do
             print(filepath)
             if path.filename(filepath) == "mem_map_7xx.h" then
