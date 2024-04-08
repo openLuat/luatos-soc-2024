@@ -1,0 +1,246 @@
+
+../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/cp-demo-flash.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .vector       00000080  0081a000  0081a000  0000a000  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  1 .ARM.exidx    00000008  0081a080  0081a080  0000a080  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  2 .text         000455d4  0081a088  0081a088  0000a088  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  3 .load_cp_piram_csmb 0000c614  00000020  0085f65c  00050020  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  4 .load_cp_firam_csmb 00000000  0000c634  0000c634  0006d934  2**2
+                  CONTENTS
+  5 .unload_cpcsmbdata 00000e18  0000c634  0000c634  0005c634  2**2
+                  ALLOC
+  6 .unload_cpaonmem 000007fc  0000f800  0000f800  0000f800  2**0
+                  ALLOC
+  7 .unload_cpaon 000007fc  0020a800  0020a800  0000a800  2**0
+                  ALLOC
+  8 .load_cp_slp2piram_msmb 00000000  004dd000  004dd000  0006d934  2**2
+                  CONTENTS
+  9 .load_cp_piram_msmb 00000000  004dd000  004dd000  0006d934  2**2
+                  CONTENTS
+ 10 .load_cp_firam_msmb_part1 0000a384  004dd000  0086bc70  0005d000  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+ 11 .load_cp_firam_msmb_part2 000014f8  004e7384  00875ff4  00067384  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+ 12 .load_cpos    00002768  004e8880  008774ec  00068880  2**4
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+ 13 .unload_slpmem 000002d5  004ed000  004ed000  0000d000  2**2
+                  ALLOC
+ 14 .load_cpdram_bsp_data 00000168  004ed2d8  00879c54  0006d2d8  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+ 15 .load_cpdram_bsp_bss 0000037c  004ed440  004ed440  0006d440  2**2
+                  ALLOC
+ 16 .load_cpdram_shared_data 00000178  004ed7bc  00879dbc  0006d7bc  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+ 17 .load_cpdram_shared_bss 0000dabc  004ed938  004ed938  0006d938  2**3
+                  ALLOC
+ 18 .load_xp_sharedinfo 000006e0  004fe000  004fe000  0000d000  2**2
+                  ALLOC
+ 19 .ARM.attributes 00000029  00000000  00000000  0006d934  2**0
+                  CONTENTS, READONLY
+ 20 .comment      0000004d  00000000  00000000  0006d95d  2**0
+                  CONTENTS, READONLY
+ 21 .debug_frame  00010808  00000000  00000000  0006d9ac  2**2
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 22 .debug_info   0027ff3e  00000000  00000000  0007e1b4  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 23 .debug_abbrev 0001f097  00000000  00000000  002fe0f2  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 24 .debug_loc    000a0492  00000000  00000000  0031d189  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 25 .debug_aranges 00004c50  00000000  00000000  003bd620  2**3
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 26 .debug_ranges 00012f98  00000000  00000000  003c2270  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 27 .debug_macro  00081c72  00000000  00000000  003d5208  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 28 .debug_line   000e2bf8  00000000  00000000  00456e7a  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 29 .debug_str    000d09dd  00000000  00000000  00539a72  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+      text       data        bss      total filename
+    392140        872      67069     460081 ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/cp-demo-flash.elf
+      text       data        bss      total filename
+       574        121          0        695 prec_init.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libstartup.a)
+        72          0          0         72 syscalls.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libstartup.a)
+       366          4          0        370 system_ec7xx.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libstartup.a)
+       132        128          0        260 startup_ec7xx_gcc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libstartup.a)
+      1144        253          0       1397 (TOTALS)
+      text       data        bss      total filename
+       138          0          0        138 ec_string.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver.a)
+       584         36          0        620 wdt.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver.a)
+       522        300          0        822 clock.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver.a)
+       344         73          0        417 pad.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver.a)
+       518         15          4        537 gpio.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver.a)
+      1472        371         29       1872 timer.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver.a)
+       236          0          0        236 memcpy-armv7m.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver.a)
+      3814        795         33       4642 (TOTALS)
+      text       data        bss      total filename
+       276         31          0        307 acmsgtype.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+      1580        180          0       1760 caipcapi.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+      2692        474          0       3166 exception_process.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+       824        276          0       1100 sys_record.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+      2786          4          0       2790 unilog.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+       112          0          0        112 cache.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+       318         22          1        341 caipcdrv.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+      1794          0        260       2054 ic.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+      1398        155          0       1553 gpr.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+      2952        393        516       3861 dma.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+      2368        769          0       3137 cpmu.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+       452         92          0        544 slpman.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+         0          0          0          0 cpmuTest.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+         0          0          0          0 ipcdrvcomm.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+       146          0          0        146 sipcdrv.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+      1524        144          4       1672 aonreg.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+        72          0          0         72 cpmureg.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+      1192       1791          0       2983 shareinfo.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+       384         22          0        406 reset.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+      1414          0          0       1414 TmuDriver.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+        94          0          0         94 dpmureg.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+        36          0          0         36 flashLock.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libdriver_private.a)
+     22414       4353        781      27548 (TOTALS)
+      text       data        bss      total filename
+         0          0          0          0 timers.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfreertos.a)
+      6104        490        356       6950 tasks.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfreertos.a)
+       964        118          0       1082 event_groups.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfreertos.a)
+       920         83      24584      25587 heap_6.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfreertos.a)
+       128          0          0        128 list.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfreertos.a)
+         0          0          0          0 heap_6_psram.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfreertos.a)
+      2426        326          0       2752 queue.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfreertos.a)
+         0          0          0          0 heap_4.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfreertos.a)
+       362         16       3204       3582 mm_debug.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfreertos.a)
+       214          0          1        215 os_systick.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfreertos.a)
+       236         77         64        377 os_callback_hook.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfreertos.a)
+      1830          0       3460       5290 cmsis_os2.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfreertos.a)
+       514         72          4        590 port.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfreertos.a)
+      5762       1688         21       7471 tlsf.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfreertos.a)
+     19460       2870      31694      54024 (TOTALS)
+      text       data        bss      total filename
+        62          5          0         67 nvram.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libmiddleware_ec.a)
+        62          5          0         67 (TOTALS)
+      text       data        bss      total filename
+       560          0          0        560 LzFindOpt.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       240          0          0        240 Bra86.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       910          0          0        910 Bcj2Enc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+      3480          0          0       3480 LzFindMt.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       274          6          0        280 Xz.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       648          0          0        648 Bcj2.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       336          0          0        336 Lzma86Enc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       720          0          0        720 7zCrcOpt.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+      5184          0          0       5184 XzDec.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+        20          0          0         20 CpuArch.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       200          0       9236       9436 7zCrc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+      1814         12          0       1826 7zDec.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       228          0      10244      10472 XzCrc64.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+      1408          0          0       1408 XzIn.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       504          0          0        504 7zStream.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       524          0          0        524 Sort.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+      5140          0          0       5140 LzFind.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       136          0          0        136 LzmaLib.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+        48          0          0         48 7zBuf.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+     11358         48          0      11406 LzmaEnc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       650          0          0        650 Bra.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+        22          0          0         22 7zAlloc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+      1294          0          0       1294 Ppmd7Enc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+      3104          0          0       3104 XzEnc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       154         16          0        170 Alloc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+      2644        256       8464      11364 Aes.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       106          0          0        106 7zBuf2.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+      1024          0          0       1024 Ppmd7Dec.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+      6566          6          0       6572 7zArcIn.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       800          7          0        807 7zFile.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+      1526          0          0       1526 Lzma2Enc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+         4          0          0          4 Sha256Opt.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+      6580          0          0       6580 LzmaDec.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+         0          0          0          0 AesOpt.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+         0          0          0          0 Threads.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+         0          0          0          0 DllSecur.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       212          0          0        212 BraIA64.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       436          0          0        436 XzCrc64Opt.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+      1304          0          0       1304 Lzma2Dec.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       346          0          0        346 Delta.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       182          0          0        182 Lzma86Dec.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+       938        160          0       1098 LzmaEc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/liblzma.a)
+     61624        511      27944      90079 (TOTALS)
+      text       data        bss      total filename
+      1378        372          0       1750 PhyUtils.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+       584         33          0        617 PhyDebug.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      2070         12          0       2082 ModemGcuDriver.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      2428        464          0       2892 MacTimerCtrl.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      1544        236          0       1780 PhyCommon.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+         0          0          0          0 PhyTpuCode718_FPGASys.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+         0          0          0          0 PhyTpuCode718.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+         0          0          0          0 PhyTpuCode.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      1146          0          0       1146 PhyAtCmdDebug.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+         0          0          0          0 PhyTpuCode718_DirectCase.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+         0       7119          0       7119 PhyConstData.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+         0      12216          0      12216 PhyTpuCode716.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      3054        788          0       3842 PhyAxc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      2640          0          0       2640 PhyAfc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      2276         44          0       2320 PhyAtc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+     10814        890          0      11704 PhyCeProc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      3842         31          0       3873 PhyCeConfig.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+         4          0          0          4 PhyIdleSpeedEst.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      9268         86          0       9354 PhyCsiProc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+     14448        850          0      15298 PhyDciParse.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      6446        435          0       6881 PhyCchConfig.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      1332        157          0       1489 PhyDlHarqProc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      6546       1744         16       8306 PhyDchConfig.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      2480         42          0       2522 PhyDecConfig.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      3164       1272          0       4436 PhyDecProc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      6572       1378          0       7950 PhyRxDFE.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      9718        450          0      10168 PhyIcsMeasSchedule.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+     12618        688          0      13306 PhyIcsSchedule.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      1364         22          0       1386 PhyRssiScanScoring.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+       436          0          0        436 PhyRssiScanSchedule.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      4576        138          0       4714 PhyMacRa.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      2898          4          0       2902 PhyMacApi.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+     10668        260          0      10928 PhyMeasPostProc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+     16776        215          0      16991 PhyMeasSchedule.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      4934        132          0       5066 PhyMeasSigProc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      2262       4941          0       7203 RfCtrl.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+       332         40          0        372 RfRxAgc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      2826         62          0       2888 RfAtCmd.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+        40          0          0         40 RfTxApc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+       554          0          0        554 RfMipiRffe.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+         0          0          0          0 RfEc618Cfg.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      4172        254          0       4426 RfEc716Cfg.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+         0          0          0          0 RfEc718Cfg.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      3418        172          0       3590 RfNstTest.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+       784          0          0        784 PhyRxDFE4Calib.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+     16328        899        164      17391 RfNstCali.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      7294        563          0       7857 RfNstApi.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+     13160        232          0      13392 PhySchedule.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+       796          0          0        796 PhyTimeCalc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+        34          0          0         34 PhyGpsDumpSchedule.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      3916         44          0       3960 PhySleepCtrl.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      5804        225          0       6029 PhyConnDrxSchedule.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      7700         74          0       7774 PhySiReqHandle.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+     11088          4          0      11092 PhyEcgiSchedule.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      5234         79          0       5313 PhyDCXOFTEst.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      1878         40          0       1918 PhyPchReqHandle.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      8590        509          0       9099 PhyHwTaskCtrl.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+     25138       8888          0      34026 PhyCellInfo.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+     10036        612          0      10648 PhyPresyncCtrl.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      6654        174          0       6828 SqConfig.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+       558          0          0        558 SqDriver.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      4668         25          0       4693 PhyTxSchedule.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      4426         25          0       4451 PhyPuxch.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      1448          0          0       1448 PhyTxDfe.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      1456         12          0       1468 PhyTaProc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+         0          0          0          0 PhyTssiProc.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      4462         29          0       4491 PhyTxPower.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      8168          7          0       8175 PhyTxHarq.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      1250          4          0       1254 PhyTxHw.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      5860         11          0       5871 PhySrs.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      1248          0          0       1248 PhyPrach.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+      3054          0          0       3054 PhyAnReport.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+         0          0          0          0 PhyWifiBeaconSync.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+         0          0          0          0 PhyWifiRake.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+         0          0          0          0 PhyWifiSchedule.o (ex ../../../../../../../PLAT/gccout/ec7xx_0h00_ec716e/cp/cp_project/lib/libfw.a)
+    320660      48003        180     368843 (TOTALS)

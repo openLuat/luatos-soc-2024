@@ -78,13 +78,19 @@ linux和macos安装请自行参考,但并不建议,因为macos无法打包,并�
 
 **注意:上述配置操作只需要配置一次，之后会一直生效，只有修改配置才需要重新执行配置操作**
 
-随后执行 `xmake进行编译即可，生成的binpkg/soc/日志数据库(comdb.txt)等文件都位于项目下`out`目录
+随后执行 `xmake`进行编译即可，生成的binpkg/soc/日志数据库(comdb.txt)等文件都位于项目下`out`目录
+
+
+
+ps：如果不想使用图形也支持使用命令行配置方式，例如`xmake f --chip_target=ec718p --lspd_mode=y --denoise_force=n` ，具体支持的配置项和参数执行 `xmake f --help` 查看 `Command options (Project Configuration)`下具体描述
+
+
 
 ### 清理编译
 
 执行 `xmake clean -a`可以清除编译产生的中间文件(通常执行此命令即可)
 
-执行 `xmake f -c可以清除自己的配置(清除后需要重新执行上述配置)
+执行 `xmake f -c`可以清除自己的配置(清除后需要重新执行上述配置)
 
 
 
