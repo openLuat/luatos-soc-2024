@@ -28,4 +28,5 @@ out/
 
 libdriver_private_drv.a
 /PLAT/libs/*
+/PLAT/prebuild/*
 !metas.json
