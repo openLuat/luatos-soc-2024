@@ -280,7 +280,7 @@ if %DENOISE_FORCE% == "disable" (
 @echo "=============================="
 
 cd project/%PROJECT_NAME% 
-xmake f --local_gcc_path=%GCC_PATH% --chip_target=%CHIP_TARGET% --lspd_mode=%LSPD_MODE% --denoise_force=%DENOISE_FORCE%
+xmake f --chip_target=%CHIP_TARGET% --lspd_mode=%LSPD_MODE% --denoise_force=%DENOISE_FORCE%
 if "%3"=="-v" (
 	xmake -v
 ) else (
