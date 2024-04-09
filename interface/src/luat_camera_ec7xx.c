@@ -77,6 +77,7 @@ typedef struct
 	uint8_t preview_on_off;
 	uint8_t camera_id;
 	uint8_t is_work;
+	uint8_t jpeg_quality;
 }luat_camera_app_t;
 
 static luat_camera_app_t luat_camera_app;
@@ -422,7 +423,7 @@ static void luat_camera_task(void *param)
 			}
 			p_cache = luat_camera_app.p_cache[0];
 			luat_camera_app.jpeg_data_point = 0;
-			JPEGEncodeHandle = jpeg_encode_init(luat_camera_save_JPEG_data, 0, 1, luat_camera_app.config.sensor_width, luat_camera_app.config.sensor_height, 3);
+			JPEGEncodeHandle = jpeg_encode_init(luat_camera_save_JPEG_data, 0, luat_camera_app.jpeg_quality?luat_camera_app.jpeg_quality:1, luat_camera_app.config.sensor_width, luat_camera_app.config.sensor_height, 3);
 			ycb_cache = malloc(luat_camera_app.config.sensor_width * 8 * 3);
 			for(i = 0; i < luat_camera_app.config.sensor_height; i+= 8)
 			{
@@ -539,6 +540,7 @@ int luat_camera_capture_in_ram(int id, uint8_t quality, void *buffer)
 	if (!luat_camera_app.scan_mode && !luat_camera_app.capture_stage && !luat_camera_app.is_process_image)
 	{
 		luat_camera_app.buff = buffer;
+		luat_camera_app.jpeg_quality = quality;
 		luat_camera_app.capture_stage = 1;
 		return 0;
 	}
@@ -565,6 +567,7 @@ int luat_camera_capture(int id, uint8_t quality, const char *path)
 			strcpy(luat_camera_app.save_path, path);
 			DBG("save file in %s", luat_camera_app.save_path);
 		}
+		luat_camera_app.jpeg_quality = quality;
 		luat_camera_app.capture_stage = 1;
 		return 0;
 	}
