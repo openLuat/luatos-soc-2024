@@ -247,7 +247,7 @@ int luat_camera_setup(int id, luat_spi_camera_t *conf, void * callback, void *pa
 	}
 	else
 	{
-		luat_camera_app.p_cache[1] = luat_heap_opt_malloc(LUAT_HEAP_PSRAM, luat_camera_app.config.sensor_width * luat_camera_app.config.sensor_height / 2);
+		luat_camera_app.p_cache[1] = NULL;
 	}
 #endif
 	return id;
@@ -353,7 +353,10 @@ int luat_camera_close(int id)
 		luat_rtos_event_send(luat_camera_app.task_handle, LUAT_CAMERA_EVENT_STOP, 0, 0, 0, 0);
 	}
 	luat_heap_free(luat_camera_app.p_cache[0]);
-	luat_heap_free(luat_camera_app.p_cache[1]);
+	if (luat_camera_app.p_cache[1])
+	{
+		luat_heap_free(luat_camera_app.p_cache[1]);
+	}
 	luat_camera_app.p_cache[0] = NULL;
 	luat_camera_app.p_cache[1] = NULL;
 	OS_DeInitBuffer(&luat_camera_app.result_buffer);
@@ -422,6 +425,14 @@ static void luat_camera_task(void *param)
 				break;
 			}
 			p_cache = luat_camera_app.p_cache[0];
+			if (!luat_camera_app.double_buffer_mode)
+			{
+				if (luat_camera_app.p_cache[1])
+				{
+					luat_heap_free(luat_camera_app.p_cache[1]);
+				}
+				luat_camera_app.p_cache[1] = luat_heap_opt_malloc(LUAT_HEAP_PSRAM, luat_camera_app.config.sensor_width * luat_camera_app.config.sensor_height * 2);
+			}
 			luat_camera_app.jpeg_data_point = 0;
 			JPEGEncodeHandle = jpeg_encode_init(luat_camera_save_JPEG_data, 0, luat_camera_app.jpeg_quality?luat_camera_app.jpeg_quality:1, luat_camera_app.config.sensor_width, luat_camera_app.config.sensor_height, 3);
 			ycb_cache = malloc(luat_camera_app.config.sensor_width * 8 * 3);
@@ -481,6 +492,11 @@ static void luat_camera_task(void *param)
 					luat_fs_fwrite(luat_camera_app.p_cache[1], luat_camera_app.jpeg_data_point, 1, fd);
 					luat_fs_fclose(fd);
 				}
+			}
+			if (!luat_camera_app.double_buffer_mode)
+			{
+				luat_heap_free(luat_camera_app.p_cache[1]);
+				luat_camera_app.p_cache[1] = NULL;
 			}
 		    {
 		        msg.handler = l_camera_handler;
