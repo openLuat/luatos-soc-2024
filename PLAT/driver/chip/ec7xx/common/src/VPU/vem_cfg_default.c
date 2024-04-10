@@ -1,7 +1,7 @@
 
 #include "audioCfg.h"   //struct AudioConfig_t
 
-const AudioConfig_t audio_cfg_default = 
+__attribute__((weak)) const AudioConfig_t audio_cfg_default =
 {
 	.amrEncodeBypass = 0,
 	.amrDecodeBypass = 0,

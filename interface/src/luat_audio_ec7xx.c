@@ -1036,4 +1036,4 @@ void luat_audio_power_keep_ctrl_by_bsp(uint8_t on_off)
 	soc_sys_force_wakeup_on_off(SOC_SYS_CTRL_USER - 1, on_off);
 }
 
-void *luat_audio_inter_amr_codec_pcm_address(void) {return voice_pcm;}
+void *luat_audio_inter_amr_pcm_address(void) {return voice_pcm;}

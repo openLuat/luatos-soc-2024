@@ -190,5 +190,6 @@ void luat_audio_inter_amr_init(uint8_t is_wb, uint8_t quality);
 int luat_audio_inter_amr_encode(const uint16_t *pcm_buf, uint8_t *amr_buf, uint8_t *amr_len);
 int luat_audio_inter_amr_decode(uint16_t *pcm_buf, const uint8_t *amr_buf, uint8_t *amr_len);
 void luat_audio_inter_amr_deinit(void);
+void *luat_audio_inter_amr_pcm_address(void);
 /**@}*/
 #endif
