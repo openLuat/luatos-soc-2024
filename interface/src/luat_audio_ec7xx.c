@@ -57,8 +57,10 @@ typedef struct
 	uint8_t max_frame_type;
 	uint8_t wait_flag;
 	uint8_t is_init;
+	uint8_t voice_pcm_buffer_cnt;
+	uint8_t voice_pcm_buffer_max;
 }ec7xx_voice_eng_ctrl_t;
-static __ALIGNED(4) PS_FM_VOICE_NOINIT uint8_t voice_pcm[640];
+static __ALIGNED(4) PS_FM_VOICE_NOINIT uint8_t voice_pcm[640 * 3];
 static __ALIGNED(4) PS_FM_VOICE_NOINIT uint8_t voice_amr[64];
 static const uint16_t  amr_nb_bit_len[]  = {95, 103, 118, 134, 148, 159, 204, 244, 39};
 static const uint8_t  amr_nb_byte_len[] = {12, 13, 15, 17, 19, 20, 26, 31, 5};
@@ -727,7 +729,7 @@ static void amrEngCallback(uint32_t msgId, void *msg)
 
 static uint8_t luat_audio_inter_amr_wait(ec7xx_voice_eng_ctrl_t *eng)
 {
-    uint8_t timeout = 15;
+    uint8_t timeout = 20;
     while(eng->wait_flag)
     {
     	luat_rtos_task_sleep(1);
@@ -780,6 +782,8 @@ void luat_audio_inter_amr_init(uint8_t is_wb, uint8_t quality)
     	eng->bit_table = amr_wb_bit_len;
     	eng->byte_table = amr_wb_byte_len;
     	eng->max_frame_type = HAL_AMR_WB_FT_9;
+    	eng->voice_pcm_buffer_max = 3;
+    	eng->voice_pcm_buffer_cnt = 0;
     }
     else
     {
@@ -787,6 +791,8 @@ void luat_audio_inter_amr_init(uint8_t is_wb, uint8_t quality)
     	eng->bit_table = amr_nb_bit_len;
     	eng->byte_table = amr_nb_byte_len;
     	eng->max_frame_type = HAL_AMR_NB_FT_8;
+    	eng->voice_pcm_buffer_max = 6;
+    	eng->voice_pcm_buffer_cnt = 0;
     }
 
     codecCfg.encBitRate = quality;
@@ -920,7 +926,6 @@ int luat_audio_inter_amr_decode(uint16_t *pcm_buf, const uint8_t *amr_buf, uint8
 		memcpy(voice_amr, amr_buf + 1, eng->byte_table[q]);
 	}
 
-	eng->decode_req.pPcmData = voice_pcm;
 	eng->decode_req.pAmrData = voice_amr;
 	eng->decode_req.sn++;
 
@@ -943,9 +948,15 @@ int luat_audio_inter_amr_decode(uint16_t *pcm_buf, const uint8_t *amr_buf, uint8
     	}
     	else
     	{
-    		memcpy(pcm_buf, eng->decode_req.pPcmData, eng->decode_cnf.pcmDataLen);
+    		memcpy(pcm_buf, &voice_pcm[(eng->decode_req.codecType + 1) * 320 * eng->voice_pcm_buffer_cnt], eng->decode_cnf.pcmDataLen);
     	}
     }
+    eng->voice_pcm_buffer_cnt++;
+    if (eng->voice_pcm_buffer_cnt >= eng->voice_pcm_buffer_max)
+    {
+    	eng->voice_pcm_buffer_cnt = 0;
+    }
+    eng->decode_req.pPcmData = NULL;
 	eng->wait_flag = 0;
 	return 0;
 }
@@ -1024,3 +1035,5 @@ void luat_audio_power_keep_ctrl_by_bsp(uint8_t on_off)
 {
 	soc_sys_force_wakeup_on_off(SOC_SYS_CTRL_USER - 1, on_off);
 }
+
+void *luat_audio_inter_amr_codec_pcm_address(void) {return voice_pcm;}
