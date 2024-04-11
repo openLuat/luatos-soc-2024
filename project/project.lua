@@ -213,6 +213,7 @@ end)
 target(project_name..".elf",function()
 	set_kind("binary")
     set_targetdir(project_dir.."/build/"..project_name)
+    add_deps("ap_bootloader.elf", {inherit = false})
     add_deps("csdk")
     add_deps(project_name)
 
