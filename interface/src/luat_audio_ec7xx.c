@@ -729,10 +729,10 @@ static void amrEngCallback(uint32_t msgId, void *msg)
 
 static uint8_t luat_audio_inter_amr_wait(ec7xx_voice_eng_ctrl_t *eng)
 {
-    uint8_t timeout = 20;
+    uint8_t timeout = 5;
     while(eng->wait_flag)
     {
-    	luat_rtos_task_sleep(1);
+    	luat_rtos_task_sleep(3);
     	timeout--;
     	if (!timeout)
     	{
