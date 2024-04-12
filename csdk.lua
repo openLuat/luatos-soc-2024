@@ -268,6 +268,19 @@ function description_common()
         if target:name()== target:values("project_name") then
             cprint(format("${cyan}CPU : ${magenta}%s",os.cpuinfo("model_name")))
             cprint(format("${cyan}MEM : ${magenta}%sG",math.ceil(os.meminfo("totalsize")/1024)))
+            cprint(format("${cyan}HOST : ${magenta}%s",os.host()))
+            cprint(format("${cyan}ARCH : ${magenta}%s",os.arch()))
+            if is_plat("windows") then
+                cprint(format("${cyan}OS VERSION : ${magenta}%s",winos.version()))
+            elseif is_plat("linux") then
+                cprint(format("${cyan}OS NAME : ${magenta}%s",linuxos.name()))
+                cprint(format("${cyan}OS VERSION : ${magenta}%s",linuxos.version()))
+                cprint(format("${cyan}OS KERNEL : ${magenta}%s",linuxos.kernelver()))
+            elseif is_plat("macosx") then
+                cprint(format("${cyan}OS VERSION : ${magenta}%s",macosx.version()))
+            end
+
+
             cprint(format("${cyan}project_name : ${magenta}%s",target:values("project_name")))
             cprint(format("${cyan}chip_target : ${magenta}%s",chip_target))
             cprint(format("${cyan}lspd_mode : ${magenta}%s",get_config("lspd_mode")))
