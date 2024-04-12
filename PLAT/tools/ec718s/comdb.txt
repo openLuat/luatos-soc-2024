@@ -1,8 +1,8 @@
 DbVersion
-1914660032,100
+1834159705,100
 <end>
 BuildInfo
-The current data file was built by the Application Ver. 2.2.80.213, Wed Apr 10 17:20:59 2024
+The current data file was built by the Application Ver. 2.2.80.213, Fri Apr 12 12:47:24 2024
 <end>
 EnumVals
 0,2048,0,0,PHY_ONLINE,PHY_ICS_MODULE,PhyIcsMeasMainEntrance_1,P_ERROR,swLogPrintf("Incorrect ICS stage ( %d ) for new euArfcn arranged for ICS MEAS ");
@@ -442,7 +442,8 @@ EnumVals
 263168,538972161,0,0,PLAT_AP,PLA_STRING,slpManGivebackPlatVoteHandle_4,P_VALUE,swLogPrintf("%s ");
 263168,538974209,0,0,PLAT_AP,PLA_STRING,OsaFopen_1,P_WARNING,swLogPrintf("Can ' t open NVM file , as not support mode : %s ");
 263168,538976257,0,0,PLAT_AP,PLA_STRING,build_info,P_SIG,swLogPrintf("%s ");
-263168,538978305,0,0,PLAT_AP,PLA_STRING,StackOverflow,P_ERROR,swLogPrintf("\r \n!!!error!!!..task : %s..stack.over.flow!!! \r \n ");
+263168,538978305,0,0,PLAT_AP,PLA_STRING,get_log_version_1,P_ERROR,swLogPrintf("%s ");
+263168,538980353,0,0,PLAT_AP,PLA_STRING,StackOverflow,P_ERROR,swLogPrintf("\r \n!!!error!!!..task : %s..stack.over.flow!!! \r \n ");
 264192,541071359,0,0,PLAT_AP,PLA_INTERNAL_CMD,EC_READY,P_INFO,swLogPrintf("EC Ready! ");
 264192,541067265,0,0,PLAT_AP,PLA_INTERNAL_CMD,get_log_version,P_SIG,swLogPrintf("LOGVERSION : %s ");
 264192,541073407,0,0,PLAT_AP,PLA_INTERNAL_CMD,ecDumpHandshakeProc,P_ERROR,swLogPrintf("enter dump handshake mode ");
@@ -873,68 +874,69 @@ EnumVals
 265216,544032767,0,0,PLAT_AP,PLA_DRIVER,OsaSetFlashValue_1,P_INFO,swLogPrintf("set cclk time value , file not exist , create default one ");
 265216,544034815,0,0,PLAT_AP,PLA_DRIVER,OsaSetFlashValue_2,P_INFO,swLogPrintf("cclk time value file write sucess ");
 265216,544035584,0,0,PLAT_AP,PLA_DRIVER,adc_efuse_read,P_INFO,swLogPrintf("adc efuse trim value , gain : 0x%x , offset : 0x%x , tcode : 0x%x , t0 : 0x%x ");
-265216,544038911,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_1,P_ERROR,swLogPrintf("Can ' t open ' plat_config ' file , use the defult value ");
-265216,544040959,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_2,P_ERROR,swLogPrintf("Can ' t read ' plat_config ' file header , use the defult value ");
-265216,544040960,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_5,P_ERROR,swLogPrintf("' plat_config ' version : %d not right , use the defult value ");
-265216,544043520,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_3,P_ERROR,swLogPrintf("' plat_config ' version : %d file body size not right : ( %u / %u ) , use the defult value ");
-265216,544045568,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_4,P_ERROR,swLogPrintf("Can ' t read ' plat_config ' version : %d file body , or body not right , ( %u / %u ) , use the defult value ");
-265216,544049151,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfig_1,P_ERROR,swLogPrintf("Can ' t open / create ' plat_config ' file , save plat_config failed ");
-265216,544051199,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfig_2,P_ERROR,swLogPrintf("Write ' plat_config ' file header failed ");
-265216,544053247,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfig_3,P_ERROR,swLogPrintf("Write ' plat_config ' file body failed ");
-265216,544055295,0,0,PLAT_AP,PLA_DRIVER,BSP_SetFSAssertCount_0,P_ERROR,swLogPrintf("Erase flash error!!! ");
-265216,544057343,0,0,PLAT_AP,PLA_DRIVER,BSP_SetFSAssertCount_1,P_ERROR,swLogPrintf("Update fsAssertCount value error!!! ");
-265216,544059391,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfigToRawFlash_1,P_ERROR,swLogPrintf("Erase flash error!!! ");
-265216,544061439,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfigToRawFlash_2,P_ERROR,swLogPrintf("Save plat config to raw flash error!!! ");
-265216,544063487,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfigToRawFlash_3,P_ERROR,swLogPrintf("Erase flash error!!! ");
-265216,544065535,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfigToRawFlash_4,P_ERROR,swLogPrintf("Save plat config to raw flash error!!! ");
-265216,544067583,0,0,PLAT_AP,PLA_DRIVER,BSP_WriteToRawFlash_1,P_ERROR,swLogPrintf("Erase flash error!!! ");
-265216,544069631,0,0,PLAT_AP,PLA_DRIVER,BSP_WriteToRawFlash_2,P_ERROR,swLogPrintf("Save plat config to raw flash error!!! ");
-265216,544071679,0,0,PLAT_AP,PLA_DRIVER,BSP_WriteToRawFlash_3,P_ERROR,swLogPrintf("Erase flash error!!! ");
-265216,544073727,0,0,PLAT_AP,PLA_DRIVER,BSP_WriteToRawFlash_4,P_ERROR,swLogPrintf("Save plat config to raw flash error!!! ");
-265216,544073984,0,0,PLAT_AP,PLA_DRIVER,BSP_GET_PLAT_CFG_3,P_WARNING,swLogPrintf("non-identical baud between fs ( %d ) & raw ( %d ) ! ");
-265216,544076544,0,0,PLAT_AP,PLA_DRIVER,CLOCK_Trace_1,P_WARNING,swLogPrintf("Clock Trace , id = 0x%x isEnable = %d counter = %d , funcPtr = %x ");
-265216,544078336,0,0,PLAT_AP,PLA_DRIVER,CLOCK_Trace_2,P_WARNING,swLogPrintf("Clock Trace , id = 0x%x counter = %d may overflow , funcPtr = %x ");
-265216,544080128,0,0,PLAT_AP,PLA_DRIVER,CLOCK_clockEnable_1,P_WARNING,swLogPrintf("Clock Enable Failed , id = 0x%x counter = %d ");
-265216,544081920,0,0,PLAT_AP,PLA_DRIVER,CLOCK_clockDisable_0,P_WARNING,swLogPrintf("Clock Disable check failed , id = 0x%x ");
-265216,544084224,0,0,PLAT_AP,PLA_DRIVER,TIMER_netlightPWM_1,P_SIG,swLogPrintf("Netlight mode = %u Instance = %d ");
-265216,544086016,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_init_1,P_WARNING,swLogPrintf("usb_wkup_pad_idx %d ");
-265216,544088320,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_1_1,P_WARNING,swLogPrintf("filter reset detect evt %x , vbus %d ");
-265216,544090368,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_1_2,P_WARNING,swLogPrintf("filter reset ( to ) evt %x , vbus %d ");
-265216,544092416,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_1,P_WARNING,swLogPrintf("port filtered unstable evt %x , vbus %d ");
-265216,544094464,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_2,P_WARNING,swLogPrintf("port vbus filter unstable level vbus last %d , vbus cur = %d ");
-265216,544096256,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_3,P_WARNING,swLogPrintf("port filtered type2 ( to ) invalid vbus , evt %x , vbus 0 ");
-265216,544098304,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_4,P_WARNING,swLogPrintf("port filtered type3 ( to ) invalid vbus , evt %x , vbus 1 ");
-265216,544100608,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_5,P_WARNING,swLogPrintf("port vbus trigger warning , ctx stat not valid %x , vbus %d ");
-265216,544102656,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_6,P_INFO,swLogPrintf("port vbus trigger , evt %x , vbus %d ");
-265216,544106495,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_1,P_WARNING,swLogPrintf("BSP_UsbDeInit ");
-265216,544108543,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_2,P_ERROR,swLogPrintf("BSP_UsbDeInit , ctx stat not match ");
-265216,544110591,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_3,P_WARNING,swLogPrintf("BSP_UsbInit ");
-265216,544112639,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_4,P_ERROR,swLogPrintf("BSP_UsbInit , ctx stat not match ");
-265216,544112896,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_5,P_WARNING,swLogPrintf("port vbus last %d , vbus cur = %d ");
-265216,544116735,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_4_1,P_WARNING,swLogPrintf("port stable wait evt change ");
-265216,544116736,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_4_2,P_WARNING,swLogPrintf("port stable detect evt %x ");
-265216,544118784,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_intr_cb_1,P_INFO,swLogPrintf("wkup_val : 0x%x ");
-265216,544121600,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_ccinfo_map_1,P_ERROR,swLogPrintf("clstype %d , inst_id %d , maintp %d , subtp %d ");
-265216,544123648,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_ccinfo_map_2,P_ERROR,swLogPrintf("clstype %d , inst_id %d , maintp %d , subtp %d ");
-265216,544124928,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_cfg_end_1,P_ERROR,swLogPrintf("p_multidev_load->load_cnt %x ");
-265216,544127756,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidevstr_desc_1,P_DEBUG,swLogPrintf("cls_type %d , inst_id 0x%x , name %s , intf string %s ");
-265216,544129793,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_cmndesc_1,P_DEBUG,swLogPrintf("name %s , cls = 0x%x , subcls 0x%x , protocol 0x%x ");
-265216,544131844,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_ctrl_proc_1,P_DEBUG,swLogPrintf("cls_type = %d , inst_id %d , name %s , req 0x%x ");
-265216,544135167,0,0,PLAT_AP,PLA_DRIVER,SoftSimInit_0,P_INFO,swLogPrintf("Softsim task has already been created ");
-265216,544137215,0,0,PLAT_AP,PLA_DRIVER,SoftSimInit_1,P_INFO,swLogPrintf("Start softsim task ");
-265216,544139263,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtInit_1,P_VALUE,swLogPrintf("Log above print through uart ");
-265216,544141311,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtInit_2,P_VALUE,swLogPrintf("Log below print through usb ");
-265216,544141312,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtInit_5,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtInit Process Time = %d ");
-265216,544143360,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtDinit_1,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtDinit Process Time = %d ");
-265216,544145408,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtReset_1,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtReset Process Time = %d ");
-265216,544149503,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtSuspend_3,P_VALUE,swLogPrintf("Log below print through uart ");
-265216,544149504,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtSuspend_4,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtSuspend Process Time = %d ");
-265216,544153599,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtResume_1,P_VALUE,swLogPrintf("Log above print through uart ");
-265216,544155647,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtResume_2,P_VALUE,swLogPrintf("Low below print through usb ");
-265216,544155648,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtResume_4,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtResume Process Time = %d ");
-265216,544158208,0,0,PLAT_AP,PLA_DRIVER,npiLoadNvmConfig_4,P_ERROR,swLogPrintf("Can ' t read ' npiconfig.nvm ' version : %d file body , or body not right , ( %u / %u ) , use the defult value ");
-265216,544159744,0,0,PLAT_AP,PLA_DRIVER,npiLoadNvmConfig_5,P_ERROR,swLogPrintf("' npiconfig.nvm ' version : %d not right , use the defult value ");
-265216,544162304,0,0,PLAT_AP,PLA_DRIVER,xTimerGenericCommand_1,P_WARNING,swLogPrintf("OsTimer Operation in ISR , msgId = %u , value = %d , pTimer = 0x%x ");
+265216,544037379,0,0,PLAT_AP,PLA_DRIVER,assert_func_1,P_ERROR,swLogPrintf("Assert , expr : %s , file : %s , line : %d \r \n ");
+265216,544040959,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_1,P_ERROR,swLogPrintf("Can ' t open ' plat_config ' file , use the defult value ");
+265216,544043007,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_2,P_ERROR,swLogPrintf("Can ' t read ' plat_config ' file header , use the defult value ");
+265216,544043008,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_5,P_ERROR,swLogPrintf("' plat_config ' version : %d not right , use the defult value ");
+265216,544045568,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_3,P_ERROR,swLogPrintf("' plat_config ' version : %d file body size not right : ( %u / %u ) , use the defult value ");
+265216,544047616,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_4,P_ERROR,swLogPrintf("Can ' t read ' plat_config ' version : %d file body , or body not right , ( %u / %u ) , use the defult value ");
+265216,544051199,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfig_1,P_ERROR,swLogPrintf("Can ' t open / create ' plat_config ' file , save plat_config failed ");
+265216,544053247,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfig_2,P_ERROR,swLogPrintf("Write ' plat_config ' file header failed ");
+265216,544055295,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfig_3,P_ERROR,swLogPrintf("Write ' plat_config ' file body failed ");
+265216,544057343,0,0,PLAT_AP,PLA_DRIVER,BSP_SetFSAssertCount_0,P_ERROR,swLogPrintf("Erase flash error!!! ");
+265216,544059391,0,0,PLAT_AP,PLA_DRIVER,BSP_SetFSAssertCount_1,P_ERROR,swLogPrintf("Update fsAssertCount value error!!! ");
+265216,544061439,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfigToRawFlash_1,P_ERROR,swLogPrintf("Erase flash error!!! ");
+265216,544063487,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfigToRawFlash_2,P_ERROR,swLogPrintf("Save plat config to raw flash error!!! ");
+265216,544065535,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfigToRawFlash_3,P_ERROR,swLogPrintf("Erase flash error!!! ");
+265216,544067583,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfigToRawFlash_4,P_ERROR,swLogPrintf("Save plat config to raw flash error!!! ");
+265216,544069631,0,0,PLAT_AP,PLA_DRIVER,BSP_WriteToRawFlash_1,P_ERROR,swLogPrintf("Erase flash error!!! ");
+265216,544071679,0,0,PLAT_AP,PLA_DRIVER,BSP_WriteToRawFlash_2,P_ERROR,swLogPrintf("Save plat config to raw flash error!!! ");
+265216,544073727,0,0,PLAT_AP,PLA_DRIVER,BSP_WriteToRawFlash_3,P_ERROR,swLogPrintf("Erase flash error!!! ");
+265216,544075775,0,0,PLAT_AP,PLA_DRIVER,BSP_WriteToRawFlash_4,P_ERROR,swLogPrintf("Save plat config to raw flash error!!! ");
+265216,544076032,0,0,PLAT_AP,PLA_DRIVER,BSP_GET_PLAT_CFG_3,P_WARNING,swLogPrintf("non-identical baud between fs ( %d ) & raw ( %d ) ! ");
+265216,544078592,0,0,PLAT_AP,PLA_DRIVER,CLOCK_Trace_1,P_WARNING,swLogPrintf("Clock Trace , id = 0x%x isEnable = %d counter = %d , funcPtr = %x ");
+265216,544080384,0,0,PLAT_AP,PLA_DRIVER,CLOCK_Trace_2,P_WARNING,swLogPrintf("Clock Trace , id = 0x%x counter = %d may overflow , funcPtr = %x ");
+265216,544082176,0,0,PLAT_AP,PLA_DRIVER,CLOCK_clockEnable_1,P_WARNING,swLogPrintf("Clock Enable Failed , id = 0x%x counter = %d ");
+265216,544083968,0,0,PLAT_AP,PLA_DRIVER,CLOCK_clockDisable_0,P_WARNING,swLogPrintf("Clock Disable check failed , id = 0x%x ");
+265216,544086272,0,0,PLAT_AP,PLA_DRIVER,TIMER_netlightPWM_1,P_SIG,swLogPrintf("Netlight mode = %u Instance = %d ");
+265216,544088064,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_init_1,P_WARNING,swLogPrintf("usb_wkup_pad_idx %d ");
+265216,544090368,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_1_1,P_WARNING,swLogPrintf("filter reset detect evt %x , vbus %d ");
+265216,544092416,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_1_2,P_WARNING,swLogPrintf("filter reset ( to ) evt %x , vbus %d ");
+265216,544094464,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_1,P_WARNING,swLogPrintf("port filtered unstable evt %x , vbus %d ");
+265216,544096512,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_2,P_WARNING,swLogPrintf("port vbus filter unstable level vbus last %d , vbus cur = %d ");
+265216,544098304,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_3,P_WARNING,swLogPrintf("port filtered type2 ( to ) invalid vbus , evt %x , vbus 0 ");
+265216,544100352,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_4,P_WARNING,swLogPrintf("port filtered type3 ( to ) invalid vbus , evt %x , vbus 1 ");
+265216,544102656,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_5,P_WARNING,swLogPrintf("port vbus trigger warning , ctx stat not valid %x , vbus %d ");
+265216,544104704,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_6,P_INFO,swLogPrintf("port vbus trigger , evt %x , vbus %d ");
+265216,544108543,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_1,P_WARNING,swLogPrintf("BSP_UsbDeInit ");
+265216,544110591,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_2,P_ERROR,swLogPrintf("BSP_UsbDeInit , ctx stat not match ");
+265216,544112639,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_3,P_WARNING,swLogPrintf("BSP_UsbInit ");
+265216,544114687,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_4,P_ERROR,swLogPrintf("BSP_UsbInit , ctx stat not match ");
+265216,544114944,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_5,P_WARNING,swLogPrintf("port vbus last %d , vbus cur = %d ");
+265216,544118783,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_4_1,P_WARNING,swLogPrintf("port stable wait evt change ");
+265216,544118784,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_4_2,P_WARNING,swLogPrintf("port stable detect evt %x ");
+265216,544120832,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_intr_cb_1,P_INFO,swLogPrintf("wkup_val : 0x%x ");
+265216,544123648,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_ccinfo_map_1,P_ERROR,swLogPrintf("clstype %d , inst_id %d , maintp %d , subtp %d ");
+265216,544125696,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_ccinfo_map_2,P_ERROR,swLogPrintf("clstype %d , inst_id %d , maintp %d , subtp %d ");
+265216,544126976,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_cfg_end_1,P_ERROR,swLogPrintf("p_multidev_load->load_cnt %x ");
+265216,544129804,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidevstr_desc_1,P_DEBUG,swLogPrintf("cls_type %d , inst_id 0x%x , name %s , intf string %s ");
+265216,544131841,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_cmndesc_1,P_DEBUG,swLogPrintf("name %s , cls = 0x%x , subcls 0x%x , protocol 0x%x ");
+265216,544133892,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_ctrl_proc_1,P_DEBUG,swLogPrintf("cls_type = %d , inst_id %d , name %s , req 0x%x ");
+265216,544137215,0,0,PLAT_AP,PLA_DRIVER,SoftSimInit_0,P_INFO,swLogPrintf("Softsim task has already been created ");
+265216,544139263,0,0,PLAT_AP,PLA_DRIVER,SoftSimInit_1,P_INFO,swLogPrintf("Start softsim task ");
+265216,544141311,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtInit_1,P_VALUE,swLogPrintf("Log above print through uart ");
+265216,544143359,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtInit_2,P_VALUE,swLogPrintf("Log below print through usb ");
+265216,544143360,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtInit_5,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtInit Process Time = %d ");
+265216,544145408,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtDinit_1,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtDinit Process Time = %d ");
+265216,544147456,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtReset_1,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtReset Process Time = %d ");
+265216,544151551,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtSuspend_3,P_VALUE,swLogPrintf("Log below print through uart ");
+265216,544151552,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtSuspend_4,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtSuspend Process Time = %d ");
+265216,544155647,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtResume_1,P_VALUE,swLogPrintf("Log above print through uart ");
+265216,544157695,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtResume_2,P_VALUE,swLogPrintf("Low below print through usb ");
+265216,544157696,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtResume_4,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtResume Process Time = %d ");
+265216,544160256,0,0,PLAT_AP,PLA_DRIVER,npiLoadNvmConfig_4,P_ERROR,swLogPrintf("Can ' t read ' npiconfig.nvm ' version : %d file body , or body not right , ( %u / %u ) , use the defult value ");
+265216,544161792,0,0,PLAT_AP,PLA_DRIVER,npiLoadNvmConfig_5,P_ERROR,swLogPrintf("' npiconfig.nvm ' version : %d not right , use the defult value ");
+265216,544164352,0,0,PLAT_AP,PLA_DRIVER,xTimerGenericCommand_1,P_WARNING,swLogPrintf("OsTimer Operation in ISR , msgId = %u , value = %d , pTimer = 0x%x ");
 266240,545261568,0,0,PLAT_AP,PLA_HAL,ApmuHandleScCalibrCancel,P_INFO,swLogPrintf("ApmuHandleScCalibration Cancelled! and timer status is %d ");
 266240,545265663,0,0,PLAT_AP,PLA_HAL,ApmuScCalibrTimerExpired_0,P_INFO,swLogPrintf("ApmuScCalibrTimerExpired! ");
 266240,545267711,0,0,PLAT_AP,PLA_HAL,ApmuScCalibrTimerExpired_1,P_INFO,swLogPrintf("AP do calibration itself , not notice CP ");
@@ -1584,12 +1586,13 @@ bd7c1f66823ca47383a330b1527583c834b252a85b42aaa8492f7b40ff9be0c9785d835c8948e0b8
 269312,552058880,0,0,PLAT_AP,PMU,Pad0_WakeupIntHandler_1,P_VALUE,swLogPrintf("Pad%d Wakeup ");
 269312,552062975,0,0,PLAT_AP,PMU,ChrgPad_WakeupIntHandler_1,P_VALUE,swLogPrintf("charge Wakeup ");
 269312,552065023,0,0,PLAT_AP,PMU,PwrKey_WakeupIntHandler_1,P_VALUE,swLogPrintf("Pwr key Wakeup ");
-269312,552067071,0,0,PLAT_AP,PMU,apmu2PeriWFITimerExp_0,P_VALUE,swLogPrintf("apmu2PeriWFITimerExp Enter ");
-269312,552067584,0,0,PLAT_AP,PMU,apmuPeriStartWFITimer_0,P_ERROR,swLogPrintf("clkRet1 = %d , clkRet2 = %d , CLKFREQ = 0x%x ");
-269312,552069120,0,0,PLAT_AP,PMU,apmuPeriStartWFITimer_1,P_VALUE,swLogPrintf("apmuPeriStartWFITimer set to %u ms ");
-269312,552071680,0,0,PLAT_AP,PMU,apmuPeriStartCPTimer_0,P_ERROR,swLogPrintf("clkRet1 = %d , clkRet2 = %d , CLKFREQ = 0x%x ");
-269312,552073216,0,0,PLAT_AP,PMU,apmuPeriStartCPTimer_1,P_VALUE,swLogPrintf("apmuCreateModemStartTimer set to %u ms ");
-269312,552077311,0,0,PLAT_AP,PMU,cmsProcSignal_1,P_VALUE,swLogPrintf("cmsProcSignal CP start ind ");
+269312,552065024,0,0,PLAT_AP,PMU,GPR_rmiErrDetectIsr_1,P_WARNING,swLogPrintf("Rmi Err Detect Address = 0x%x ");
+269312,552069119,0,0,PLAT_AP,PMU,apmu2PeriWFITimerExp_0,P_VALUE,swLogPrintf("apmu2PeriWFITimerExp Enter ");
+269312,552069632,0,0,PLAT_AP,PMU,apmuPeriStartWFITimer_0,P_ERROR,swLogPrintf("clkRet1 = %d , clkRet2 = %d , CLKFREQ = 0x%x ");
+269312,552071168,0,0,PLAT_AP,PMU,apmuPeriStartWFITimer_1,P_VALUE,swLogPrintf("apmuPeriStartWFITimer set to %u ms ");
+269312,552073728,0,0,PLAT_AP,PMU,apmuPeriStartCPTimer_0,P_ERROR,swLogPrintf("clkRet1 = %d , clkRet2 = %d , CLKFREQ = 0x%x ");
+269312,552075264,0,0,PLAT_AP,PMU,apmuPeriStartCPTimer_1,P_VALUE,swLogPrintf("apmuCreateModemStartTimer set to %u ms ");
+269312,552079359,0,0,PLAT_AP,PMU,cmsProcSignal_1,P_VALUE,swLogPrintf("cmsProcSignal CP start ind ");
 270336,553650432,0,0,PLAT_AP,CCIO,ADD_DEV_1,P_INFO,swLogPrintf("device ( 0x%x / %d ) is added! ");
 270336,553652224,0,0,PLAT_AP,CCIO,DEL_DEV_0,P_INFO,swLogPrintf("device ( 0x%x ) is deleted! ");
 270336,553656319,0,0,PLAT_AP,CCIO,DEL_DEV_1,P_SIG,swLogPrintf("no devices in the list! ");
@@ -8348,5 +8351,5 @@ MW_INFO_PHY_EDRX_PARAM,midWareNvmInfoPhyEdrxParam
 plat_config,plat_config_fs_t
 <end>
 OptionalSegment
-optional_sk_01,CBC086231656A5B079D4C7E2923B9EDF33F398C4B27A519AC87C91964C8593C0
+optional_sk_01,8EDFCD0F355CB8E4390C9889F18E639A10B4710868F48502C275E61A054FA5C7
 <end>
