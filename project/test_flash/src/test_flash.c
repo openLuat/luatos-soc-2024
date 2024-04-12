@@ -80,6 +80,7 @@ static void task(void *param)
 		end_ms = luat_mcu_tick64_ms();
 		check((uint32_t)(end_ms - start_ms), address);
 	}
+#ifdef FLASH_FDB_REGION_START
 	LUAT_DEBUG_PRINT("检测kv区flash");
 	for(address = FLASH_FDB_REGION_START; address < FLASH_FDB_REGION_END; address += 4096)
 	{
@@ -91,7 +92,7 @@ static void task(void *param)
 		end_ms = luat_mcu_tick64_ms();
 		check((uint32_t)(end_ms - start_ms), address);
 	}
-
+#endif
 	while(1)
 	{
 		luat_rtos_task_sleep(1000);
