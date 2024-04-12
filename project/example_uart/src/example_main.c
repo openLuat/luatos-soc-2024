@@ -50,7 +50,7 @@ void luat_uart_recv_cb(int uart_id, uint32_t data_len){
     char* data_buff = malloc(data_len+1);
     memset(data_buff,0,data_len+1);
     luat_uart_read(uart_id, data_buff, data_len);
-    LUAT_DEBUG_PRINT("uart_id:%d data_len:%d",uart_id,data_buff,data_len);
+    LUAT_DEBUG_PRINT("uart_id:%d %p data_len:%d",uart_id,data_buff,data_len);
     luat_uart_write(uart_id, data_buff, data_len);
     free(data_buff);
 }
