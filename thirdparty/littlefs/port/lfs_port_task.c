@@ -49,8 +49,10 @@ static int block_device_erase(const struct lfs_config *cfg, lfs_block_t block);
 // Sync the block device
 static int block_device_sync(const struct lfs_config *cfg);
 
-// utility functions for traversals
+#ifdef __USER_CODE__
+#else
 static int lfs_statfs_count(void *p, lfs_block_t b);
+#endif
 
 // Send LFS operation request to LFS Daemon task and wait for completion
 static int LFS_waitForCompletion(lfs_request_type_t type, void *handle, uint32_t data0, uint32_t data1);
@@ -279,14 +281,15 @@ static int block_device_sync(const struct lfs_config *cfg)
 {
     return 0;
 }
-
+#ifdef __USER_CODE__
+#else
 static int lfs_statfs_count(void *p, lfs_block_t b)
 {
     *(lfs_size_t *)p += 1;
 
     return 0;
 }
-
+#endif
 /***************************************************
  *******      FUNCTION IMPLEMENTATION       ********
  ***************************************************/
