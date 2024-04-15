@@ -81,7 +81,7 @@ int luat_i2s_setup(const luat_i2s_conf_t *conf)
 	int pad;
 	switch(conf->id)
 	{
-#if defined TYPE_EC716S
+#ifdef CHIP_EC716
 	case I2S_ID0:
 		GPIO_IomuxEC7XX(11, 6, 1, 0);
 		GPIO_IomuxEC7XX(25, 6, 1, 0);

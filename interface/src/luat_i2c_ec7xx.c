@@ -59,7 +59,7 @@ int luat_i2c_setup(int id, int speed) {
     if (!luat_i2c_exist(id)) return -1;
     if (luat_mcu_iomux_is_default(LUAT_MCU_PERIPHERAL_I2C, id))
     {
-#if defined TYPE_EC716S
+#ifdef CHIP_EC716
 		if (id)
     	{
     		GPIO_IomuxEC7XX(10, 1, 1, 0);

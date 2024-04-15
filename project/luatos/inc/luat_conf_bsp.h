@@ -467,6 +467,16 @@
 
 #endif
 
+
+#ifndef PSRAM_FEATURE_ENABLE
+#undef LUAT_USE_CAMERA
+#endif
+
+#ifdef TYPE_EC716E
+#undef LUAT_HEAP_SIZE
+#define LUAT_HEAP_SIZE (200*1024)
+#endif
+
 #ifdef LUAT_USE_CAMERA
 #define LUAT_USE_LCD_SERVICE 1
 #endif

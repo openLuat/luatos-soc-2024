@@ -194,7 +194,7 @@ int luat_uart_setup(luat_uart_t* uart) {
     if(luat_mcu_iomux_is_default(LUAT_MCU_PERIPHERAL_UART, uart->id))
     {
 
-#if defined TYPE_EC716S
+#ifdef CHIP_EC716
         switch (uart->id)
         {
         case UART_ID0:

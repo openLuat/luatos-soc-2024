@@ -202,7 +202,7 @@ int luat_pwm_open(int channel, size_t freq,  size_t pulse, int pnum) {
 	{
     	if (luat_mcu_iomux_is_default(LUAT_MCU_PERIPHERAL_PWM, channel))
     	{
-#if defined TYPE_EC716S
+#ifdef CHIP_EC716
 			switch (channel)
         	{
         	case 0:
@@ -369,7 +369,7 @@ static int32_t __USER_FUNC_IN_RAM__ prvHWTimer_OperationQueuExti(void *pData, vo
 extern uint8_t luat_gpio_get_alt(uint8_t GPIO);
 __USER_FUNC_IN_RAM__ uint32_t prvGPIO_ToPadEC7XXFast(uint32_t Pin)
 {
-#ifdef TYPE_EC716S
+#ifdef CHIP_EC716
 	if (Pin <= HAL_GPIO_16) return Pin + 12;
 	if (Pin <= HAL_GPIO_20) return Pin - 9;
 #else

@@ -110,7 +110,7 @@ int luat_spi_setup(luat_spi_t* spi) {
     if(spi->CPHA&&spi->CPOL)spi_mode = SPI_MODE_3;
     else if(spi->CPOL)spi_mode = SPI_MODE_2;
     else if(spi->CPHA)spi_mode = SPI_MODE_1;
-#ifdef TYPE_EC716S
+#ifdef CHIP_EC716
 	if (HAL_GPIO_2 == spi->cs)
 	{
 		GPIO_IomuxEC7XX(14, 1, 1, 0);

@@ -17,7 +17,7 @@ csdk_root = "../../" --csdk根目录,可自行修改
     add_linkgroups("mp3", {whole = true,public = true})
     
     on_config(function(target)
-        assert (chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718e" ,"luatos only support ec718p/ec718pv/ec718e")
+        assert (chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718e" or chip_target == "ec716e" ,"luatos only support ec718p/ec718pv/ec718e/ec716e")
         -- toolchains = target:tool("cc"):match('.+\\bin')
         -- local parameter = {"-E","-P"}
         -- for _, define_flasg in pairs(target:get("defines")) do
@@ -29,7 +29,7 @@ csdk_root = "../../" --csdk根目录,可自行修改
         local conf_data = io.readfile("./inc/luat_conf_bsp.h")
         local ap_load_add
         if chip_target == "ec718p" and has_config("denoise_force") or chip_target == "ec718pv" then ap_load_add = "0x000Ba000" -- ec718pv AP_FLASH_LOAD_ADDR
-        elseif chip_target == "ec718p" or chip_target == "ec718e" then ap_load_add = "0x0007e000"  -- ec718p AP_FLASH_LOAD_ADDR
+        elseif chip_target == "ec718p" or chip_target == "ec718e" or chip_target == "ec716e" then ap_load_add = "0x0007e000"  -- ec718p AP_FLASH_LOAD_ADDR
         end
         local FLASH_FOTA_REGION_START = 0x340000 -- ec718p/ec718pv FLASH_FOTA_REGION_START
         -- print("FLASH_FOTA_REGION_START",FLASH_FOTA_REGION_START)

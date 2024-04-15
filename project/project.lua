@@ -11,7 +11,7 @@ function description_csdk()
 
         if chip_target == "ec718p" or chip_target == "ec718pv" then
             add_defines("PSRAM_FEATURE_ENABLE")
-            add_defines("FEATURE_EXCEPTION_FLASH_DUMP_ENABLE")
+            --add_defines("FEATURE_EXCEPTION_FLASH_DUMP_ENABLE")
         end
 
         if chip_target == "ec718pv" then
