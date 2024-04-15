@@ -60,7 +60,7 @@ int luat_spi_bus_setup(luat_spi_device_t* spi_dev){
 	if(spi_dev->spi_config.CPHA&&spi_dev->spi_config.CPOL)spi_mode = SPI_MODE_3;
 	else if(spi_dev->spi_config.CPOL)spi_mode = SPI_MODE_2;
 	else if(spi_dev->spi_config.CPHA)spi_mode = SPI_MODE_1;
-#ifdef TYPE_EC716S
+#ifdef CHIP_EC716
 	GPIO_IomuxEC7XX(15, 1, 1, 0);
 	GPIO_IomuxEC7XX(16, 1, 1, 0);
 	GPIO_IomuxEC7XX(17, 1, 1, 0);

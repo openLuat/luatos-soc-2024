@@ -306,6 +306,8 @@ const char* luat_os_bsp(void) {
     return "EC718S";
 #elif defined TYPE_EC716S
     return "EC716S";
+#elif defined TYPE_EC716E
+    return "EC716E";
 #elif defined TYPE_EC718P
     return "EC718P";
 #elif defined TYPE_EC718H

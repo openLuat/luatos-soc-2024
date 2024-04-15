@@ -71,7 +71,7 @@ static volatile uint32_t vbatChannelResult = 0;
 static volatile uint32_t thermalChannelResult = 0;
 
 static int adc_exist(int id) {
-#ifndef TYPE_EC716S
+#ifndef CHIP_EC716
     if (id >= 0 && id < 5)
         return 1;
 #else
@@ -90,7 +90,7 @@ static int adc_range_to_resdiv(int id, int range, AdcAioResDiv_e *resdiv, float 
     adc_range_resdiv_map_item_t map[]=
     {
         {LUAT_ADC_AIO_RANGE_1_2, ADC_AIO_RESDIV_BYPASS, (float)1},
-#if defined TYPE_EC716S
+#ifdef CHIP_EC716
         {LUAT_ADC_AIO_RANGE_1_4, ADC_AIO_RESDIV_RATIO_28OVER32, (float)32/28},
         {LUAT_ADC_AIO_RANGE_1_6, ADC_AIO_RESDIV_RATIO_24OVER32, (float)32/24},
 #else
@@ -195,7 +195,7 @@ int luat_adc_open(int id, void* ptr) {
     {
     case 0:
         adcConfig.channelConfig.aioResDiv = resdiv;
-#if defined TYPE_EC716S
+#ifdef CHIP_EC716
         ADC_channelInit(ADC_CHANNEL_AIO1, ADC_USER_APP, &adcConfig, adc0_cb);
 #else
         ADC_channelInit(ADC_CHANNEL_AIO3, ADC_USER_APP, &adcConfig, adc0_cb);
@@ -204,7 +204,7 @@ int luat_adc_open(int id, void* ptr) {
         break;
     case 1:
         adcConfig.channelConfig.aioResDiv = resdiv;
-#if defined TYPE_EC716S
+#ifdef CHIP_EC716
         ADC_channelInit(ADC_CHANNEL_AIO2, ADC_USER_APP, &adcConfig, adc1_cb);
 #else
         ADC_channelInit(ADC_CHANNEL_AIO4, ADC_USER_APP, &adcConfig, adc1_cb);
@@ -248,7 +248,7 @@ int luat_adc_read(int id, int* val, int* val2) {
     {
     case 0:
         adc_state[0] = 0;
-#if defined TYPE_EC716S
+#ifdef CHIP_EC716
         ADC_startConversion(ADC_CHANNEL_AIO1, ADC_USER_APP);
 #else
         ADC_startConversion(ADC_CHANNEL_AIO3, ADC_USER_APP);
@@ -261,7 +261,7 @@ int luat_adc_read(int id, int* val, int* val2) {
         break;
     case 1:
         adc_state[1] = 0;
-#if defined TYPE_EC716S
+#ifdef CHIP_EC716
         ADC_startConversion(ADC_CHANNEL_AIO2, ADC_USER_APP);
 #else
         ADC_startConversion(ADC_CHANNEL_AIO4, ADC_USER_APP);
@@ -392,14 +392,14 @@ int luat_adc_close(int id) {
     switch (id)
     {
     case 0:
-#if defined TYPE_EC716S
+#ifdef CHIP_EC716
         ADC_channelDeInit(ADC_CHANNEL_AIO1, ADC_USER_APP);
 #else
         ADC_channelDeInit(ADC_CHANNEL_AIO3, ADC_USER_APP);
 #endif
         break;
     case 1:
-#if defined TYPE_EC716S
+#ifdef CHIP_EC716
         ADC_channelDeInit(ADC_CHANNEL_AIO2, ADC_USER_APP);
 #else
         ADC_channelDeInit(ADC_CHANNEL_AIO4, ADC_USER_APP);
@@ -432,7 +432,7 @@ int luat_adc_global_config(int tp, int val) {
     case ADC_SET_GLOBAL_RANGE:
     	adc_range[0] = val;
     	adc_range[1] = val;
-#ifndef TYPE_EC716S
+#ifndef CHIP_EC716
     	adc_range[2] = val;
     	adc_range[3] = val;
 #endif
