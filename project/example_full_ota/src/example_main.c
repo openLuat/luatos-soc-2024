@@ -55,7 +55,7 @@ luat_rtos_task_handle g_s_task_handle;
 luat_rtos_task_handle g_s_version_print_task_handle;
 
 
-#define PROJECT_VERSION  "1.0.0"                  		 //使用合宙iot升级的话此字段必须存在，并且强制固定格式为x.x.x, x可以为任意的数字
+#define PROJECT_VERSION  "1.0.1"                  		 //使用合宙iot升级的话此字段必须存在，并且强制固定格式为x.x.x, x可以为任意的数字
 
 #ifdef OTA_BY_IOT
 #define PROJECT_KEY "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"  //修改为自己iot上面的PRODUCT_KEY，这里是一个错误的，使用合宙iot升级的话此字段必须存在
