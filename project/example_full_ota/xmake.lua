@@ -14,7 +14,7 @@ target(project_name,function()
     local chip_target = nil
     if has_config("chip_target") then chip_target = get_config("chip_target") end
     -- 程序区缩小到1b7000，剩余2ca000 - 1b7000 = 113000
-    if chip_target == "ec718p" or chip_target == "ec716e" then
+    if chip_target == "ec718p" or chip_target == "ec716e" or chip_target == "ec718e" then
         add_defines("AP_FLASH_LOAD_SIZE=0x1b7000",{public = true})
         add_defines("AP_PKGIMG_LIMIT_SIZE=0x1b7000",{public = true})
         add_defines("FULL_OTA_SAVE_ADDR=0x235000",{public = true})
