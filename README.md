@@ -23,7 +23,7 @@ luatos-soc-2023迁移luatos-soc-2024文档请点击[这里](#section)跳转
 
 1. **强烈推荐使用git来下载本代码库**, 不会命令行操作git可以用 [tortoiseGit](https://tortoisegit.org/download/)
 2. 本CSDK底层是没有AT指令的,不存在"调用某某AT指令"的情况
-3. **由于依赖luatos主库，所以要在 luatos-soc-2024/xmake.lua中配置luatos仓库目录，默认luatos目录在luatos-soc-2024同级目录，即在luatos-soc-2024同级目录 clone [LuatOS](https://gitee.com/openLuat/LuatOS) 仓库即可，否则编译报错**
+3. **由于依赖luatos主库，所以要在 luatos-soc-2024/xmake.lua中配置luatos仓库目录，默认luatos目录在luatos-soc-2024同级目录，文件夹名称必须是LuatOS, LuatOS, LuatOS, 即在luatos-soc-2024同级目录 clone [LuatOS](https://gitee.com/openLuat/LuatOS) 仓库即可，否则编译报错**
 4. 本项目使用[xmake](https://xmake.io/#/zh-cn/)构建，就算不熟悉lua和构建也能直接上手使用，几乎不会在构建上花费您的时间，**但如需自定义的一些操作请先查看下相关api**
 5. 请留意, 本代码库使用的GCC版本与 luatos-soc-2022 库是不一样的, 无法更换,**同样由于lto原因也不要擅自更改编译工具链**
 
