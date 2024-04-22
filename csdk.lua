@@ -142,6 +142,9 @@ function description_common()
         end
         set_values("lib_ps_plat", lib_ps_plat)
         set_values("lib_fw", lib_fw)
+        if chip_target == "ec716e" then
+            add_defines("FEATURE_MORERAM_ENABLE")
+        end
     end
 
     add_defines("__USER_CODE__",
