@@ -168,7 +168,7 @@ static void lvgl_task(void *param)
     }
     lv_font_flash = sfud_get_device_table();
 
-if(0){//下载 font 到flash，也可自己使用烧录工具下载，这里支持演示，只有第一次下载需要支持烧录
+if(0){//下载 font 到flash，这里只是演示，只有第一次下载需要支持烧录，推荐使用烧录工具下载，因为字体大部分情况都比较大，此方法未必都能装得下
 	extern unsigned long hexLength;
 	extern unsigned char hexData[];
     if (re = sfud_erase(lv_font_flash, 0, hexLength)!=0){
