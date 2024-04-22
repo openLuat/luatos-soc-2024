@@ -63,16 +63,6 @@
 #define ATC_CPWD_2_NEWPIN_STR_MIN_LEN           4
 #define ATC_CPWD_2_NEWPIN_STR_DEFAULT           NULL
 
-/* AT+CLCK */
-#define ATC_CLCK_0_FAC_STR_MAX_LEN            2
-#define ATC_CLCK_0_FAC_STR_DEFAULT            NULL
-#define ATC_CLCK_1_MODE_VAL_MIN                  0
-#define ATC_CLCK_1_MODE_VAL_MAX                  2
-#define ATC_CLCK_1_MODE_VAL_DEFAULT              0
-#define ATC_CLCK_2_PIN_STR_MAX_LEN            8
-#define ATC_CLCK_2_PIN_STR_MIN_LEN            4
-#define ATC_CLCK_2_PIN_STR_DEFAULT            NULL
-
 /* AT+CPINR */
 #define ATC_CPINR_0_MAX_PARM_STR_LEN                 16
 #define ATC_CPINR_0_MAX_PARM_STR_DEFAULT             NULL
@@ -182,7 +172,6 @@ CmsRetId  simCSIM(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  simCRSM(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  simCIMI(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  simECICCID(const AtCmdInputContext *pAtCmdReq);
-CmsRetId  simCLCK(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  simCPINR(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  simCSUS(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  simCCHO(const AtCmdInputContext *pAtCmdReq);

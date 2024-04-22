@@ -8,8 +8,10 @@
 #define FILE_TASK_CREATE   1 
 #define FILE_TASK_DELETE   2 
 #define FILE_READ_MAX_COUNT   4 
+#define FILE_CRC_LEN          2 
 
-#define FILE_READ_DEFAULT_LEN       0xffff
+#define FILE_READ_DEFAULT_LEN        0xffff
+#define FILE_NVM_AUDIO_FILE_NAME     "ecAudioTlvCfg.nvm"   //should be as same as MID_WARE_NVM_AUDIO_FILE_NAME
 
 enum FILE_RET
 {
@@ -56,8 +58,11 @@ enum FILE_MSG_CMD
     FILE_MSG_RESERVE,
     FILE_MSG_OPEN,
     FILE_MSG_READ,
+    FILE_MSG_READ_HEX,
+    FILE_MSG_READ_AUDIO,
     FILE_MSG_WRITE,
     FILE_MSG_WRITE_HEX,
+    FILE_MSG_WRITE_AUDIO,
     FILE_MSG_SEEK,
     FILE_MSG_POSITION,
     FILE_MSG_TUCAT, 

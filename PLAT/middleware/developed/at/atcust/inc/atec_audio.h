@@ -158,11 +158,11 @@
 #define ATC_ECADSPHCFG_2_DELAY_VAL_DEF                   0
 
 #define ATC_ECADSPHCFG_3_CNGMODE_VAL_MIN                   0
-#define ATC_ECADSPHCFG_3_CNGMODE_VAL_MAX                   1
+#define ATC_ECADSPHCFG_3_CNGMODE_VAL_MAX                   3
 #define ATC_ECADSPHCFG_3_CNGMODE_VAL_DEF                   0
 
 #define ATC_ECADSPHCFG_4_ECHOMODE_VAL_MIN                   0
-#define ATC_ECADSPHCFG_4_ECHOMODE_VAL_MAX                   4
+#define ATC_ECADSPHCFG_4_ECHOMODE_VAL_MAX                   6
 #define ATC_ECADSPHCFG_4_ECHOMODE_VAL_DEF                   3
 
 #define ATC_ECADSPHCFG_5_NLPFLAG_VAL_MIN                   0
@@ -172,6 +172,10 @@
 #define ATC_ECADSPHCFG_2_MODE_VAL_MIN                   0
 #define ATC_ECADSPHCFG_2_MODE_VAL_MAX                   3
 #define ATC_ECADSPHCFG_2_MODE_VAL_DEF                   0
+
+#define ATC_ECADSPHCFG_3_EQBYPASS_VAL_MIN                   0
+#define ATC_ECADSPHCFG_3_EQBYPASS_VAL_MAX                   1
+#define ATC_ECADSPHCFG_3_EQBYPASS_VAL_DEF                   0
 
 #define ATC_ECADSPHCFG_3_PARA_STR_LEN                   300
 #define ATC_ECADSPHCFG_3_PARA_STR_DEF                   NULL
@@ -205,11 +209,11 @@
 #define ATC_ECADSPHCFG_8_MAKEUP_GAIN_VAL_DEF                   1
 
 #define ATC_ECADSPHCFG_2_TARGET_LEVEL_VAL_MIN                   0
-#define ATC_ECADSPHCFG_2_TARGET_LEVEL_VAL_MAX                   3
+#define ATC_ECADSPHCFG_2_TARGET_LEVEL_VAL_MAX                   30
 #define ATC_ECADSPHCFG_2_TARGET_LEVEL_VAL_DEF                   0
 
 #define ATC_ECADSPHCFG_3_COMP_GAIN_VAL_MIN                   3
-#define ATC_ECADSPHCFG_3_COMP_GAIN_VAL_MAX                   18
+#define ATC_ECADSPHCFG_3_COMP_GAIN_VAL_MAX                   100
 #define ATC_ECADSPHCFG_3_COMP_GAIN_VAL_DEF                   6
 
 #define ATC_ECADSPHCFG_4_LIMITER_EN_VAL_MIN                   1

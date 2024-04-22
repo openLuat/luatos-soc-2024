@@ -85,6 +85,12 @@ extern "C" {
 #define BSP_QSPI_ERASE_AP_FLASH_32K(addr, size)    FLASH_erase32KBlkSafe(addr)
 #define BSP_QSPI_WRITE_AP_FLASH(buf, addr, size)   FLASH_write(buf, addr, size)
 #define BSP_QSPI_READ_AP_FLASH(buf, addr, size)    FLASH_XIPRead(buf, addr, size)
+#elif defined CHIP_EC626
+#define BSP_QSPI_ERASE_AP_FLASH(addr, size)        FLASH_eraseSector(addr)
+#define BSP_QSPI_ERASE_AP_FLASH_32K(addr, size)    FLASH_eraseBlock(addr)
+#define BSP_QSPI_WRITE_AP_FLASH(buf, addr, size)   FLASH_write(buf, addr, size)
+#define BSP_QSPI_READ_AP_FLASH(buf, addr, size)    FLASH_XIPRead(buf, addr, size)
+//#define BSP_QSPI_READ_AP_FLASH(buf, addr, size)    ImageGeneralRead(buf, addr, size)
 #else
 #define BSP_QSPI_ERASE_AP_FLASH(addr, size)        BSP_QSPI_Erase_Sector(addr)
 #define BSP_QSPI_ERASE_AP_FLASH_32K(addr, size)    BSP_QSPI_Erase_Block(addr)
@@ -126,6 +132,35 @@ extern "C" {
 #define BSP_QSPI_READ_CP_FLASH(buf, addr, size)    1
 #endif
 
+//nvram operation
+#if defined CHIP_EC618 || defined CHIP_EC618_Z0
+#if 1
+#define NVRAM_CHECK_VALID()        1
+#define NVRAM_CHECK_FAC_VALID()    1
+#define NVRAM_SAVE_TO_FAC()        0
+#else
+#define NVRAM_CHECK_VALID()        nvramChkValid()
+#define NVRAM_CHECK_FAC_VALID()    nvramChkFacValid()
+#define NVRAM_SAVE_TO_FAC()        nvramSave2Fac()
+#endif
+#define NVRAM_RESTORE_FROM_FAC()   nvramAfterInit()
+#elif defined CHIP_EC718 || defined CHIP_EC716
+#define NVRAM_CHECK_VALID()        nvramCheckNvValid()
+#define NVRAM_CHECK_FAC_VALID()    nvramCheckFactoryCprsNvValid()
+#define NVRAM_SAVE_TO_FAC()        nvramStoreRfToFactoryCprs()
+#define NVRAM_RESTORE_FROM_FAC()   nvramAfterInit()
+#elif defined CHIP_EC626
+#define NVRAM_CHECK_VALID()        nvram_chk_valid()
+#define NVRAM_CHECK_FAC_VALID()    nvram_chk_fac_valid()
+#define NVRAM_SAVE_TO_FAC()        nvram_sav2fac()
+#define NVRAM_RESTORE_FROM_FAC()   nvram_after_init()
+#else
+#define NVRAM_CHECK_VALID()        nvram_chk_valid()
+#define NVRAM_CHECK_FAC_VALID()    nvram_chk_fac_valid()
+#define NVRAM_SAVE_TO_FAC()        nvram_sav2fac()
+#define NVRAM_RESTORE_FROM_FAC()   nvram_after_init()
+#endif
+
 #else
 #define FOTA_NVM_SECTOR_ERASE_MODE     0
 
@@ -140,6 +175,11 @@ extern "C" {
 #define BSP_QSPI_ERASE_AP_FLASH_32K(addr, size)    FLASH_eraseSafe(addr, size)
 #define BSP_QSPI_WRITE_AP_FLASH(buf, addr, size)   FLASH_writeSafe(buf, addr, size)
 #define BSP_QSPI_READ_AP_FLASH(buf, addr, size)    FLASH_XIPRead(buf, addr, size)
+#elif defined CHIP_EC626
+#define BSP_QSPI_ERASE_AP_FLASH(addr, size)        BSP_QSPI_Erase_Safe(addr, size)
+#define BSP_QSPI_ERASE_AP_FLASH_32K(addr, size)    BSP_QSPI_Erase_Safe(addr, size)
+#define BSP_QSPI_WRITE_AP_FLASH(buf, addr, size)   BSP_QSPI_Write_Safe(buf, addr, size)
+#define BSP_QSPI_READ_AP_FLASH(buf, addr, size)    BSP_QSPI_Read_Safe(buf, addr, size)
 #else
 #define BSP_QSPI_ERASE_AP_FLASH(addr, size)        BSP_QSPI_Erase_Safe(addr, size)
 #define BSP_QSPI_ERASE_AP_FLASH_32K(addr, size)    BSP_QSPI_Erase_Safe(addr, size)
@@ -180,6 +220,12 @@ extern "C" {
 #define BSP_QSPI_READ_CP_FLASH(buf, addr, size)    1
 #endif
 
+//nvram operation
+#define NVRAM_CHECK_VALID()        1
+#define NVRAM_CHECK_FAC_VALID()    1
+#define NVRAM_SAVE_TO_FAC()        0
+#define NVRAM_RESTORE_FROM_FAC()   //nvramAfterInit()
+
 #endif
 
 
@@ -208,17 +254,41 @@ extern uint8_t  CPXIP_QSPI_Erase_Sector(uint32_t SectorAddress);
 extern uint8_t  CPXIP_QSPI_Write(uint8_t* pData, uint32_t WriteAddr, uint32_t Size);
 extern uint32_t CPXIP_QSPI_Read(uint8_t *pData,uint32_t ReadAddr, uint32_t Size);
 
+extern uint8_t  nvramChkValid(void);
+extern uint8_t  nvramChkFacValid(void);
+extern uint32_t nvramSave2Fac(void);
+extern void     nvramAfterInit(void);
+
 #elif defined CHIP_EC718 || defined CHIP_EC716
 
-extern uint8_t FLASH_XIPRead(uint8_t* pData, uint32_t ReadAddr, uint32_t Size);
-extern uint8_t FLASH_write(uint8_t* pData, uint32_t WriteAddr, uint32_t Size);
-extern uint8_t FLASH_eraseSectorSafe(uint32_t SectorAddress);
-extern uint8_t FLASH_erase32KBlkSafe(uint32_t SectorAddress);
-extern uint8_t CPFLASH_read(uint8_t* pData, uint32_t ReadAddr, uint32_t Size);
-extern uint8_t CPFLASH_write(uint8_t* pData, uint32_t ReadAddr, uint32_t Size);
-extern uint8_t CPFLASH_eraseSector(uint32_t SectorAddress);
-extern uint8_t CPFLASH_eraseBlock(uint32_t BlockAddress);
-extern uint8_t CPFLASH_xipInit( void );
+extern uint8_t  FLASH_XIPRead(uint8_t* pData, uint32_t ReadAddr, uint32_t Size);
+extern uint8_t  FLASH_write(uint8_t* pData, uint32_t WriteAddr, uint32_t Size);
+extern uint8_t  FLASH_eraseSectorSafe(uint32_t SectorAddress);
+extern uint8_t  FLASH_erase32KBlkSafe(uint32_t SectorAddress);
+
+extern uint8_t  CPFLASH_read(uint8_t* pData, uint32_t ReadAddr, uint32_t Size);
+extern uint8_t  CPFLASH_write(uint8_t* pData, uint32_t ReadAddr, uint32_t Size);
+extern uint8_t  CPFLASH_eraseSector(uint32_t SectorAddress);
+extern uint8_t  CPFLASH_eraseBlock(uint32_t BlockAddress);
+extern uint8_t  CPFLASH_xipInit( void );
+
+extern uint32_t nvramCheckNvValid(void);
+extern uint32_t nvramCheckFactoryCprsNvValid(void);
+extern uint32_t nvramStoreRfToFactoryCprs(void);
+extern void     nvramAfterInit(void);
+
+#elif defined CHIP_EC626
+
+//extern uint32_t ImageGeneralRead(uint8_t * pData, uint32_t  ReadAddr, uint32_t Size);
+extern uint8_t  FLASH_XIPRead(uint8_t* pData, uint32_t ReadAddr, uint32_t Size);
+extern uint8_t  FLASH_write(uint8_t* pData, uint32_t WriteAddr, uint32_t Size);
+extern uint8_t  FLASH_eraseSector(uint32_t BlockAddress);
+extern uint8_t  FLASH_eraseBlock(uint32_t BlockAddress);
+
+extern uint8_t  nvram_chk_valid(void);
+extern uint8_t  nvram_chk_fac_valid(void);
+extern uint32_t nvram_sav2fac(void);
+extern void     nvram_after_init(void);
 
 #else
 
@@ -227,6 +297,11 @@ extern uint8_t  BSP_QSPI_Erase_Block(uint32_t BlockAddress);
 extern uint8_t  BSP_QSPI_Write(uint8_t* pData, uint32_t WriteAddr, uint32_t Size);
 extern uint32_t ImageGeneralRead(uint8_t * pData, uint32_t  ReadAddr, uint32_t Size);
 //extern uint8_t  BSP_QSPI_Read(uint8_t* pData, uint32_t ReadAddr, uint32_t Size);
+
+extern uint8_t  nvram_chk_valid(void);
+extern uint8_t  nvram_chk_fac_valid(void);
+extern uint32_t nvram_sav2fac(void);
+extern void     nvram_after_init(void);
 
 #endif
 

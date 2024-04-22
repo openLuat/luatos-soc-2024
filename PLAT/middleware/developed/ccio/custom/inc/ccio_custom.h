@@ -34,6 +34,7 @@ typedef enum
 {
     CSIO_ACF_NORM = 0,
     CSIO_ACF_CALI,
+    CSIO_ACF_MUX,
 
     CSIO_ACF_MAXNUM
 }CsioAtCustFlags_e;
@@ -41,12 +42,16 @@ typedef enum
 typedef enum
 {
     CSIO_OCF_NORM = 0,
-    CSIO_OCF_GNSS,
     CSIO_OCF_UARTEST,
     CSIO_OCF_USBTEST,
     CSIO_OCF_SPITEST,
+    CSIO_OCF_MUX_BASE = 4,
+    CSIO_OCF_MUX_0 = CSIO_OCF_MUX_BASE,
+    CSIO_OCF_MUX_1,
+    CSIO_OCF_MUX_2,
+    CSIO_OCF_MUX_3,
 
-    CSIO_OCF_MAXNUM
+    CSIO_OCF_MAXNUM = 8   /* 3bits: custFlags */
 }CsioOpaqCustFlags_e;
 
 

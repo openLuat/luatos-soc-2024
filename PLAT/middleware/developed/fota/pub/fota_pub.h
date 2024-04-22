@@ -29,17 +29,8 @@
 /*----------------------------------------------------------------------------*
  *                    MACROS                                                  *
  *----------------------------------------------------------------------------*/
-#if defined CHIP_EC718 || defined CHIP_EC716
-#ifdef FEATURE_BOOTLOADER_PROJECT_ENABLE
-#define FOTA_PRESET_RAM_ENABLE   1
-#else
-#define FOTA_PRESET_RAM_ENABLE   0
-#endif
-
-#else
-#define FOTA_PRESET_RAM_ENABLE   0
-
-#endif
+/* will file system is enabled? */
+//#define FOTA_NVM_FS_ENABLE
 
 
 #define FOTA_EOK          0

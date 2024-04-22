@@ -92,7 +92,7 @@ typedef struct AudioParaCfgCommon_Tag
     UINT8  device;              /*  */
 }AudioParaCfgCommon_t;
 
-typedef struct AudioParaCfgAmr_Tag
+typedef struct _EPAT_AudioParaCfgAmr_Tag
 {
     UINT8  mode;  
     UINT8  bypassEncode; 
@@ -102,7 +102,7 @@ typedef struct AudioParaCfgAmr_Tag
     #endif
 }AudioParaCfgAmr_t;
 
-typedef struct AudioParaCfgCodec_Tag
+typedef struct _EPAT_AudioParaCfgCodec_Tag
 {
     UINT16  isDmic;                
     UINT16  isExPa;              
@@ -141,6 +141,7 @@ typedef struct AudioParaSphTxANS_Tag
 {
     UINT8   bypass;
     UINT8   mode;
+    INT16   eqBypass;
     UINT16  eqBand[EC_ADCFG_SPEECH_ANS_EQ_BAND_NUMB];
 }AudioParaSphTxANS_t;
 
@@ -198,12 +199,13 @@ typedef struct AudioParaSphRxANS_Tag
 {
     UINT8   bypass;
     UINT8   mode;
+    INT16  eqBypass;
     UINT16  eqBand[EC_ADCFG_SPEECH_ANS_EQ_BAND_NUMB];
 }AudioParaSphRxANS_t;
 
 typedef struct AudioParaSphRxDRC_Tag
 {
-    UINT16   bypass;
+    UINT8    bypass;
     INT16    compThreshold;
     INT16    compRatio;
     INT16    expandThreshold;
@@ -223,10 +225,9 @@ typedef struct AudioParaSphRxAGC_Tag
 
 typedef struct AudioParaSphRxEQ_Tag
 {
-    UINT8   bypass;
-    UINT8   gain;
-    UINT8   num;
-    UINT8   type;
+    UINT32   bypass;
+    UINT32   gain;
+    UINT32   num;
     AudioParaSphEQBiquard_t    biquardParam[EC_ADCFG_SPEECH_EQ_BIQUARD_NUMB];
 }AudioParaSphRxEQ_t;
 
@@ -319,6 +320,8 @@ typedef struct MWNvmAudioCfgStore_Tag
 #define NVM_AUDIO_CFG_TX_RX_MODULE_SHIFT        16
 #define NVM_AUDIO_CFG_CODEC_SHIFT               16
 
+#define NVM_AUDIO_CFG_INDEX_MASK           0x000000FF
+
 #define NVM_AUDIO_CFG_TX_RX_MODULE_MULTIPLE     3
 
 #define EC_ADCFG_COMMON_MODE_VAL_DEF                     0
@@ -405,9 +408,17 @@ typedef struct MWNvmAudioCfgStore_Tag
 #define EC_ADCFG_LOG_CTRL_RX_AFTER_CCIO_VAL_DEF                    0
 
 #define AUDIO_CFG_TLV_TYPE_SHIFT                   8
+typedef enum AtcAudioDeviceMapping_Tag
+{
+//  
+    AUDIO_CFG_DEVICE_HANDSET        = 0,
+    AUDIO_CFG_DEVICE_HANDSET_POLE,
+    AUDIO_CFG_DEVICE_EARPHONE,
+    AUDIO_CFG_DEVICE_HANDOFF,
+    AUDIO_CFG_DEVICE_MAX,
+}AtcAudioDeviceMap_e;
 
-
-typedef enum AtcAudioTypeMapping_Tag
+typedef enum _EPAT_AtcAudioTypeMapping_Tag
 {
 //  
     EC_AUDIO_CFG_TLV_ITEM = 0,
@@ -438,9 +449,10 @@ typedef enum AtcAudioTypeMapping_Tag
     AUDIO_CFG_TLV_SPEECH_TX_AEC_ECHOMODE  = 0x100404,
     AUDIO_CFG_TLV_SPEECH_TX_AEC_NLPFLAG   = 0x100405,
     
-    AUDIO_CFG_TLV_SPEECH_TX_ANS_BYPASS   = 0x100501,
-    AUDIO_CFG_TLV_SPEECH_TX_ANS_MODE     = 0x100502,
-    AUDIO_CFG_TLV_SPEECH_TX_ANS_EQBAND   = 0x100503,
+    AUDIO_CFG_TLV_SPEECH_TX_ANS_BYPASS     = 0x100501,
+    AUDIO_CFG_TLV_SPEECH_TX_ANS_MODE       = 0x100502,
+    AUDIO_CFG_TLV_SPEECH_TX_ANS_EQBAND     = 0x100503,
+    AUDIO_CFG_TLV_SPEECH_TX_ANS_EQBYPASS   = 0x100504,
     
     AUDIO_CFG_TLV_SPEECH_TX_DRC_BYPASS           = 0x100601,
     AUDIO_CFG_TLV_SPEECH_TX_DRC_COMPTHRESHOLD    = 0x100602,
@@ -461,9 +473,10 @@ typedef enum AtcAudioTypeMapping_Tag
     AUDIO_CFG_TLV_SPEECH_TX_EQ_NUM         = 0x100803,
     AUDIO_CFG_TLV_SPEECH_TX_EQ_PARAMS      = 0x100808,
 
-    AUDIO_CFG_TLV_SPEECH_RX_ANS_BYPASS   = 0x100901,
-    AUDIO_CFG_TLV_SPEECH_RX_ANS_MODE     = 0x100902,
-    AUDIO_CFG_TLV_SPEECH_RX_ANS_EQBAND   = 0x100903,
+    AUDIO_CFG_TLV_SPEECH_RX_ANS_BYPASS     = 0x100901,
+    AUDIO_CFG_TLV_SPEECH_RX_ANS_MODE       = 0x100902,
+    AUDIO_CFG_TLV_SPEECH_RX_ANS_EQBAND     = 0x100903,
+    AUDIO_CFG_TLV_SPEECH_RX_ANS_EQBYPASS   = 0x100904,
     
     AUDIO_CFG_TLV_SPEECH_RX_DRC_BYPASS           = 0x100A01,
     AUDIO_CFG_TLV_SPEECH_RX_DRC_COMPTHRESHOLD    = 0x100A02,
@@ -598,17 +611,6 @@ typedef struct EcAudioCfgTlvCodec_Tag
     EcAudioCfgTlvUint16Item_t  rxAnaGain100; 
 }EcAudioCfgTlvCodec_t;
 
-typedef struct EcAudioCfgTlvCodecDev_Tag
-{
-    EcAudioCfgTlvUint8Item_t  isPaExist;
-    EcAudioCfgTlvUint8Item_t  paGain;
-    EcAudioCfgTlvUint8Item_t  isDmic;                
-    EcAudioCfgTlvUint8Item_t  micVolume;              
-    EcAudioCfgTlvUint8Item_t  volume; 
-    EcAudioCfgTlvUint8Item_t  spkMicVolume;              
-    EcAudioCfgTlvUint8Item_t  spkVolume;             
-}EcAudioCfgTlvCodecDev_t;
-
 typedef struct EcAudioCfgTlvSphTxAEC_Tag
 {
     EcAudioCfgTlvUint8Item_t   bypass;
@@ -622,12 +624,13 @@ typedef struct EcAudioCfgTlvSphTxANS_Tag
 {
     EcAudioCfgTlvUint8Item_t   bypass;
     EcAudioCfgTlvUint8Item_t   mode;
-    EcAudioCfgTlvUint16Item_t  eqBand[EC_ADCFG_SPEECH_ANS_EQ_BAND_NUMB];    
+    EcAudioCfgTlvInt16Item_t   eqBypass;
+    EcAudioCfgTlvVariItem_t    eqBand;    
 }EcAudioCfgTlvSphTxANS_t;
 
 typedef struct EcAudioCfgTlvSphTxDRC_Tag
 {
-    EcAudioCfgTlvUint16Item_t   bypass;
+    EcAudioCfgTlvUint8Item_t   bypass;
     EcAudioCfgTlvInt16Item_t    compThreshold;
     EcAudioCfgTlvInt16Item_t    compRatio;
     EcAudioCfgTlvInt16Item_t    expandThreshold;
@@ -657,12 +660,13 @@ typedef struct EcAudioCfgTlvSphRxANS_Tag
 {
     EcAudioCfgTlvUint8Item_t   bypass;
     EcAudioCfgTlvUint8Item_t   mode;
-    EcAudioCfgTlvUint16Item_t  eqBand[EC_ADCFG_SPEECH_ANS_EQ_BAND_NUMB];
+    EcAudioCfgTlvInt16Item_t   eqBypass;
+    EcAudioCfgTlvVariItem_t    eqBand;
 }EcAudioCfgTlvSphRxANS_t;
 
 typedef struct EcAudioCfgTlvSphRxDRC_Tag
 {
-    EcAudioCfgTlvUint16Item_t   bypass;
+    EcAudioCfgTlvUint8Item_t   bypass;
     EcAudioCfgTlvInt16Item_t    compThreshold;
     EcAudioCfgTlvInt16Item_t    compRatio;
     EcAudioCfgTlvInt16Item_t    expandThreshold;
@@ -682,9 +686,9 @@ typedef struct EcAudioCfgTlvSphRxAGC_Tag
 
 typedef struct EcAudioCfgTlvSphRxEQ_Tag
 {
-    EcAudioCfgTlvUint8Item_t   bypass;
-    EcAudioCfgTlvUint8Item_t   gain;
-    EcAudioCfgTlvUint8Item_t   num;
+    EcAudioCfgTlvUint32Item_t   bypass;
+    EcAudioCfgTlvUint32Item_t   gain;
+    EcAudioCfgTlvUint32Item_t   num;
     EcAudioCfgTlvVariItem_t     biquardParam;
 }EcAudioCfgTlvSphRxEQ_t;
 

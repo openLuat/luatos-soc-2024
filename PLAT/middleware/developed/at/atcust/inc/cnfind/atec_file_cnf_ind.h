@@ -19,8 +19,11 @@
 
 #include "at_util.h"
 
+#define ATC_FILE_RESP_MAX_STR_LEN        4096
+
 CmsRetId fileOpenCnf(UINT16 reqHandle, UINT16 rc, void *paras);
 CmsRetId fileReadCnf(UINT16 reqHandle, UINT16 rc, void *paras);
+CmsRetId fileReadAudioCnf(UINT16 reqHandle, UINT16 rc, void *paras);
 CmsRetId fileWriteCnf(UINT16 reqHandle, UINT16 rc, void *paras);
 CmsRetId fileSeekCnf(UINT16 reqHandle, UINT16 rc, void *paras);
 CmsRetId filePositionCnf(UINT16 reqHandle, UINT16 rc, void *paras);

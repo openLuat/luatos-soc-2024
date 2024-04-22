@@ -991,6 +991,19 @@ uint8_t usbcustom_multidev_cfg_end(multidev_load_info_st *p_multidev_load)
     return 0;
 }
 
+extern void usbd_multi_lib_get_load_info(multidev_load_info_st **p_pload_info);
+uint8_t* usbcustom_multidev_get_devname(uint8_t func_idx)
+{
+    multidev_load_info_st  *load_info = NULL;
+
+    usbd_multi_lib_get_load_info(&load_info);
+    if(load_info == NULL) return NULL;
+
+    if(func_idx >= load_info->load_cnt) return NULL;
+
+    return (uint8_t*)load_info->elem_arr[func_idx].p_dev_name;
+}
+
 uint8_t *usbcustom_multidev_strdesc(usbcust_mdcd_strdesc_st *p_mdcd_strdesc)
 {
     uint8_t* p_intf_str_desc = (uint8_t*)"default";

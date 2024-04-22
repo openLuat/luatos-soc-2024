@@ -31,9 +31,9 @@ typedef struct
     uint32_t baseFwSize     :24;  /* old image real size */
     uint32_t nextFwSize     :24;  /* new image real size */
     uint32_t rsvdBits2      :8;
-    uint32_t parPkgPlSize;        /* delta size @every pkg, no pkgh */
-    uint32_t parPkgPlOffs;        /* delta offset @every pkg in *.par */
-    uint32_t parBfwProfOffs;      /* pho offset @every pkg in *.par */
+    uint32_t parPkgPlSize;        /* delta payload size @every pkg, no pkgh */
+    uint32_t parPkgPlOffs;        /* delta payload offset @every pkg in *.par */
+    uint32_t parBfwProfOffs;      /* pho bfwProfile offset @every pkg in *.par */
 }FotaPsegCtrlUnit_t;
 
 #endif

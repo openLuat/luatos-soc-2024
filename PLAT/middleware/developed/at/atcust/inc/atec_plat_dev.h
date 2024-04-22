@@ -128,8 +128,20 @@
 #define ATC_ECPCFG_PWRKEY_MODE_VAL_DEFAULT      0
 
 #define ATC_ECPCFG_USBNET_VAL_MIN               0
+
+#ifndef FEATURE_PLAT_CFG_FS_SUP_USBNET_ATA
 #define ATC_ECPCFG_USBNET_VAL_MAX               1
+#else
+#define ATC_ECPCFG_USBNET_VAL_MAX               3
+#endif
 #define ATC_ECPCFG_USBNET_VAL_DEFAULT           0
+
+#define ATC_ECPCFG_USBNET_VAL_RNDIS              0
+#define ATC_ECPCFG_USBNET_VAL_ECM              1
+#define ATC_ECPCFG_USBNET_VAL_AUTOADAPT_RDSINIT    2
+#define ATC_ECPCFG_USBNET_VAL_AUTOADAPT_ECMINIT    3
+
+
 
 #define ATC_ECPCFG_PMUINCDRX_VAL_MIN               0
 #define ATC_ECPCFG_PMUINCDRX_VAL_MAX               1

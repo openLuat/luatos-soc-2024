@@ -408,7 +408,8 @@ HalCodecSts_e es8311Init(HalCodecCfg_t *codecCfg)
     mAudioCfgCommon.direct = DIRECTION_RX;
 
     pMwNvmAudioCfg = (ecAudioCfgTlvStore *)OsaAllocZeroMemory(sizeof(ecAudioCfgTlvStore)+ sizeof(AudioParaSphEQBiquard_t)*EC_ADCFG_SPEECH_EQ_BIQUARD_NUMB*EC_ADCFG_SPEECH_TX_NUMB
-            + sizeof(AudioParaSphEQBiquard_t)*EC_ADCFG_SPEECH_EQ_BIQUARD_NUMB*EC_ADCFG_SPEECH_RX_NUMB);
+                    + sizeof(AudioParaSphEQBiquard_t)*EC_ADCFG_SPEECH_EQ_BIQUARD_NUMB*EC_ADCFG_SPEECH_RX_NUMB + sizeof(UINT16)*EC_ADCFG_SPEECH_ANS_EQ_BAND_NUMB*EC_ADCFG_SPEECH_RX_NUMB
+                     + sizeof(UINT16)*EC_ADCFG_SPEECH_ANS_EQ_BAND_NUMB*EC_ADCFG_SPEECH_TX_NUMB);
     if (FALSE == mwNvmAudioCfgRead(pMwNvmAudioCfg))
     {
         DEBUG_PRINT(UNILOG_PLA_MIDWARE, ec8311DefaultCfg_1, P_WARNING, "MW NVM Audio, Read Audio Storage memory failure, try again !");

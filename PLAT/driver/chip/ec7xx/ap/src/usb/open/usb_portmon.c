@@ -9,6 +9,7 @@
 #include "bsp_custom.h"
 #include "slpman.h"
 #include "usb_ext_inc.h"
+#include "usb_net_adapt_cust.h"
 
 #include DEBUG_LOG_HEADER_FILE
 typedef int (*pfn_PadWakeupHook)(uint32_t pad_num);
@@ -135,8 +136,12 @@ void usb_portmon_task(void *arg)
     uint32_t vbus_evtflag;
     uint32_t vbus_filter_sample_cnt = 0;
     uint8_t vbus_val_cur = 0;
+#ifdef FEATURE_USBNET_ATA_FOR_AP                    
+    uint8_t mutex_ret = 0;
+#endif
     slpManApplyPlatVoteHandle("usbpm", &usbpm_vote_handle);
     slpManPlatVoteDisableSleep(usbpm_vote_handle, SLP_SLP2_STATE);
+    t_usbnet_adapt.init();
     
     usb_portmon_init();
     
@@ -245,18 +250,38 @@ void usb_portmon_task(void *arg)
             
             if (vbus_val_cur==0)
             {
-                ECOMM_TRACE(UNILOG_PLA_DRIVER, usb_portmon_task_3_1, P_WARNING, 0,"BSP_UsbDeInit");                
+                ECOMM_TRACE(UNILOG_PLA_DRIVER, usb_portmon_task_3_1, P_WARNING, 0,"BSP_UsbDeInit");     
+#ifdef FEATURE_USBNET_ATA_FOR_AP                
+                mutex_ret = t_usb_dynamic_inst_mgr_ops.vbus_swt_try_enter_inst_mutex();
+                if (mutex_ret !=1)
+                {
+                    ECOMM_TRACE(UNILOG_PLA_DRIVER, usb_portmon_task_mutex_1, P_ERROR, 0,"BSP_UsbDeInit, mutex failed");
+                    usb_portmon_setstat(usb_portmon_state_none);
+                    break;
+                }
+#endif                
                 BSP_UsbDeInit();
                 if(usbstack_ctx_stat_isoff()==0)
                 {
                     ECOMM_TRACE(UNILOG_PLA_DRIVER, usb_portmon_task_3_2, P_ERROR, 0,"BSP_UsbDeInit, ctx stat not match");                
                 }
+#ifdef FEATURE_USBNET_ATA_FOR_AP                                
+                t_usb_dynamic_inst_mgr_ops.vbus_swt_exit_inst_unmutex();
+#endif
             }
             else
             {
                 //check the vbus if it is plug in 
                 ECOMM_TRACE(UNILOG_PLA_DRIVER, usb_portmon_task_3_3, P_WARNING, 0,"BSP_UsbInit");                
-                
+#ifdef FEATURE_USBNET_ATA_FOR_AP                                
+                mutex_ret = t_usb_dynamic_inst_mgr_ops.vbus_swt_try_enter_inst_mutex();
+                if (mutex_ret !=1)
+                {
+                    ECOMM_TRACE(UNILOG_PLA_DRIVER, usb_portmon_task_mutex_2, P_ERROR, 0,"BSP_UsbInit, mutex failed");
+                    usb_portmon_setstat(usb_portmon_state_none);
+                    break;
+                }
+#endif                
                 usblpw_clear_lpusbwkup_src();
                 if (usblpw_retothwk_cur_stg_success()==0)
                 {
@@ -269,6 +294,9 @@ void usb_portmon_task(void *arg)
                 {
                     ECOMM_TRACE(UNILOG_PLA_DRIVER, usb_portmon_task_3_4, P_ERROR, 0,"BSP_UsbInit, ctx stat not match");                
                 }                    
+#ifdef FEATURE_USBNET_ATA_FOR_AP                                
+                t_usb_dynamic_inst_mgr_ops.vbus_swt_exit_inst_unmutex();
+#endif
             }                
             vbus_val_last = usb_portmon_vbuspad_level();
             ECOMM_TRACE(UNILOG_PLA_DRIVER, usb_portmon_task_3_5, P_WARNING, 2,"port vbus last %d,vbus cur = %d", vbus_val_last, vbus_val_cur);

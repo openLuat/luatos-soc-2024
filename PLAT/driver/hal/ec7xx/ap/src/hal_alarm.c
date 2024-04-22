@@ -196,8 +196,15 @@ static void alarmIndUrcBcast(alarmMsgType_e msgType, alarmInfo *info)
     MWNvmCfgAlarmParam   param;
 
     mwNvmCfgGetAlarmParam(&param);
-    if(!param.voltUrcEnable) return;
-
+    if((param.voltUrcEnable == false) && (msgType == ALARM_TYPE_VOLT))
+    {
+        return;
+    }
+    if((param.thermUrcEnable == false) && (msgType == ALARM_TYPE_THERM))
+    {
+        return;
+    }
+    
     uint32_t primId = (msgType == ALARM_TYPE_VOLT) ? APPL_ALARM_VOLT_IND : APPL_ALARM_THERM_IND;
     applSendCmsInd(BROADCAST_IND_HANDLER, APPL_ALARM, primId, sizeof(alarmInfo), (void *)info);
 #endif

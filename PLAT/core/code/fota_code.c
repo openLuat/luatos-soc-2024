@@ -41,6 +41,8 @@
 #define FOTA_NVM_DELTA_BACKUP_ADDR     (xxxx)
 #if defined CHIP_EC718 || defined CHIP_EC716
 #define FOTA_NVM_DELTA_BACKUP_SIZE     (FOTA_BUF_SIZE_1K * 44)
+#elif defined CHIP_EC626
+#define FOTA_NVM_DELTA_BACKUP_SIZE     (FOTA_BUF_SIZE_4K)
 #else
 #define FOTA_NVM_DELTA_BACKUP_SIZE     (FOTA_BUF_SIZE_32K)
 #endif
@@ -55,20 +57,30 @@
 #define FOTA_NVM_DELTA_BACKUP_ADDR     (FOTA_NVM_DELTA_ADDR + FOTA_NVM_DELTA_DOWNLOAD_SIZE)
 #if defined CHIP_EC718 || defined CHIP_EC716
 #define FOTA_NVM_DELTA_BACKUP_SIZE     (FOTA_BUF_SIZE_1K * 44)
-#else
+#elif defined CHIP_EC626
+#define FOTA_NVM_DELTA_BACKUP_SIZE     (FOTA_BUF_SIZE_4K)
+#else /* defined CHIP_EC616 || defined CHIP_EC616_Z0 || defined CHIP_EC616S || CHIP_EC618 */
 #define FOTA_NVM_DELTA_BACKUP_SIZE     (FOTA_BUF_SIZE_32K)
 #endif
+#endif  /* FOTA_NVM_FS_ENABLE */
 
+#if defined TYPE_EC718P || defined TYPE_EC716E || defined TYPE_EC718U
+#undef FOTA_NVM_DELTA_BACKUP_SIZE
+#define FOTA_NVM_DELTA_BACKUP_SIZE		(FOTA_BUF_SIZE_1K * 96)
 #endif
 
 #define FOTA_NVM_REAL_BACKUP_ADDR      (FOTA_NVM_DELTA_BACKUP_ADDR)
 #define FOTA_NVM_REAL_BACKUP_SIZE      (FOTA_NVM_DELTA_BACKUP_SIZE + FOTA_NVM_BACKUP_MUX_SIZE)
-#if defined CHIP_EC718 || defined CHIP_EC716
+#if defined CHIP_EC718 || defined CHIP_EC716  || defined CHIP_EC626
 #define FOTA_NVM_BACKUP_MUX_SIZE       (NVRAM_PHYSICAL_SIZE)
-#else
+#else /* defined CHIP_EC616 || defined CHIP_EC616_Z0 || defined CHIP_EC616S || CHIP_EC618 */
 #define FOTA_NVM_BACKUP_MUX_SIZE       0
 #endif
 
+#if defined TYPE_EC718P || defined TYPE_EC716E || defined TYPE_EC718U
+#undef FOTA_NVM_BACKUP_MUX_SIZE
+#define FOTA_NVM_BACKUP_MUX_SIZE		0
+#endif
 
 #if defined CHIP_EC618 || defined CHIP_EC618_Z0 || defined CHIP_EC718 || defined CHIP_EC716
 #define FOTA_NVM_A2AP_XIP_ADDR         (AP_FLASH_XIP_ADDR)
@@ -488,25 +500,51 @@ PLAT_BL_CIRAM_FLASH_TEXT static int32_t fotaNvmGetDfuResult(FotaDefDfuResult_t *
 
 static int32_t fotaNvmPrepareDfu(FotaDefPrepareDfu_t *preDfu)
 {
-    return FOTA_EOK;
+    int32_t  retCode = FOTA_EOK;
+
+#if (FOTA_NVM_BACKUP_MUX_SIZE != 0)
+    if(NVRAM_CHECK_FAC_VALID())
+    {
+        //ECPLAT_PRINTF(UNILOG_FOTA, FOTA_NVM_PREP_DFU_1, P_WARNING, "prep DFU: fac nv ok!\n");
+        return FOTA_EOK;
+    }
+
+    ECPLAT_PRINTF(UNILOG_FOTA, FOTA_NVM_PREP_DFU_2, P_WARNING, "prep DFU: fac nv err, bkup it!\n");
+
+    if(NVRAM_CHECK_VALID())
+    {
+        if(0 == NVRAM_SAVE_TO_FAC())
+        {
+            if(NVRAM_CHECK_FAC_VALID())
+            {
+                ECPLAT_PRINTF(UNILOG_FOTA, FOTA_NVM_PREP_DFU_3, P_WARNING, "prep DFU: and succ!\n");
+                return FOTA_EOK;
+            }
+        }
+    }
+
+    retCode = FOTA_EPERM;
+#endif
+
+    return retCode;
 }
 
 static int32_t fotaNvmClosingDfu(FotaDefClosingDfu_t *clsDfu)
 {
 #if (FOTA_NVM_BACKUP_MUX_SIZE != 0)
-#ifdef REL_COMPRESS_EN
-    if(gFotaNvmZoneMan.zone[FOTA_NVM_ZONE_BKUP].overhead)
-    {
-        /*if(FOTA_EOK != fotaNvmClear(FOTA_NVM_ZONE_BKUP, FOTA_NVM_DELTA_BACKUP_SIZE, FOTA_NVM_BACKUP_MUX_SIZE))
-        {
-            ECPLAT_PRINTF(UNILOG_FOTA, FOTA_NVM_CLR_RCVRY_1, P_ERROR, "post DFU: clear bkup ovhd zone failure!\n");
-            return FOTA_EFLERASE;
-        }*/
+    NVRAM_RESTORE_FROM_FAC();
 
-        extern void nvramAfterInit(void);
-        nvramAfterInit();
+    if(!NVRAM_CHECK_FAC_VALID())
+    {
+        /* for ver-beta debug */
+        fotaDoExtension(FOTA_DEF_WDT_STOP, NULL);
+        while(1)
+        {
+            FotaDefUsDelay_t  delay = {1000000};
+            fotaDoExtension(FOTA_DEF_US_DELAY, (void*)&delay);
+            ECPLAT_PRINTF(UNILOG_FOTA, FOTA_NVM_CLS_DFU_1, P_WARNING, "cls DFU: restore nv fail!\n");
+        }
     }
-#endif
 #endif
 
     return FOTA_EOK;
@@ -692,6 +730,8 @@ static int32_t fotaNvmCheckBaseImage(FotaDefChkBaseImage_t *chkImage)
  ******************************************************************************/
 PLAT_BL_CIRAM_FLASH_TEXT int32_t fotaNvmInit(void)
 {
+    //if(gFotaNvmZoneMan.bmZoneId) return FOTA_EOK;
+
 #if (FOTA_NVM_A2CP_XIP_ADDR != FOTA_NVM_A2AP_XIP_ADDR)
     if(FOTA_IS_CPFLASH_DISABLED())
     {
@@ -752,6 +792,10 @@ PLAT_BL_CIRAM_FLASH_TEXT int32_t fotaNvmClear(uint32_t zid, uint32_t offset, uin
 #ifdef FOTA_NVM_FS_ENABLE
     if(zid == FOTA_NVM_ZONE_DELTA)
     {
+        int32_t   fd = gFotaNvmZoneMan.zone[FOTA_NVM_ZONE_DELTA].handle;
+
+        if(!(gFotaNvmZoneMan.bmZoneId & (1 << zid)) || (fd < 0)) return FOTA_EOK;
+
         return fotaNvmFsRemove(FOTA_DELTA_PAR_NAME);
     }
     else
@@ -777,8 +821,12 @@ PLAT_BL_CIRAM_FLASH_TEXT int32_t fotaNvmWrite(uint32_t zid, uint32_t offset, uin
     #else
         int32_t   fd = gFotaNvmZoneMan.zone[FOTA_NVM_ZONE_DELTA].handle;
 
+        if(!(gFotaNvmZoneMan.bmZoneId & (1 << zid)) || (fd < 0)) return FOTA_EFLWRITE;
+
         fotaNvmFsSeek(fd, offset, SEEK_SET);
-        return fotaNvmFsWrite(buf, bufLen, 1, fd);
+        fotaNvmFsWrite(buf, bufLen, 1, fd);
+
+        return FOTA_EOK;
     #endif
     }
     else
@@ -800,8 +848,12 @@ PLAT_BL_CIRAM_FLASH_TEXT int32_t fotaNvmRead(uint32_t zid, uint32_t offset, uint
 
     if(zid == FOTA_NVM_ZONE_DELTA)
     {
+        if(!(gFotaNvmZoneMan.bmZoneId & (1 << zid)) || (fd < 0)) return FOTA_EFLREAD;
+
         fotaNvmFsSeek(fd, offset, SEEK_SET);
-        return fotaNvmFsRead(buf, bufLen, 1, fd);
+        fotaNvmFsRead(buf, bufLen, 1, fd);
+
+        return FOTA_EOK;
     }
     else
 #endif

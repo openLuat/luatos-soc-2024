@@ -41,12 +41,20 @@
 #define EC_FWRITE_0_HANDLE_LEN_MIN               1
 #define EC_FWRITE_0_HANDLE_LEN_MAX               33
 #define EC_FWRITE_0_HANDLE_LEN_DEF               0
-#define EC_FWRITE_1_LEN_MIN               0
-#define EC_FWRITE_1_LEN_MAX               (10*1024)
-#define EC_FWRITE_1_LEN_DEF               (1000)
+#define EC_FWRITE_1_LEN_MIN                   0
+#define EC_FWRITE_1_LEN_MAX                   (10*1024)
+#define EC_FWRITE_1_LEN_DEF                   (1000)
 #define EC_FWRITE_2_TIMEOUT_MIN               0
 #define EC_FWRITE_2_TIMEOUT_MAX               100
 #define EC_FWRITE_2_TIMEOUT_DEF               5
+
+#define EC_FWRITE_AUDIO_0_LEN_MIN                   0
+#define EC_FWRITE_AUDIO_0_LEN_MAX                   (20*1024)
+#define EC_FWRITE_AUDIO_0_LEN_DEF                   (1000)
+#define EC_FWRITE_AUDIO_1_TIMEOUT_MIN               0
+#define EC_FWRITE_AUDIO_1_TIMEOUT_MAX               100
+#define EC_FWRITE_AUDIO_1_TIMEOUT_DEF               20
+
 
 #define EC_FSEEK_0_HANDLE_LEN_MIN               1
 #define EC_FSEEK_0_HANDLE_LEN_MAX               33
@@ -128,8 +136,11 @@ typedef struct
 
 CmsRetId fileOPEN(const AtCmdInputContext *pAtCmdReq);
 CmsRetId fileREAD(const AtCmdInputContext *pAtCmdReq);
+CmsRetId fileREADHEX(const AtCmdInputContext *pAtCmdReq);
+CmsRetId fileREADAUDIO(const AtCmdInputContext *pAtCmdReq);
 CmsRetId fileWRITE(const AtCmdInputContext *pAtCmdReq);
 CmsRetId fileWRITEHEX(const AtCmdInputContext *pAtCmdReq);
+CmsRetId fileWRITEAUDIO(const AtCmdInputContext *pAtCmdReq);
 CmsRetId fileWriteInputData(UINT8 chanId, UINT8 *pData, INT16 dataLength);
 CmsRetId fileWriteCancel(void);
 CmsRetId fileSEEK(const AtCmdInputContext *pAtCmdReq);

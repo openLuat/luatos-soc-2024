@@ -46,8 +46,10 @@
 /* Patch-Mux-Buffer */
 #define FOTA_PMB_GAP_SIZE      (FOTA_BUF_SIZE_32)
 
+//#ifdef FEATURE_FOTA_HLS_ENABLE
+#if 1
 
-#ifdef FEATURE_FOTA_HLS_ENABLE
+#if (defined CHIP_EC718 || defined CHIP_EC716)
 /*
  *|===============================================================|=====================================|
  *|                           745.5K                              |               268.5K                |
@@ -193,6 +195,9 @@
 
 #define FOTA_PMB_DECOMPR_BZIP_LL4_OFFS    (FOTA_PMB_DECOMPR_BZIP_LL16_OFFS + FOTA_PMB_DECOMPR_BZIP_LL16_SIZE)
 #define FOTA_PMB_DECOMPR_BZIP_LL4_SIZE    (36 * FOTA_BUF_SIZE_1K + FOTA_PMB_GAP_SIZE)
+
+//#define FOTA_PMB_DECOMPR_BZIP_TT_OFFS     (FOTA_PMB_DECOMPR_BZIP_DSTATE_OFFS + FOTA_PMB_DECOMPR_BZIP_DSTATE_SIZE)
+//#define FOTA_PMB_DECOMPR_BZIP_TT_SIZE     (274 * UTL_BUF_SIZE_1K + FOTA_PMB_GAP_SIZE)
 /* <<< multiplex @decompress zone */
 
 #define FOTA_PMB_ZIP_DELTA_OFFS           (FOTA_PMB_DECOMPR_OFFS + FOTA_PMB_DECOMPR_SIZE)
@@ -233,6 +238,201 @@
 #define FOTA_PMB_HLS_UNZIP_NEXT_OFFS      (FOTA_PMB_UNZIP_DELTA_OFFS)
 #define FOTA_PMB_HLS_UNZIP_NEXT_SIZE      (FOTA_PMB_UNZIP_NEXT_SIZE)
 /* <<< hls related */
+
+#elif (defined CHIP_EC616 || defined CHIP_EC616_Z0 || defined CHIP_EC616S || defined CHIP_EC626)
+/* 241K
+ *|=========================================|===================================|
+ *|                      120.25K            |              120.75K              |
+ *|-----------------------------------------|-----------------------------------|
+ *|                                         | prior  memory usage (e.g. sha256) |
+ *|=============|===========================|===================================|
+ *|    24K      |     32K     |     64K     |     32.5K     |         88K       |
+ *|-------------|---------------------------|-----------------------------------|
+ *| zip delta |G| unzip new |G|    rsvd   |P| unzip delta |G| bzip decompr zone |
+ *|-------------|---------------------------|-----------------------------------|
+ *| zip delta |G|     HLS workspace         | unzip delta |G| bzip decompr zone | <-- a) FS scenario
+ *|=========================================|===================================|
+ *|    32K      |         96K               |     32.5K     |         88K       |
+ *|-------------|---------------------------|-----------------------------------|
+ *| unzip new |G|         rsvd            |P| unzip delta |G| bzip decompr zone |
+ *|-------------|---------------------------|-----------------------------------|
+ *|            HLS workspace                | unzip delta |G| bzip decompr zone | <-- b) Non-FS scenario
+ *|=========================================|===================================|
+ *|                                         | post  memory usage (e.g. sha256)  |
+ *|=============================================================================|
+ *|    24K      |     32K     |     64K     |     32.5K     |         88K       |
+ *|-------------|---------------------------------------------------------------|
+ *|   ramcode   |                          heap                                 | <-- c) Non-HLS scenario
+ *|=============================================================================|
+ *| Abrreviations:
+ *| 1) G - Gap
+ *| 2) P - Paddings
+ *|*****************************************************************************
+ *| NOTE(risk):
+ *| 1) max compress ratio = 0.75
+ *| 2) max P&G size = 1K
+ *|*****************************************************************************
+ */
+
+/*
+  New layout proposal
+
+                                transform(unzip old => unzip old')
+                                           ||
+                                           VV
+*|=========================================|===================================|
+*|    24K      |     32K     |     64K     |     32.5K     |         88K       |
+*|-----------------------------------------|-----------------------------------|
+*| zip delta |G|         unzip old'        | unzip delta |G| bzip decompr zone | <-- a) FS scenario
+*|--------------------------- -------------|-----------------------------------|
+*|               unzip old'                | unzip delta |G| bzip decompr zone | <-- b) Non-FS scenario
+*|--------------------------- -------------|-----------------------------------|
+
+                                   pack(unzip old' => unzip old'')
+                                           ||
+                                           VV
+*|=================================================|===========================|
+*|    24K      |     32K     |     64K     |     32.5K     |         88K       |
+*|-------------------------------------------------|---------------------------|
+*| zip delta |G|         unzip old''       | unzip delta |G| bzip decompr zone | <-- a) FS scenario
+*|-------------------------------------------------|---------------------------|
+*|               unzip old''               | unzip delta |G| bzip decompr zone | <-- b) Non-FS scenario
+*|--------------------------- -------------|-----------------------------------|
+
+                   bspatch(unzip old'' + zip delta => unzip new'')
+                                           ||
+                                           VV
+*|=================================================|===========================|
+*|    24K      |     32K     |     64K     |     32.5K     |         88K       |
+*|-------------------------------------------------|---------------------------|
+*| zip delta |G| unzip old'' | unzip new'' | unzip delta |G| bzip decompr zone | <-- a) FS scenario
+*|-------------------------------------------------|---------------------------|
+*|    unzip old''   |     unzip new''      | unzip delta |G| bzip decompr zone | <-- b) Non-FS scenario
+*|--------------------------- -------------|-----------------------------------|
+
+                                 unpack(unzip new'' => unzip new')
+                                           ||
+                                           VV
+*|=================================================|===========================|
+*|    24K      |     32K     |     64K     |     32.5K     |         88K       |
+*|-------------------------------------------------|---------------------------|
+*| zip delta |G|          unzip new'       | unzip delta |G| bzip decompr zone | <-- a) FS scenario
+*|-------------------------------------------------|---------------------------|
+*|            unzip new'                   | unzip delta |G| bzip decompr zone | <-- b) Non-FS scenario
+*|--------------------------- -------------|-----------------------------------|
+
+
+                              re-transform(unzip new' = unzip new)
+                                           ||
+                                           VV
+*|=================================================|===========================|
+*|    24K      |     32K     |     64K     |     32.5K     |         88K       |
+*|-------------------------------------------------|---------------------------|
+*| zip delta |G|          unzip new'       | unzip new   |G| bzip decompr zone | <-- a) FS scenario
+*|-------------------------------------------------|---------------------------|
+*|            unzip new'                   | unzip new   |G| bzip decompr zone | <-- b) Non-FS scenario
+*|--------------------------- -------------|-----------------------------------|
+                                                |
+                     +--------------------------+
+                     |
+                     v
+*|=================================================|===========================|
+*|    24K      |     32K     |     64K     |     32.5K     |         88K       |
+*|-------------------------------------------------|---------------------------|
+*| zip delta |G| unzip new |G|           |P| unzip delta |G| bzip decompr zone | <-- a) FS scenario
+*|-------------------------------------------------|---------------------------|
+*| unzip new |G|                         |P| unzip delta |G| bzip decompr zone | <-- b) Non-FS scenario
+*|-------------------------------------------------|---------------------------|
+
+*/
+
+
+/* >>> two main parts */
+#define FOTA_PMB_NEXT_OFFS                (0)
+#define FOTA_PMB_NEXT_SIZE                (120 * FOTA_BUF_SIZE_1K + FOTA_BUF_SIZE_256)
+
+#define FOTA_PMB_COMPR_OFFS               (FOTA_PMB_NEXT_OFFS + FOTA_PMB_NEXT_SIZE)
+#define FOTA_PMB_COMPR_SIZE               (120 * FOTA_BUF_SIZE_1K + 3 * FOTA_BUF_SIZE_256)
+/* <<< two main parts */
+
+/* >>> multiplex @next zone */
+#define FOTA_PMB_ZIP_DELTA_OFFS           (FOTA_PMB_NEXT_OFFS)
+#ifdef FOTA_NVM_FS_ENABLE
+#define FOTA_PMB_ZIP_DELTA_SIZE           (24 * FOTA_BUF_SIZE_1K + FOTA_PMB_GAP_SIZE)
+#else
+#define FOTA_PMB_ZIP_DELTA_SIZE           (0)
+#endif
+
+#define FOTA_PMB_UNZIP_NEXT_OFFS          (FOTA_PMB_ZIP_DELTA_OFFS + FOTA_PMB_ZIP_DELTA_SIZE)
+#define FOTA_PMB_UNZIP_NEXT_SIZE          (32 * FOTA_BUF_SIZE_1K + FOTA_PMB_GAP_SIZE)
+
+#define FOTA_PMB_ZIP_NEXT_OFFS            (FOTA_PMB_UNZIP_NEXT_OFFS + FOTA_PMB_UNZIP_NEXT_SIZE)
+#define FOTA_PMB_ZIP_NEXT_SIZE            (64 * FOTA_BUF_SIZE_1K + FOTA_PMB_GAP_SIZE)
+/* <<< multiplex @next zone */
+
+/* >>> multiplex @compress zone */
+#define FOTA_PMB_SHA256_DATA_OFFS         (FOTA_PMB_COMPR_OFFS)
+#define FOTA_PMB_SHA256_DATA_SIZE         (FOTA_BUF_SIZE_64K)
+
+#define FOTA_PMB_UNZIP_DELTA_OFFS         (FOTA_PMB_COMPR_OFFS)
+#define FOTA_PMB_UNZIP_DELTA_SIZE         ((32 * FOTA_BUF_SIZE_1K + FOTA_BUF_SIZE_512) + FOTA_PMB_GAP_SIZE)
+
+#define FOTA_PMB_DECOMPR_OFFS             (FOTA_PMB_UNZIP_DELTA_OFFS + FOTA_PMB_UNZIP_DELTA_SIZE)
+#define FOTA_PMB_DECOMPR_SIZE             (88 * FOTA_BUF_SIZE_1K + 4 * FOTA_PMB_GAP_SIZE)
+/* <<< multiplex @compress zone */
+
+/* >>> multiplex @decompress zone */
+#define FOTA_PMB_DECOMPR_BZIP_FBUFF_OFFS   FOTA_PMB_DECOMPR_OFFS
+#define FOTA_PMB_DECOMPR_BZIP_FBUFF_SIZE  (5 * FOTA_BUF_SIZE_1K + FOTA_PMB_GAP_SIZE)
+
+#define FOTA_PMB_DECOMPR_BZIP_DSTATE_OFFS (FOTA_PMB_DECOMPR_BZIP_FBUFF_OFFS + FOTA_PMB_DECOMPR_BZIP_FBUFF_SIZE)
+#define FOTA_PMB_DECOMPR_BZIP_DSTATE_SIZE (63 * FOTA_BUF_SIZE_1K + FOTA_PMB_GAP_SIZE)
+
+#define FOTA_PMB_DECOMPR_BZIP_LL16_OFFS   (FOTA_PMB_DECOMPR_BZIP_DSTATE_OFFS + FOTA_PMB_DECOMPR_BZIP_DSTATE_SIZE)
+#define FOTA_PMB_DECOMPR_BZIP_LL16_SIZE   (16 * FOTA_BUF_SIZE_1K + FOTA_PMB_GAP_SIZE)
+
+#define FOTA_PMB_DECOMPR_BZIP_LL4_OFFS    (FOTA_PMB_DECOMPR_BZIP_LL16_OFFS + FOTA_PMB_DECOMPR_BZIP_LL16_SIZE)
+#define FOTA_PMB_DECOMPR_BZIP_LL4_SIZE    (4 * FOTA_BUF_SIZE_1K + FOTA_PMB_GAP_SIZE)
+
+//#define FOTA_PMB_DECOMPR_BZIP_TT_OFFS     (FOTA_PMB_DECOMPR_BZIP_DSTATE_OFFS + FOTA_PMB_DECOMPR_BZIP_DSTATE_SIZE)
+//#define FOTA_PMB_DECOMPR_BZIP_TT_SIZE     (32 * FOTA_BUF_SIZE_1K + FOTA_PMB_GAP_SIZE)
+/* <<< multiplex @decompress zone */
+
+/* xip operation, dummy difinition here */
+#define FOTA_PMB_UNZIP_BASE_OFFS          (FOTA_PMB_ZIP_NEXT_OFFS)
+#define FOTA_PMB_UNZIP_BASE_SIZE          (FOTA_PMB_ZIP_NEXT_SIZE)
+
+/* >>> multiplex @zip new zone */
+#define FOTA_PMB_DELTA_PZGH_OFFS           FOTA_PMB_ZIP_NEXT_OFFS
+#define FOTA_PMB_DELTA_PZGH_SIZE          (4 * FOTA_BUF_SIZE_1K + FOTA_PMB_GAP_SIZE)
+
+#define FOTA_PMB_ZIP_SECT_OFFS            (FOTA_PMB_DELTA_PZGH_OFFS + FOTA_PMB_DELTA_PZGH_SIZE)
+#define FOTA_PMB_ZIP_SECT_SIZE            (60 * FOTA_BUF_SIZE_1K + FOTA_PMB_GAP_SIZE)
+/* <<< multiplex @zip new zone */
+
+/* >>> multiplex @next zone */
+#define FOTA_PMB_ZIP_NVRAM_OFFS            FOTA_PMB_ZIP_NEXT_OFFS
+#define FOTA_PMB_ZIP_NVRAM_SIZE            FOTA_PMB_ZIP_NEXT_SIZE
+
+#define FOTA_PMB_UNZIP_NVRAM_OFFS          FOTA_PMB_UNZIP_NEXT_OFFS
+#define FOTA_PMB_UNZIP_NVRAM_SIZE          FOTA_PMB_UNZIP_NEXT_SIZE
+ /* <<< multiplex @next zone */
+
+ /* >>> hls related */
+#define FOTA_PMB_HLS_WORK_SPACE_OFFS      (FOTA_PMB_NEXT_OFFS + FOTA_PMB_ZIP_DELTA_SIZE)
+#define FOTA_PMB_HLS_WORK_SPACE_SIZE      (FOTA_PMB_NEXT_SIZE - FOTA_PMB_ZIP_DELTA_SIZE)
+
+#define FOTA_PMB_HLS_UNZIP_BASE_OFFS      (FOTA_PMB_UNZIP_DELTA_OFFS)
+#define FOTA_PMB_HLS_UNZIP_BASE_SIZE      (FOTA_PMB_UNZIP_BASE_SIZE)
+
+#define FOTA_PMB_HLS_BASE_PROF_OFFS       (FOTA_PMB_HLS_UNZIP_BASE_OFFS + FOTA_PMB_UNZIP_BASE_SIZE)
+#define FOTA_PMB_HLS_BASE_PROF_SIZE       (FOTA_BUF_SIZE_4K + FOTA_PMB_GAP_SIZE)
+
+#define FOTA_PMB_HLS_UNZIP_NEXT_OFFS      (FOTA_PMB_UNZIP_DELTA_OFFS)
+#define FOTA_PMB_HLS_UNZIP_NEXT_SIZE      (FOTA_PMB_UNZIP_NEXT_SIZE)
+/* <<< hls related */
+
+#endif
 
 #else
 /*

@@ -97,7 +97,6 @@ void ctiot_to_dereg(void);
 void ctiot_dereg_done(void);
 uint16_t ctiot_update(void);
 uint16_t ctiot_send(char* data,ctiot_send_mode_e sendMode, UINT8 seqNum);
-uint16_t ctiot_set_idauth_pm(char* idAuthStr);
 
 void ctiot_init_sleep_handler(void);
 void ctiot_disable_sleepmode(void);

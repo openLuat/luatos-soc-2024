@@ -154,6 +154,12 @@ struct netif;
 #define ip4_addr_get_network(target, host, netmask) do { ((target)->addr = ((host)->addr) & ((netmask)->addr)); } while(0)
 
 u32_t ip4_addr_get_netmask(ip4_addr_t *addr);
+
+//return net mask with host order
+
+//input addr: ipv4 address with host order
+u32_t ip4_addr_get_netmask_by_host(u32_t addrHost);
+
 /**
  * Determine if two address are on the same network.
  *

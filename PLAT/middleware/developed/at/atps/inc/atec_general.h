@@ -117,6 +117,16 @@
 #define ATC_CSCS_0_STR_MAX_LEN              10
 #define ATC_CSCS_0_STR_DEFAULT              NULL
 
+/* AT+CLCK */
+#define ATC_CLCK_0_FAC_STR_MAX_LEN            2
+#define ATC_CLCK_0_FAC_STR_DEFAULT            NULL
+#define ATC_CLCK_1_MODE_VAL_MIN                  0
+#define ATC_CLCK_1_MODE_VAL_MAX                  2
+#define ATC_CLCK_1_MODE_VAL_DEFAULT              0
+#define ATC_CLCK_2_PIN_STR_MAX_LEN            8
+#define ATC_CLCK_2_PIN_STR_MIN_LEN            4
+#define ATC_CLCK_2_PIN_STR_DEFAULT            NULL
+
 /* AT+ECURC */
 #define ATC_ECURC_0_MAX_PARM_STR_LEN        16
 #define ATC_ECURC_0_MAX_PARM_STR_DEFAULT    NULL
@@ -171,6 +181,7 @@ CmsRetId gcCMUX(const AtCmdInputContext *pAtCmdReq);
 CmsRetId gcCMEE(const AtCmdInputContext *pAtCmdReq);
 CmsRetId gcATANDC(const AtCmdInputContext *pAtCmdReq);
 CmsRetId gcATANDD(const AtCmdInputContext *pAtCmdReq);
+CmsRetId gcCLCK(const AtCmdInputContext *pAtCmdReq);
 CmsRetId gcECURC(const AtCmdInputContext *pAtCmdReq);
 CmsRetId gcECURCCFG(const AtCmdInputContext *pAtCmdReq);
 CmsRetId gcATD(const AtCmdInputContext *pAtCmdReq);

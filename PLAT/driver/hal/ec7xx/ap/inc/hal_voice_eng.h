@@ -135,7 +135,6 @@ typedef enum
  *****************************************************************************
 ******************************************************************************/
 
-
 /*
  *
 */
@@ -168,9 +167,22 @@ typedef struct
     UINT8       encBitRate;     /* ACAMRNBFRAMETYPE / ACAMRWBFRAMETYPE */
     UINT8       encOutBitOffset;  //0-7, encode AMR frame output bit offset
     UINT8       rsvd;
+	/* audio para ptr from AP , including bypass ctrl for each VEM module and AMR EN/DECODE
+   RO for CP, AP could malloc in heap
+   if NULL means AP side NV is not valid, CP should use default value*/
+	void*		pAudioPara;
 }HalVoiceCodecConfigReq;
 
-typedef UINT32  HalVoiceCodecConfigCnf;
+
+typedef struct
+{
+    UINT8       rc;                 /* ACVOICECODECRC */
+	UINT8       rsvd0;
+	UINT16		rsvd1;
+	
+    void*       pAudioPara;/* audio para ptr for  AP to free*/
+    void*       extra0;
+}HalVoiceCodecConfigCnf;//12byte
 
 /*
  *

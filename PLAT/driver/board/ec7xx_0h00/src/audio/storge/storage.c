@@ -16,10 +16,10 @@
 #include "storage.h"
 #include DEBUG_LOG_HEADER_FILE
 
-#include "ff.h"
+//#include "ff.h"
 
-FATFS fsobject;
-BYTE work[FF_MAX_SS];
+//FATFS fsobject;
+//BYTE work[FF_MAX_SS];
 
 void subStorageInit(void)
 {

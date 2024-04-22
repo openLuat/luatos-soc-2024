@@ -9,7 +9,7 @@
 #define CSMB_START_ADDR                 (0x0)
 #define CSMB_END_ADDR                   (0x10000)
 #define CSMB_TOTAL_LENGTH               (CSMB_END_ADDR-CSMB_START_ADDR)
-#define APVIEW_CSMB_START_ADDR          (0x200000)      
+#define APVIEW_CSMB_START_ADDR          (0x200000)
 #define APVIEW_CSMB_HEAP_START          (0x200010)      // first two word used for fast boot, keep align
 #define APVIEW_CSMB_HEAP_END            (0x204000)
 
@@ -43,14 +43,13 @@
 #define MSMB_FOTA_MUXMEM_BASE_ADDR      (MSMB_START_ADDR + 0x2800)
 #define MSMB_FOTA_MUXMEM_END_ADDR       (MSMB_START_ADDR + 0x100000)
 
-#ifdef FEATURE_FOTA_HLS_ENABLE
+//#ifdef FEATURE_FOTA_HLS_ENABLE
+#if 1
 #define MSMB_COMPR_MEM_BASE_ADDR        (MSMB_FOTA_MUXMEM_BASE_ADDR)
 #define MSMB_COMPR_MEM_END_ADDR         (MSMB_FOTA_MUXMEM_BASE_ADDR + 0xBA600)
-
 #else
 #define MSMB_COMPR_MEM_BASE_ADDR        (MSMB_FOTA_MUXMEM_BASE_ADDR + 0x43200)
 #define MSMB_COMPR_MEM_END_ADDR         (MSMB_FOTA_MUXMEM_END_ADDR)
-
 #endif
 
 #define MSMB_DECOMPR_MEM_BASE_ADDR      (MSMB_COMPR_MEM_BASE_ADDR)

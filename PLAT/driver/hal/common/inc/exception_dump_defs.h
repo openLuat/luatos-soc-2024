@@ -1961,6 +1961,7 @@ typedef struct _EPAT_PS_PART13_CerrcConnContext
     UINT8                                   srCfgType;  //UpConfigType, 0~6 indicate: not change, setup, setup_resume, modify, releasse, release_suspend, invalid
     UINT8                                   rachSkipType; //UpConfigType, 0~6 indicate: not change, setup, setup_resume, modify, releasse, release_suspend, invalid
     BOOL                                    fullConfigAdditPhyDedicated; //fullconfig and phyDedicatedConfig in a rrcRecfg
+    UINT8                                   lastRecfgHashValue[8];
     UINT8                                   numberOfPreamblesSent;
     BOOL                                    contentionDetected;
     BOOL                                    maxTxPowerReached;

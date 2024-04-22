@@ -75,6 +75,7 @@ PLAT_BL_CIRAM_FLASH_TEXT static uint8_t BSP_CalcCrcValue(const uint8_t *buf, uin
 PLATCONFIG_BSS_SECTION static uint8_t          g_fsPlatConfigInitFlag = 0;
 PLATCONFIG_BSS_SECTION static plat_config_fs_t g_fsPlatConfig;
 
+#if (FS_PLAT_CONFIG_FILE_CURRENT_VERSION==0)
 /**
   \fn           void BSP_SetDefaultFsPlatConfig(void)
   \brief        set default value of "g_fsPlatConfig"
@@ -190,7 +191,527 @@ void BSP_LoadPlatConfigFromFs(void)
 
     return;
 }
+#endif
 
+#if (FS_PLAT_CONFIG_FILE_CURRENT_VERSION>=1)
+
+
+
+
+#define PLAT_CFG_SCALE_CONTROL_SIZE()  (sizeof(g_fsPlatConfig.scaleAreaStartMark) + \
+                                                                    sizeof(g_fsPlatConfig.scaleAreaEndMark) + \
+                                                                    sizeof(g_fsPlatConfig.recScaleAreaGrpNum) + \
+                                                                    sizeof(g_fsPlatConfig.recPrevArAllSzForUpg) + \
+                                                                    sizeof(g_fsPlatConfig.scaleAreaAllSize))
+
+#define PLAT_CFG_SCALE_CTRL_TAIL_SIZE()    (sizeof(g_fsPlatConfig.scaleAreaEndMark) + \
+                                                                    sizeof(g_fsPlatConfig.recScaleAreaGrpNum) + \
+                                                                    sizeof(g_fsPlatConfig.recPrevArAllSzForUpg) + \
+                                                                    sizeof(g_fsPlatConfig.scaleAreaAllSize))
+
+
+
+//CHECK the size align to grp unit
+SIZE_OF_TYPE_EQUAL_TO_SZX(plat_cfg_sc_grp0_all_data_st, SCALE_AREA_GRP_UNIT_SIZE)
+
+//CHECK the size of plat_config_fs_t legal
+SIZE_OF_TYPE_EQUAL_TO_CALX(plat_config_fs_t, PLAT_CFG_FIX_BASE_SIZE+PLAT_CFG_SCALE_CONTROL_SIZE()+SCALE_AREA_GRP_UNIT_SIZE)
+
+
+#define PLAT_CFG_SCALE_LOAD_FAST_PASS 1
+
+#define PLAT_CFG_SCALE_LOAD_DEFAULT_ERR 2
+
+#define PLAT_CFG_SCALE_LOAD_DWNGRADE_ERR 3
+
+#define PLAT_CFG_SCALE_LOAD_SEEK_ERR 4
+#define PLAT_CFG_SCALE_LOAD_READ_ERR 5
+
+#define PLAT_CFG_SCALE_LOAD_CRC_ERR 6
+
+#define PLAT_CFG_SCALE_LOAD_BASESZ_ERR 7
+#define PLAT_CFG_SCALE_LOAD_SCALESZ_ERR 8
+
+#define PLAT_CFG_SCALE_LOAD_MARKSTART_ERR 9
+#define PLAT_CFG_SCALE_LOAD_MARKEND_ERR 10
+
+
+
+static void BSP_SetFsPlatCfgScalArCtrl(void)
+{
+    uint16_t cur_fixedBaseSize;
+    uint16_t cur_scaleAreaAllSize;
+    cur_fixedBaseSize = (uint8_t*)(&(g_fsPlatConfig.scaleAreaStartMark)) - (uint8_t*)(&(g_fsPlatConfig));
+    cur_scaleAreaAllSize = sizeof(g_fsPlatConfig) -cur_fixedBaseSize;        
+
+
+    g_fsPlatConfig.scaleAreaStartMark = PLAT_CFG_SCALE_START_MARK;
+    
+    //scalable area pure data already copied when upgrade or download, do not overwrited here
+    //g_fsPlatConfig.usbNetAdaptResult = 0;    
+    g_fsPlatConfig.scaleAreaEndMark = PLAT_CFG_SCALE_END_MARK;    
+    //g_fsPlatConfig.scaleAreaVerNum = 0;
+
+    g_fsPlatConfig.scaleAreaEndMark = PLAT_CFG_SCALE_END_MARK;    
+    g_fsPlatConfig.scaleAreaAllSize = cur_scaleAreaAllSize;    
+    
+    //record previous scaleAreaAllSize before update to current plat cfg scalable area size
+    //current g_fsPlatConfig.scaleAreaAllSize == SCALE_AREA_SCALE_UNIT_SIZE, default0, no need set
+    //if (g_fsPlatConfig.scaleAreaAllSize >SCALE_AREA_SCALE_UNIT_SIZE)
+    //{
+    //    g_fsPlatConfig.recPrevArAllSzForUpg = g_fsPlatConfig.scaleAreaAllSize-SCALE_AREA_SCALE_UNIT_SIZE;
+    //}    
+}
+
+
+#define CALC_BUF_SIZE 64
+PLAT_BL_CIRAM_FLASH_TEXT static uint8_t BSP_RdAndCalcCrcValue(OSAFILE fp, config_file_header_t *pfHead)
+{
+    UINT32  readCount = 0;
+    uint8_t Crc8;
+    uint32_t i ;
+    uint16_t bufSize;
+    uint32_t a = 1, b = 0;
+    uint16_t RestCalDataSz = pfHead->fileBodySize;
+    uint8_t buf[CALC_BUF_SIZE];
+
+    readCount = OsaFread(&buf, sizeof(buf), 1, fp);
+    while(RestCalDataSz>0)
+    {
+        if (RestCalDataSz >= CALC_BUF_SIZE)
+        {
+            bufSize = CALC_BUF_SIZE;
+        }
+        else
+        {
+            bufSize = RestCalDataSz;
+         }
+        RestCalDataSz -= CALC_BUF_SIZE;
+        if (OsaFseek(fp, sizeof(config_file_header_t)+RestCalDataSz, SEEK_SET)!=0)
+        {
+            return PLAT_CFG_SCALE_LOAD_SEEK_ERR;
+        }        
+        
+        readCount = OsaFread(&buf, bufSize, 1, fp);
+        if (readCount!=1)
+        {
+            return PLAT_CFG_SCALE_LOAD_READ_ERR;
+        }     
+        
+        for (i = bufSize; i > 0; )
+        {
+            a += (uint32_t)(buf[--i]);
+            b += a;
+        }
+        
+    }
+    
+    //for (i = bufSize; i > 0; )
+    //{
+    //    a += (uint32_t)(buf[--i]);
+    //    b += a;
+    //}
+    Crc8 = (uint8_t)(((a>>24)&0xFF)^((a>>16)&0xFF)^((a>>8)&0xFF)^((a)&0xFF)^
+                     ((b>>24)&0xFF)^((b>>16)&0xFF)^((b>>8)&0xFF)^((b)&0xFF)^
+                     (bufSize&0xFF));
+    if (pfHead->checkSum!=Crc8)
+    {
+        ECPLAT_PRINTF(UNILOG_PLA_DRIVER, BSP_RdAndCalcCrcValue_1, P_ERROR,
+                    "plat_config crc not match, (%u/%u), ", Crc8, pfHead->checkSum);              
+        return PLAT_CFG_SCALE_LOAD_CRC_ERR;
+    }
+    return 0;
+}
+
+
+/**
+  \fn           void BSP_SetDefaultFsPlatConfig(void)
+  \brief        set default value of "g_fsPlatConfig"
+  \return       void
+*/
+static void BSP_SetDefaultFsPlatConfig(void)
+{
+    //uint16_t cur_fixedBaseSize;
+    //uint16_t cur_scaleAreaAllSize;
+
+    g_fsPlatConfigInitFlag = 1;
+
+    memset(&g_fsPlatConfig, 0x0, sizeof(g_fsPlatConfig));
+    //cur_fixedBaseSize = (uint8_t*)(&(g_fsPlatConfig.scaleAreaStartMark)) - (uint8_t*)(&(g_fsPlatConfig));
+    //cur_scaleAreaAllSize = sizeof(g_fsPlatConfig) -cur_fixedBaseSize;    
+
+     g_fsPlatConfig.atPortBaudRate = 115200;
+    BSP_SetFsPlatCfgScalArCtrl();
+    //g_fsPlatConfig.scaleAreaStartMark = PLAT_CFG_SCALE_START_MARK;
+    //g_fsPlatConfig.usbNetAdaptResult = 0;    
+    //g_fsPlatConfig.scaleAreaEndMark = PLAT_CFG_SCALE_END_MARK;    
+    //g_fsPlatConfig.scaleAreaVerNum = 0;
+    
+    
+    //g_fsPlatConfig.scaleAreaEndMark = PLAT_CFG_SCALE_END_MARK;    
+    
+    //g_fsPlatConfig.scaleAreaAllSize = cur_scaleAreaAllSize;
+    //record previous scaleAreaAllSize before update to current plat cfg scalable area size
+    //current g_fsPlatConfig.scaleAreaAllSize == SCALE_AREA_SCALE_UNIT_SIZE, default0, no need set
+    //if (g_fsPlatConfig.scaleAreaAllSize >SCALE_AREA_SCALE_UNIT_SIZE)
+    //{
+    //    g_fsPlatConfig.recPrevArAllSzForUpg = g_fsPlatConfig.scaleAreaAllSize-SCALE_AREA_SCALE_UNIT_SIZE;
+    //}
+
+}
+
+void BSP_LoadPlatConfigFromFs(void)
+{
+    OSAFILE fp = PNULL;
+    UINT32  readCount = 0;
+    UINT8   crcCheck = 0;
+    config_file_header_t fileHeader;
+
+    uint16_t cur_fixedBaseSize;
+    uint16_t cur_scaleAreaAllSize;
+
+    uint16_t loaded_scaleAreaAllSize;
+    uint16_t loaded_scaleAreaStartMark;
+    uint16_t loaded_scaleAreaEndMark;
+    
+    uint16_t loaded_fixedBaseSize;
+    uint16_t loaded_recPrevArAllSzForUpg;
+    
+    uint8_t loadStat = PLAT_CFG_SCALE_LOAD_DEFAULT_ERR;
+    
+    uint8_t* p_g_fsPlatConfig;
+    
+    cur_fixedBaseSize = (uint8_t*)(&(g_fsPlatConfig.scaleAreaStartMark)) - (uint8_t*)(&(g_fsPlatConfig));
+    cur_scaleAreaAllSize = sizeof(g_fsPlatConfig) -cur_fixedBaseSize;
+
+
+    BSP_SetDefaultFsPlatConfig();
+
+    /*
+     * open NVM file
+     */
+    fp = OsaFopen("plat_config", "rb");   //read only
+    if (fp == PNULL)
+    {
+        ECPLAT_PRINTF(UNILOG_PLA_DRIVER, BSP_LoadPlatConfig_1, P_ERROR,
+                    "Can't open 'plat_config' file, use the defult value");
+        //Called
+        //BSP_SetDefaultFsPlatConfig();
+        BSP_SavePlatConfigToFs();
+
+        return;
+    }
+
+    /*
+     * read file header
+     */
+    readCount = OsaFread(&fileHeader, sizeof(config_file_header_t), 1, fp);
+    if (readCount != 1)
+    {
+        ECPLAT_PRINTF(UNILOG_PLA_DRIVER, BSP_LoadPlatConfig_2, P_ERROR,
+                    "Can't read 'plat_config' file header, use the defult value");
+
+        OsaFclose(fp);
+        //Called at start
+        //BSP_SetDefaultFsPlatConfig();
+        BSP_SavePlatConfigToFs();
+
+        return;
+    }
+
+
+    /*
+     * read file body, check validation and handle compatiblity issue
+     */
+    if(fileHeader.version != FS_PLAT_CONFIG_FILE_CURRENT_VERSION)
+    {
+        if(fileHeader.version == 0)
+        {
+            //memset(&g_fsPlatConfig, 0x0, sizeof(g_fsPlatConfig));
+            if (cur_fixedBaseSize== fileHeader.fileBodySize)
+            {
+                //cur seek pos sizeof(config_file_header_t)
+                readCount = OsaFread(&g_fsPlatConfig, fileHeader.fileBodySize, 1, fp);
+                
+                if (readCount!=1)
+                {
+                    //unlikely, reload all default data
+                    BSP_SetDefaultFsPlatConfig();
+                } 
+                else
+                {
+                    //already called in BSP_SetDefaultFsPlatConfig
+                    //BSP_SetFsPlatCfgScalArCtrl();
+                    //g_fsPlatConfig.scaleAreaStartMark =  PLAT_CFG_SCALE_START_MARK;
+                    //g_fsPlatConfig.scaleAreaEndMark =  PLAT_CFG_SCALE_END_MARK;
+                    //the scaleAreaAllSize should final set to cur_scaleAreaAllSize
+                    //g_fsPlatConfig.scaleAreaAllSize = cur_scaleAreaAllSize;
+                    ECPLAT_PRINTF(UNILOG_PLA_DRIVER, BSP_LoadPlatConfig_3, P_INFO,
+                                "'plat_config' version 0, upgrade to plat config scale version %d", FS_PLAT_CONFIG_FILE_CURRENT_VERSION);                    
+                }
+                
+            }
+            //Called at start
+            //else {
+            //    BSP_SetDefaultFsPlatConfig();
+            //}
+            
+            OsaFclose(fp);
+            BSP_SavePlatConfigToFs();                
+        }
+        // handle future version below
+        else if(0)
+        {
+
+        }
+        else
+        {
+            ECPLAT_PRINTF(UNILOG_PLA_DRIVER, BSP_LoadPlatConfig_4, P_ERROR,
+                        "'plat_config' version:%d not right, use the defult value", fileHeader.version);
+
+            OsaFclose(fp);
+            //Called at start
+            //BSP_SetDefaultFsPlatConfig();
+            BSP_SavePlatConfigToFs();
+        }
+    }
+    else
+    {
+        //scalable update
+        
+        //Called at start
+        //BSP_SetDefaultFsPlatConfig();
+        
+        //cur_fixedBaseSize = (uint8_t*)(&(g_fsPlatConfig.scalabeAreaMark)) - (uint8_t*)(&(g_fsPlatConfig));
+        //pure scalable data area = sizeof(g_fsPlatConfig) - cur_fixedBaseSize-  PLAT_CFG_SCALE_CONTROL_SIZE(); 
+
+        do {
+
+            
+            if (fileHeader.fileBodySize>sizeof(g_fsPlatConfig))
+            {
+
+                // Dwngrade crc check
+                if (BSP_RdAndCalcCrcValue(fp, &fileHeader) != 0)
+                {
+                    loadStat = PLAT_CFG_SCALE_LOAD_CRC_ERR;      
+                    break;
+                }                            
+                
+                ////////////////////////////////branch for downgrade start ////////////////////////////////////////////////////////////////////////////////////
+                // scaleAreaStartMark, scaleAreaPureData0-scaleAreaPureDataX, scaleAreaEndMark, recScaleAreaGrpNum , recPrevArAllSzForUpg,scaleAreaAllSize
+                 //seek to loaded_scaleAreaEndMark
+                if (OsaFseek(fp, fileHeader.fileBodySize    \
+                                            - sizeof(g_fsPlatConfig.scaleAreaEndMark)  \
+                                            -sizeof(g_fsPlatConfig.recScaleAreaGrpNum)  \
+                                            -sizeof(loaded_recPrevArAllSzForUpg)  \
+                                            -sizeof(loaded_scaleAreaAllSize),  \
+                                             SEEK_SET)!=0)
+                {
+                    loadStat = PLAT_CFG_SCALE_LOAD_SEEK_ERR;
+                    break;
+                }
+
+
+                readCount = OsaFread(&loaded_scaleAreaEndMark, sizeof(loaded_scaleAreaEndMark), 1, fp);
+                if (readCount!=1)
+                {
+                    loadStat = PLAT_CFG_SCALE_LOAD_READ_ERR;
+                    break;
+                }                     
+
+                if (loaded_scaleAreaEndMark!=PLAT_CFG_SCALE_END_MARK)
+                {
+                    loadStat = PLAT_CFG_SCALE_LOAD_MARKEND_ERR;
+                    break;                  
+                }            
+
+                if (OsaFseek(fp, fileHeader.fileBodySize    \
+                                            -sizeof(loaded_recPrevArAllSzForUpg)  \
+                                            -sizeof(loaded_scaleAreaAllSize),  \
+                                             SEEK_SET)!=0)
+                {
+                    loadStat = PLAT_CFG_SCALE_LOAD_SEEK_ERR;
+                    break;
+                }
+                
+                readCount = OsaFread(&loaded_recPrevArAllSzForUpg, sizeof(loaded_recPrevArAllSzForUpg), 1, fp);
+                if (readCount!=1)
+                {
+                    loadStat = PLAT_CFG_SCALE_LOAD_READ_ERR;
+                    break;
+                }     
+                readCount = OsaFread(&loaded_scaleAreaAllSize, sizeof(loaded_scaleAreaAllSize), 1, fp);
+                if (readCount!=1)
+                {
+                    loadStat = PLAT_CFG_SCALE_LOAD_READ_ERR;
+                    break;
+                }                     
+                if ((loaded_recPrevArAllSzForUpg!=cur_scaleAreaAllSize) ||(loaded_recPrevArAllSzForUpg > loaded_scaleAreaAllSize))
+                {
+                    loadStat = PLAT_CFG_SCALE_LOAD_DWNGRADE_ERR;
+                    break;
+                }
+
+                loaded_fixedBaseSize = fileHeader.fileBodySize -loaded_scaleAreaAllSize;
+                if (loaded_fixedBaseSize!=cur_fixedBaseSize)
+                {
+                    loadStat = PLAT_CFG_SCALE_LOAD_BASESZ_ERR;
+                    break;
+                }                
+                
+                //branch for dowgrade, seek to sizeof(config_file_header_t)
+                if (OsaFseek(fp, sizeof(config_file_header_t), SEEK_SET)!=0)
+                {
+                    loadStat = PLAT_CFG_SCALE_LOAD_SEEK_ERR;
+                    break;
+                }
+
+                // loaded layout loaded_fixedBaseSize, loaded_scaleAreaStartMark, loaded_scaleAreaPureData0-loaded_scaleAreaPureDataX
+                //    real_read_X=cur_fixedBaseSize-PLAT_CFG_SCALE_CONTROL_SIZE 
+                //
+                    
+                readCount = OsaFread(&g_fsPlatConfig, cur_fixedBaseSize + cur_scaleAreaAllSize - PLAT_CFG_SCALE_CTRL_TAIL_SIZE(), 1, fp);
+                if (readCount!=1)
+                {
+                    loadStat = PLAT_CFG_SCALE_LOAD_READ_ERR;
+                    break;
+                }     
+
+               if (g_fsPlatConfig.scaleAreaStartMark!=PLAT_CFG_SCALE_START_MARK)
+               {
+                   loadStat = PLAT_CFG_SCALE_LOAD_MARKSTART_ERR;
+                   break;                  
+               }
+
+               BSP_SetFsPlatCfgScalArCtrl();
+               loadStat = 0;
+                //all valid data will be loaded to g_fsPlatConfig
+                //fileHeader.fileBodySize == loaded_fixedBaseSize + loaded_scaleAreaAllSize;
+                //sizeof(g_fsPlatConfig) ==  cur_fixedBaseSize +  cur_scaleAreaAllSize
+               break;
+                
+                ////////////////////////////////branch for downgrade end ///////////////////////////////////////////////////////////////////////////////
+            }
+
+            ////////////////////////////////branch for upgrade end ////////////////////////////////////////////////////////////////////////////////////
+            //cur seek pos sizeof(config_file_header_t)
+            readCount = OsaFread(&g_fsPlatConfig, fileHeader.fileBodySize, 1, fp);
+            if (readCount!=1)
+            {
+                loadStat = PLAT_CFG_SCALE_LOAD_READ_ERR;
+                break;
+            }
+            p_g_fsPlatConfig = (uint8_t*)(&g_fsPlatConfig);
+
+            crcCheck = BSP_CalcCrcValue(p_g_fsPlatConfig, fileHeader.fileBodySize);
+
+
+            if (crcCheck != fileHeader.checkSum)
+            {
+                loadStat = PLAT_CFG_SCALE_LOAD_CRC_ERR;
+                ECPLAT_PRINTF(UNILOG_PLA_DRIVER, BSP_LoadPlatConfig_6, P_ERROR,
+                            "Can't read 'plat_config' crc not match, (%u/%u), ", crcCheck, fileHeader.checkSum);                
+                break;
+            }            
+
+            if(fileHeader.fileBodySize == sizeof(g_fsPlatConfig))
+            {
+                loadStat = PLAT_CFG_SCALE_LOAD_FAST_PASS;
+                break;
+            }
+
+            //init loaded_scaleAreaAllSize from p_g_fsPlatConfig +fileBodySize - 2 bytes
+            loaded_scaleAreaAllSize = *((uint16_t*)(p_g_fsPlatConfig + fileHeader.fileBodySize- sizeof(g_fsPlatConfig.scaleAreaAllSize)));
+            loaded_fixedBaseSize = fileHeader.fileBodySize -loaded_scaleAreaAllSize;
+            if (loaded_fixedBaseSize!=cur_fixedBaseSize)
+            {
+                loadStat = PLAT_CFG_SCALE_LOAD_BASESZ_ERR;
+                break;
+            }
+            
+            if(loaded_scaleAreaAllSize< PLAT_CFG_SCALE_CONTROL_SIZE()) 
+            {
+                loadStat = PLAT_CFG_SCALE_LOAD_SCALESZ_ERR;
+                break;                
+            }
+
+            //start mark loc same to cur g_fsPlatConfig.scaleAreaStartMark
+            loaded_scaleAreaStartMark = g_fsPlatConfig.scaleAreaStartMark;
+            loaded_scaleAreaEndMark = *((uint16_t*)(p_g_fsPlatConfig + fileHeader.fileBodySize
+                                                                            -sizeof(g_fsPlatConfig.scaleAreaEndMark)
+                                                                            - sizeof(g_fsPlatConfig.scaleAreaAllSize)));
+            
+            if (loaded_scaleAreaStartMark!=PLAT_CFG_SCALE_START_MARK)
+            {
+                loadStat = PLAT_CFG_SCALE_LOAD_MARKSTART_ERR;
+                break;                  
+            }
+
+            if (loaded_scaleAreaEndMark!=PLAT_CFG_SCALE_END_MARK)
+            {
+                loadStat = PLAT_CFG_SCALE_LOAD_MARKEND_ERR;
+                break;                  
+            }
+
+            
+            BSP_SetFsPlatCfgScalArCtrl();
+            loadStat = 0;
+            
+        }while(0);
+
+        if(loadStat==0)
+        {
+            //update
+            //give cond: fileHeader.fileBodySize<=sizeof(g_fsPlatConfig) 
+            //           cur_fixedBaseSize == loaded_fixedBaseSize
+            //           sizeof(g_fsPlatConfig) == cur_scaleAreaAllSize + cur_fixedBaseSize;
+            //           fileHeader.fileBodySize == (loaded_scaleAreaAllSize + loaded_fixedBaseSize);
+            //if cur_scaleAreaAllSize<loaded_scaleAreaAllSize 
+            //      means fileHeader.fileBodySize<sizeof(g_fsPlatConfig)        
+            //else 
+            //        means cur_scaleAreaAllSize==loaded_scaleAreaAllSize 
+            //            and fileHeader.fileBodySize==sizeof(g_fsPlatConfig)     
+            //if (cur_scaleAreaAllSize<loaded_scaleAreaAllSize)
+            //{
+
+                //g_fsPlatConfig.scaleAreaEndMark =  PLAT_CFG_SCALE_END_MARK;
+                //the scaleAreaAllSize should final set to cur_scaleAreaAllSize
+                //g_fsPlatConfig.scaleAreaAllSize = cur_scaleAreaAllSize;
+                ECPLAT_PRINTF(UNILOG_PLA_DRIVER, BSP_LoadPlatConfig_7, P_INFO,
+                            "plat_config version:%d, upd scale area size  from loaded %d to %d",
+                            fileHeader.version, loaded_scaleAreaAllSize, cur_scaleAreaAllSize);
+                OsaFclose(fp);
+                BSP_SavePlatConfigToFs();                      
+            //}
+            //else {
+                //crcCheck, loaded_fixedBaseSize, loaded_scaleAreaAllSize, loaded_scaleAreaStartMark,  loaded_scaleAreaEndMark
+                //all check pass, no change
+                //Called at start
+                //BSP_SetDefaultFsPlatConfig();                
+            //    g_fsPlatConfigInitFlag = 1;
+            //}
+        }
+        else
+        {
+            if(PLAT_CFG_SCALE_LOAD_FAST_PASS!=loadStat)
+            {
+                ECPLAT_PRINTF(UNILOG_PLA_DRIVER, BSP_LoadPlatConfig_8, P_ERROR,
+                            "Can't load 'plat_config' version:%d, load_error %d, use the defult value",
+                            fileHeader.version, loadStat);
+                //reload all default data
+                BSP_SetDefaultFsPlatConfig();
+                OsaFclose(fp);
+                BSP_SavePlatConfigToFs();             
+            }
+        }
+
+    }
+
+    return;
+}
+
+#endif
 
 void BSP_SetFsPorDefaultValue(void)
 {
@@ -734,6 +1255,15 @@ PLAT_BL_CIRAM_FLASH_TEXT uint32_t BSP_GetPlatConfigItemValue(plat_config_id_t id
         	return soc_user_usb_eth_mode();
 #else
             return g_rawFlashPlatConfig.usbNet;
+#ifdef FEATURE_PLAT_CFG_FS_SUP_USBNET_ATA
+        case PLAT_CONFIG_ITEM_USBNET_ATA_RESULT:
+            #ifdef PLAT_CONFIG_FS_ENABLE
+                return g_fsPlatConfig.usbNetAdaptResult;  
+            #else
+                ECPLAT_PRINTF(UNILOG_PLA_DRIVER, BSP_GET_PLAT_CFG_6, P_ERROR, "Get usbnet autoadapt unsupported yet!");
+                return 0;
+            #endif       
+#endif      
 #endif
 
         case PLAT_CONFIG_ITEM_USB_VCOM_EN_BMP:
@@ -774,6 +1304,57 @@ PLAT_BL_CIRAM_FLASH_TEXT uint32_t BSP_GetPlatConfigItemValue(plat_config_id_t id
             return 0;
     }
 }
+
+#ifdef FEATURE_PLAT_CFG_FS_SUP_USBNET_ATA
+
+
+#ifndef ATC_ECPCFG_USBNET_VAL_AUTOADAPT_TYPE
+#define ATC_ECPCFG_USBNET_VAL_AUTOADAPT_RDSINIT    2
+#endif
+
+#ifndef ATC_ECPCFG_USBNET_VAL_AUTOADAPT_ECMINIT
+#define ATC_ECPCFG_USBNET_VAL_AUTOADAPT_ECMINIT    3
+#endif
+
+uint32_t BSP_GetPlatCfgUsbNetATAEnabled(void)
+{
+    uint32_t ret = BSP_GetPlatConfigItemValue(PLAT_CONFIG_ITEM_USB_NET) ;
+    if ((ret==ATC_ECPCFG_USBNET_VAL_AUTOADAPT_RDSINIT)  || (ret==ATC_ECPCFG_USBNET_VAL_AUTOADAPT_ECMINIT))
+    {
+        return 1;
+    }
+    return 0;
+}
+
+
+void BSP_SetPlatCfgUsbNetATAItemVal(uint32_t val)
+{
+        BSP_SetPlatConfigItemValue(PLAT_CONFIG_ITEM_USBNET_ATA_RESULT, val);
+}
+
+uint32_t BSP_GetPlatCfgUsbNetATAItemVal(void)
+{
+        return BSP_GetPlatConfigItemValue(PLAT_CONFIG_ITEM_USBNET_ATA_RESULT);
+}
+
+#else
+//for link pass
+void BSP_SetPlatCfgUsbNetATAItemVal(uint32_t val)
+{
+    (void)val;
+}
+
+uint32_t BSP_GetPlatCfgUsbNetATAItemVal(void)
+{
+        return 0;
+}
+
+uint32_t BSP_GetPlatCfgUsbNetATAEnabled(void)
+{
+        return 0;
+}
+
+#endif
 
 void BSP_SetPlatConfigItemValue(plat_config_id_t id, uint32_t value)
 {
@@ -895,7 +1476,16 @@ void BSP_SetPlatConfigItemValue(plat_config_id_t id, uint32_t value)
         case PLAT_CONFIG_ITEM_USB_NET:
             g_rawFlashPlatConfig.usbNet = value;
             break;
-
+            
+#ifdef FEATURE_PLAT_CFG_FS_SUP_USBNET_ATA
+        case PLAT_CONFIG_ITEM_USBNET_ATA_RESULT:
+            #ifdef PLAT_CONFIG_FS_ENABLE
+                g_fsPlatConfig.usbNetAdaptResult = value;  
+            #else
+                ECPLAT_PRINTF(UNILOG_PLA_DRIVER, BSP_SET_PLAT_CFG_6, P_ERROR, "Set usbnet autoadapt unsupported yet!");
+            #endif       
+            break;
+#endif            
         case PLAT_CONFIG_ITEM_USB_VCOM_EN_BMP:
             g_rawFlashPlatConfig.usbVcomEnBitMap = value;
             break;

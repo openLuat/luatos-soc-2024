@@ -62,7 +62,7 @@ extern "C" {
 #endif
 
 /** The IPv6 reassembly timer interval in milliseconds. */
-#define IP6_REASS_TMR_INTERVAL 1000
+#define IP6_REASS_TMR_INTERVAL 60000
 
 /* Copy the complete header of the first fragment to struct ip6_reassdata
    or just point to its original location in the first pbuf? */
@@ -81,10 +81,15 @@ struct ip6_reassdata {
   struct ip6_reassdata *next;
   struct pbuf *p;
   struct ip6_hdr IPV6_FRAG_HDRPTR iphdr;
+#if ENABLE_PSIF
+    /* In this case we still need the buffer, for sending ICMPv6 replies. */
+  u8_t orig_hdr[sizeof(struct ip6_frag_hdr)];
+#endif /* IPV6_FRAG_COPYHEADER */
   u32_t identification;
   u16_t datagram_len;
   u8_t nexth;
   u8_t timer;
+  u32_t active_time; //seconds
 };
 
 #define ip6_reass_init() /* Compatibility define */

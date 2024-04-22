@@ -19,7 +19,15 @@
  * Definitions
  ******************************************************************************/
 
+
+//use FEATURE_PLAT_CFG_FS_SUP_USBNET_ATA not DFEATURE_USBNET_ATA_FOR_AP, the plat cfgfs structure is same for bootloader and ap
+#ifndef FEATURE_PLAT_CFG_FS_SUP_USBNET_ATA
+
 #define FS_PLAT_CONFIG_FILE_CURRENT_VERSION           (0)
+#else
+// the version 1 use scalable plat cfg fs data structure, it's more useful when then data config grows dynamically
+#define FS_PLAT_CONFIG_FILE_CURRENT_VERSION           (1)
+#endif
 
 #define RAW_FLASH_PLAT_CONFIG_FILE_CURRENT_VERSION    (1)
 
@@ -60,6 +68,11 @@ typedef enum
 
 
 
+#if (FS_PLAT_CONFIG_FILE_CURRENT_VERSION==0)
+/*verion 0 orignal plat cfg, no change the data structure compare to released sdk,
+so no merge needed when new sdk release, and plat cfg fs will also not change 
+when new sdk burned. */
+
 /** \brief typedef of platform configuration stored in fs */
 typedef __PACKED_STRUCT _NVM_EPAT_plat_config
 {
@@ -98,8 +111,278 @@ typedef __PACKED_STRUCT _NVM_EPAT_plat_config
     *        1 -- ECQSCLK set to 1
     */
     uint8_t ecSclkCfg;
+
+    
 } plat_config_fs_t;
 
+#else
+/*version 1, scalable plat cfg, two method to update the config data structure
+1.The total data size for scalable area does not change when some new config data added, the reserved data array still have some bytes spare, 
+the added data just use one or some bytes of the reserved data array. 
+When the new config data added the upgrade is compatitble. and downgrade is also compatitble too. 
+If the new config data added is a automatical parameter, such as the usbNetAdaptResult, it's automatically setted by the UE connected with different Host Windows or Ubuntu.
+If the new config data added is not a automatical parameter, it should be setted to a meaningful value otherwise when upgrade ,it may not work correctly as required by the default 0.
+
+In this case, the plat cfg fs data will not be overwrited to fs  when both upgarde or downgrade initlal between the old/new sdk versions that plat cfg fs data size same .
+it's more convenient for lightly upgrade or downgrade.
+
+2.The total data size for scalable area is increased when some new config data added. because the reserved data array has no some bytes spare, 
+Increase the scalable area with some bytes each time, such as each time 16 bytes(_NVM_PLATCFG_SCALE_UNIT_SZ) for example. use one or some of the increased bytes by new added parameter, 
+some other bytes defined as reserverd data array.
+In this case, the plat cfg fs data will be writed when upgrade or downgrade ocurrs.
+
+Set recPrevArAllSzForUpg = scaleAreaAllSize - SCALE_AREA_SCALE_UNIT_SIZE
+
+
+2.1 Upgarde  from  previous plat cfg fs structure to a new added parameter new plat cfg fs structure.
+Provided condition: readed scalable area total size from plat cfg fs is not same with current scaleAreaAllSize real size
+
+
+If the readed scalable area total size from plat cfg fs is same with recPrevArAllSzForUpg, then it's upgradable.
+If not same with recPrevArAllSzForUpg, then it's not upgardable because may have a lot of difference between old/new versions.
+
+2.2 Downgrade from a new added parameter new plat cfg fs structure to  an old plat cfg fs structure.
+Provided condition: readed scalable area total size from plat cfg fs is not same with current scaleAreaAllSize var
+
+If the readed recPrevArAllSzForUpg from plat cfg fs is current scaleAreaAllSize real size, then it's downgradable.
+If recPrevArAllSzForUpg not same with current scaleAreaAllSize real size, then it's not downgradable because may have a lot of difference between old/new versions.
+*/
+
+#define _NVM_PLATCFG_SCALE_UNIT_SZ 16
+
+
+// S 53 C 43 A 41  L 4C
+#define PLAT_CFG_SCALE_START_MARK 0x4353   
+#define PLAT_CFG_SCALE_END_MARK 0x4C41
+
+
+
+
+#define PLAT_CFG_FIX_BASE_SIZE 18
+
+#define SCALE_AREA_GRP_UNIT_SIZE 16
+#define PLAT_CFG_GRP0_RSVBYTES_NUM 15
+#define PLAT_CFG_GRP0_TOKBYTES_NUM  (SCALE_AREA_GRP_UNIT_SIZE-PLAT_CFG_GRP0_RSVBYTES_NUM)
+
+
+#define PLAT_CFG_GRP_DATA_X(_TYPE_XX, __NAME_XX)  _TYPE_XX __NAME_XX
+#define PLAT_CFG_DATA_0(_TYPE_XX, __NAME_XX)  PLAT_CFG_DATA_X(_TYPE_XX, __NAME_XX)
+
+#define PLAT_CFG_GRP_RSV_BYTE_X(__GRP_XX, __IDX_XX) uint8_t  rsvBytes_##__GRP_XX##__IDX_XX
+
+#define PLAT_CFG_GRP0_ALL_TOK_BYTES()  \
+        uint8_t usbNetAdaptResult;          
+
+
+#define PLAT_CFG_GRP0_RSVBYTE_0()     PLAT_CFG_GRP_RSV_BYTE_X(0, 0);
+#define PLAT_CFG_GRP0_RSVBYTE_1()     PLAT_CFG_GRP_RSV_BYTE_X(0, 1);
+#define PLAT_CFG_GRP0_RSVBYTE_2()     PLAT_CFG_GRP_RSV_BYTE_X(0, 2);
+#define PLAT_CFG_GRP0_RSVBYTE_3()     PLAT_CFG_GRP_RSV_BYTE_X(0, 3);
+#define PLAT_CFG_GRP0_RSVBYTE_4()     PLAT_CFG_GRP_RSV_BYTE_X(0, 4);
+#define PLAT_CFG_GRP0_RSVBYTE_5()     PLAT_CFG_GRP_RSV_BYTE_X(0, 5);
+#define PLAT_CFG_GRP0_RSVBYTE_6()     PLAT_CFG_GRP_RSV_BYTE_X(0, 6);
+#define PLAT_CFG_GRP0_RSVBYTE_7()     PLAT_CFG_GRP_RSV_BYTE_X(0, 7);
+#define PLAT_CFG_GRP0_RSVBYTE_8()     PLAT_CFG_GRP_RSV_BYTE_X(0, 8);
+#define PLAT_CFG_GRP0_RSVBYTE_9()     PLAT_CFG_GRP_RSV_BYTE_X(0, 9);
+#define PLAT_CFG_GRP0_RSVBYTE_10()     PLAT_CFG_GRP_RSV_BYTE_X(0, 10);
+#define PLAT_CFG_GRP0_RSVBYTE_11()     PLAT_CFG_GRP_RSV_BYTE_X(0, 11);
+#define PLAT_CFG_GRP0_RSVBYTE_12()     PLAT_CFG_GRP_RSV_BYTE_X(0, 12);
+#define PLAT_CFG_GRP0_RSVBYTE_13()     PLAT_CFG_GRP_RSV_BYTE_X(0, 13);
+#define PLAT_CFG_GRP0_RSVBYTE_14()     PLAT_CFG_GRP_RSV_BYTE_X(0, 14);
+#define PLAT_CFG_GRP0_RSVBYTE_15()     PLAT_CFG_GRP_RSV_BYTE_X(0, 15);
+
+
+#define PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_0()  PLAT_CFG_GRP0_RSVBYTE_0() 
+
+#define PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_1()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_0()   \
+                                                                        PLAT_CFG_GRP0_RSVBYTE_1() 
+                                                                        
+#define PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_2()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_1()  \
+                                                                            PLAT_CFG_GRP0_RSVBYTE_2() 
+                                                                            
+#define PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_3()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_2() \
+                                                                                PLAT_CFG_GRP0_RSVBYTE_3() 
+
+#define PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_4()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_3() \
+                                                                                PLAT_CFG_GRP0_RSVBYTE_4() 
+                                                                                
+#define PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_5()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_4 ()\
+                                                                                    PLAT_CFG_GRP0_RSVBYTE_5() 
+
+#define PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_6()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_5() \
+                                                                                    PLAT_CFG_GRP0_RSVBYTE_6() 
+
+
+#define PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_7()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_6() \
+                                                                                    PLAT_CFG_GRP0_RSVBYTE_7() 
+
+
+#define PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_8()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_7() \
+                                                                                    PLAT_CFG_GRP0_RSVBYTE_8() 
+                                                                                    
+#define PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_9()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_8() \
+                                                                                        PLAT_CFG_GRP0_RSVBYTE_9() 
+                                                                                        
+#define PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_10()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_9() \
+                                                                                            PLAT_CFG_GRP0_RSVBYTE_10() 
+
+
+#define PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_11()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_10() \
+                                                                                            PLAT_CFG_GRP0_RSVBYTE_11() 
+
+
+
+#define PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_12()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_11()  \
+                                                                                            PLAT_CFG_GRP0_RSVBYTE_12() 
+
+
+#define PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_13()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_12() \
+                                                                                            PLAT_CFG_GRP0_RSVBYTE_13() 
+                                                                                            
+#define PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_14()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_13() \
+                                                                                            PLAT_CFG_GRP0_RSVBYTE_14() 
+
+#define PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_15()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_14() \
+                                                                                            PLAT_CFG_GRP0_RSVBYTE_15() 
+
+
+#if (PLAT_CFG_GRP0_RSVBYTES_NUM== 0)
+#define PLAT_CFG_GRP0_ALL_RSV_BYTES()   
+#elif (PLAT_CFG_GRP0_RSVBYTES_NUM==1)
+#define PLAT_CFG_GRP0_ALL_RSV_BYTES()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_0()
+#elif (PLAT_CFG_GRP0_RSVBYTES_NUM==2)
+#define PLAT_CFG_GRP0_ALL_RSV_BYTES()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_1()  
+#elif (PLAT_CFG_GRP0_RSVBYTES_NUM==3)
+#define PLAT_CFG_GRP0_ALL_RSV_BYTES()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_2()  
+#elif (PLAT_CFG_GRP0_RSVBYTES_NUM==4)
+#define PLAT_CFG_GRP0_ALL_RSV_BYTES()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_3()  
+#elif (PLAT_CFG_GRP0_RSVBYTES_NUM==5)
+#define PLAT_CFG_GRP0_ALL_RSV_BYTES()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_4()  
+#elif (PLAT_CFG_GRP0_RSVBYTES_NUM==6)
+#define PLAT_CFG_GRP0_ALL_RSV_BYTES()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_5()  
+#elif (PLAT_CFG_GRP0_RSVBYTES_NUM==7)
+#define PLAT_CFG_GRP0_ALL_RSV_BYTES()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_6()  
+#elif (PLAT_CFG_GRP0_RSVBYTES_NUM==8)
+#define PLAT_CFG_GRP0_ALL_RSV_BYTES()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_7()  
+#elif (PLAT_CFG_GRP0_RSVBYTES_NUM== 9)
+#define PLAT_CFG_GRP0_ALL_RSV_BYTES()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_8()  
+#elif (PLAT_CFG_GRP0_RSVBYTES_NUM==10)
+#define PLAT_CFG_GRP0_ALL_RSV_BYTES()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_9()  
+#elif (PLAT_CFG_GRP0_RSVBYTES_NUM==11)
+#define PLAT_CFG_GRP0_ALL_RSV_BYTES()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_10)  
+#elif (PLAT_CFG_GRP0_RSVBYTES_NUM==12)
+#define PLAT_CFG_GRP0_ALL_RSV_BYTES()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_11)  
+#elif (PLAT_CFG_GRP0_RSVBYTES_NUM==13)
+#define PLAT_CFG_GRP0_ALL_RSV_BYTES()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_12()  
+#elif (PLAT_CFG_GRP0_RSVBYTES_NUM==14)
+#define PLAT_CFG_GRP0_ALL_RSV_BYTES()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_13()  
+#elif (PLAT_CFG_GRP0_RSVBYTES_NUM==15)
+#define PLAT_CFG_GRP0_ALL_RSV_BYTES()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_14()  
+#elif (PLAT_CFG_GRP0_RSVBYTES_NUM==16)
+#define PLAT_CFG_GRP0_ALL_RSV_BYTES()  PLAT_CFG_GRP0_RANGE_RSV_BYTES_0_15()   
+#endif
+
+
+
+typedef  __PACKED_STRUCT plat_cfg_sc_grp0_tok_tag {                   
+    PLAT_CFG_GRP0_ALL_TOK_BYTES()         
+}plat_cfg_sc_grp0_tok_st;
+
+
+typedef  __PACKED_STRUCT plat_cfg_sc_grp0_all_data_tag {                   
+    PLAT_CFG_GRP0_ALL_TOK_BYTES()         
+    PLAT_CFG_GRP0_ALL_RSV_BYTES()           
+}plat_cfg_sc_grp0_all_data_st;
+
+
+#define SIZE_OF_TYPE_EQUAL_TO_SZX(type_x, size_x)       \
+        static inline char size_of##type_x##_equal_to_##size_x(void)  {     \
+            char __dummy1[sizeof(type_x) - size_x];                                      \
+            char __dummy2[size_x-sizeof(type_x)];                                       \
+            return __dummy1[-1]+__dummy2[-1];                                          \
+        }
+
+#define SIZE_OF_TYPE_EQUAL_TO_CALX(type_x, cal_sz_x)       \
+        static inline char size_of##type_x##_equal_to_cal_sz_x(void)  {     \
+            char __dummy1[sizeof(type_x) - (cal_sz_x)];                                      \
+            char __dummy2[(cal_sz_x)-sizeof(type_x)];                                       \
+            return __dummy1[-1]+__dummy2[-1];                                          \
+        }
+
+
+        
+typedef __PACKED_STRUCT _NVM_EPAT_plat_config
+{
+    /*do not change any variable function or name of base fix area if want to upgrade ,
+        because when sync para from prev plat config scale fs the para may be syncd unmatched and used uncorrectly*/        
+
+    /** PM on/off flag
+     *  valid value:
+     *        0x504D5544 -- PM is disabled, "PMUD"
+     *        0x504D5545 -- PM is enabled, "PMUE"
+     */
+    uint32_t enablePM;
+
+    /** sleep mode
+     *  valid value:
+     *        0 -- dummy
+     *        1 -- dummy
+     */
+    uint8_t sleepMode;
+
+    /** wait n ms before sleep, when wakeup from pad
+     *  valid value:
+     *        0 -- do not wait
+     *        x -- wait x ms
+     */
+    uint32_t slpWaitTime;
+
+    /** AT baudrate,for AP only
+     *  should be equal to 'atPortBaudRate' in struct plat_config_raw_flash_t
+     */
+    uint32_t atPortBaudRate;
+
+    /** AT port frame format*/
+    atPortFrameFormat_t atPortFrameFormat;
+
+    /** ECQSCLK config
+    *  valid value:
+    *        0 -- ECQSCLK set to 0
+    *        1 -- ECQSCLK set to 1
+    */
+    uint8_t ecSclkCfg;
+
+
+    /*Mark for reserve bytes area*/
+    uint16_t scaleAreaStartMark;
+
+    /*scalable area data define*/
+    /*do not change any variable function or name of used scale area data,
+        because when sync para from prev plat config scale fs the para may be syncd unmatched and used uncorrectly*/      
+    //scaleAreaPureData0        
+    //uint8_t usbNetAdaptResult;/*  7-4: Adapt valid, 3-0:adapt result*/
+
+    
+    //scaleAreaPureData1-   scaleAreaPureDataX X=(SCALE_AREA_SCALE_UNIT_SIZE-1)
+    //uint8_t scaleAreaSpareBytes[SCALE_AREA_SCALED_SPARE_SZ];
+    PLAT_CFG_GRP0_ALL_TOK_BYTES()
+    PLAT_CFG_GRP0_ALL_RSV_BYTES()
+    
+    uint16_t scaleAreaEndMark;
+
+    //scalable area data structure version, added 1 by customer if sometimes need to upgrade from specific scalable area verson to another specific scalable area version, 
+    //if not need specific upgrade,  set to defautl 0 ro add 1 just for record
+    uint16_t recScaleAreaGrpNum; 
+    
+    uint16_t recPrevArAllSzForUpg;
+    
+    //uint16_t scaleTimers;
+    uint16_t scaleAreaAllSize;
+} plat_config_fs_t;
+
+
+
+#endif
 
 /** \brief typedef of platform configuration stored in raw flash --old v0*/
 __PACKED_STRUCT _plat_config_raw_flash_v0
@@ -440,6 +723,7 @@ typedef enum _plat_config_id
     PLAT_CONFIG_ITEM_USB_VBUS_MODE_EN,       /**< USB VBUS MODE ENABLE, DISABLE*/
     PLAT_CONFIG_ITEM_USB_VBUS_WKUP_PAD,      /**< USB VBUS MODE WKUP PAD INDEX*/
     PLAT_CONFIG_ITEM_USB_NET,                /**< USB NET Select*/
+    PLAT_CONFIG_ITEM_USBNET_ATA_RESULT,       /*USB NET Autoadapt result */    
     PLAT_CONFIG_ITEM_USB_VCOM_EN_BMP,        /**< USB VCOM Enabled Bitmap*/
     PLAT_CONFIG_ITEM_FOTA_CONTROL, 	         /**< FOTA URC Port control*/
     PLAT_CONFIG_ITEM_FOTA_URC_PORT_SEL,      /**< FOTA URC Port Select*/
@@ -544,6 +828,21 @@ void BSP_SetFSAssertCount(uint32_t value);
   \return    void
  */
 void BSP_SetFsPorDefaultValue(void);
+
+/**
+  \fn        void BSP_SetPlatCfgUsbNetATAItemVal(void);
+  \brief     when USB net auto adapt enabled, to store the adapt result usb net type
+  \return    void
+ */
+void BSP_SetPlatCfgUsbNetATAItemVal(uint32_t val);
+
+/**
+  \fn        void BSP_GetPlatCfgUsbNetATAEnabled(void);
+  \brief     when USB net type config equal to ATC_ECPCFG_USBNET_VAL_AUTOADAPT_TYPE auto adapt enabled, return 1, other return 0
+  \return    void
+ */
+uint32_t BSP_GetPlatCfgUsbNetATAEnabled(void);
+
 
 #ifdef __cplusplus
 }

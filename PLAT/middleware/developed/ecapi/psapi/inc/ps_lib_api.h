@@ -595,6 +595,11 @@ typedef struct GetPinStateCnfParams_Tag
 GetPinStateCnfParams;
 
 /******************************************************************************
+ *Get CPINR params struct
+******************************************************************************/
+typedef CmiSimQueryRemianPinRetriesCnf    RemianPinRetriesParams;
+
+/******************************************************************************
  *Manual PLMN Search result struct
 ******************************************************************************/
 #define PLMN_STR_MAX_LENGTH 7
@@ -940,6 +945,17 @@ CmsRetId appSetPinOperationSync(SetPinOperReqParams *pPinOperReqParams);
   \returns     CmsRetId
 */
 CmsRetId appGetPINStateSync(GetPinStateType type, GetPinStateCnfParams *pGetPinStateCnfParams);
+
+/**
+  \fn          CmsRetId appGetRemainPINRetriesSync
+  \brief       Send cmi request to get the remaining PIN retries
+  \param[in]   UINT8 sleCode, select pin code, refer to CmiSimPinNum
+  \param[out]  RemianPinRetriesParams *pRemianPinRetriesParams, the pointer to the RemianPinRetriesParams
+  \returns     CmsRetId
+  \NOTE:       This API implements the feature as AT+CPINR[=<sel_code>]
+*/
+CmsRetId appGetRemainingPINRetriesSync(UINT8 sleCode,
+                                               RemianPinRetriesParams *pRemianPinRetriesParams);
 
 /**
   \fn          appSetSimCCHOSync

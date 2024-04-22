@@ -256,8 +256,13 @@ flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 #define PSRAM_END_ADDR                  (0x10200000)
 #define PSRAM_TOTAL_LENGTH              (PSRAM_END_ADDR-PSRAM_START_ADDR)
 
+
 #ifdef OPEN_CPU_MODE
+#if FEATURE_IMS_ENABLE
+#define min_heap_size_threshold 0x3E800//isms heap(+ 150KB) will also use heap
+#else
 #define min_heap_size_threshold 0x19000
+#endif
 #ifdef FEATURE_MORERAM_ENABLE
 #define up_buf_start 0x4A0000   // should be 4 byte align
 #define UP_BUF_MAX_SIZE 0x3CA00//only upbuf size, need another 512B for other buf also in this region

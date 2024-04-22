@@ -25,6 +25,7 @@ __attribute__((weak)) const AudioConfig_t audio_cfg_default =
 	    .CVT_ANS = {
 	    .bypass = 0,
 	    .mode = 0,
+	    .eqBypass = 0,
 	    },
 #endif
 
@@ -75,6 +76,7 @@ __attribute__((weak)) const AudioConfig_t audio_cfg_default =
 	    .CVT_ANS_RX = {
 	    .bypass = 1,
 	    .mode = 0,
+	    .eqBypass = 0,
 	    },
 #endif
 

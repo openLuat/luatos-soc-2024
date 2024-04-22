@@ -372,6 +372,7 @@ bool onenetDLBufferIsEnable(UINT32 onenetId, cisDLBufType type);
 void onenetDLPush2Buffer(cisDLBufferInfo bufInfo);
 void onenetDLBufferInfoCheck(uint8_t *pBuffered, uint16_t *pBufferedSize, uint32_t *pRecvCnt, uint32_t *pDropCnt);
 bool onenetDLPopout(void);
+void onenetDLClearAll(void);
 
 INT32 onenetRspTimeoutConfig(UINT32 onenetId, UINT8 rsp_timeout);
 void onenetRspTimeoutGet(UINT32 onenetId, UINT8 *rsp_timeout);

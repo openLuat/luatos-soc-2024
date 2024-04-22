@@ -9,17 +9,36 @@
 
 #define TICK_LOAD_VALUE 0x800000  //256 seconds for tick period
 
+
 #ifdef EC_ASSERT
 #undef EC_ASSERT
 #endif
 #define EC_ASSERT(x,v1,v2,v3)
 
+#if (FOTA_PRESET_RAM_ENABLE == 1)
+extern int EC_Printf(const char * pFormat, ...);
+extern int EC_Sprintf(char *pBuf, const char * pFormat, ...);
+
+#define BL_TRACE(fmt,args...)        EC_Printf(fmt, ##args)
+#define BL_SPRINTF(buf,args...)      EC_Sprintf(buf, ##args)
+
 #ifdef ECPLAT_PRINTF
 #undef ECPLAT_PRINTF
 #endif
-
-extern int EC_Printf(const char * pFormat, ...);
 #define ECPLAT_PRINTF(moduleId, subId, debugLevel, format, ...)    EC_Printf(format, ##__VA_ARGS__)
+
+#else
+#define BL_TRACE(fmt,args...)        printf(fmt, ##args)
+#define BL_SPRINTF(buf,args...)      sprintf(buf, ##args)
+
+#ifdef ECPLAT_PRINTF
+#undef ECPLAT_PRINTF
+#endif
+#define ECPLAT_PRINTF(moduleId, subId, debugLevel, format, ...)    printf(format, ##__VA_ARGS__)
+
+#endif
+
+
 
 extern void trace(char*log,int len);
 extern void show_err(uint32_t err);

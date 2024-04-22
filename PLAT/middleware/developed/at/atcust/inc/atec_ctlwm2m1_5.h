@@ -58,7 +58,6 @@ CmsRetId  ctm2mSETMOD(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  ctlwSETAUTH(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  ctm2mSETPM(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  ctm2mSETPSK(const AtCmdInputContext *pAtCmdReq);
-CmsRetId  ctm2mIDAUTHPM(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  ctm2mREG(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  ctm2mUPDATE(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  ctm2mDEREG(const AtCmdInputContext *pAtCmdReq);

@@ -37,7 +37,7 @@ extern "C" {
  *                    MACROS                                                  *
  *----------------------------------------------------------------------------*/
 
-//#pragma pack(1)
+#pragma pack(1)
 
 #define TX_AEC
 #define TX_ANS
@@ -105,30 +105,30 @@ struct IirBiquardState
     int16_t s0, s1, s2;
 };
 
-typedef __PACKED_STRUCT _EPAT_BiquardParam_raw
+typedef struct _EPAT_BiquardParam_raw
 {
     int16_t a1; int16_t a2; int16_t b0; int16_t b1; int16_t b2;
 }biquardParam_raw;
 
-typedef __PACKED_STRUCT _EPAT_BiquardParam_design
+typedef struct _EPAT_BiquardParam_design
 {
     int16_t f0; int16_t gain; int16_t q;
 }biquardParam_design;
 
-typedef __PACKED_UNION _EPAT_BiquardParam_filt
+typedef union _EPAT_BiquardParam_filt
 {
     biquardParam_raw raw;
     biquardParam_design design;
 }biquardParam_filt;
 
-typedef __PACKED_STRUCT _EPAT_BiquardParam_t
+typedef struct _EPAT_BiquardParam_t
 {
     //enum IIR_BIQUARD_TYPE type;
     IIR_BIQUARD_TYPE type;
     biquardParam_filt filt;
 }BiquardParam;
 
-typedef __PACKED_STRUCT _EPAT_EqConfig_t
+typedef struct _EPAT_EqConfig_t
 {
     int32_t     bypass;
     int         gain;
@@ -139,6 +139,7 @@ typedef __PACKED_STRUCT _EPAT_EqConfig_t
 typedef struct _EPAT_AnsConfig_t{
     int8_t    bypass;
     int8_t    mode;
+    int16_t   eqBypass;
     uint16_t  eqBand[MAX_ANS_EQ_BAND];
 } AnsConfig_t;
 
@@ -190,7 +191,7 @@ typedef struct _EPAT_AudioConfig_t{
 } AudioConfig_t;
 
 
-//#pragma pack()
+#pragma pack()
 
 
 /*----------------------------------------------------------------------------*

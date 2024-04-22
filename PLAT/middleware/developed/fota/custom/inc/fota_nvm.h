@@ -31,9 +31,6 @@ extern "C" {
 /*----------------------------------------------------------------------------*
  *                    MACROS                                                  *
  *----------------------------------------------------------------------------*/
-/* will file system is enabled? */
-//#define FOTA_NVM_FS_ENABLE
-
 #define fotaNvmClearRemap(offset, len)       fotaNvmClear(FOTA_NVM_ZONE_REMAP, offset, len)
 #define fotaNvmWriteRemap(offset, buf, len)  fotaNvmWrite(FOTA_NVM_ZONE_REMAP, offset, buf, len)
 #define fotaNvmReadRemap(offset, buf, len)   fotaNvmRead(FOTA_NVM_ZONE_REMAP, offset, buf, len)

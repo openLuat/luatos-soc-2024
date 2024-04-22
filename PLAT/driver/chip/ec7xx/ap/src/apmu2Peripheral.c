@@ -9,6 +9,8 @@ void usblpw_enter_start_proc(bool force_cfg_pwr_down);
 void usblpw_enter_abort_proc(bool force_cfg_pwr_down);
 void usblpw_susp2vbustbl_guard_dlychk(uint32_t cur_tick);
 void usblpw_susp2hib_guard_dlychk(uint32_t cur_tick);
+void usblpw_rmtwkup_monbus_dlychk(uint32_t cur_tick, uint32_t penalty_tick);
+
 void usblpw_retwkup_sleep1_later_recovery(void);
 void usblpw_retwkup_sleep1_pre_recovery(void);
 #endif
@@ -60,6 +62,11 @@ void apmuPeriUsbSusp2HibGuardDlyChk(uint32_t cur_tick)
 #if (RTE_USB_EN == 1)
     usblpw_susp2hib_guard_dlychk(cur_tick);
 #endif
+}
+
+void apmuPeriUsbRmtWkupMonBusDlyChk(uint32_t cur_tick)
+{
+    usblpw_rmtwkup_monbus_dlychk(cur_tick, 1000);
 }
 
 void apmuPeriUsbSleep1LateRecoverFlow(bool sleepSuccess)
