@@ -22,6 +22,16 @@ target(project_name,function()
     -- 将下面注释打开并将上一行代码注释，即可演示widgets demo
     -- add_files("./src/demo_widgets.c",{public = true})
 
+    -- 下面为外部flash font示例
+    -- add_files("./src/demo_font_flash.c","./src/lvgl_flash_fonts.c")
+    -- add_files("./src/bin2c.c")
+    -- -- sfud
+    -- -- add_defines("SFUD_USING_FAST_READ")--根据自己flash是否支持自行设置，spi频率一定要高，低速不要开启，反而会更慢
+    -- add_defines("LUAT_USE_SFUD",{public = true})
+    -- add_includedirs(luatos_root.."/components/sfud",{public = true})
+    -- add_files(luatos_root.."/components/sfud/*.c")
+	-- remove_files(luatos_root.."/components/sfud/luat_lib_sfud.c")
+
 
     add_includedirs(luatos_root.."/components/u8g2", {public = true})
     add_includedirs(luatos_root.."/components/lcd", {public = true})
