@@ -11,6 +11,7 @@ add_defines("LTO_FEATURE_MODE",
             "__BL_MODE__",
             "FEATURE_FOTA_HLS_ENABLE",
             "FEATURE_FOTA_USBURC_ENABLE",
+            "FOTA_PRESET_RAM_ENABLE=1",
             "DEBUG_LOG_HEADER_FILE=\"debug_log_dummy.h\""
             )
 add_cxflags("-flto",
