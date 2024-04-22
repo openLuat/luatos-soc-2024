@@ -312,9 +312,29 @@ gcc下载连接参考 csdk.lua中的连接，选择对应平台下载
 
 3，github包是否可以加速？
 
-`xmake g --proxy_pac=github_mirror.lua`可设置内置的github加速镜像
+答:`xmake g --proxy_pac=github_mirror.lua`可设置内置的github加速镜像
 
+4，更新xmake时候windows报毒怎么办？
 
+答:xmake是完全开源的，可以放心使用，误报手动允许即可
+
+5，更新xmake后使用遇到
+
+```powershell
+PS F:\luatos-soc-2024\project\luatos> xmake f --menu
+checking for Microsoft Visual Studio (x64) version ... 2022
+updating repositoerror: Updating 2c9ad29..695dd08
+ke-mirror/build-artifacts
+ * branch            main       -> FETCH_HEAD
+error: Your local changes to the following files would be overwritten by merge:
+        packages/xxx
+Please commit your changes or stash them before you merge.
+Aborting
+```
+
+报错怎么办
+
+答:最直接的方式是删除  %localappdata%/.xmake/repositories (通常为 C:\Users\用户名\AppData\Local\\.xmake\repositories) 之后重新执行即可
 
 更多问题可自己看[xmake](https://xmake.io/#/)文档
 
