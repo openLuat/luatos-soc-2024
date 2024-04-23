@@ -830,7 +830,6 @@ int luat_mobile_set_band(uint8_t *band,  uint8_t total_num)
 	return (appSetBandModeSync(total_num, band) == 0)?0:-1;
 }
 
-
 static CmsRetId luatSetPSMSettingTest(UINT8 psmMode)
 {
     CmsRetId            cmsRet = CMS_RET_SUCC;
@@ -1063,3 +1062,71 @@ uint8_t soc_mobile_is_sync_time_enable(void) {return luat_mobile_sync_time_enabl
 
 void luat_mobile_set_sync_time(uint8_t on_off) {luat_mobile_sync_time_enable = on_off;}
 uint8_t luat_mobile_get_sync_time(void) {return luat_mobile_sync_time_enable;}
+
+int luat_mobile_softsim_onoff(uint8_t on_off)
+{
+	EcSimCfgGetParams pEcSimCfgGetParams = {0};
+
+	appGetECSIMCFGSync(&pEcSimCfgGetParams);
+	if (pEcSimCfgGetParams.bSoftSim != on_off)
+	{
+		CmsRetId                cmsRet = CMS_RET_SUCC;
+		CmiSimSetExtCfgReq      cmiReq = {0};
+		CmiSimSetExtCfgCnf      cmiCnf = {0};
+		AppPsCmiReqData         psCmiReqData = {0};
+		cmiReq.bSoftSim = on_off;
+		cmiReq.softsimPresent = TRUE;
+
+	    psCmiReqData.sgId        = CAM_SIM;
+	    psCmiReqData.reqPrimId   = CMI_SIM_SET_EXT_CFG_REQ;
+	    psCmiReqData.cnfPrimId   = CMI_SIM_SET_EXT_CFG_CNF;
+	    psCmiReqData.reqParamLen = sizeof(cmiReq);
+	    psCmiReqData.pReqParam   = &cmiReq;
+
+	    /* output here */
+	    psCmiReqData.cnfBufLen = sizeof(cmiCnf);
+	    psCmiReqData.pCnfBuf   = &cmiCnf;
+
+	    cmsRet = appPsCmiReq(&psCmiReqData, CMS_MAX_DELAY_MS);
+
+	    if (cmsRet != CMS_RET_SUCC || psCmiReqData.cnfRc != CME_SUCC)
+	    {
+	        return -1;
+	    }
+	}
+	return 0;
+}
+
+int luat_mobile_sim_detect_onoff(uint8_t on_off)
+{
+	EcSimCfgGetParams pEcSimCfgGetParams = {0};
+
+	appGetECSIMCFGSync(&pEcSimCfgGetParams);
+	if (pEcSimCfgGetParams.bSimPreDetect != on_off)
+	{
+		CmsRetId                cmsRet = CMS_RET_SUCC;
+		CmiSimSetExtCfgReq      cmiReq = {0};
+		CmiSimSetExtCfgCnf      cmiCnf = {0};
+		AppPsCmiReqData         psCmiReqData = {0};
+		cmiReq.bSimPreDetect = on_off;
+		cmiReq.simPreDetectPresent = TRUE;
+
+	    psCmiReqData.sgId        = CAM_SIM;
+	    psCmiReqData.reqPrimId   = CMI_SIM_SET_EXT_CFG_REQ;
+	    psCmiReqData.cnfPrimId   = CMI_SIM_SET_EXT_CFG_CNF;
+	    psCmiReqData.reqParamLen = sizeof(cmiReq);
+	    psCmiReqData.pReqParam   = &cmiReq;
+
+	    /* output here */
+	    psCmiReqData.cnfBufLen = sizeof(cmiCnf);
+	    psCmiReqData.pCnfBuf   = &cmiCnf;
+
+	    cmsRet = appPsCmiReq(&psCmiReqData, CMS_MAX_DELAY_MS);
+
+	    if (cmsRet != CMS_RET_SUCC || psCmiReqData.cnfRc != CME_SUCC)
+	    {
+	        return -1;
+	    }
+	}
+	return 0;
+}
