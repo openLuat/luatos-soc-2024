@@ -45,6 +45,7 @@
 #include "ccio_misc.h"
 #include "hal_voice_eng.h"
 #include "hal_voice_eng_mem.h"
+#include "mw_nvm_audio.h"
 
 typedef struct
 {
@@ -52,6 +53,7 @@ typedef struct
 	HalVoiceDecodeReq decode_req;
 	HalVoiceEncodeCnf encode_cnf;
 	HalVoiceDecodeCnf decode_cnf;
+	void *need_free;
 	uint16_t *bit_table;
 	uint8_t *byte_table;
 	uint8_t max_frame_type;
@@ -706,6 +708,7 @@ static void amrEngCallback(uint32_t msgId, void *msg)
 	ec7xx_voice_eng_ctrl_t *eng = (ec7xx_voice_eng_ctrl_t *)prv_audio_config.hardware_data;
     HalVoiceEncodeCnf *msgEn  = (HalVoiceEncodeCnf *)msg;
     HalVoiceDecodeCnf *msgDe  = (HalVoiceDecodeCnf *)msg;
+    HalVoiceCodecConfigCnf *configCnf = (HalVoiceCodecConfigCnf *)msg;
     switch (msgId)
     {
         case HAL_VOICE_ENCODE_CNF:
@@ -716,7 +719,9 @@ static void amrEngCallback(uint32_t msgId, void *msg)
             break;
         case HAL_VOICE_ENG_START_CNF:
         case HAL_VOICE_ENG_STOP_CNF:
+        	break;
         case HAL_VOICE_CODEC_CONFIG_CNF:
+        	eng->need_free = configCnf->pAudioPara;
         	break;
         default:
             return;
@@ -821,10 +826,25 @@ void luat_audio_inter_amr_init(uint8_t is_wb, uint8_t quality)
     	DBG("failed!");
     }
     eng->wait_flag = HAL_VOICE_CODEC_CONFIG_CNF;
+
+    AudioConfig_t *audioCfg = malloc(sizeof(audioCfg));
+    if (audioCfg && mwNvmGetAudioCfgForCP(audioCfg))
+    {
+    	codecCfg.pAudioPara = audioCfg;
+    }
     halVoiceCodecConfigReq(&codecCfg);
     if (luat_audio_inter_amr_wait(eng))
     {
     	DBG("failed!");
+    }
+    if (eng->need_free == audioCfg)
+    {
+    	free(eng->need_free);
+    	eng->need_free = NULL;
+    }
+    else
+    {
+    	DBG("%x,%x", audioCfg, eng->need_free);
     }
 #ifdef __LUATOS__
 	return prv_audio_config.hardware_data;
