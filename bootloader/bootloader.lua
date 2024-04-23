@@ -69,6 +69,7 @@ target("ap_bootloader.elf",function()
         add_linkdirs(csdk_root.."/PLAT/prebuild/PLAT/lib/gcc/"..(chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6).."/"..lib_ps_plat)
         add_linkdirs(csdk_root.."/PLAT/libs/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(lib_ps_plat=="mid"and"-mid"or"").."/bootloader")
     end
+
     add_linkdirs(csdk_root.."/lib/")
     add_linkgroups("driver","startup","core_airm2m","lzma","driver_private_bl","bootloader","usbbl_priv",
                     "osa","middleware_ec","middleware_ec_private","ccio","fota","deltapatch2","ffota_eflash", {whole = true})

@@ -27,10 +27,6 @@ function description_csdk()
             add_cxflags("-fno-strict-aliasing",{force=true})
         end
         
-        if chip_target == "ec716e" then
-            add_defines("FEATURE_MORERAM_ENABLE")
-        end
-        
         if use_lto then
             -- 开启 lto
             add_defines("LTO_FEATURE_MODE")
