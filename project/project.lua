@@ -3,7 +3,7 @@ function description_csdk()
     if has_config("chip_target") then 
         chip_target = get_config("chip_target")
         use_lto = false
-        if chip_target == "ec716s" or chip_target == "ec716e" or chip_target == "ec718s" then 
+        if chip_target == "ec716s" or chip_target == "ec718s" then 
             use_lto = true
         elseif os.getenv("LTO_FEATURE_MODE") == "enable" then 
             use_lto = true
