@@ -223,6 +223,11 @@ csdk_root = "../../" --csdk根目录,可自行修改
     -- libftp
     add_includedirs(luatos_root.."/components/network/libftp", {public = true})
     add_files(luatos_root.."/components/network/libftp/*.c")
+    -- ulwip和natp
+    add_includedirs(luatos_root.."/components/network/adapter_lwip2", {public = true})
+    add_files(luatos_root.."/components/network/adapter_lwip2/**.c")
+    add_includedirs(luatos_root.."/components/network/ulwip/include", {public = true})
+    add_files(luatos_root.."/components/network/ulwip/**.c")
     -- sfd
     add_includedirs(luatos_root.."/components/sfd", {public = true})
     add_files(luatos_root.."/components/sfd/*.c")

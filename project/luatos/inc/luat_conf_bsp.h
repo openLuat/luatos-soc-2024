@@ -30,6 +30,8 @@
 #define LUAT_USE_WEBSOCKET 1
 #define LUAT_USE_IO_QUEUE 1
 // #define LUAT_USE_RNDIS 1
+// #define LUAT_USE_ULWIP 1
+// #define LUAT_USE_NAPT 1
 
 //----------------------------
 // 常用工具库, 按需启用, cjson和pack是强烈推荐启用的
@@ -116,6 +118,7 @@
 // 4. 使用8k的资源文件可节省100k,音质见仁见智,可选
 // ------------------------------
 #define LUAT_USE_MEDIA    1
+// #define LUAT_USE_RECORD     1
 // #define LUAT_USE_TTS    1
 // #define LUAT_USE_TTS_ONCHIP    1
 // // 仅开启TTS, 禁用AMR/MP3的解码
@@ -485,6 +488,10 @@
 #if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
 #define LUAT_USE_INTER_AMR	1
 #endif
+#endif
+
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+#define LUAT_USE_PSRAM
 #endif
 
 #endif
