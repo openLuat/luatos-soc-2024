@@ -25,7 +25,8 @@
 #include "slpman.h"
 #include "FreeRTOS.h"
 #include "pwrkey.h"
-
+#include "charge.h"
+#include "pad.h"
 #define GPIO_ALT_MAX (4)
 
 __attribute__((weak)) int luat_gpio_irq_default(int pin, void* args)
