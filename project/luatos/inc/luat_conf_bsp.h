@@ -490,4 +490,8 @@
 #endif
 #endif
 
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+#define LUAT_USE_PSRAM
+#endif
+
 #endif
