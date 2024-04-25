@@ -1,5 +1,6 @@
 #include "wdt.h"
 #include "clock.h"
+#include "slpman.h"
 int luat_wdt_init(size_t timeout)
 {
     if(timeout < 1 || timeout > 60)
