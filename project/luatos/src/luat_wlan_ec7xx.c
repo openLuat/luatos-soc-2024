@@ -84,3 +84,4 @@ int luat_wlan_scan_get_result(luat_wlan_scan_result_t *results, size_t ap_limit)
     }
     return ap_limit;
 }
+
