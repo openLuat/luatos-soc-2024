@@ -202,7 +202,7 @@ uint32_t luat_lcd_service_cache_len(void)
 	return (uint32_t)(g_s_lcd.wait_bytes - g_s_lcd.done_bytes);
 }
 
-uint32_t luat_lcd_service_debug(void)
+void luat_lcd_service_debug(void)
 {
 	DBG("%llu, %llu", g_s_lcd.wait_bytes , g_s_lcd.done_bytes);
 }
