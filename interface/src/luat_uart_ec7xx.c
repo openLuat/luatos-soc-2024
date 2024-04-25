@@ -160,6 +160,7 @@ static int32_t luat_uart_cb(void *pData, void *pParam){
         case UART_CB_ERROR:
             break;
 	}
+	return 0;
 }
 
 int luat_uart_exist(int uartid) {
