@@ -242,9 +242,17 @@
                     {
                         "name": "rndis",
                         "content": "RNDIS功能",
-                        "rsize": 3756,
+                        "rsize": 1024,
                         "fsize": 275108,
-                        "dft": false
+                        "dft": false,
+                        "children" : [
+                            {
+                                "name": "rndis_nat_enable",
+                                "content": "RNDIS支持NAT方式",
+                                "rsize": 1024,
+                                "fsize": 275108
+                            }
+                        ]
                     },
                     {
                         "name": "mqtt",
