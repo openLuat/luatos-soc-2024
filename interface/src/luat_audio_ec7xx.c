@@ -27,7 +27,7 @@
 #include "luat_multimedia.h"
 #include "audio_play.h"
 #include "soc_service.h"
-
+#include "driver_gpio.h"
 #include "soc_spi.h"
 #include "ivTTSSDKID_all.h"
 #include "ivTTS.h"
@@ -602,6 +602,7 @@ int luat_audio_play_blank(uint8_t multimedia_id, uint8_t on_off)
 		I2S_Start(prv_audio_config.codec_conf.i2s_id, 1, 16000, 2);
 		I2S_TransferLoop(prv_audio_config.codec_conf.i2s_id, NULL, 3200, 2, 0);
 	}
+	return 0;
 }
 
 int luat_audio_record_and_play(uint8_t multimedia_id, uint32_t sample_rate, const uint8_t *play_buffer, uint32_t one_trunk_len, uint32_t total_trunk_cnt)
@@ -620,6 +621,7 @@ int luat_audio_record_and_play(uint8_t multimedia_id, uint32_t sample_rate, cons
 	{
 		luat_audio_pa(multimedia_id,1, 0);
 	}
+	return 0;
 }
 
 int luat_audio_record_stop(uint8_t multimedia_id)
@@ -700,6 +702,7 @@ int luat_audio_speech_stop(uint8_t multimedia_id)
 		DBG("load rx len %d", i2s_conf->cb_rx_len);
 	}
 	prv_audio_config.i2s_rx_cb_save = 0;
+	return 0;
 }
 
 #if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
