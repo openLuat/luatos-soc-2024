@@ -41,7 +41,7 @@
 #include "luat_lvgl.h"
 #endif
 #include "luat_errdump.h"
-
+#include "net_lwip.h"
 #include "cmisim.h"
 #include "reset.h"
 #include "cms_util.h"
