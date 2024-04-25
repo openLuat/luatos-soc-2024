@@ -8,7 +8,7 @@
 #ifndef CORE_INCLUDE_SOC_SERVICE_H_
 #define CORE_INCLUDE_SOC_SERVICE_H_
 #include "common_api.h"
-#define RNDIS_CID	5
+#define RNDIS_CID	8
 #define IMS_CID	15
 typedef enum SOC_MISC_EVENT
 {
