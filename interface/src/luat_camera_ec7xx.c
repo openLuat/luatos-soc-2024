@@ -20,10 +20,13 @@
  */
 #include "luat_base.h"
 #include "luat_rtos.h"
+#include "luat_fs.h"
 #include "common_api.h"
 #include "luat_camera.h"
 #include "driver_usp.h"
 #include "soc_image_decode.h"
+#include "driver_gpio.h"
+#include "tiny_jpeg.h"
 
 typedef struct
 {
@@ -300,6 +303,7 @@ int luat_camera_start(int id)
 	{
 		luat_rtos_event_send(luat_camera_app.task_handle, LUAT_CAMERA_EVENT_FRAME_NEW, 0, 0, 0, 0);
 	}
+	return 0;
 #else
 	return -1;
 #endif
@@ -329,6 +333,7 @@ int luat_camera_stop(int id)
 		luat_rtos_event_send(luat_camera_app.task_handle, LUAT_CAMERA_EVENT_STOP, 0, 0, 0, 0);
 	}
 	luat_camera_app.raw_mode = 0;
+	return 0;
 #else
 	return -1;
 #endif
@@ -594,7 +599,7 @@ int luat_camera_capture(int id, uint8_t quality, const char *path)
 	return -1;
 }
 
-int luat_camera_work_mode(id, mode)
+int luat_camera_work_mode(int id, int mode)
 {
 	if (g_s_camera[id].is_init)
 	{
