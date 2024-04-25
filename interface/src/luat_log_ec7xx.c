@@ -7,13 +7,13 @@
 #include "luat_log.h"
 #include "luat_uart.h"
 #include "printf.h"
-// #include "luat_conf_bsp.h"
+
 #ifdef LUAT_USE_SHELL
 #include "luat_cmux.h"
 extern luat_cmux_t cmux_ctx;
 #endif
 
-// #include "cms_def.h"
+extern void soc_vsprintf(uint8_t no_print, const char *fmt, va_list ap);
 
 extern void soc_debug_out(char *string, uint32_t size);
 static uint32_t luat_log_uart_port = 0;

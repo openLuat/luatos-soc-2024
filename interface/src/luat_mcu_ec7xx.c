@@ -27,6 +27,7 @@
 #include "luat_mcu.h"
 #include "driver_gpio.h"
 #include "plat_config.h"
+#include "reset.h"
 
 long luat_mcu_ticks(void) {
     return xTaskGetTickCount();

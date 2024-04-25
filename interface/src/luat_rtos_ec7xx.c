@@ -27,6 +27,7 @@
 #include "semphr.h"
 #include "timers.h"
 #include "cmsis_os2.h"
+#include "event_groups.h"
 typedef struct
 {
 	void *timer;

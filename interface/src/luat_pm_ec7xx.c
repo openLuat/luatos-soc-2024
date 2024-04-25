@@ -9,6 +9,8 @@
 #include "driver_gpio.h"
 #include "common_api.h"
 #include "plat_config.h"
+#include "reset.h"
+#include "luat_wdt.h"
 #ifdef __LUATOS__
 #include "luat_msgbus.h"
 #define LUAT_LOG_TAG "pm"

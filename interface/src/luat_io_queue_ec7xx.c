@@ -22,7 +22,8 @@
 #include "luat_base.h"
 #include "common_api.h"
 #include "luat_lib_io_queue.h"
-
+#include "driver_gpio.h"
+#include "core_hwtimer.h"
 #ifdef __LUATOS__
 #include "luat_msgbus.h"
 static int32_t luat_io_queue_done_cb(void *pData, void *pParam)
