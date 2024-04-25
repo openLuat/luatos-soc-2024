@@ -1,8 +1,8 @@
 DbVersion
-1209471117,100
+1382444479,100
 <end>
 BuildInfo
-The current data file was built by the Application Ver. 2.2.81.216, Thu Apr 25 10:46:29 2024
+The current data file was built by the Application Ver. 2.2.81.216, Thu Apr 25 15:30:38 2024
 <end>
 EnumVals
 0,0,0,0,PHY_ONLINE,PHY_ICS_MODULE,PhyIcsMeasMainEntrance_0,P_INFO,swLogPrintf("ICS MEAS of euArfcn %d will be started ");
@@ -2281,34 +2281,39 @@ f4cd1cb4097b19f78b630924f40d36e734b252a85b42aaa8492f7b40ff9be0c9785d835c8948e0b8
 277504,568399871,0,0,PLAT_AP,PS_DIAL,psDialNetProcApplInd_unbind_1,P_VALUE,swLogPrintf("PS DIAL NET , ETH unbind , check whether need to rebind ");
 277504,568399872,0,0,PLAT_AP,PS_DIAL,psDialNetAutoDialCheck_0,P_VALUE,swLogPrintf("PS DIAL NET , cancel Auto Dial Check due to usbCtrl %d ");
 277504,568403967,0,0,PLAT_AP,PS_DIAL,psDialNetAutoDialCheck_2,P_VALUE,swLogPrintf("PS DIAl NET , getAllBearersCidsBasicInfo failed , report bind failure ");
-277504,568404736,0,0,PLAT_AP,PS_DIAL,psDialNetInit_2,P_VALUE,swLogPrintf("PS DIAL , Ethlan config , ethLocalAddr : %u.%u.%u.%u ");
-277504,568406016,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_s_1,P_INFO,swLogPrintf("PS DIAL ISR , proc CP event : %e<CpPagingImgEventId> ");
-277504,568408064,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_w_1,P_WARNING,swLogPrintf("PS DIAL , CMS task already created , forward the CP event : %d , to task ");
-277504,568412159,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_paging_1,P_SIG,swLogPrintf("PS DIAL ISR , need wakeup AP & CP , as recv UE paging ");
-277504,568414207,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_paging_2,P_WARNING,swLogPrintf("PS DIAL ISR , only need wakeup AP , as recv UE paging ");
-277504,568416255,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_serving_1,P_SIG,swLogPrintf("PS DIAL ISR , need wakeup AP & CP , as serving cell measurement ");
-277504,568418303,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_serving_2,P_SIG,swLogPrintf("PS DIAL ISR , only need wakeup AP , as serving cell measurement ");
-277504,568420351,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_cell_reselect_1,P_SIG,swLogPrintf("PS DIAL ISR , need wakeup AP & CP , as need cell re-selection ");
-277504,568422399,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_cell_reselect_2,P_WARNING,swLogPrintf("PS DIAL ISR , only need wakeup AP , as need cell re-selection ");
-277504,568424447,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_cell_meas_1,P_SIG,swLogPrintf("PS DIAL ISR , need wakeup AP & CP , as cell measurement event ");
-277504,568426495,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_cell_meas_2,P_SIG,swLogPrintf("PS DIAL ISR , only need wakeup AP , as cell measurement event ");
-277504,568426496,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_err_1,P_ERROR,swLogPrintf("PS DIAL ISR , can ' t proc CP event : %d ");
-277504,568430591,0,0,PLAT_AP,PS_DIAL,cmsWakeupCheckPagingEvent_paging_s_1,P_SIG,swLogPrintf("PS DIAL , UE paging event to RRC ");
-277504,568432639,0,0,PLAT_AP,PS_DIAL,psDialWakeupCheckPagingEvent_meas_s_1,P_SIG,swLogPrintf("PS DIAL , UE measure event to RRC ");
-277504,568434687,0,0,PLAT_AP,PS_DIAL,psDialWakeupCheckPagingEvent_reselect_s_1,P_SIG,swLogPrintf("PS DIAL , UE re-select event to RRC ");
-277504,568434688,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingEventIndIsrSig_s_1,P_SIG,swLogPrintf("PS DIAL , PS is ready , forward CP event : %d , to RRC ");
-277504,568436736,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingEventIndIsrSig_paging_1,P_SIG,swLogPrintf("PS DIAL , need wakeup PS , as recv UE paging , ret : %d ");
-277504,568438784,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingEventIndIsrSig_serving_1,P_SIG,swLogPrintf("PS DIAL , need wakeup PS , as serving cell measurement , ret : %d ");
-277504,568440832,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingEventIndIsrSig_cell_reselect_1,P_SIG,swLogPrintf("PS DIAL , need wakeup PS , as need cell re-selection , ret : %d ");
-277504,568442880,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingEventIndIsrSig_cell_meas_1,P_SIG,swLogPrintf("PS DIAL , need wakeup PS , as cell measurement event , ret : %d ");
-277504,568446975,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingEventIndIsrSig_not_start_ps_1,P_SIG,swLogPrintf("PS DIAL , proc CP event , not need wake up PS ");
-277504,568447232,0,0,PLAT_AP,PS_DIAL,psDialWakeupPs_value_1,P_VALUE,swLogPrintf("PS DIAL recv CMI CNF , SgId : %d , PrimId : %d , netif not recovery , still need pending ");
-277504,568451071,0,0,PLAT_AP,PS_DIAL,psDialFirstPowerOn_cfun0_1,P_SIG,swLogPrintf("PS DIAL , CFUN 0 power on , don ' t power on PS... ");
-277504,568453119,0,0,PLAT_AP,PS_DIAL,psDialFirstPowerOn_cfun4_1,P_SIG,swLogPrintf("PS DIAL , CFUN 4 power on , power on PS... ");
-277504,568453120,0,0,PLAT_AP,PS_DIAL,psDialFirstPowerOn_cfun1_w_1,P_WARNING,swLogPrintf("PS DIAL , unsupported poweron cfun : %d , change to CFUN 1 , power on PS... ");
-277504,568457215,0,0,PLAT_AP,PS_DIAL,psDialFirstPowerOn_cfun1_s_1,P_SIG,swLogPrintf("PS DIAL , CFUN 1 power on , power on PS... ");
-277504,568459263,0,0,PLAT_AP,PS_DIAL,psDialStartPs_w_1,P_WARNING,swLogPrintf("PS DIAL , PS task is ready , don ' t need to restart ");
-277504,568459520,0,0,PLAT_AP,PS_DIAL,psCamCmiReq_start_1,P_SIG,swLogPrintf("PS DIAL , request PS service , sgId : %d , primId : %d , need start PS firstly ");
+277504,568404736,0,0,PLAT_AP,PS_DIAL,psDialNetInit_ethhost_1,P_VALUE,swLogPrintf("PS DIAL , Ethlan config , ethHostAddr : %u.%u.%u.%u ");
+277504,568406784,0,0,PLAT_AP,PS_DIAL,psDialNetInit_getway_1,P_VALUE,swLogPrintf("PS DIAL , Ethlan config , ethLocalAddr : %u.%u.%u.%u ");
+277504,568408064,0,0,PLAT_AP,PS_DIAL,psDialNetInit_mask_1,P_VALUE,swLogPrintf("PS DIAL , Ethlan config , mask : %u ");
+277504,568410112,0,0,PLAT_AP,PS_DIAL,psDialNetInit_dns1_1,P_VALUE,swLogPrintf("PS DIAL , Ethlan config , dns server 2 : %u ");
+277504,568412160,0,0,PLAT_AP,PS_DIAL,psDialNetInit_dns2_1,P_VALUE,swLogPrintf("PS DIAL , Ethlan config , dns server 2 : %u ");
+277504,568414976,0,0,PLAT_AP,PS_DIAL,psDialNetInit_2,P_VALUE,swLogPrintf("PS DIAL , Ethlan config , ethLocalAddr : %u.%u.%u.%u ");
+277504,568416256,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_s_1,P_INFO,swLogPrintf("PS DIAL ISR , proc CP event : %e<CpPagingImgEventId> ");
+277504,568418304,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_w_1,P_WARNING,swLogPrintf("PS DIAL , CMS task already created , forward the CP event : %d , to task ");
+277504,568422399,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_paging_1,P_SIG,swLogPrintf("PS DIAL ISR , need wakeup AP & CP , as recv UE paging ");
+277504,568424447,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_paging_2,P_WARNING,swLogPrintf("PS DIAL ISR , only need wakeup AP , as recv UE paging ");
+277504,568426495,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_serving_1,P_SIG,swLogPrintf("PS DIAL ISR , need wakeup AP & CP , as serving cell measurement ");
+277504,568428543,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_serving_2,P_SIG,swLogPrintf("PS DIAL ISR , only need wakeup AP , as serving cell measurement ");
+277504,568430591,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_cell_reselect_1,P_SIG,swLogPrintf("PS DIAL ISR , need wakeup AP & CP , as need cell re-selection ");
+277504,568432639,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_cell_reselect_2,P_WARNING,swLogPrintf("PS DIAL ISR , only need wakeup AP , as need cell re-selection ");
+277504,568434687,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_cell_meas_1,P_SIG,swLogPrintf("PS DIAL ISR , need wakeup AP & CP , as cell measurement event ");
+277504,568436735,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_cell_meas_2,P_SIG,swLogPrintf("PS DIAL ISR , only need wakeup AP , as cell measurement event ");
+277504,568436736,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingImgEventIsr_err_1,P_ERROR,swLogPrintf("PS DIAL ISR , can ' t proc CP event : %d ");
+277504,568440831,0,0,PLAT_AP,PS_DIAL,cmsWakeupCheckPagingEvent_paging_s_1,P_SIG,swLogPrintf("PS DIAL , UE paging event to RRC ");
+277504,568442879,0,0,PLAT_AP,PS_DIAL,psDialWakeupCheckPagingEvent_meas_s_1,P_SIG,swLogPrintf("PS DIAL , UE measure event to RRC ");
+277504,568444927,0,0,PLAT_AP,PS_DIAL,psDialWakeupCheckPagingEvent_reselect_s_1,P_SIG,swLogPrintf("PS DIAL , UE re-select event to RRC ");
+277504,568444928,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingEventIndIsrSig_s_1,P_SIG,swLogPrintf("PS DIAL , PS is ready , forward CP event : %d , to RRC ");
+277504,568446976,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingEventIndIsrSig_paging_1,P_SIG,swLogPrintf("PS DIAL , need wakeup PS , as recv UE paging , ret : %d ");
+277504,568449024,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingEventIndIsrSig_serving_1,P_SIG,swLogPrintf("PS DIAL , need wakeup PS , as serving cell measurement , ret : %d ");
+277504,568451072,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingEventIndIsrSig_cell_reselect_1,P_SIG,swLogPrintf("PS DIAL , need wakeup PS , as need cell re-selection , ret : %d ");
+277504,568453120,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingEventIndIsrSig_cell_meas_1,P_SIG,swLogPrintf("PS DIAL , need wakeup PS , as cell measurement event , ret : %d ");
+277504,568457215,0,0,PLAT_AP,PS_DIAL,psDialProcCpPagingEventIndIsrSig_not_start_ps_1,P_SIG,swLogPrintf("PS DIAL , proc CP event , not need wake up PS ");
+277504,568457472,0,0,PLAT_AP,PS_DIAL,psDialWakeupPs_value_1,P_VALUE,swLogPrintf("PS DIAL recv CMI CNF , SgId : %d , PrimId : %d , netif not recovery , still need pending ");
+277504,568461311,0,0,PLAT_AP,PS_DIAL,psDialFirstPowerOn_cfun0_1,P_SIG,swLogPrintf("PS DIAL , CFUN 0 power on , don ' t power on PS... ");
+277504,568463359,0,0,PLAT_AP,PS_DIAL,psDialFirstPowerOn_cfun4_1,P_SIG,swLogPrintf("PS DIAL , CFUN 4 power on , power on PS... ");
+277504,568463360,0,0,PLAT_AP,PS_DIAL,psDialFirstPowerOn_cfun1_w_1,P_WARNING,swLogPrintf("PS DIAL , unsupported poweron cfun : %d , change to CFUN 1 , power on PS... ");
+277504,568467455,0,0,PLAT_AP,PS_DIAL,psDialFirstPowerOn_cfun1_s_1,P_SIG,swLogPrintf("PS DIAL , CFUN 1 power on , power on PS... ");
+277504,568469503,0,0,PLAT_AP,PS_DIAL,psDialStartPs_w_1,P_WARNING,swLogPrintf("PS DIAL , PS task is ready , don ' t need to restart ");
+277504,568469760,0,0,PLAT_AP,PS_DIAL,psCamCmiReq_start_1,P_SIG,swLogPrintf("PS DIAL , request PS service , sgId : %d , primId : %d , need start PS firstly ");
 278528,570425344,0,0,PLAT_AP,PS_STK_BIP,SendSignaltoSimBip_0,P_WARNING,swLogPrintf("Simbip task destroyed , cannot send any sig ( %x ) to simbip task! ");
 278528,570427392,0,0,PLAT_AP,PS_STK_BIP,SendSignaltoSimBip_1,P_VALUE,swLogPrintf("Send signal ( %x ) to simbip task! ");
 278528,570431487,0,0,PLAT_AP,PS_STK_BIP,SimBipLinkUp_0,P_WARNING,swLogPrintf("pLinkUpInd is null! ");
@@ -15524,29 +15529,30 @@ dd58ad6819c8593a779837f202de6d1b7b34df2ca1595d7e2e09d763204e58de240ff51e0a987aeb
 786432,1610614783,0,0,CUSTOMER,LUATOS,rndis_2,P_SIG,swLogPrintf("set auth for rndis ");
 786432,1610616831,0,0,CUSTOMER,LUATOS,rndis_10,P_SIG,swLogPrintf("rndis active stop ");
 786432,1610617344,0,0,CUSTOMER,LUATOS,airm2m_service_1,P_SIG,swLogPrintf("cnf %d , %d , %d ");
-786432,1610620927,0,0,CUSTOMER,LUATOS,rndis_1,P_SIG,swLogPrintf("set apn point for rndis ");
-786432,1610622975,0,0,CUSTOMER,LUATOS,rndis_3,P_SIG,swLogPrintf("active cid for rndis ");
-786432,1610623488,0,0,CUSTOMER,LUATOS,airm2m_service_2,P_SIG,swLogPrintf("ind %d , %d , %d ");
-786432,1610625024,0,0,CUSTOMER,LUATOS,rndis_4,P_SIG,swLogPrintf("rndis link state %d ");
-786432,1610627584,0,0,CUSTOMER,LUATOS,airm2m_service_3,P_SIG,swLogPrintf("ima cnf %d , %d , %d ");
-786432,1610629632,0,0,CUSTOMER,LUATOS,airm2m_service_4,P_SIG,swLogPrintf("ima ind %d , %d , %d ");
-786432,1610631169,0,0,CUSTOMER,LUATOS,airm2m_service_5,P_SIG,swLogPrintf("nst result %s ");
-786432,1610633216,0,0,CUSTOMER,LUATOS,airm2m_service_6,P_ERROR,swLogPrintf("param len %d ");
-786432,1610635265,0,0,CUSTOMER,LUATOS,airm2m_service_7,P_SIG,swLogPrintf("find %s ");
-786432,1610639359,0,0,CUSTOMER,LUATOS,airm2m_service_8,P_ERROR,swLogPrintf("find at , but no end ");
-786432,1610639361,0,0,CUSTOMER,LUATOS,debug,P_ERROR,swLogPrintf("%s ");
-786432,1610641664,0,0,CUSTOMER,LUATOS,uart_rx_2,P_INFO,swLogPrintf("uart%d , rx buffer len %d ");
-786432,1610644224,0,0,CUSTOMER,LUATOS,uart_rx_1,P_INFO,swLogPrintf("uart%d , rx%dbyte , buffer %dbyte , %dbyte ");
-786432,1610645504,0,0,CUSTOMER,LUATOS,uart_tx_1,P_INFO,swLogPrintf("uart%d , tx true done ");
-786432,1610647552,0,0,CUSTOMER,LUATOS,uart_tx_2,P_INFO,swLogPrintf("uart%d , tx wait true done ");
-786432,1610650112,0,0,CUSTOMER,LUATOS,uart_tx_3,P_INFO,swLogPrintf("uart%d , start 0x%x %u ");
-786432,1610651904,0,0,CUSTOMER,LUATOS,uart_tx_4,P_INFO,swLogPrintf("uart%d , 0x%x done ");
-786432,1610653952,0,0,CUSTOMER,LUATOS,uart_err_1,P_INFO,swLogPrintf("uart%d , ISR %x ");
-786432,1610655744,0,0,CUSTOMER,LUATOS,uart_tx_5,P_INFO,swLogPrintf("uart%d , tx true done ");
-786432,1610658048,0,0,CUSTOMER,LUATOS,uart_tx_6,P_INFO,swLogPrintf("uart%d , tx done but state %d ");
-786432,1610660096,0,0,CUSTOMER,LUATOS,uart_rx_11,P_INFO,swLogPrintf("uart%d , buffer len %u ");
-786432,1610661888,0,0,CUSTOMER,LUATOS,USB_DIRECT_OUTPUT,P_ERROR,swLogPrintf("dlpdu ( %d bytes ) failure! ");
-786432,1610665983,0,0,CUSTOMER,LUATOS,udp_abort_1,P_ERROR,swLogPrintf("this is luatos udp , no need abort ");
+786432,1610620927,0,0,CUSTOMER,LUATOS,rndis_5,P_SIG,swLogPrintf("rndis is nat ");
+786432,1610622975,0,0,CUSTOMER,LUATOS,rndis_1,P_SIG,swLogPrintf("set apn point for rndis ");
+786432,1610625023,0,0,CUSTOMER,LUATOS,rndis_3,P_SIG,swLogPrintf("active cid for rndis ");
+786432,1610625536,0,0,CUSTOMER,LUATOS,airm2m_service_2,P_SIG,swLogPrintf("ind %d , %d , %d ");
+786432,1610627072,0,0,CUSTOMER,LUATOS,rndis_4,P_SIG,swLogPrintf("rndis link state %d ");
+786432,1610629632,0,0,CUSTOMER,LUATOS,airm2m_service_3,P_SIG,swLogPrintf("ima cnf %d , %d , %d ");
+786432,1610631680,0,0,CUSTOMER,LUATOS,airm2m_service_4,P_SIG,swLogPrintf("ima ind %d , %d , %d ");
+786432,1610633217,0,0,CUSTOMER,LUATOS,airm2m_service_5,P_SIG,swLogPrintf("nst result %s ");
+786432,1610635264,0,0,CUSTOMER,LUATOS,airm2m_service_6,P_ERROR,swLogPrintf("param len %d ");
+786432,1610637313,0,0,CUSTOMER,LUATOS,airm2m_service_7,P_SIG,swLogPrintf("find %s ");
+786432,1610641407,0,0,CUSTOMER,LUATOS,airm2m_service_8,P_ERROR,swLogPrintf("find at , but no end ");
+786432,1610641409,0,0,CUSTOMER,LUATOS,debug,P_ERROR,swLogPrintf("%s ");
+786432,1610643712,0,0,CUSTOMER,LUATOS,uart_rx_2,P_INFO,swLogPrintf("uart%d , rx buffer len %d ");
+786432,1610646272,0,0,CUSTOMER,LUATOS,uart_rx_1,P_INFO,swLogPrintf("uart%d , rx%dbyte , buffer %dbyte , %dbyte ");
+786432,1610647552,0,0,CUSTOMER,LUATOS,uart_tx_1,P_INFO,swLogPrintf("uart%d , tx true done ");
+786432,1610649600,0,0,CUSTOMER,LUATOS,uart_tx_2,P_INFO,swLogPrintf("uart%d , tx wait true done ");
+786432,1610652160,0,0,CUSTOMER,LUATOS,uart_tx_3,P_INFO,swLogPrintf("uart%d , start 0x%x %u ");
+786432,1610653952,0,0,CUSTOMER,LUATOS,uart_tx_4,P_INFO,swLogPrintf("uart%d , 0x%x done ");
+786432,1610656000,0,0,CUSTOMER,LUATOS,uart_err_1,P_INFO,swLogPrintf("uart%d , ISR %x ");
+786432,1610657792,0,0,CUSTOMER,LUATOS,uart_tx_5,P_INFO,swLogPrintf("uart%d , tx true done ");
+786432,1610660096,0,0,CUSTOMER,LUATOS,uart_tx_6,P_INFO,swLogPrintf("uart%d , tx done but state %d ");
+786432,1610662144,0,0,CUSTOMER,LUATOS,uart_rx_11,P_INFO,swLogPrintf("uart%d , buffer len %u ");
+786432,1610663936,0,0,CUSTOMER,LUATOS,USB_DIRECT_OUTPUT,P_ERROR,swLogPrintf("dlpdu ( %d bytes ) failure! ");
+786432,1610668031,0,0,CUSTOMER,LUATOS,udp_abort_1,P_ERROR,swLogPrintf("this is luatos udp , no need abort ");
 <end>
 Structs
 f774c3c409e93081529f28ef51e6b571c0e8c6d9d2dda2b11371b95df4827c4998852834fc250f9ba9260833ceb344037e19add6473d2b7a4af0ffba1ac1a4260d919d08204b91a990c96a3ba8081a64e94c21c7684ee2cedca8edf1ace90c41111d8e81ae169c2c3123eb0aec9913bc59031220ffb62ddd3ec36d32e74f24d861978e7b811cca402b19aab717d6c3c9bbcfb59995dd4b07ef2d8aa0726997ad3ce42a5d7d9e9ddf689cd2e832155ca10a2ee6cfcd0a1b2a76809560f849291bbc26912261fe082350e14d8a4784a2c380bcbb32fef9ce9f199e3e01d56e9904e7c3a07497edf69fe300a95c00b1bb2d
@@ -16275,5 +16281,5 @@ MW_INFO_PHY_EDRX_PARAM,midWareNvmInfoPhyEdrxParam
 plat_config,plat_config_fs_t
 <end>
 OptionalSegment
-optional_sk_01,DA231F58ADF9E045FF5E3E1607E198C2934E8595622AD10FEBC0D1B9AE48B3E1
+optional_sk_01,DF09A4739DB6A302B8EEFE2742831152E72E4BE1AABD38386C49EE188576446A
 <end>
