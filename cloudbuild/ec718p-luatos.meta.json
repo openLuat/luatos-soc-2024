@@ -246,6 +246,13 @@
                         "fsize": 275108,
                         "dft": false
                     },
+					{
+                        "name": "rndis_nat",
+                        "content": "RNDIS使用NAT和LWIP共用IP，不勾选则RNDIS使用独立IP，SIM卡不允许激活多个承载时必选",
+                        "rsize": 1024,
+                        "fsize": 1024,
+                        "dft": false
+                    },
                     {
                         "name": "mqtt",
                         "content": "MQTT客户端",

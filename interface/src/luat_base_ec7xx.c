@@ -426,3 +426,9 @@ uint8_t soc_rndis_is_enable(void)
 }
 #endif
 
+#ifdef LUAT_USE_RNDIS_NAT_MODE
+uint8_t soc_rndis_is_nat(void)
+{
+	return 1;
+}
+#endif
