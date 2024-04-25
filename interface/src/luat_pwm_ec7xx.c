@@ -2,6 +2,7 @@
 #include "clock.h"
 #include "timer.h"
 #include "pad.h"
+#include "ic.h"
 #include "common_api.h"
 #include "driver_gpio.h"
 #include "luat_debug.h"
@@ -422,6 +423,7 @@ __USER_FUNC_IN_RAM__ uint32_t prvGPIO_PullFast(uint32_t Pin, uint8_t IsPull, uin
 
 	PAD->PCR[Pad] = uConfig.Value;
 	CLOCK_clockDisable(PCLK_PAD);
+	return 0;
 }
 
 
