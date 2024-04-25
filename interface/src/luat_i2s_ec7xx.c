@@ -39,6 +39,7 @@ int l_i2s_pause(lua_State *L) {
 int l_i2s_stop(lua_State *L) {
 	uint8_t id = luaL_checkinteger(L, 1);
 	I2S_RxStop(id);
+	return 0;
 }
 #endif
 
@@ -172,9 +173,9 @@ int luat_i2s_modify(uint8_t id,uint8_t channel_format,uint8_t data_bits,uint32_t
 		I2S_Start(id, 1, sample_rate, (channel_format == LUAT_I2S_CHANNEL_STEREO)?2:1);
 	}
 	prv_i2s[id].state = LUAT_I2S_STATE_RUNING;
-
+	return 0;
 }
-static __USER_FUNC_IN_RAM__ void luat_i2s_check_start(id)
+static __USER_FUNC_IN_RAM__ void luat_i2s_check_start(uint8_t id)
 {
 	if (!prv_i2s[id].state)
 	{
@@ -198,7 +199,7 @@ static __USER_FUNC_IN_RAM__ void luat_i2s_check_start(id)
 __USER_FUNC_IN_RAM__ int luat_i2s_send(uint8_t id, uint8_t* buff, size_t len)
 {
 	if (id >= I2S_MAX) return -1;
-	luat_i2s_check_start();
+	luat_i2s_check_start(id);
 	I2S_Tx(id, buff, len, prv_i2s_cb, (void *)&prv_i2s[id]);
 	return 0;
 }
@@ -208,14 +209,15 @@ int luat_i2s_recv(uint8_t id, uint8_t* buff, size_t len)
 	if (id >= I2S_MAX) return -1;
 	if (prv_i2s[id].is_full_duplex) return -1;
 	if (len) prv_i2s[id].cb_rx_len = len;
-	luat_i2s_check_start();
+	luat_i2s_check_start(id);
 	I2S_Rx(id, prv_i2s[id].cb_rx_len, prv_i2s_cb, (void *)&prv_i2s[id]);
+	return 0;
 }
 
 __USER_FUNC_IN_RAM__ int luat_i2s_transfer(uint8_t id, uint8_t* txbuff, size_t len)
 {
 	if (id >= I2S_MAX) return -1;
-	luat_i2s_check_start();
+	luat_i2s_check_start(id);
 	I2S_Transfer(id, txbuff, len);
 	return 0;
 }
@@ -223,8 +225,9 @@ __USER_FUNC_IN_RAM__ int luat_i2s_transfer(uint8_t id, uint8_t* txbuff, size_t l
 int luat_i2s_transfer_loop(uint8_t id, uint8_t* buff, uint32_t one_truck_byte_len, uint32_t total_trunk_cnt, uint8_t need_callback)
 {
 	if (id >= I2S_MAX) return -1;
-	luat_i2s_check_start();
+	luat_i2s_check_start(id);
 	I2S_TransferLoop(id, buff, one_truck_byte_len, total_trunk_cnt, need_callback);
+	return 0;
 }
 // 控制
 int luat_i2s_pause(uint8_t id)
@@ -232,6 +235,7 @@ int luat_i2s_pause(uint8_t id)
 	if (id >= I2S_MAX) return -1;
 	if (prv_i2s[id].is_full_duplex) return -1;
 	I2S_TxPause(id);
+	return 0;
 }
 int luat_i2s_resume(uint8_t id)
 {
@@ -244,6 +248,7 @@ int luat_i2s_close(uint8_t id)
 		I2S_Stop(id);
 	}
 	prv_i2s[id].state = LUAT_I2S_STATE_STOP;
+	return 0;
 }
 
 // 获取配置
