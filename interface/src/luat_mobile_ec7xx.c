@@ -28,7 +28,10 @@
 #include "cmips.h"
 #include "cms_api.h"
 #include "soc_service.h"
-
+#include "nvram.h"
+#include "ps_ps_if.h"
+#include "ps_sim_if.h"
+#include "ps_sync_cnf.h"
 extern void soc_mobile_event_deregister_handler(void);
 extern void soc_mobile_get_imsi(uint8_t *buf);
 extern void soc_mobile_get_iccid(uint8_t *buf);
@@ -59,6 +62,8 @@ extern void soc_mobile_rf_test_input(uint8_t *data, uint32_t len);
 extern void soc_mobile_get_last_cc_event_info(void *info, uint32_t *info_len);
 extern void soc_mobile_get_last_nas_event(uint8_t *type, uint16_t *cause, uint16_t *phy_cellid, uint32_t *freq);
 void soc_mobile_set_network_check_period(uint32_t period);
+extern void soc_mobile_active_cid(uint8_t cid);
+extern CmsRetId appPsCmiReq(AppPsCmiReqData *pReqData, UINT32 timeOutMs);
 
 /**
  * @brief 获取默认PDP的一些信息
@@ -752,7 +757,7 @@ int luat_mobile_sms_event_register_handler(luat_mobile_sms_event_callback_t call
 
 /* ------------------------------------------------- mobile status end ------------------------------------------------ */
 
-extern soc_mobile_set_rrc_release_time(uint8_t s);
+extern void soc_mobile_set_rrc_release_time(uint8_t s);
 void luat_mobile_set_rrc_auto_release_time(uint8_t s)
 {
 	if (1 == s) s = 2;
@@ -874,7 +879,7 @@ static CmsRetId luatSetPSMSettingTest(UINT8 psmMode)
 static void luat_mobile_set_attach_type_ec618(UINT16 paramSize, void *pParam)
 {
 	uint32_t value;
-	memcpy(value, pParam, 4);
+	memcpy(&value, pParam, 4);
 	DBG("CE MODE %d", value);
 	if (value <= CMI_PS_MODE_1_OF_OPERATION)
 	{
