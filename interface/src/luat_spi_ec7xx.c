@@ -101,6 +101,7 @@ int luat_spi_set_mode(int spi_id, uint8_t mode) {
     if (!spi_exist(spi_id))
         return -1;
     g_s_luat_spi_mode[spi_id] = mode;
+	return 0;
 }
 
 int luat_spi_setup(luat_spi_t* spi) {
