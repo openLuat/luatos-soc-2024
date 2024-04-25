@@ -247,19 +247,12 @@
                         "dft": false,
                         "children" : [
                             {
-                                "name": "rndis_nat_enable",
-                                "content": "RNDIS支持NAT方式",
+                                "name": "rndis_nat_mode",
+                                "content": "RNDIS使用NAT和LWIP共用IP，不勾选则RNDIS使用独立IP，SIM卡不允许激活多个承载时必选",
                                 "rsize": 1024,
                                 "fsize": 275108
                             }
                         ]
-                    },
-					{
-                        "name": "rndis_nat",
-                        "content": "RNDIS使用NAT和LWIP共用IP，不勾选则RNDIS使用独立IP，SIM卡不允许激活多个承载时必选",
-                        "rsize": 1024,
-                        "fsize": 1024,
-                        "dft": false
                     },
                     {
                         "name": "mqtt",
