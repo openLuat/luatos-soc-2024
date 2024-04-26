@@ -26,7 +26,7 @@
 #include "driver_usp.h"
 #include "soc_image_decode.h"
 #include "driver_gpio.h"
-#include "tiny_jpeg.h"
+
 
 typedef struct
 {
@@ -40,6 +40,7 @@ typedef struct
 }luat_camera_ctrl_t;
 
 #ifdef __LUATOS__
+#include "tiny_jpeg.h"
 #include "luat_msgbus.h"
 #include "luat_mem.h"
 #include "luat_zbuff.h"
