@@ -105,7 +105,6 @@ static void audio_event_cb(uint32_t event, void *param){
 		break;
 	case LUAT_MULTIMEDIA_CB_TTS_INIT:
 		break;
-	case LUAT_MULTIMEDIA_CB_DECODE_DONE:
 	case LUAT_MULTIMEDIA_CB_TTS_DONE:
 		if (!audio_play_get_last_error(0))
 		{
