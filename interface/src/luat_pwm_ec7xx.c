@@ -258,7 +258,7 @@ int luat_pwm_update_dutycycle(int channel,size_t pulse)
 		while (EIGEN_TIMER(channel)->TACR > 5) {;}
 		EIGEN_TIMER(channel)->TMR[1] = period - 1;
 	}
-	if (pulse && g_s_pwm_table[channel].last_pulse_rate && (g_s_pwm_table[channel].last_pulse_rate != 1000) && (low_cnt < EIGEN_TIMER(channel)->TMR[0]))
+	if ((EIGEN_TIMER(channel)->TMR[0] < (EIGEN_TIMER(channel)->TMR[1] - 5)) && pulse && g_s_pwm_table[channel].last_pulse_rate && (g_s_pwm_table[channel].last_pulse_rate != 1000) && (low_cnt < EIGEN_TIMER(channel)->TMR[0]))
 	{
 		while (EIGEN_TIMER(channel)->TACR <= EIGEN_TIMER(channel)->TMR[0]) {;}
 	}
