@@ -31,7 +31,8 @@
 
 
 
-
+#define HTTP_GET_TEST      (1)
+#define HTTP_POST_TEST     (0)
 #define HTTP_TEST_IS_SYNC  (0) // 在这里选择同步或异步http演示，测试少量数据时，可以使用同步演示方式获取数据，测试大量数据时，必须用异步演示方式获取数据
 
 static luat_rtos_task_handle g_s_task_handle;
@@ -42,6 +43,8 @@ enum
 	TEST_HTTP_GET_HEAD_DONE,
 	TEST_HTTP_GET_DATA,
 	TEST_HTTP_GET_DATA_DONE,
+	TEST_HTTP_POST_DATA_START,
+	TEST_HTTP_POST_DATA_CONTINUE,
 	TEST_HTTP_FAILED,
 };
 static void luatos_mobile_event_callback(LUAT_MOBILE_EVENT_E event, uint8_t index, uint8_t status)
@@ -94,9 +97,11 @@ static void luatos_http_cb(int status, void *data, uint32_t len, void *param)
 		break;
 	case HTTP_STATE_SEND_BODY_START:
 		//如果是POST，在这里发送POST的body数据，如果一次发送不完，可以在HTTP_STATE_SEND_BODY回调里继续发送
+		luat_rtos_event_send(param, TEST_HTTP_POST_DATA_START, 0, 0, 0, 0);
 		break;
 	case HTTP_STATE_SEND_BODY:
 		//如果是POST，可以在这里发送POST剩余的body数据
+		luat_rtos_event_send(param, TEST_HTTP_POST_DATA_CONTINUE, 0, 0, 0, 0);
 		break;
 	default:
 		break;
@@ -104,9 +109,9 @@ static void luatos_http_cb(int status, void *data, uint32_t len, void *param)
 }
 
 
-
+#if (HTTP_GET_TEST == 1)
 #if (HTTP_TEST_IS_SYNC == 0)
-static void luat_test_http_async_task(void *param)
+static void luat_test_http_get_async_task(void *param)
 {
 	luat_event_t event = {0};
 	uint8_t is_end = 0;
@@ -229,7 +234,7 @@ static int luat_test_http_get_sync(char *url, char*headBuf, uint32_t headBufLen,
 }
 
 
-static void luat_test_http_sync_task(void *param)
+static void luat_test_http_get_sync_task(void *param)
 {
 	char remote_domain[200];
 	snprintf((char *)remote_domain, 200, "%s", "http://www.baidu.com");
@@ -259,16 +264,87 @@ static void luat_test_http_sync_task(void *param)
 	}
 }
 
+
 #endif
+#elif (HTTP_POST_TEST == 1)
+static void luat_test_http_post_task(void *param)
+{
+	luat_event_t event = {0};
+	uint8_t is_end = 0;
+	uint32_t done_len = 0;
+	luat_http_ctrl_t *http = luat_http_client_create(luatos_http_cb, luat_rtos_get_current_handle(), -1);
+	luat_http_client_ssl_config(http, 0, NULL, 0, NULL, 0, NULL, 0, NULL, 0);
+	const char remote_domain[200];
+	snprintf((char *)remote_domain, 200, "%s", "https://emqx.yywk.net/home/TestPost");
+	const char *post_data = "{\"imei\":\"test\", \"mcuid\":\"ffffffffffffffffff\"}";
+
+	char tmp[16];
+	sprintf_(tmp, "%d", strlen(post_data));
+	luat_http_client_set_user_head(http, "Content-Type", "application/json");
+	luat_http_client_set_user_head(http, "Content-Length", tmp);
+
+    LUAT_DEBUG_PRINT("print url %s", remote_domain);
+	luat_http_client_start(http, remote_domain, 1, 0, 0);
+	while (!is_end)
+	{
+		luat_rtos_event_recv(g_s_task_handle, 0, &event, NULL, LUAT_WAIT_FOREVER);
+		LUAT_DEBUG_PRINT("event %d", event.id);
+		switch(event.id)
+		{
+		case TEST_HTTP_GET_HEAD:
+			luat_heap_free((char *)event.param1);
+			break;
+		case TEST_HTTP_GET_HEAD_DONE:
+			// 在这里处理http响应头
+			done_len = 0;
+			LUAT_DEBUG_PRINT("status %d total %u", luat_http_client_get_status_code(http), http->total_len);
+			break;
+		case TEST_HTTP_GET_DATA:
+			// 在这里处理用户数据
+			done_len += event.param2;
+			LUAT_DEBUG_PRINT("%.*s", event.param2, event.param1);
+			luat_heap_free((char *)event.param1);
+			break;
+		case TEST_HTTP_GET_DATA_DONE:
+			is_end = 1;
+			break;
+		case TEST_HTTP_POST_DATA_START:
+			luat_http_client_post_body(http, (void *)post_data, strlen(post_data));
+			break;
+		case TEST_HTTP_POST_DATA_CONTINUE:
+			break;
+		case TEST_HTTP_FAILED:
+			is_end = 1;
+			break;
+		default:
+			break;
+		}
+	}
+	LUAT_DEBUG_PRINT("http test end, total count %d", done_len);
+	luat_http_client_close(http);
+	luat_http_client_destroy(&http);
+	while(1)
+	{
+		luat_rtos_task_sleep(60000);
+	}
+}
+#endif
+
+
 
 static void luat_test_init(void)
 {
 	luat_mobile_event_register_handler(luatos_mobile_event_callback);
+#if (HTTP_GET_TEST == 1)
 #if (HTTP_TEST_IS_SYNC == 1)
-	luat_rtos_task_create(&g_s_task_handle, 4 * 1024,20, "sync test", luat_test_http_sync_task, NULL, 16);
+	luat_rtos_task_create(&g_s_task_handle, 4 * 1024, 20, "sync test", luat_test_http_get_sync_task, NULL, 16);
 #else
-	luat_rtos_task_create(&g_s_task_handle, 4 * 1024,20, "async test", luat_test_http_async_task, NULL, 16);
+	luat_rtos_task_create(&g_s_task_handle, 4 * 1024, 20, "async test", luat_test_http_get_async_task, NULL, 16);
 #endif
+#elif (HTTP_POST_TEST == 1)
+	luat_rtos_task_create(&g_s_task_handle, 10 * 1024, 20, "async test", luat_test_http_post_task, NULL, 16);
+#endif
+
 }
 
 INIT_TASK_EXPORT(luat_test_init, "1");
