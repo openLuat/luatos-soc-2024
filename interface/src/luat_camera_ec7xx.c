@@ -702,7 +702,7 @@ int luat_camera_get_raw_again(int id)
 #else
 int luat_camera_init(luat_camera_conf_t *conf) {return -1;}
 int luat_camera_capture(int id, uint8_t quality, const char *path) {return -1;}
-int luat_camera_work_mode(id, mode){return -1;}
+int luat_camera_work_mode(int id, int mode){return -1;}
 #endif
 
 
