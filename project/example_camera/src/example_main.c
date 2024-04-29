@@ -39,8 +39,10 @@
 #include "luat_mem.h"
 #include "luat_lcd.h"
 #include "mem_map.h"
+#include "luat_pm.h"
+#include "tiny_jpeg.h"
 
-//#define CAMERA_TEST_QRCODE			//扫码
+#define CAMERA_TEST_QRCODE			//扫码
 #define LCD_ENABLE						//默认均开启LCD预览
 #define USB_UART_ENABLE
 
@@ -52,8 +54,8 @@
 //#define CAMERA_POWER_PIN_ALT 0
 //内部LDO就是VDD_EXT, 不需要单独控制
 
-//#define CAMERA_USE_BFXXXX
-#define CAMERA_USE_GC03XX
+#define CAMERA_USE_BFXXXX
+// #define CAMERA_USE_GC03XX
 
 #define BF30A2_I2C_ADDRESS	(0x6e)
 #define GC03XX_I2C_ADDR		(0x21)
@@ -511,7 +513,7 @@ static void luat_camera_save_JPEG_data(void *cxt, void *data, int size)
 	memcpy(p + g_s_camera_app.jpeg_data_point, data, size);
 	g_s_camera_app.jpeg_data_point += size;
 }
-int gpio_level_irq(void *data, void* args)
+static int gpio_level_irq(void *data, void* args)
 {
 
 	if (!g_s_camera_app.scan_mode && !g_s_camera_app.capture_stage && !g_s_camera_app.is_process_image)
@@ -522,6 +524,7 @@ int gpio_level_irq(void *data, void* args)
 	{
 		luat_rtos_event_send(g_s_task_handle, PIN_PRESS, 0, 0, 0, 0);
 	}
+	return 0;
 }
 
 static void luat_camera_task(void *param)
