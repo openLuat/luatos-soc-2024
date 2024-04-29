@@ -82,4 +82,4 @@ jobs:
       - name: 构建指定项目
         run: |
           cd luatos-soc-2024/ci/
-          python3 ci_build ${{matrix.csdk_chip}}
+          python3 ci_build.py ${{matrix.csdk_chip}}
