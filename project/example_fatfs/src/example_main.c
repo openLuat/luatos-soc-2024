@@ -31,9 +31,15 @@
 #include "ff.h"
 #include "diskio.h"
 
+#ifndef CHIP_EC716
 #define SPI_TF_SPI_ID 1                 // SPIID
 #define SPI_TF_CS_PIN	HAL_GPIO_24		// 如果不需要低功耗可以选用普通GPIO
 #define SPI_TF_POWER_PIN HAL_GPIO_28	// 如果没有电源控制脚可以写0xff，强烈建议加入电源控制，如果不需要低功耗可以选用普通GPIO
+#else
+#define SPI_TF_SPI_ID 0                 // SPIID
+#define SPI_TF_CS_PIN	HAL_GPIO_15		// 如果不需要低功耗可以选用普通GPIO
+#define SPI_TF_POWER_PIN HAL_GPIO_16	// 如果没有电源控制脚可以写0xff，强烈建议加入电源控制，如果不需要低功耗可以选用普通GPIO
+#endif
 
 extern BYTE FATFS_DEBUG;                // debug log, 0 -- disable , 1 -- enable
 extern BYTE FATFS_POWER_PIN;            // POWER PIN
