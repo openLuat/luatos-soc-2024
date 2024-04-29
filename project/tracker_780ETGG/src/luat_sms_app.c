@@ -14,7 +14,7 @@ static luat_rtos_task_handle send_msg_task_handle;
 static luat_rtos_task_handle recv_msg_task_handle;
 static luat_rtos_semaphore_t send_message_semaphore;
 
-void luat_sms_send_pdu_msg(uint8_t *p_input, char *p_des)
+int luat_sms_send_pdu_msg(uint8_t *p_input, char *p_des)
 {
     size_t phone_len = 0;
     size_t payload_len = 0;
@@ -150,6 +150,7 @@ void luat_sms_send_pdu_msg(uint8_t *p_input, char *p_des)
         phone = "";
         luat_sms_send_msg(pdu, "", 1, payload_len);
     }
+    return 0;
 }
 
 void app_sms_send_msg(uint8_t *p_input, char *p_des)
