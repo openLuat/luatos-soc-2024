@@ -43,7 +43,7 @@ DRESULT diskio_open_spitf(BYTE pdrv, void* userdata);
 
 luat_rtos_task_handle fatfs_task_handle;
 
-static int print_fs_info(const char* dir_path)
+static void print_fs_info(const char* dir_path)
 {
     luat_fs_info_t fs_info = {0};
 
