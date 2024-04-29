@@ -27,6 +27,7 @@
 #include "pwrkey.h"
 #include "charge.h"
 #include "pad.h"
+#include "soc_service.h"
 #define GPIO_ALT_MAX (4)
 
 __attribute__((weak)) int luat_gpio_irq_default(int pin, void* args)
@@ -228,6 +229,23 @@ int luat_gpio_setup(luat_gpio_t *gpio){
 int luat_gpio_set(int pin, int level){
     if (((uint32_t)(pin)) >= HAL_GPIO_MAX) return -1;
     GPIO_Output(pin, level);
+#if defined LUAT_USE_AGPIO_KEEP
+    soc_aon_gpio_save_state_enable(1);
+#endif
+#if defined __LUATOS__ || defined LUAT_USE_AGPIO_KEEP
+
+#ifdef CHIP_EC716
+	if ((pin >= HAL_GPIO_10) && (pin <= HAL_GPIO_16))
+	{
+		soc_aon_gpio_save_state(pin - HAL_GPIO_10, level?1:2);
+	}
+#else
+	if ((pin >= HAL_GPIO_20) && (pin <= HAL_GPIO_28))
+	{
+		soc_aon_gpio_save_state(pin - HAL_GPIO_20, level?1:2);
+	}
+#endif
+#endif
     return 0;
 }
 
@@ -277,6 +295,22 @@ void luat_gpio_close(int pin){
 		}
 	}
     PAD_setInputOutputDisable(GPIO_ToPadEC7XX(pin, alt_fun));
+#if defined LUAT_USE_AGPIO_KEEP
+    soc_aon_gpio_save_state_enable(1);
+#endif
+#if defined __LUATOS__ || defined LUAT_USE_AGPIO_KEEP
+#ifdef CHIP_EC716
+	if ((pin >= HAL_GPIO_10) && (pin <= HAL_GPIO_16))
+	{
+		soc_aon_gpio_save_state(pin - HAL_GPIO_10, 0);
+	}
+#else
+	if ((pin >= HAL_GPIO_20) && (pin <= HAL_GPIO_28))
+	{
+		soc_aon_gpio_save_state(pin - HAL_GPIO_20, 0);
+	}
+#endif
+#endif
     return ;
 }
 int luat_gpio_set_irq_cb(int pin, luat_gpio_irq_cb cb, void* args)

@@ -45,6 +45,7 @@
 #include "cmisim.h"
 #include "reset.h"
 #include "cms_util.h"
+#include "soc_service.h"
 
 extern void ShareInfoWakeupCP4Version(void);
 extern void luat_audio_global_init(void);
@@ -214,6 +215,7 @@ static void luatos_mobile_event_callback(LUAT_MOBILE_EVENT_E event, uint8_t inde
 static void luatos_task_init(void)
 {
 	GPIO_GlobalInit(NULL);
+	soc_aon_gpio_save_state_enable(1);
 	luat_mobile_event_register_handler(luatos_mobile_event_callback);
 	#ifdef LUAT_USE_SMS
 	luat_sms_init();
