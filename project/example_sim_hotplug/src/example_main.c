@@ -168,6 +168,7 @@ static int gpio_cb(int pin, void *param)
             luat_rtos_event_send(g_s_task_handle, 0, SIM_INSERT, 0, 0, 0);
         }
     }
+	return 0;
 }
 
 static void test_task(void *param){

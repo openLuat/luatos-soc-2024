@@ -20,6 +20,8 @@
 static char *productKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 static luat_rtos_task_handle lbsloc_task_handle = NULL;
 static uint8_t lbsloc_task_tatus = 0;
+static int g_s_network_status = 0;
+static luat_rtos_task_handle http_task_handle;
 
 static bool ddddtoddmm(char *location, char *test)
 {
@@ -334,8 +336,6 @@ void lbsloc_request(void)
 }
 #define EPH_HOST "http://download.openluat.com/9501-xingli/HXXT_GPS_BDS_AGNSS_DATA.dat"
 
-static g_s_network_status = 0;
-static luat_rtos_task_handle http_task_handle;
 
 static void luatos_mobile_event_callback(LUAT_MOBILE_EVENT_E event, uint8_t index, uint8_t status)
 {

@@ -14,6 +14,7 @@ luat_rtos_task_handle pwm_task_handle;
 static int32_t pwm_test_callback(void *pdata, void *param)
 {
 	LUAT_DEBUG_PRINT("pwm done!");
+	return 0;
 }
 
 static void task_test_pwm(void *param)

@@ -222,7 +222,7 @@ static void lbsLoc_request_task(void *param)
     uint8_t lbsLocReqBuf[200] = {0};
     uint8_t sendLen = 0;
     lbsLocReqBuf[sendLen++] = strlen(productKey);
-    memcpy(&lbsLocReqBuf[sendLen], (uint8_t *)productKey, 32);
+    memcpy(&lbsLocReqBuf[sendLen], (uint8_t *)productKey, strlen(productKey));
     sendLen = sendLen + strlen(productKey);
 #if WIFI_LOC
     lbsLocReqBuf[sendLen++] = 0x38;

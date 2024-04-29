@@ -114,13 +114,14 @@ static void task_test_sht30(void *param)
 
 }
 
-int gpio_irq(int pin, void *args)//ACC，GS 运动传感器中断回调
+static int gpio_irq(int pin, void *args)//ACC，GS 运动传感器中断回调
 {
 	
 	if (pin == Motion_Sensor_Pin)//GS中断传感器回调
 	{
 		LUAT_DEBUG_PRINT("enter motion sensor input");
 	}
+	return 0;
 }
 
 

@@ -127,7 +127,7 @@ int config_speed_get(void)
 	return g_s_accelerated_speed_status;
 }
 
-int gpio_irq(int pin, void *args)
+static int gpio_irq(int pin, void *args)
 {
 	if (pin == Acc_input_Pin)
 	{
@@ -147,6 +147,7 @@ int gpio_irq(int pin, void *args)
 			g_s_accelerated_speed_status = 1;
 		luat_rtos_message_send(da213b_monitor_task_handle, 0, NULL);
 	}
+	return 0;
 }
 
 #define I2C_ID 0
@@ -374,7 +375,7 @@ static void history_data_trans_task()
 	}
 }
 
-static luat_rtos_timer_callback_t sleep_timer_callback(void *param)
+static void sleep_timer_callback(void *param)
 {
 	LUAT_DEBUG_PRINT("entry sleep mode");
 	// locinfo_upload_enable = 0;
