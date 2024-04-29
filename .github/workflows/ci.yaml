@@ -5,46 +5,6 @@ on:
   workflow_call:
 
 jobs:
-  # # 最基础的example编译
-  # EC7xx_basic:
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       csdk_project:
-  #         - example
-  #       csdk_chip:
-  #         - ec718p
-  #         - ec716s
-  #         - ec718pv
-  #   steps:
-  #     - name: 克隆 LuatOS 代码库
-  #       run:  git clone --depth=1 https://github.com/openLuat/LuatOS.git
-  #     - name: 克隆 ec7xx-csdk 代码库
-  #       run: | 
-  #         git clone --depth=1 https://github.com/openLuat/luatos-soc-2024.git
-  #         sudo chmod +x luatos-soc-2024/PLAT/tools/fcelf
-  #     - name: 下载GCC工具链
-  #       run: |
-  #         mkdir /home/runner/toolchains
-  #         wget -q -O /home/runner/toolchains/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2 https://github.com/wendal/xmake-docker/releases/download/dev-gcc/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
-  #     - name: 初始化工具链
-  #       run: |
-  #         sudo add-apt-repository ppa:xmake-io/xmake -y
-  #         sudo apt update -y
-  #         sudo apt-get update -y && sudo apt-get install -y gcc make g++ wget curl p7zip-full 
-  #         sudo dpkg --add-architecture i386 && sudo apt update
-  #         sudo apt-get install -y lib32z1 libc6:i386 libgcc1:i386 libstdc++5:i386 libstdc++6:i386
-  #         sudo apt-get install -y xmake
-  #         xmake update
-  #         # curl -fsSL https://xmake.io/shget.text | bash -s v2.8.9
-  #         xmake g --pkg_searchdirs=/home/runner/toolchains
-  #     - name: 构建指定项目
-  #       run: |
-  #         cd luatos-soc-2024/project/${{matrix.csdk_project}} 
-  #         xmake f --chip_target=${{matrix.csdk_chip}} -y
-  #         xmake -y --root
-
   # LuatOS固件编译
   EC718P_LuatOS:
     runs-on: ubuntu-latest
@@ -92,36 +52,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        csdk_project:
-          - example
-          - example_adc
-          - example_audio
-          - example_camera
-          - example_cjson
-          - example_crypto
-          - example_flash
-          - example_fs
-          - example_fskv
-          - example_gpio
-          - example_i2c
-          - example_iconv
-          - example_luatos_mqtt
-          - example_luatos_socket
-          - example_mobile
-          - example_pm
-          - example_rndis
-          - example_rtc
-          - example_uart
-          - example_lbsLoc
-          - example_gnss
-          - example_lcd
-          - example_gnss
-          - example_linksdk
-          - example_otp
         csdk_chip:
           - ec718p
           - ec718pv
           - ec716s
+          - ec716e
     steps:
       - name: 克隆 LuatOS 代码库
         run:  git clone --depth=1 https://github.com/openLuat/LuatOS.git
@@ -137,7 +72,7 @@ jobs:
         run: |
           sudo add-apt-repository ppa:xmake-io/xmake -y
           sudo apt update -y
-          sudo apt-get update -y && sudo apt-get install -y gcc make g++ wget curl p7zip-full 
+          sudo apt-get update -y && sudo apt-get install -y gcc make g++ wget curl p7zip-full python3
           sudo dpkg --add-architecture i386 && sudo apt update
           sudo apt-get install -y lib32z1 libc6:i386 libgcc1:i386 libstdc++5:i386 libstdc++6:i386
           sudo apt-get install -y xmake
@@ -145,8 +80,6 @@ jobs:
           # curl -fsSL https://xmake.io/shget.text | bash -s v2.8.9
           xmake g --pkg_searchdirs=/home/runner/toolchains
       - name: 构建指定项目
-        if: ${{ ! ( (matrix.csdk_project == 'example_audio' || matrix.csdk_project == 'example_camera') && matrix.csdk_chip == 'ec716s' ) }}
         run: |
-          cd luatos-soc-2024/project/${{matrix.csdk_project}} 
-          xmake f --chip_target=${{matrix.csdk_chip}} -y
-          xmake -y --root
+          cd luatos-soc-2024/ci/
+          python3 ci_build ${{matrix.csdk_chip}}
