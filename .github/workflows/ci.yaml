@@ -57,6 +57,7 @@ jobs:
         csdk_chip:
           - ec718p
           - ec718pv
+          - ec716e
     steps:
       - name: 克隆 LuatOS 代码库
         run:  git clone --depth=1 https://github.com/openLuat/LuatOS.git

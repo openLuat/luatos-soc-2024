@@ -44,6 +44,15 @@ static void flash_example(void *param)
 	// flash读写没有太多技巧
 	luat_flash_read(buff, addr, 256);
 
+	// 打印前64字节
+	for (size_t i = 0; i < 8; i++)
+	{
+		uint8_t* tmp = (uint8_t*)(buff + i*8);
+		LUAT_DEBUG_PRINT("addr 0x%08X %02X%02X%02X%02X%02X%02X%02X%02X", addr + i*8, tmp[0], tmp[1], tmp[2], tmp[3], tmp[4], tmp[5], tmp[6], tmp[7]);
+	}
+	// 再打印一下文本形式
+	LUAT_DEBUG_PRINT("addr 0x%08X str %.*s", addr, 64, buff);
+
 	luat_flash_erase(addr, 4096);
 
 	// 生成一些随机数据,模拟业务数据
