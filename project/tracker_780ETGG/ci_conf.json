@@ -1,0 +1,5 @@
+{
+    "build" : {
+        "chip_target": ["ec716s"]
+    }
+}
