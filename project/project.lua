@@ -100,6 +100,33 @@ function description_csdk()
                 "-Wl,--wrap=time",
                 {force = true})
 
+    -- 已经生效的GCC警告信息
+    add_cxflags("-Werror=maybe-uninitialized")
+    add_cxflags("-Werror=unused-value")
+    add_cxflags("-Werror=array-bounds")
+    add_cxflags("-Werror=return-type")
+    add_cxflags("-Werror=overflow")
+    add_cxflags("-Werror=empty-body")
+    add_cxflags("-Werror=old-style-declaration")
+    -- add_cxflags("-Werror=implicit-function-declaration")
+    add_cxflags("-Werror=implicit-int")
+
+    -- 暂不考虑的GCC警告信息
+    add_cxflags("-Wno-unused-parameter")
+    add_cxflags("-Wno-unused-but-set-variable")
+    add_cxflags("-Wno-sign-compare")
+    add_cxflags("-Wno-unused-variable")
+    add_cxflags("-Wno-unused-function")
+
+    -- 待修复的GCC警告信息
+    add_cxflags("-Wno-int-conversion")
+    add_cxflags("-Wno-discarded-qualifiers")
+    add_cxflags("-Wno-pointer-sign")
+    add_cxflags("-Wno-type-limits")
+    add_cxflags("-Wno-incompatible-pointer-types")
+    add_cxflags("-Wno-pointer-to-int-cast")
+    add_cxflags("-Wno-int-to-pointer-cast")
+
     -- ==============================
     -- === includes =====
     -- SDK相关头文件引用
