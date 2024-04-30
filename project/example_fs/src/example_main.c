@@ -98,7 +98,7 @@ void exmaple_fs_luat_file(void) {
     int ret = 0;
     size_t size = 0;
 
-    LUAT_DEBUG_PRINT("check file exists? %s", filepath);
+    LUAT_DEBUG_PRINT("check file exists? %s %d", filepath, luat_fs_fexist(filepath));
     // 通过获取大小, 判断文件是否存在, 存在就删除之
     if (luat_fs_fexist(filepath)) {
         LUAT_DEBUG_PRINT("remove %s", filepath);
@@ -200,8 +200,8 @@ void exmaple_fs_luat_file(void) {
     }
     // 读取文件, 新路径应该得到文件大小等于300
     size = luat_fs_fsize(newpath);
-    if (size != 300) {
-        LUAT_DEBUG_PRINT("file shall 300 byte but %d", size);
+    if (size != 24 * 100) {
+        LUAT_DEBUG_PRINT("file shall 24 * 100 byte but %d", size);
     }
 
     luat_fs_remove(filepath);
@@ -242,10 +242,12 @@ void exmaple_fs_lfs_dir(void)
 void exmaple_fs_luat_main(void) {
     luat_fs_init(); // 必须先初始化    
     print_fs_info();
-    exmaple_fs_lfs_dir();
     exmaple_fs_luat_file();
     recur_fs("/");
+    #ifndef TYPE_EC716S
+    exmaple_fs_lfs_dir(); // ec716s方案就别建文件夹了,空间不够的
     recur_fs("luatos");
+    #endif
 }
 
 static void fs_example(void *param)
