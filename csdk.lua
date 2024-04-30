@@ -330,7 +330,9 @@ function description_common()
 
 
         for _, filepath in ipairs(os.files(target:values("project_dir").."/**/mem_map_7xx.h")) do
-            print(filepath)
+            if target:name()== target:values("project_name") then
+                print("mem_map_7xx.h found in ",filepath)
+            end
             if path.filename(filepath) == "mem_map_7xx.h" then
                 target:add("defines", "__USER_MAP_CONF_FILE__=\"mem_map_7xx.h\"")
                 target:add("includedirs", path.directory(filepath))
