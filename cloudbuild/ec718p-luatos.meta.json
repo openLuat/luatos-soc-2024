@@ -185,7 +185,16 @@
                         "content": "多媒体,当前仅音频,支持播放amr/mp3. 含audio和codec库",
                         "rsize": 10240,
                         "fsize": 288052,
-                        "dft": false
+                        "dft": false,
+                        "children" : [
+                            {
+                                "name": "record",
+                                "content": "录音功能",
+                                "rsize": 1024,
+                                "fsize": 1024,
+                                "dft": false
+                            }
+                        ]
                     },
                     {
                         "name": "otp",
