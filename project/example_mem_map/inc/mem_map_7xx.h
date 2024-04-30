@@ -121,7 +121,12 @@ flash xip address(from ap/cp view): 0x00800000---0x00a00000
 
 #elif defined TYPE_EC718P
 
+/* 4MB flash + 2MB psram*/
+
 /*
+flash layout, toatl 4MB
+flash raw address: 0x00000000---0x00400000
+flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 
 0x00000000          |---------------------------------|
                     |      header1 4KB                |
@@ -130,7 +135,7 @@ flash xip address(from ap/cp view): 0x00800000---0x00a00000
 0x00002000          |---------------------------------|
                     |      fuse mirror 4KB            |
 0x00003000          |---------------------------------|
-                    |      bl 72KB                    |
+                    |      bl 68KB + 4KB              |
 0x00015000          |---------------------------------|
                     |      rel data(factory)20KB      |
 0x0001a000          |---------------------------------|
@@ -138,25 +143,26 @@ flash xip address(from ap/cp view): 0x00800000---0x00a00000
 #if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
                     |      cp img 640KB               |
 0x000Ba000          |---------------------------------|
-                    |      app img 2616KB             |
+                    |      app img 2584KB             |
 #else
                     |      cp img 400KB               |
 0x0007e000          |---------------------------------|
-                    |      app img 2856KB             |
+                    |      app img 2826KB             |
 #endif
-0x00348000          |---------------------------------|
-                    |      fota 260KB  (164KB可用)    |     因增大fs导致fota缩小至260KB
-0x00389000          |---------------------------------|
-                    |      fs 256KB                    |    此demo增大fs至256KB
+0x00340000          |---------------------------------|
+                    |      fota 420KB(324KB can use)  |
+0x003a9000          |---------------------------------|
+                    |      lfs  128KB                 |
 0x003c9000          |---------------------------------|
-                    |      kv  64KB                   |
+                    |      kv   64KB                  |
 0x003d9000          |---------------------------------|
-                    |      hib backup 96KB            |
+                    |      hib   96KB                 |
 0x003f1000          |---------------------------------|
                     |      rel data 52KB              |
 0x003fe000          |---------------------------------|
                     |      plat config 8KB            |
 0x00400000          |---------------------------------|
+
 
 */
 
@@ -165,14 +171,12 @@ flash xip address(from ap/cp view): 0x00800000---0x00a00000
 
 //ap image addr and size
 #if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
-#define AP_FLASH_LOAD_ADDR              (0x008BA000)
 #ifndef AP_FLASH_LOAD_SIZE
-#define AP_FLASH_LOAD_SIZE              (0x28E000)//2616KB
+#define AP_FLASH_LOAD_SIZE              (0x286000)//2584KB
 #endif
 #else
-#define AP_FLASH_LOAD_ADDR              (0x0087e000)
 #ifndef AP_FLASH_LOAD_SIZE
-#define AP_FLASH_LOAD_SIZE              (0x2ca000)//2856KB
+#define AP_FLASH_LOAD_SIZE              (0x2c2000)//2824KB
 #endif
 #endif
 
@@ -183,19 +187,15 @@ flash xip address(from ap/cp view): 0x00800000---0x00a00000
 
 
 //fota addr and size
-#ifndef FLASH_FOTA_REGION_START
-#define FLASH_FOTA_REGION_START         (0x348000)
-#define FLASH_FOTA_REGION_LEN           (0x41000)//260KB
-#define FLASH_FOTA_REGION_END           (0x389000)
-#endif
+#define FLASH_FOTA_REGION_START         (0x340000)
+#define FLASH_FOTA_REGION_LEN           (0x69000)//420KB
+#define FLASH_FOTA_REGION_END           (0x3a9000)
 
 
 //fs addr and size
-#ifndef FLASH_FS_REGION_START
-#define FLASH_FS_REGION_START           (0x389000)
+#define FLASH_FS_REGION_START           (0x3a9000)
 #define FLASH_FS_REGION_END             (0x3c9000)
-#endif
-#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START) //256KB
+#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START) //128KB
 
 
 //fskv addr and size
@@ -213,9 +213,15 @@ flash xip address(from ap/cp view): 0x00800000---0x00a00000
 // mapdef
 #define BOOTLOADER_PKGIMG_LIMIT_SIZE (0x11000)
 
+#if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
 #ifndef AP_PKGIMG_LIMIT_SIZE
-#define AP_PKGIMG_LIMIT_SIZE (0x2ca000)
+#define AP_PKGIMG_LIMIT_SIZE (0x286000)
 #endif
+#else
+#ifndef AP_PKGIMG_LIMIT_SIZE
+#define AP_PKGIMG_LIMIT_SIZE (0x2c2000)
+#endif
+#endif // (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
 
 #elif defined TYPE_EC716S
 
