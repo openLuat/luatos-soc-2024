@@ -25,6 +25,7 @@
 #include "luat_pm.h"
 #include "luat_uart.h"
 #include "plat_config.h"
+#include "luat_mem.h"
 /*
  一.上报接收数据中断的逻辑：
     1.串口初始化时，新建一个缓冲区
@@ -47,12 +48,23 @@
 static luat_rtos_task_handle uart_task_handle;
 
 void luat_uart_recv_cb(int uart_id, uint32_t data_len){
-    char* data_buff = malloc(data_len+1);
-    memset(data_buff,0,data_len+1);
-    luat_uart_read(uart_id, data_buff, data_len);
-    LUAT_DEBUG_PRINT("uart_id:%d %p data_len:%d",uart_id,data_buff,data_len);
-    luat_uart_write(uart_id, data_buff, data_len);
-    free(data_buff);
+    char* data_buff = luat_heap_malloc(1024);
+    if (data_buff == NULL)
+    {
+        LUAT_DEBUG_PRINT("malloc buff for uart fail");
+        return;
+    }
+    memset(data_buff,0, 1024);
+    int len = 0;
+    while (1) {
+        len = luat_uart_read(uart_id, data_buff, 1024);
+        if (len <= 0) {
+            break;
+        }
+        LUAT_DEBUG_PRINT("uart_id:%d %p len:%d",uart_id,data_buff,len);
+        luat_uart_write(uart_id, data_buff, len);
+    }
+    luat_heap_free(data_buff);
 }
 
 static void task_test_uart(void *param)
@@ -99,7 +111,7 @@ static void task_test_uart(void *param)
 
 static void task_demo_uart(void)
 {
-    luat_rtos_task_create(&uart_task_handle, 2048, 20, "uart", task_test_uart, NULL, 0);
+    luat_rtos_task_create(&uart_task_handle, 8*1024, 20, "uart", task_test_uart, NULL, 0);
 }
 
 // 除非你已经非常清楚uart0作为普通串口给用户使用所带来的的后果，否则不要打开以下注释掉的代码
