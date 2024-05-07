@@ -269,25 +269,25 @@ function description_common()
         assert (chip_target == "ec718e" or chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718s" or chip_target == "ec716s" or chip_target == "ec716e" ,"target only support ec718e/ec718p/ec718pv/ec718s/ec716s/ec716e")
         
         if target:name()== target:values("project_name") then
-            cprint(format("${cyan}CPU : ${magenta}%s",os.cpuinfo("model_name")))
-            cprint(format("${cyan}MEM : ${magenta}%sG",math.ceil(os.meminfo("totalsize")/1024)))
-            cprint(format("${cyan}HOST : ${magenta}%s",os.host()))
-            cprint(format("${cyan}ARCH : ${magenta}%s",os.arch()))
+            cprint(format("${cyan}CPU : ${red}%s",os.cpuinfo("model_name")))
+            cprint(format("${cyan}MEM : ${red}%sG",math.ceil(os.meminfo("totalsize")/1024)))
+            cprint(format("${cyan}HOST : ${red}%s",os.host()))
+            cprint(format("${cyan}ARCH : ${red}%s",os.arch()))
             if is_plat("windows") then
-                cprint(format("${cyan}OS VERSION : ${magenta}%s",winos.version()))
+                cprint(format("${cyan}OS VERSION : ${red}%s",winos.version()))
             elseif is_plat("linux") then
-                cprint(format("${cyan}OS NAME : ${magenta}%s",linuxos.name()))
-                cprint(format("${cyan}OS VERSION : ${magenta}%s",linuxos.version()))
-                cprint(format("${cyan}OS KERNEL : ${magenta}%s",linuxos.kernelver()))
+                cprint(format("${cyan}OS NAME : ${red}%s",linuxos.name()))
+                cprint(format("${cyan}OS VERSION : ${red}%s",linuxos.version()))
+                cprint(format("${cyan}OS KERNEL : ${red}%s",linuxos.kernelver()))
             elseif is_plat("macosx") then
-                cprint(format("${cyan}OS VERSION : ${magenta}%s",macosx.version()))
+                cprint(format("${cyan}OS VERSION : ${red}%s",macosx.version()))
             end
 
 
-            cprint(format("${cyan}project_name : ${magenta}%s",target:values("project_name")))
-            cprint(format("${cyan}chip_target : ${magenta}%s",chip_target))
-            cprint(format("${cyan}lspd_mode : ${magenta}%s",get_config("lspd_mode")))
-            cprint(format("${cyan}denoise_force : ${magenta}%s",get_config("denoise_force")))
+            cprint(format("${cyan}project_name : ${red}%s",target:values("project_name")))
+            cprint(format("${cyan}chip_target : ${red}%s",chip_target))
+            cprint(format("${cyan}lspd_mode : ${red}%s",get_config("lspd_mode")))
+            cprint(format("${cyan}denoise_force : ${red}%s",get_config("denoise_force")))
         end
 
         assert(os.isdir(target:values("luatos_root")),"luatos_root:"..target:values("luatos_root").." not exist")
