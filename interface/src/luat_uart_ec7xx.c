@@ -273,7 +273,15 @@ int luat_uart_setup(luat_uart_t* uart) {
           	if (!g_s_serials[uart->id].rs485_timer) {
           		g_s_serials[uart->id].rs485_timer = luat_create_rtos_timer(luat_uart_wait_timer_cb, uart->id, NULL);
           	}
-          	GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(g_s_serials[uart->id].rs485_pin, 0), 0, 0, 0);
+          	if (g_s_serials[uart->id].rs485_pin >= HAL_GPIO_16 && g_s_serials[uart->id].rs485_pin <= HAL_GPIO_17)
+          	{
+          		GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(g_s_serials[uart->id].rs485_pin, 4), 0, 0, 0);
+          	}
+          	else
+          	{
+          		GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(g_s_serials[uart->id].rs485_pin, 0), 0, 0, 0);
+          	}
+          	//GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(g_s_serials[uart->id].rs485_pin, 0), 0, 0, 0);
           	GPIO_Config(g_s_serials[uart->id].rs485_pin, 0, g_s_serials[uart->id].rs485_param_bit.rx_level);
  		 }
     }
