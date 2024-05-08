@@ -304,8 +304,11 @@
 // #define LUAT_UART0_FORCE_USER     1
 // #define LUAT_UART0_FORCE_ALT1     1
 // #define LUAT_UART0_LOG_BR_12M     1
-
-#define LUAT_GPIO_PIN_MAX 48
+#if defined CHIP_EC716
+#define LUAT_GPIO_PIN_MAX 29
+#else
+#define LUAT_GPIO_PIN_MAX 47
+#endif
 // #define LUAT__UART_TX_NEED_WAIT_DONE
 // // 内存优化: 减少内存消耗, 会稍微减低性能
 #define LUAT_USE_MEMORY_OPTIMIZATION_CODE_MMAP 1
