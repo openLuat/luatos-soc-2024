@@ -178,7 +178,7 @@ enum
 	HAL_GPIO_18,
 	HAL_GPIO_19,
 	HAL_GPIO_20,
-#if defined TYPE_EC716S
+#if defined CHIP_EC716
 #else
 	HAL_GPIO_21,
 	HAL_GPIO_22,
