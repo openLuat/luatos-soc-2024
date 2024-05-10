@@ -29,11 +29,51 @@
 #include "bsp_custom.h"
 #include "soc_spi.h"
 #include "driver_gpio.h"
+#include "soc_service.h"
+#include "mem_map.h"
 static uint8_t g_s_luat_spi_mode[SPI_MAX] ={0};
 
 static int spi_exist(int id) {
 	if (id < SPI_MAX) return 1;
     return 0;
+}
+
+static void spi_psram_dma_on_check(uint32_t tx_buf, uint32_t rx_buf)
+{
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+	uint8_t psram = 0;
+	if ((tx_buf > PSRAM_START_ADDR) && (tx_buf < PSRAM_END_ADDR))
+	{
+		psram = 1;
+	}
+	if ((rx_buf > PSRAM_START_ADDR) && (rx_buf < PSRAM_END_ADDR))
+	{
+		psram = 1;
+	}
+	if (psram)
+	{
+		soc_psram_dma_on_off(SOC_SYS_CTRL_SPI, 1);
+	}
+#endif
+}
+
+static void spi_psram_dma_off_check(uint32_t tx_buf, uint32_t rx_buf)
+{
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+	uint8_t psram = 0;
+	if ((tx_buf > PSRAM_START_ADDR) && (tx_buf < PSRAM_END_ADDR))
+	{
+		psram = 1;
+	}
+	if ((rx_buf > PSRAM_START_ADDR) && (rx_buf < PSRAM_END_ADDR))
+	{
+		psram = 1;
+	}
+	if (psram)
+	{
+		soc_psram_dma_on_off(SOC_SYS_CTRL_SPI, 0);
+	}
+#endif
 }
 
 #ifdef __LUATOS__
@@ -155,29 +195,33 @@ int luat_spi_close(int spi_id) {
 int luat_spi_transfer(int spi_id, const char* send_buf, size_t send_length, char* recv_buf, size_t recv_length) {
     if (!spi_exist(spi_id))
         return -1;
+    int ret = 0;
+    spi_psram_dma_on_check((uint32_t)send_buf, (uint32_t)recv_buf);
     if(g_s_luat_spi_mode[spi_id])
     {
     	if (SPI_BlockTransfer(spi_id, send_buf, recv_buf, recv_length))
     	{
-    		return 0;
+
     	}
     	else
     	{
-    		return recv_length;
+    		ret = recv_length;
     	}
     }
     else
     {
     	if (SPI_FlashBlockTransfer(spi_id, send_buf, send_length, recv_buf, recv_length))
     	{
-    		return 0;
+
     	}
     	else
     	{
-    		return recv_length;
+
+    		ret =  recv_length;
     	}
     }
-    return 0;
+    spi_psram_dma_off_check((uint32_t)send_buf, (uint32_t)recv_buf);
+    return ret;
 }
 
 //收SPI数据，返回接收字节数
@@ -188,13 +232,14 @@ int luat_spi_recv(int spi_id, char* recv_buf, size_t length) {
 //    {
 //    	SPI_SetDMAEnable(spi_id, 0);
 //    }
-
+    spi_psram_dma_on_check(0, (uint32_t)recv_buf);
     if (SPI_BlockTransfer(spi_id, recv_buf, recv_buf, length))
     {
 //        if (SPI_GetSpeed(spi_id) > 12800000)
 //        {
 //        	SPI_SetDMAEnable(spi_id, 1);
 //        }
+    	spi_psram_dma_off_check(0, (uint32_t)recv_buf);
     	return 0;
     }
     else
@@ -203,6 +248,7 @@ int luat_spi_recv(int spi_id, char* recv_buf, size_t length) {
 //        {
 //        	SPI_SetDMAEnable(spi_id, 1);
 //        }
+    	spi_psram_dma_off_check(0, (uint32_t)recv_buf);
     	return length;
     }
 }
@@ -210,12 +256,15 @@ int luat_spi_recv(int spi_id, char* recv_buf, size_t length) {
 int luat_spi_send(int spi_id, const char* send_buf, size_t length) {
     if (!spi_exist(spi_id))
         return -1;
+    spi_psram_dma_on_check((uint32_t)send_buf, 0);
     if (SPI_BlockTransfer(spi_id, send_buf, NULL, length))
     {
+    	spi_psram_dma_off_check((uint32_t)send_buf, 0);
     	return 0;
     }
     else
     {
+    	spi_psram_dma_off_check((uint32_t)send_buf, 0);
     	return length;
     }
 }
