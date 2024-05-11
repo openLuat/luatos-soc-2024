@@ -13,10 +13,12 @@ target(project_name,function()
 
     --加入代码和头文件
     -- little_flash
+    add_defines("LUAT_USE_LITTLE_FLASH",{public = true})
     add_includedirs(luatos_root.."/components/little_flash/inc",
                 luatos_root.."/components/little_flash/port",
                 {public = true})
     add_files(luatos_root.."/components/little_flash/**.c")
+    remove_files(luatos_root.."/components/little_flash/luat_lib_little_flash.c")
 
     add_includedirs("./inc",{public = true})
     add_files("./src/*.c",{public = true})
