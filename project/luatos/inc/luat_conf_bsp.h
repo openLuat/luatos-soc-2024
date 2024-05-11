@@ -43,6 +43,7 @@
 #define LUAT_USE_FS  1
 #define LUAT_USE_SENSOR  1
 #define LUAT_USE_SFUD  1
+// #define LUAT_USE_LITTLE_FLASH 1
 // #define LUAT_USE_SFD   1
 // #define LUAT_USE_STATEM 1
 // 性能测试

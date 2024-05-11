@@ -428,6 +428,13 @@
                         "dft": false
                     },
                     {
+                        "name": "little_flash",
+                        "content": "spi flash驱动库 目前支持nand flash",
+                        "rsize": 11968,
+                        "fsize": 299388,
+                        "dft": false
+                    },
+                    {
                         "name": "io_queue",
                         "content": "IO序列,支持10us精度",
                         "rsize": 0,

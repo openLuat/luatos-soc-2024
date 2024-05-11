@@ -287,6 +287,9 @@ static const luaL_Reg loadedlibs[] = {
 #ifdef LUAT_USE_CAMERA
   {"camera", luaopen_camera},
 #endif
+#ifdef LUAT_USE_LITTLE_FLASH
+  {"lf", luaopen_little_flash},
+#endif
   {NULL, NULL}
 };
 

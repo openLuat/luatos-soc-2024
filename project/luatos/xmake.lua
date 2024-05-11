@@ -12,7 +12,7 @@ target(project_name,function()
     -- set_warnings("error")
 
     local chip_target = get_config("chip_target")
-csdk_root = "../../" --csdk根目录,可自行修改
+
     add_linkdirs(csdk_root.."/lib",csdk_root.."/PLAT/core/lib",{public = true})
     add_linkgroups("mp3", {whole = true,public = true})
     
@@ -278,6 +278,12 @@ csdk_root = "../../" --csdk根目录,可自行修改
 	add_includedirs(luatos_root.."/components/tiny_jpeg", {public = true})
 	add_files(luatos_root.."/components/camera/*.c")
 	add_files(luatos_root.."/components/tiny_jpeg/*.c")
+    -- little_flash
+    add_includedirs(luatos_root.."/components/little_flash/inc",
+                luatos_root.."/components/little_flash/port",
+                {public = true})
+    add_files(luatos_root.."/components/little_flash/**.c")
+
     --加入代码和头文件
     add_includedirs("./inc",{public = true})
     add_files("./src/*.c",{public = true})
