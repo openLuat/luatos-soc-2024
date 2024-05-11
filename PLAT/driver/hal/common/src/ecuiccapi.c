@@ -79,7 +79,7 @@ BOOL    bSoftSIMTaskCreate = FALSE;
  *        Shall send signal/msg to softsim task and block to wait response .
  *        Softsim internal process running in this func is not allowed.
 ******************************************************************************/
-void SoftSimReset(UINT16 *atrLen, UINT8 *atrData)
+__attribute__((weak))  void SoftSimReset(UINT16 *atrLen, UINT8 *atrData)
 {
     osSemaphoreId_t sem = osSemaphoreNew(1U, 0, PNULL);
     osStatus_t osState = osOK;
@@ -130,7 +130,7 @@ void SoftSimReset(UINT16 *atrLen, UINT8 *atrData)
  *        Shall send signal/msg to softsim task and block to wait response.
  *        Softsim internal process running in this func is not allowed.
 ******************************************************************************/
-void SoftSimApduReq(UINT16 txDataLen, UINT8 *txData, UINT16 *rxDataLen, UINT8 *rxData)
+__attribute__((weak))  void SoftSimApduReq(UINT16 txDataLen, UINT8 *txData, UINT16 *rxDataLen, UINT8 *rxData)
 {
     osSemaphoreId_t sem = osSemaphoreNew(1U, 0, PNULL);
     osStatus_t osState = osOK;
@@ -177,7 +177,7 @@ void SoftSimApduReq(UINT16 txDataLen, UINT8 *txData, UINT16 *rxDataLen, UINT8 *r
  * output: void
  * Comment:
 ******************************************************************************/
-void SoftSimInit(void)
+__attribute__((weak))  void SoftSimInit(void)
 {
     if (bSoftSIMTaskCreate == TRUE)
     {
