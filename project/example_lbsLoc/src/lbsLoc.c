@@ -1,30 +1,27 @@
 #include "common_api.h"
-#include "sockets.h"
-#include "dns.h"
-#include "lwip/ip4_addr.h"
-#include "netdb.h"
 #include "luat_debug.h"
 #include "luat_rtos.h"
 #include "luat_mobile.h"
 #include "lbsLoc.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "luat_wlan.h"
+#include "luat_network_adapter.h"
+#include "net_lwip.h"
 
-#define DEMO_SERVER_UDP_IP "bs.openluat.com" // 基站定位网址
-#define DEMO_SERVER_UDP_PORT 12411           // 端口
+luat_rtos_task_handle lbsLoc_request_task_handle;
 
-#define MOBILE_MNC          (0)
-#define UNICOM_MNC          (1)
-#define TELE_MNC            (11)
-#define IMSI_LEN            (18)
-#define MOBILE_NUM          (6)
-#define UNICOM_NUM          (4)
-#define TELE_NUM            (4)
+#define LBSLOC_SERVER_UDP_IP "bs.openluat.com" // 基站定位网址
+#define LBSLOC_SERVER_UDP_PORT 12411           // 端口      // 端口
 
-const char mobile[MOBILE_NUM][3] = {"00", "02", "04", "07", "08", "13"};
-const char unicom[UNICOM_NUM][3] = {"01", "06", "09", "10"};
-const char tele[TELE_NUM][3] = {"03", "05", "11", "12"};
+#define MOBILE_MNC (0)
+#define UNICOM_MNC (1)
+#define TELE_MNC (11)
+#define IMSI_LEN (18)
+#define MOBILE_NUM (6)
+#define UNICOM_NUM (4)
+#define TELE_NUM (4)
+
+const char mobile[MOBILE_NUM][3] = {"00", "02", "04", "07", "08", "13"}; // 中国移动
+const char unicom[UNICOM_NUM][3] = {"01", "06", "09", "10"};             // 中国联通
+const char tele[TELE_NUM][3] = {"03", "05", "11", "12"};                 // 中国电信
 
 static int8_t search_mnc(char *mnc)
 {
@@ -52,10 +49,9 @@ static int8_t search_mnc(char *mnc)
     return -1;
 }
 
-
-#define WIFI_LOC 0 // 是否开启wifi 定位
+#define WIFI_LOC 1 // 是否开启wifi 定位
 /// @brief 合宙IOT 项目productkey ，必须加上，否则定位失败
-static uint8_t *productKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+static uint8_t *productKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 
 static uint8_t imeiToBcd(uint8_t *arr, uint8_t len, uint8_t *outPut)
 {
@@ -117,8 +113,8 @@ static uint32_t location_service_bcd_to_str(uint8_t *pOutBuffer, uint8_t *pInBuf
     return len;
 }
 
-static bool location_service_parse_response(struct am_location_service_rsp_data_t *response, uint8_t *latitude, uint8_t *longitude,
-                                            uint16_t *year, uint8_t *month, uint8_t *day, uint8_t *hour, uint8_t *minute, uint8_t *second)
+static uint8_t location_service_parse_response(struct am_location_service_rsp_data_t *response, uint8_t *latitude, uint8_t *longitude,
+                                               uint16_t *year, uint8_t *month, uint8_t *day, uint8_t *hour, uint8_t *minute, uint8_t *second)
 {
     uint8_t loc[20] = {0};
     uint32_t len = 0;
@@ -126,13 +122,13 @@ static bool location_service_parse_response(struct am_location_service_rsp_data_
     if (response == NULL || latitude == NULL || longitude == NULL || year == NULL || month == NULL || day == NULL || hour == NULL || minute == NULL || second == NULL)
     {
         LUAT_DEBUG_PRINT("location_service_parse_response: invalid parameter\r\n");
-        return FALSE;
+        return 0;
     }
 
     if (!(response->result == 0 || response->result == 0xFF))
     {
         LUAT_DEBUG_PRINT("location_service_parse_response: result fail %d\r\n", response->result);
-        return FALSE;
+        return 0;
     }
 
     // latitude
@@ -140,7 +136,7 @@ static bool location_service_parse_response(struct am_location_service_rsp_data_
     if (len <= 0)
     {
         LUAT_DEBUG_PRINT("location_service_parse_response: latitude fail\r\n");
-        return FALSE;
+        return 0;
     }
     strncat((char *)latitude, (char *)loc, 3);
     strncat((char *)latitude, ".", 2);
@@ -149,7 +145,7 @@ static bool location_service_parse_response(struct am_location_service_rsp_data_
     if (len <= 0)
     {
         LUAT_DEBUG_PRINT("location_service_parse_response: longitude fail\r\n");
-        return FALSE;
+        return 0;
     }
     strncat((char *)longitude, (char *)loc, 3);
     strncat((char *)longitude, (char *)".", 2);
@@ -160,393 +156,199 @@ static bool location_service_parse_response(struct am_location_service_rsp_data_
     *hour = response->hour;
     *minute = response->minute;
     *second = response->second;
-
-    return TRUE;
+    return 1;
 }
-
-static void lbsLoc_request_task(void *param)
+static int32_t luat_test_socket_callback(void *pdata, void *param)
 {
-    ip_addr_t remote_ip;
-    char *txbuf;
-    struct sockaddr_in name;
-    socklen_t sockaddr_t_size = sizeof(name);
-    int ret;
-    int socket_id = -1;
-    struct hostent dns_result;
-    struct hostent *p_result;
-    int h_errnop;
-    struct am_location_service_rsp_data_t locationServiceResponse;
-    uint8_t latitude[20] = {0};  // 经度
-    uint8_t longitude[20] = {0}; // 维度
-    uint16_t year = 0;           // 年
-    uint8_t month = 0;           // 月
-    uint8_t day = 0;             // 日
-    uint8_t hour = 0;            // 小时
-    uint8_t minute = 0;          // 分钟
-    uint8_t second = 0;          // 秒
-
-    uint8_t lac_total_num = 0x01;
-    uint8_t lbsLocReqBuf[200] = {0};
-    uint8_t sendLen = 0;
-    lbsLocReqBuf[sendLen++] = strlen(productKey);
-    memcpy(&lbsLocReqBuf[sendLen], (uint8_t *)productKey, strlen(productKey));
-    sendLen = sendLen + strlen(productKey);
-#if WIFI_LOC
-    lbsLocReqBuf[sendLen++] = 0x38;
-#else
-    lbsLocReqBuf[sendLen++] = 0x28;
-#endif
-    char imeiBuf[16] = {0};
-    luat_mobile_get_imei(0, imeiBuf, 16);
-    uint8_t imeiBcdBuf[8] = {0};
-    imeiToBcd((uint8_t *)imeiBuf, 15, imeiBcdBuf);
-    memcpy(&lbsLocReqBuf[sendLen], (uint8_t *)imeiBcdBuf, 8);
-    sendLen = sendLen + 8;
-    char muidBuf[64] = {0};
-    luat_mobile_get_muid(muidBuf, sizeof(muidBuf));
-    lbsLocReqBuf[sendLen++] = strlen(muidBuf);
-    memcpy(&lbsLocReqBuf[sendLen], (uint8_t *)muidBuf, strlen(muidBuf));
-    sendLen = sendLen + strlen(muidBuf);
-    luat_mobile_cell_info_t cell_info = {0};
-    ret = luat_mobile_get_cell_info_async(5);
-    if (ret != 0)
+    OS_EVENT *event = (OS_EVENT *)pdata;
+    LUAT_DEBUG_PRINT("%x", event->ID);
+    return 0;
+}
+static void lbsloc_request(void *param)
+{
+    while (1)
     {
-        LUAT_DEBUG_PRINT("cell_info_async false\r\n");
-        goto quit;
-    }
-    luat_rtos_task_sleep(5000);
-    ret = luat_mobile_get_last_notify_cell_info(&cell_info);
-    // ret = luat_mobile_get_cell_info(&cell_info);//同步方式获取cell_info
-    if (ret != 0)
-    {
-        LUAT_DEBUG_PRINT("get last notify cell_info false\r\n");
-        goto quit;
-    }
-
-    uint8_t mnc = 0;
-
-    uint8_t lac_num_index = sendLen++;
-    lbsLocReqBuf[sendLen++] = (cell_info.lte_service_info.tac >> 8) & 0xFF;
-    lbsLocReqBuf[sendLen++] = cell_info.lte_service_info.tac & 0xFF;
-    lbsLocReqBuf[sendLen++] = (cell_info.lte_service_info.mcc >> 8) & 0xFF;
-    lbsLocReqBuf[sendLen++] = cell_info.lte_service_info.mcc & 0XFF;
-
-    int buf = 10;
-    char imsi[IMSI_LEN + 1] = {0};
-    int result = luat_mobile_get_imsi(0, imsi, IMSI_LEN + 1);
-    if(result != -1)
-    {
-        char mncTmp[3] = {0};
-        memcpy(mncTmp, imsi + 3, 2);
-        int8_t mncSearchResult = search_mnc(mncTmp);
-        if (mncSearchResult != -1)
+        network_ctrl_t *network_ctrl = NULL;
+        network_ctrl = network_alloc_ctrl(NW_ADAPTER_INDEX_LWIP_GPRS);
+        network_init_ctrl(network_ctrl, luat_rtos_get_current_handle(), luat_test_socket_callback, NULL);
+        network_set_base_mode(network_ctrl, 0, 15000, 0, 0, 0, 0);
+        int result;
+        while (1)
         {
-            lbsLocReqBuf[sendLen++] = mncSearchResult;
+            result = network_wait_link_up(network_ctrl, 5000);
+            if (result)
+            {
+                LUAT_DEBUG_PRINT("network_wait_link_up fail %d\r\n", result);
+                continue;
+            }
+            else
+            {
+                LUAT_DEBUG_PRINT("network_wait_link_up success %d\r\n", result);
+                break;
+            }
+        }
+        struct am_location_service_rsp_data_t locationServiceResponse;
+        uint8_t latitude[20] = {0};  // 经度
+        uint8_t longitude[20] = {0}; // 维度
+        uint16_t year = 0;           // 年
+        uint8_t month = 0;           // 月
+        uint8_t day = 0;             // 日
+        uint8_t hour = 0;            // 小时
+        uint8_t minute = 0;          // 分钟
+        uint8_t second = 0;          // 秒
+        uint8_t lbsLocReqBuf[176] = {0};
+        int8_t mnc = -1;
+        char imsi[24] = {0};
+        memset(lbsLocReqBuf, 0, 176);
+        uint8_t sendLen = 0;
+        lbsLocReqBuf[sendLen++] = strlen(productKey);
+        memcpy(&lbsLocReqBuf[sendLen], (UINT8 *)productKey, strlen(productKey));
+        sendLen = sendLen + strlen(productKey);
+        lbsLocReqBuf[sendLen++] = 0x28;
+        CHAR imeiBuf[16];
+        memset(imeiBuf, 0, sizeof(imeiBuf));
+        luat_mobile_get_imei(0, imeiBuf, 16);
+        uint8_t imeiBcdBuf[8] = {0};
+        imeiToBcd((uint8_t *)imeiBuf, 15, imeiBcdBuf);
+        memcpy(&lbsLocReqBuf[sendLen], imeiBcdBuf, 8);
+        sendLen = sendLen + 8;
+        CHAR muidBuf[64];
+        memset(muidBuf, 0, sizeof(muidBuf));
+        luat_mobile_get_muid(muidBuf, sizeof(muidBuf));
+        lbsLocReqBuf[sendLen++] = strlen(muidBuf);
+        memcpy(&lbsLocReqBuf[sendLen], (UINT8 *)muidBuf, strlen(muidBuf));
+        sendLen = sendLen + strlen(muidBuf);
+        luat_mobile_cell_info_t cell_info;
+        memset(&cell_info, 0, sizeof(cell_info));
+        luat_mobile_get_cell_info(&cell_info);
+        lbsLocReqBuf[sendLen++] = 0x01;
+        lbsLocReqBuf[sendLen++] = (cell_info.lte_service_info.tac >> 8) & 0xFF;
+        lbsLocReqBuf[sendLen++] = cell_info.lte_service_info.tac & 0xFF;
+        lbsLocReqBuf[sendLen++] = (cell_info.lte_service_info.mcc >> 8) & 0xFF;
+        lbsLocReqBuf[sendLen++] = cell_info.lte_service_info.mcc & 0XFF;
+        if (luat_mobile_get_imsi(0, imsi, sizeof(imsi)) > 0)
+        {
+            char tmp[3] = {0};
+            memcpy(tmp, imsi + 3, 2);
+            mnc = search_mnc(tmp);
+            if (mnc != -1)
+            {
+                lbsLocReqBuf[sendLen++] = mnc;
+            }
         }
         else
         {
-            mnc = cell_info.lte_service_info.mnc & 0xFF;
-            if(mnc > 10)
+            mnc = cell_info.lte_service_info.mnc;
+            if (mnc > 10)
             {
-                char buf[3] = {0};
-                snprintf(buf, 3, "%02x", mnc);
-                int mncRet = atoi(buf);
-                lbsLocReqBuf[sendLen++] = mncRet;
+                char tmp[3] = {0};
+                snprintf(tmp, 3, "%02x", mnc);
+                int ret1 = atoi(tmp);
+                lbsLocReqBuf[sendLen++] = ret1;
             }
             else
             {
                 lbsLocReqBuf[sendLen++] = mnc;
             }
         }
-    }
-    else
-    {
-        mnc = cell_info.lte_service_info.mnc & 0xFF;
-        if(mnc > 10)
+
+        int16_t sRssi;
+        uint8_t retRssi;
+        sRssi = cell_info.lte_service_info.rssi;
+        if (sRssi <= -113)
         {
-            char buf[3] = {0};
-            snprintf(buf, 3, "%02x", mnc);
-            int mncRet = atoi(buf);
-            lbsLocReqBuf[sendLen++] = mncRet;
+            retRssi = 0;
+        }
+        else if (sRssi < -52)
+        {
+            retRssi = (sRssi + 113) >> 1;
         }
         else
         {
-            lbsLocReqBuf[sendLen++] = mnc;
+            retRssi = 31;
         }
-    }
+        lbsLocReqBuf[sendLen++] = retRssi;
+        lbsLocReqBuf[sendLen++] = (cell_info.lte_service_info.cid >> 24) & 0xFF;
+        lbsLocReqBuf[sendLen++] = (cell_info.lte_service_info.cid >> 16) & 0xFF;
+        lbsLocReqBuf[sendLen++] = (cell_info.lte_service_info.cid >> 8) & 0xFF;
+        lbsLocReqBuf[sendLen++] = cell_info.lte_service_info.cid & 0xFF;
 
-    int16_t sRssi;
-    uint8_t retRssi;
-    sRssi = cell_info.lte_service_info.rssi;
-    if (sRssi <= -113)
-    {
-        retRssi = 0;
-    }
-    else if (sRssi < -52)
-    {
-        retRssi = (sRssi + 113) >> 1;
-    }
-    else
-    {
-        retRssi = 31;
-    }
-    uint8_t rssi_index = sendLen++;
-    lbsLocReqBuf[sendLen++] = (cell_info.lte_service_info.cid >> 24) & 0xFF;
-    lbsLocReqBuf[sendLen++] = (cell_info.lte_service_info.cid >> 16) & 0xFF;
-    lbsLocReqBuf[sendLen++] = (cell_info.lte_service_info.cid >> 8) & 0xFF;
-    lbsLocReqBuf[sendLen++] = cell_info.lte_service_info.cid & 0xFF;
+        uint32_t tx_len, rx_len;
+        uint8_t is_break, is_timeout;
 
-
-    uint8_t lac1Num = 0;
-    uint8_t index = 0;
-    uint16_t lte_tac_table[LUAT_MOBILE_CELL_MAX_NUM] = {0};
-    for (uint8_t i = 0; i < cell_info.lte_neighbor_info_num; i++)
-    {
-        if (cell_info.lte_info[i].tac == cell_info.lte_service_info.tac)
+        result = network_connect(network_ctrl, LBSLOC_SERVER_UDP_IP, sizeof(LBSLOC_SERVER_UDP_IP), NULL, LBSLOC_SERVER_UDP_PORT, 5000);
+        LUAT_DEBUG_PRINT("%d", result);
+        if (!result)
         {
-            int16_t rsrp = cell_info.lte_info[i].rsrp + 144;
-            uint8_t ret_rssi = 0;
-            if (rsrp > 0 && rsrp < 31)
+            result = network_tx(network_ctrl, lbsLocReqBuf, sendLen, 0, NULL, 0, &tx_len, 5000);
+            if (!result)
             {
-                ret_rssi = rsrp;
-            }
-            else if(rsrp > 31)
-            {
-                ret_rssi = 31;
-            }
-            else if(rsrp < 0)
-            {
-                ret_rssi = 0;
-            }
-            lbsLocReqBuf[sendLen++] = ret_rssi;
-            lbsLocReqBuf[sendLen++] = (cell_info.lte_info[i].cid >> 24) & 0xFF;
-            lbsLocReqBuf[sendLen++] = (cell_info.lte_info[i].cid >> 16) & 0xFF;
-            lbsLocReqBuf[sendLen++] = (cell_info.lte_info[i].cid >> 8) & 0xFF;
-            lbsLocReqBuf[sendLen++] = cell_info.lte_info[i].cid & 0xFF;
-            lac1Num ++;
-        }
-        else
-        {
-            lte_tac_table[index] = cell_info.lte_info[i].tac;
-            index++;
-        }
-    }
-
-    lbsLocReqBuf[rssi_index] = (lac1Num << 5) + retRssi;
-
-    if (index > 0)
-    {
-        for (size_t i = 0; i < index - 1; i++)
-        {
-            for (size_t j = 0; j < index - i - 1; j++)
-            {
-                if (lte_tac_table[j] > lte_tac_table[j + 1])
+                result = network_wait_rx(network_ctrl, 15000, &is_break, &is_timeout);
+                LUAT_DEBUG_PRINT("%d", result);
+                if (!result)
                 {
-                    uint16_t temp = lte_tac_table[j];
-                    lte_tac_table[j] = lte_tac_table[j + 1];
-                    lte_tac_table[j + 1] = temp;
-                } 
-            }
-        }
-        uint16_t temp = lte_tac_table[0];
-        uint8_t lacxNum = 1;
-        for (uint8_t i = 1; i < cell_info.lte_neighbor_info_num; i++)
-        {
-            if (temp == lte_tac_table[i])
-            {
-                lacxNum++;
-            }
-            else
-            {
-                uint8_t is_first_lac = 1;
-                for(uint8_t j = 0; j < cell_info.lte_neighbor_info_num; j++)
-                {
-                    if(cell_info.lte_info[j].tac == temp)
+                    if (!is_timeout && !is_break)
                     {
-                        int16_t rsrp = cell_info.lte_info[j].rsrp + 144;
-                        uint8_t ret_rssi = 0;
-                        if (rsrp > 0 && rsrp < 31)
+                        result = network_rx(network_ctrl, &locationServiceResponse, sizeof(struct am_location_service_rsp_data_t), 0, NULL, NULL, &rx_len);
+                        if (!result && (sizeof(struct am_location_service_rsp_data_t) == rx_len))
                         {
-                            ret_rssi = rsrp;
-                        }
-                        else if(rsrp > 31)
-                        {
-                            ret_rssi = 31;
-                        }
-                        else if(rsrp < 0)
-                        {
-                            ret_rssi = 0;
-                        }
-                        if (is_first_lac)
-                        {
-                            lac_total_num ++;
-                            is_first_lac = 0;
-                            lbsLocReqBuf[sendLen++] = (cell_info.lte_info[j].tac >> 8) & 0xFF;
-                            lbsLocReqBuf[sendLen++] = cell_info.lte_info[j].tac & 0xFF;
-                            lbsLocReqBuf[sendLen++] = (cell_info.lte_info[j].mcc >> 8) & 0xFF;
-                            lbsLocReqBuf[sendLen++] = cell_info.lte_info[j].mcc & 0XFF;
-
-                            mnc = cell_info.lte_info[j].mnc & 0xFF;
-                            if (mnc > 10)
+                            LUAT_DEBUG_PRINT("response result:%d", locationServiceResponse.result);
+                            switch (locationServiceResponse.result)
                             {
-                                CHAR buf[3] = {0};
-                                snprintf(buf, 3, "%02x", mnc);
-                                int ret1 = atoi(buf);
-                                lbsLocReqBuf[sendLen++] = ret1;
+                            case LBSLOC_SUCCESS:
+                            case WIFILOC_SUCCESS:
+                                if (location_service_parse_response(&locationServiceResponse, latitude, longitude, &year, &month, &day, &hour, &minute, &second))
+                                {
+                                    LUAT_DEBUG_PRINT("latitude: %s, longitude: %s, year: %d, month: %d, day: %d, hour: %d, minute: %d, second: %d", latitude, longitude, year, month, day, hour, minute, second);
+                                }
+                                else
+                                {
+                                    LUAT_DEBUG_PRINT("rcv response, but process fail\r\n");
+                                }
+                                break;
+                            case UNKNOWN_LOCATION:
+                                LUAT_DEBUG_PRINT("基站数据库查询不到所有小区的位置信息\r\n");
+                                LUAT_DEBUG_PRINT("在电脑浏览器中打开http://bs.openluat.com/，根据此条打印中的小区信息，手动查找小区位置, mcc: %x, mnc: %x, lac: %d, ci: %d\r\n", cell_info.lte_service_info.mcc, cell_info.lte_service_info.mnc, cell_info.lte_service_info.tac, cell_info.lte_service_info.cid);
+                                LUAT_DEBUG_PRINT("如果手动可以查到位置，则服务器存在BUG，直接向技术人员反映问题\r\n");
+                                LUAT_DEBUG_PRINT("如果手动无法查到位置，则基站数据库还没有收录当前设备的小区位置信息，向技术人员反馈，我们会尽快收录\r\n");
+                                break;
+                            case PERMISSION_ERROR:
+                                LUAT_DEBUG_PRINT("权限错误，请联系官方人员尝试定位问题 %d\r\n", locationServiceResponse.result);
+                                break;
+                            case UNKNOWN_ERROR:
+                                LUAT_DEBUG_PRINT("未知错误，请联系官方人员尝试定位问题");
+                                break;
+                            default:
+                                break;
                             }
-                            else
-                            {
-                                lbsLocReqBuf[sendLen++] = mnc;
-                            }
-                            lbsLocReqBuf[sendLen++] = (lacxNum - 1 << 5) + ret_rssi;
                         }
-                        else
-                        {
-                            lbsLocReqBuf[sendLen++] = ret_rssi;
-                        }
-                        lbsLocReqBuf[sendLen++] = (cell_info.lte_info[j].cid >> 24) & 0xFF;
-                        lbsLocReqBuf[sendLen++] = (cell_info.lte_info[j].cid >> 16) & 0xFF;
-                        lbsLocReqBuf[sendLen++] = (cell_info.lte_info[j].cid >> 8) & 0xFF;
-                        lbsLocReqBuf[sendLen++] = cell_info.lte_info[j].cid & 0xFF;
                     }
                 }
-                temp = lte_tac_table[i];
-                if (temp == 0)
-                    break;
-                lacxNum = 1;
-            }
-        }
-    } 
-
-    lbsLocReqBuf[lac_num_index] = lac_total_num;
-
-#if WIFI_LOC
-    luat_wifiscan_set_info_t wifiscan_set_info;
-    luat_wifisacn_get_info_t wifiscan_get_info;
-    wifiscan_set_info.maxTimeOut = 10000;
-    wifiscan_set_info.round = 1;
-    wifiscan_set_info.maxBssidNum = 10;
-    wifiscan_set_info.scanTimeOut = 5;
-    wifiscan_set_info.wifiPriority = LUAT_WIFISCAN_DATA_PERFERRD;
-    wifiscan_set_info.channelCount=1;
-    wifiscan_set_info.channelRecLen=280;
-    wifiscan_set_info.channelId[0]=0;
-    ret = luat_get_wifiscan_cell_info(&wifiscan_set_info, &wifiscan_get_info);
-    if (ret != 0)
-    {
-        LUAT_DEBUG_PRINT("get wifiscan cell info false\r\n");
-        goto quit;
-    }
-    else
-    {
-        if (wifiscan_get_info.bssidNum > 0)
-        {
-            lbsLocReqBuf[sendLen++] = wifiscan_get_info.bssidNum;
-            for (int i = 0; i < wifiscan_get_info.bssidNum; i++)
-            {
-                for (int j = 0; j < 6; j++)
+                else
                 {
-                    lbsLocReqBuf[sendLen++] = wifiscan_get_info.bssid[i][j];
+                    LUAT_DEBUG_PRINT("tx fil");
                 }
-                lbsLocReqBuf[sendLen++] = wifiscan_get_info.rssi[i] + 255;
             }
         }
         else
         {
-            LUAT_DEBUG_PRINT("get wifiscan cell info wifiscan_get_info.bssidNum %d\r\n", wifiscan_get_info.bssidNum);
-            goto quit;
+            LUAT_DEBUG_PRINT("connect fil");
         }
+        network_close(network_ctrl, 5000);
+        network_release_ctrl(network_ctrl);
+        memset(latitude, 0, 20);
+        memset(longitude, 0, 20);
+        year = 0;
+        month = 0;
+        day = 0;
+        hour = 0;
+        minute = 0;
+        second = 0;
+        luat_rtos_task_sleep(30000);
     }
-#endif
-    txbuf = malloc(128);
-    ret = lwip_gethostbyname_r(DEMO_SERVER_UDP_IP, &dns_result, txbuf, 128, &p_result, &h_errnop);
-    if (!ret)
-    {
-        remote_ip = *((ip_addr_t *)dns_result.h_addr_list[0]);
-        free(txbuf);
-    }
-    else
-    {
-        free(txbuf);
-        LUAT_DEBUG_PRINT("dns fail\r\n");
-        goto quit;
-    }
-
-    socket_id = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    struct timeval timeout;
-    timeout.tv_sec = 15;
-    timeout.tv_usec = 0;
-    setsockopt(socket_id, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
-    memset(&name, 0, sizeof(name));
-    name.sin_family = AF_INET;
-    name.sin_addr.s_addr = remote_ip.u_addr.ip4.addr;
-    name.sin_port = htons(DEMO_SERVER_UDP_PORT);
-    ret = sendto(socket_id, lbsLocReqBuf, sendLen, 0, (const struct sockaddr *)&name, sockaddr_t_size);
-    if (ret == sendLen)
-    {
-        LUAT_DEBUG_PRINT("lbsLocSendRequest send  success\r\n");
-        ret = recv(socket_id, &locationServiceResponse, sizeof(struct am_location_service_rsp_data_t), 0);
-        if (ret > 0)
-        {
-            LUAT_DEBUG_PRINT("location_service_task: rcv response result %d\r\n", locationServiceResponse.result);
-            switch (locationServiceResponse.result)
-            {
-            case LBSLOC_SUCCESS:
-            case WIFILOC_SUCCESS:
-                if (sizeof(struct am_location_service_rsp_data_t) == ret)
-                {
-                    if (location_service_parse_response(&locationServiceResponse, latitude, longitude, &year, &month, &day, &hour, &minute, &second) == TRUE)
-                    {
-                        LUAT_DEBUG_PRINT("LbsLoc_result %d,latitude:%s,longitude:%s,year:%d,month:%d,day:%d,hour:%d,minute:%d,second:%d\r\n", locationServiceResponse.result,latitude,longitude, year, month, day, hour, minute, second);
-                    }
-                    else
-                    {
-                        LUAT_DEBUG_PRINT("location_service_task: rcv response, but process fail\r\n");
-                    }
-                }
-                break;
-            case UNKNOWN_LOCATION:
-                LUAT_DEBUG_PRINT("基站数据库查询不到所有小区的位置信息\r\n");
-                LUAT_DEBUG_PRINT("在电脑浏览器中打开http://bs.openluat.com/，根据此条打印中的小区信息，手动查找小区位置, mcc: %x, mnc: %x, lac: %d, ci: %d\r\n", cell_info.lte_service_info.mcc, cell_info.lte_service_info.mnc, cell_info.lte_service_info.tac, cell_info.lte_service_info.cid);
-                LUAT_DEBUG_PRINT("如果手动可以查到位置，则服务器存在BUG，直接向技术人员反映问题\r\n");
-                LUAT_DEBUG_PRINT("如果手动无法查到位置，则基站数据库还没有收录当前设备的小区位置信息，向技术人员反馈，我们会尽快收录\r\n");
-                break;
-            case PERMISSION_ERROR:
-                LUAT_DEBUG_PRINT("权限错误，请联系官方人员尝试定位问题 %d\r\n", locationServiceResponse.result);
-                break;
-            case UNKNOWN_ERROR:
-                LUAT_DEBUG_PRINT("未知错误，请联系官方人员尝试定位问题");
-                break;
-            default:
-                break;
-            }
-        }
-        else
-        {
-            LUAT_DEBUG_PRINT("location_service_task: rcv fail %d", ret);
-        }
-    }
-    else
-    {
-        LUAT_DEBUG_PRINT("lbsLocSendRequest send lbsLoc request fail\r\n");
-    }
-quit:
-    memset(latitude, 0, 20);
-    memset(longitude, 0, 20);
-    year = 0;
-    month = 0;
-    day = 0;
-    hour = 0;
-    minute = 0;
-    second = 0;
-    LUAT_DEBUG_PRINT("lbsLoc request quit\r\n");
-    close(socket_id);
-    socket_id = -1;
-    vTaskDelete(NULL);
 }
 
-void lbsLoc_request(void)
+int lbsLoc_request_init(void)
 {
-    luat_rtos_task_handle lbsLoc_request_task_handle;
-    luat_rtos_task_create(&lbsLoc_request_task_handle, 4 * 2048, 80, "lbsLoc_Init", lbsLoc_request_task, NULL, NULL);
+    return luat_rtos_task_create(&lbsLoc_request_task_handle, 4 * 2048, 50, "lbs task", lbsloc_request, NULL, NULL);
 }

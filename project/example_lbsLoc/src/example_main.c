@@ -51,16 +51,15 @@ void lbsloc_demo_task(void *param)
         luat_rtos_task_sleep(1000);
         LUAT_DEBUG_PRINT("等待网络注册");
     }
+    lbsLoc_request_init();
     while (1)
     {
-        lbsLoc_request();
         luat_rtos_task_sleep(30000);
     }
 }
 
 void lbsloc_demo_Init(void)
 {
-    //luat_mobile_set_sim_id(2);
     luat_rtos_task_handle lbsloc_demo_task_handle;
     luat_rtos_task_create(&lbsloc_demo_task_handle, 4 * 2048, 60, "lbsloc_demo_task", lbsloc_demo_task, NULL, NULL);
 }
