@@ -123,6 +123,13 @@ int luat_i2s_setup(const luat_i2s_conf_t *conf)
 	return 0;
 }
 
+int luat_i2s_set_user_data(uint8_t id, void *user_data)
+{
+	if (id >= I2S_MAX) return -1;
+	prv_i2s[id].userdata = user_data;
+	return 0;
+}
+
 int luat_i2s_modify(uint8_t id,uint8_t channel_format,uint8_t data_bits,uint32_t sample_rate)
 {
 	if (id >= I2S_MAX) return -1;
