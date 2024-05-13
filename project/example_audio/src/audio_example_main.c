@@ -545,6 +545,7 @@ static void demo_task(void *arg)
 			LUAT_DEBUG_PRINT("sram total %u, used %u, max used %u", total, alloc, peak);
 			luat_rtos_task_sleep(2000);
 		}
+#if 0 //双向对讲功能使用单独demo
 		//带ES8311的演示双向对讲，默认演示20秒
 		if (TEST_USE_ES8311)
 		{
@@ -722,6 +723,8 @@ static void demo_task(void *arg)
 			}
 #endif
 		}
+
+#endif
 		//演示audio休眠
 
 		LUAT_DEBUG_PRINT("audio shutdown 20 second");
