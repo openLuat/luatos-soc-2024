@@ -34,7 +34,7 @@ PACK_STRUCT_END
 
 
 
-void lbsLoc_request(void);
+int lbsLoc_request_init(void);
 
 
 
