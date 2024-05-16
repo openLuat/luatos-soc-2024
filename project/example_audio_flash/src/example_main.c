@@ -209,11 +209,12 @@ static void test_audio_demo_init(void)
 	luat_gpio_open(&gpio_cfg);
 
     // flash power init
+#ifndef CHIP_EC716
     gpio_cfg.pin = FLASH_VCC_PIN;
     gpio_cfg.alt_fun = FLASH_VCC_PIN_ALT_FUN;
     luat_gpio_open(&gpio_cfg);
     luat_gpio_set(FLASH_VCC_PIN, 1);
-
+#endif
 	luat_rtos_task_handle task_handle;
 	luat_rtos_task_create(&task_handle, 2048, 20, "test", demo_task, NULL, 0);
 }
