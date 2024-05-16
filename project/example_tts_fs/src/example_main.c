@@ -217,14 +217,24 @@ static void demo_task(void *arg)
     uint8_t data[8] = {0};
     luat_debug_set_fault_mode(LUAT_DEBUG_FAULT_HANG);
 	luat_spi_device_setup(&sfud_spi_dev);
-    sfud_flash_tables[0].luat_sfud.luat_spi = LUAT_TYPE_SPI_DEVICE;
-    sfud_flash_tables[0].luat_sfud.user_data = &sfud_spi_dev;
 
-    if (re = sfud_init()!=0){
-        LUAT_DEBUG_PRINT("sfud_init error is %d\n", re);
-        goto error;
-    }
-    const sfud_flash *flash = sfud_get_device_table();
+	/* SFUD */
+    // sfud_flash_tables[0].luat_sfud.luat_spi = LUAT_TYPE_SPI_DEVICE;
+    // sfud_flash_tables[0].luat_sfud.user_data = &sfud_spi_dev;
+
+    // if (re = sfud_init()!=0){
+    //     LUAT_DEBUG_PRINT("sfud_init error is %d\n", re);
+    //     goto error;
+    // }
+    // const sfud_flash *flash = sfud_get_device_table();
+
+	/* little flash */
+	static little_flash_t lf_flash = {0};
+    luat_spi_device_setup(&sfud_spi_dev);
+    lf_flash.spi.user_data = &sfud_spi_dev;
+    little_flash_init();
+    little_flash_device_init(&lf_flash);
+
     luat_fs_init();
     lfs_t* lfs = flash_lfs_sfud((sfud_flash *)flash, 0, 0);
     if (lfs) {
