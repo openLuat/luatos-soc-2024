@@ -14,8 +14,10 @@
 #include "luat_spi.h"
 #include "luat_mcu.h"
 #include "luat_wdt.h"
-#include "sfud.h"
+// #include "sfud.h"
 #include "lfs.h"
+
+#include "little_flash.h"
 
 #define FLASH_SPI_ID SPI_ID0
 #define FLASH_SPI_CS HAL_GPIO_8
@@ -38,8 +40,9 @@ enum
 	AUDIO_EVENT_PLAY_DONE = 1,
 };
 
-extern sfud_flash sfud_flash_tables[];
-extern lfs_t* flash_lfs_sfud(sfud_flash* flash, size_t offset, size_t maxsize);
+// extern sfud_flash sfud_flash_tables[];
+// extern lfs_t* flash_lfs_sfud(sfud_flash* flash, size_t offset, size_t maxsize);
+
 static luat_spi_device_t sfud_spi_dev = {
     .bus_id = FLASH_SPI_ID,
     .spi_config.CPHA = 0,
@@ -205,6 +208,8 @@ static void print_fs_info(const char* dir_path)
         fs_info.block_size);
 }
 
+extern lfs_t* flash_lfs_lf(little_flash_t* flash, size_t offset, size_t maxsize);
+
 static void demo_task(void *arg)
 {
 	static FILE* fp;
@@ -236,7 +241,10 @@ static void demo_task(void *arg)
     little_flash_device_init(&lf_flash);
 
     luat_fs_init();
-    lfs_t* lfs = flash_lfs_sfud((sfud_flash *)flash, 0, 0);
+
+    // lfs_t* lfs = flash_lfs_sfud((sfud_flash *)flash, 0, 0);
+	lfs_t* lfs = flash_lfs_lf(&lf_flash, 0, 0);
+
     if (lfs) {
 	    luat_fs_conf_t conf = {
 		    .busname = (char*)lfs,
