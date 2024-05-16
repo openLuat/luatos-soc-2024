@@ -441,3 +441,7 @@ uint8_t soc_rndis_is_nat(void)
 	return 1;
 }
 #endif
+
+#ifdef LUAT_USE_RNDIS_BY_ECM
+uint8_t soc_user_usb_eth_mode(void) {return 1;}
+#endif
