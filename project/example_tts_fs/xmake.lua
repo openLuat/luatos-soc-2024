@@ -16,10 +16,19 @@ target(project_name,function()
     add_files("./src/*.c",{public = true})
     add_defines("LUAT_USE_SFUD",{public = true})
 
-    --sfud
-    add_includedirs(luatos_root.."/components/sfud",{public = true})
-    add_files(luatos_root.."/components/sfud/*.c")
-    remove_files(luatos_root.."/components/sfud/luat_lib_sfud.c")
+    -- --sfud
+    -- add_includedirs(luatos_root.."/components/sfud",{public = true})
+    -- add_files(luatos_root.."/components/sfud/*.c")
+    -- remove_files(luatos_root.."/components/sfud/luat_lib_sfud.c")
+
+    -- little_flash
+    add_defines("LUAT_USE_LITTLE_FLASH",{public = true})
+    add_includedirs(luatos_root.."/components/little_flash/inc",
+                luatos_root.."/components/little_flash/port",
+                {public = true})
+    add_files(luatos_root.."/components/little_flash/**.c")
+    remove_files(luatos_root.."/components/little_flash/luat_lib_little_flash.c")
+
 	--codec
 	add_files(luatos_root.."/components/multimedia/luat_audio_es8311.c")
 	add_files(luatos_root.."/components/multimedia/luat_audio_tm8211.c")
