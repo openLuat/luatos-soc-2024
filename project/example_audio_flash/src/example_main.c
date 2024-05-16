@@ -24,14 +24,21 @@
 #define FLASH_SPI_CS HAL_GPIO_8
 #define FALSH_SPI_BR (51200000)
 
+#ifndef CHIP_EC716
 #define PA_PWR_PIN HAL_GPIO_25
 #define PA_PWR_PIN_ALT_FUN	0
+#else
+#define PA_PWR_PIN HAL_GPIO_20
+#define PA_PWR_PIN_ALT_FUN	0
+#endif
 #define CODEC_PWR_PIN HAL_GPIO_16
 #define CODEC_PWR_PIN_ALT_FUN	4
 
 // FLASH使能引脚
+#ifndef CHIP_EC716
 #define FLASH_VCC_PIN HAL_GPIO_26
 #define FLASH_VCC_PIN_ALT_FUN   0
+#endif
 
 extern sfud_flash sfud_flash_tables[];
 
