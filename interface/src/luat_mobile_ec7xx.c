@@ -1081,7 +1081,8 @@ int luat_mobile_softsim_onoff(uint8_t on_off)
 		AppPsCmiReqData         psCmiReqData = {0};
 		cmiReq.bSoftSim = on_off;
 		cmiReq.softsimPresent = TRUE;
-
+		cmiReq.bSimPreDetect = !on_off;
+		cmiReq.simPreDetectPresent = TRUE;
 	    psCmiReqData.sgId        = CAM_SIM;
 	    psCmiReqData.reqPrimId   = CMI_SIM_SET_EXT_CFG_REQ;
 	    psCmiReqData.cnfPrimId   = CMI_SIM_SET_EXT_CFG_CNF;
