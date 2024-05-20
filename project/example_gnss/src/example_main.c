@@ -10,6 +10,7 @@
 #define UART_ID 2
 #define USE_780ETGG 0 //如果使用780ETGG 需要设置为1
 #define USE_780EPVH 1 //如果使用780EPVH 需要设置为1
+static const uint8_t HD8128_UART0_115200_CMD[] = {0xf1,0xd9,0x06,0x00,0x08,0x00,0x00,0x00,0x00,0x00,0x00,0xc2,0x01,0x00,0xd1,0xe0};
 typedef struct
 {
     char *gnss_data;
@@ -20,10 +21,12 @@ typedef struct
 enum
 {
 	EVENT_NEW_GNSS_DATA = 1,
+	EVENT_CHANGE_BR,
 };
 
 static luat_rtos_task_handle gnss_parse_task_handle;
-
+static uint8_t gnss_work_mode;
+static uint8_t gnss_uart_error_cnt;
 static int libminmea_parse_data(const char *data, size_t len)
 {
     size_t prev = 0;
@@ -55,6 +58,16 @@ void luat_uart_recv_cb(int uart_id, uint32_t data_len)
 	if (data_len)
 	{
 		luat_rtos_event_send(gnss_parse_task_handle, EVENT_NEW_GNSS_DATA, 0, 0, 0, 0);
+	}
+	else if (gnss_work_mode)
+	{
+		gnss_uart_error_cnt++;
+		if (gnss_uart_error_cnt > 5)
+		{
+			gnss_work_mode = 0;
+			gnss_uart_error_cnt = 0;
+			luat_rtos_event_send(gnss_parse_task_handle, EVENT_CHANGE_BR, 0, 0, 0, 0);
+		}
 	}
 }
 
@@ -129,8 +142,8 @@ int parse_nmea(const char *gnssdata)
         struct minmea_sentence_gsv frame;
         if (minmea_parse_gsv(&frame, gnssdata))
         {
-            LUAT_DEBUG_PRINT("$xxGSV: message %d of %d\n", frame.msg_nr, frame.total_msgs);
-            LUAT_DEBUG_PRINT("$xxGSV: satellites in view: %d\n", frame.total_sats);
+            LUAT_DEBUG_PRINT("$xxGSV: message %d of %d", frame.msg_nr, frame.total_msgs);
+            LUAT_DEBUG_PRINT("$xxGSV: satellites in view: %d", frame.total_sats);
             for (int i = 0; i < 4; i++)
                 LUAT_DEBUG_PRINT("$xxGSV: sat nr %d, elevation: %d, azimuth: %d, CN: %d db",
                                  frame.sats[i].nr,
@@ -188,6 +201,7 @@ int parse_nmea(const char *gnssdata)
     case MINMEA_INVALID:
     {
         LUAT_DEBUG_PRINT("$xxxxx sentence is not valid");
+        return -1;
     }
     break;
     default:
@@ -203,7 +217,7 @@ static void gnss_parse_task(void *param)
     luat_uart_t uart = {
         .id = UART_ID,
 #if USE_780EPVH
-		.baud_rate = 9600,
+		.baud_rate = 115200,
 #else
         .baud_rate = 115200,
 #endif
@@ -216,6 +230,7 @@ static void gnss_parse_task(void *param)
 
     luat_uart_ctrl(UART_ID, LUAT_UART_SET_RECV_CALLBACK, luat_uart_recv_cb);
     luat_mcu_xtal_ref_output(1, 0);
+    gnss_work_mode = 1;
 #if USE_780ETGG
     luat_gpio_cfg_t gpio_cfg;
 	luat_gpio_set_default_cfg(&gpio_cfg);
@@ -245,35 +260,58 @@ static void gnss_parse_task(void *param)
     OS_InitBuffer(&nmea_data_buffer, 4096);
     while (1)
     {
-    	luat_rtos_event_recv(gnss_parse_task_handle, EVENT_NEW_GNSS_DATA, &event, NULL, LUAT_WAIT_FOREVER);
-    	read_len = luat_uart_read(UART_ID, temp, 128);
-    	if (read_len)
+    	luat_rtos_event_recv(gnss_parse_task_handle, 0, &event, NULL, LUAT_WAIT_FOREVER);
+    	switch(event.id)
     	{
-    		do
-    		{
-    			OS_BufferWrite(&nmea_data_buffer, temp, read_len);
-    			read_len = luat_uart_read(UART_ID, temp, 128);
-    		}while(read_len > 0);
-    		do
-    		{
-    			new_line_flag = 0;
-    			for (i = 0; i < nmea_data_buffer.Pos; i++)
-    			{
-    				if ('\n' == nmea_data_buffer.Data[i])
-    				{
-    					if (i >= 6 && ('\r' == nmea_data_buffer.Data[i-1]))
-    					{
-        					new_line_flag = 1;
-        					nmea_data_buffer.Data[i] = 0;
-        					LUAT_DEBUG_PRINT("gnssdata:\n %s", nmea_data_buffer.Data);
-        					parse_nmea((const char *)nmea_data_buffer.Data);
-    					}
-    					OS_BufferRemove(&nmea_data_buffer, i+1);
-    					break;
-    				}
-    			}
-    		}while(new_line_flag);
+    	case EVENT_NEW_GNSS_DATA:
+        	read_len = luat_uart_read(UART_ID, temp, 128);
+        	if (read_len)
+        	{
+        		do
+        		{
+        			OS_BufferWrite(&nmea_data_buffer, temp, read_len);
+        			read_len = luat_uart_read(UART_ID, temp, 128);
+        		}while(read_len > 0);
+        		do
+        		{
+        			new_line_flag = 0;
+        			for (i = 0; i < nmea_data_buffer.Pos; i++)
+        			{
+        				if ('\n' == nmea_data_buffer.Data[i])
+        				{
+        					if (i >= 6 && ('\r' == nmea_data_buffer.Data[i-1]))
+        					{
+            					new_line_flag = 1;
+            					nmea_data_buffer.Data[i] = 0;
+            					LUAT_DEBUG_PRINT("gnssdata:%.*s", i - 2, nmea_data_buffer.Data);
+            					if (!parse_nmea((const char *)nmea_data_buffer.Data))
+            					{
+
+            					}
+            					gnss_uart_error_cnt = 0;
+        					}
+        					OS_BufferRemove(&nmea_data_buffer, i+1);
+        					break;
+        				}
+        			}
+        		}while(new_line_flag);
+        	}
+        	break;
+    	case EVENT_CHANGE_BR:
+    		LUAT_DEBUG_PRINT("setup gnss br from 9600 to 115200");
+    		luat_uart_close(UART_ID);
+    		uart.baud_rate = 9600;
+    		luat_uart_setup(&uart);
+    		luat_rtos_task_sleep(500);
+    		luat_uart_write(UART_ID, HD8128_UART0_115200_CMD, sizeof(HD8128_UART0_115200_CMD));
+    		luat_rtos_task_sleep(500);
+    		luat_uart_close(UART_ID);
+    		uart.baud_rate = 115200;
+    		luat_uart_setup(&uart);
+    		gnss_work_mode = 1;
+    		break;
     	}
+
 
     }
 }
