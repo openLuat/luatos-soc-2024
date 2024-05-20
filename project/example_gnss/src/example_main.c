@@ -67,22 +67,22 @@ int parse_nmea(const char *gnssdata)
         struct minmea_sentence_rmc frame;
         if (minmea_parse_rmc(&frame, gnssdata))
         {
-            LUAT_DEBUG_PRINT("$xxRMC: raw coordinates and speed: (%d/%d,%d/%d) %d/%d\n",
+            LUAT_DEBUG_PRINT("$xxRMC: raw coordinates and speed: (%d/%d,%d/%d) %d/%d",
                              frame.latitude.value, frame.latitude.scale,
                              frame.longitude.value, frame.longitude.scale,
                              frame.speed.value, frame.speed.scale);
-            LUAT_DEBUG_PRINT("$xxRMC fixed-point coordinates and speed scaled to three decimal places: (%d,%d) %d\n",
+            LUAT_DEBUG_PRINT("$xxRMC fixed-point coordinates and speed scaled to three decimal places: (%d,%d) %d",
                              minmea_rescale(&frame.latitude, 1000),
                              minmea_rescale(&frame.longitude, 1000),
                              minmea_rescale(&frame.speed, 1000));
-            LUAT_DEBUG_PRINT("$xxRMC floating point degree coordinates and speed: (%f,%f) %f\n",
+            LUAT_DEBUG_PRINT("$xxRMC floating point degree coordinates and speed: (%f,%f) %f",
                              minmea_tocoord(&frame.latitude),
                              minmea_tocoord(&frame.longitude),
                              minmea_tofloat(&frame.speed));
         }
         else
         {
-            LUAT_DEBUG_PRINT("$xxRMC sentence is not parsed\n");
+            LUAT_DEBUG_PRINT("$xxRMC sentence is not parsed");
         }
     }
     break;
@@ -91,11 +91,11 @@ int parse_nmea(const char *gnssdata)
         struct minmea_sentence_gga frame;
         if (minmea_parse_gga(&frame, gnssdata))
         {
-            LUAT_DEBUG_PRINT("$xxGGA: fix quality: %d\n", frame.fix_quality);
+            LUAT_DEBUG_PRINT("$xxGGA: fix quality: %d", frame.fix_quality);
         }
         else
         {
-            LUAT_DEBUG_PRINT("$xxGGA sentence is not parsed\n");
+            LUAT_DEBUG_PRINT("$xxGGA sentence is not parsed");
         }
     }
     break;
@@ -104,12 +104,12 @@ int parse_nmea(const char *gnssdata)
         struct minmea_sentence_gst frame;
         if (minmea_parse_gst(&frame, gnssdata))
         {
-            LUAT_DEBUG_PRINT("$xxGST: raw latitude,longitude and altitude error deviation: (%d/%d,%d/%d,%d/%d)\n",
+            LUAT_DEBUG_PRINT("$xxGST: raw latitude,longitude and altitude error deviation: (%d/%d,%d/%d,%d/%d)",
                              frame.latitude_error_deviation.value, frame.latitude_error_deviation.scale,
                              frame.longitude_error_deviation.value, frame.longitude_error_deviation.scale,
                              frame.altitude_error_deviation.value, frame.altitude_error_deviation.scale);
             LUAT_DEBUG_PRINT("$xxGST fixed point latitude,longitude and altitude error deviation"
-                                           " scaled to one decimal place: (%d,%d,%d)\n",
+                                           " scaled to one decimal place: (%d,%d,%d)",
                              minmea_rescale(&frame.latitude_error_deviation, 10),
                              minmea_rescale(&frame.longitude_error_deviation, 10),
                              minmea_rescale(&frame.altitude_error_deviation, 10));
@@ -120,7 +120,7 @@ int parse_nmea(const char *gnssdata)
         }
         else
         {
-            LUAT_DEBUG_PRINT("$xxGST sentence is not parsed\n");
+            LUAT_DEBUG_PRINT("$xxGST sentence is not parsed");
         }
     }
     break;
@@ -132,7 +132,7 @@ int parse_nmea(const char *gnssdata)
             LUAT_DEBUG_PRINT("$xxGSV: message %d of %d\n", frame.msg_nr, frame.total_msgs);
             LUAT_DEBUG_PRINT("$xxGSV: satellites in view: %d\n", frame.total_sats);
             for (int i = 0; i < 4; i++)
-                LUAT_DEBUG_PRINT("$xxGSV: sat nr %d, elevation: %d, azimuth: %d, snr: %d dbm\n",
+                LUAT_DEBUG_PRINT("$xxGSV: sat nr %d, elevation: %d, azimuth: %d, CN: %d db",
                                  frame.sats[i].nr,
                                  frame.sats[i].elevation,
                                  frame.sats[i].azimuth,
@@ -140,7 +140,7 @@ int parse_nmea(const char *gnssdata)
         }
         else
         {
-            LUAT_DEBUG_PRINT("$xxGSV sentence is not parsed\n");
+            LUAT_DEBUG_PRINT("$xxGSV sentence is not parsed");
         }
     }
     break;
@@ -149,18 +149,18 @@ int parse_nmea(const char *gnssdata)
         struct minmea_sentence_vtg frame;
         if (minmea_parse_vtg(&frame, gnssdata))
         {
-            LUAT_DEBUG_PRINT("$xxVTG: true track degrees = %f\n",
+            LUAT_DEBUG_PRINT("$xxVTG: true track degrees = %f",
                              minmea_tofloat(&frame.true_track_degrees));
-            LUAT_DEBUG_PRINT("        magnetic track degrees = %f\n",
+            LUAT_DEBUG_PRINT("        magnetic track degrees = %f",
                              minmea_tofloat(&frame.magnetic_track_degrees));
-            LUAT_DEBUG_PRINT("        speed knots = %f\n",
+            LUAT_DEBUG_PRINT("        speed knots = %f",
                              minmea_tofloat(&frame.speed_knots));
-            LUAT_DEBUG_PRINT("        speed kph = %f\n",
+            LUAT_DEBUG_PRINT("        speed kph = %f",
                              minmea_tofloat(&frame.speed_kph));
         }
         else
         {
-            LUAT_DEBUG_PRINT("$xxVTG sentence is not parsed\n");
+            LUAT_DEBUG_PRINT("$xxVTG sentence is not parsed");
         }
     }
     break;
@@ -169,7 +169,7 @@ int parse_nmea(const char *gnssdata)
         struct minmea_sentence_zda frame;
         if (minmea_parse_zda(&frame, gnssdata))
         {
-            LUAT_DEBUG_PRINT("$xxZDA: %d:%d:%d %02d.%02d.%d UTC%+03d:%02d\n",
+            LUAT_DEBUG_PRINT("$xxZDA: %d:%d:%d %02d.%02d.%d UTC%+03d:%02d",
                              frame.time.hours,
                              frame.time.minutes,
                              frame.time.seconds,
@@ -181,18 +181,18 @@ int parse_nmea(const char *gnssdata)
         }
         else
         {
-            LUAT_DEBUG_PRINT("$xxZDA sentence is not parsed\n");
+            LUAT_DEBUG_PRINT("$xxZDA sentence is not parsed");
         }
     }
     break;
     case MINMEA_INVALID:
     {
-        LUAT_DEBUG_PRINT("$xxxxx sentence is not valid\n");
+        LUAT_DEBUG_PRINT("$xxxxx sentence is not valid");
     }
     break;
     default:
     {
-        LUAT_DEBUG_PRINT("$xxxxx sentence is not parsed\n");
+        LUAT_DEBUG_PRINT("$xxxxx sentence is not parsed");
     }
     break;
     }
@@ -219,9 +219,12 @@ static void gnss_parse_task(void *param)
 #if USE_780ETGG
     luat_gpio_cfg_t gpio_cfg;
 	luat_gpio_set_default_cfg(&gpio_cfg);
+	gpio_cfg.pin = HAL_GPIO_16;
+	luat_gpio_open(&gpio_cfg);
+    luat_gpio_set(HAL_GPIO_16,1);	//GNSS VCC-BAK
 	gpio_cfg.pin = HAL_GPIO_13;
 	luat_gpio_open(&gpio_cfg);
-    luat_gpio_set(HAL_GPIO_13,1);
+    luat_gpio_set(HAL_GPIO_13,1);	//GNSS VCC
 #endif
 #if USE_780EPVH
     luat_gpio_cfg_t gpio_cfg;
