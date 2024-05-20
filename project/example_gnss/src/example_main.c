@@ -1,10 +1,4 @@
-/*
- * Copyright © 2014 Kosma Moczek <kosma@cloudyourcar.com>
- * This program is free software. It comes without any warranty, to the extent
- * permitted by applicable law. You can redistribute it and/or modify it under
- * the terms of the Do What The Fuck You Want To Public License, Version 2, as
- * published by Sam Hocevar. See the COPYING file for more details.
- */
+
 
 #include "minmea.h"
 #include "common_api.h"
@@ -13,9 +7,9 @@
 #include "luat_uart.h"
 #include "luat_gpio.h"
 #include "agnss.h"
-//注意目前这个DEMO 是通过780EP UART2 外挂510U实现的
 #define UART_ID 2
 #define USE_780ETGG 0 //如果使用780ETGG 需要设置为1
+#define USE_780EPVH 1 //如果使用780EPVH 需要设置为1
 typedef struct
 {
     char *gnss_data;
@@ -23,7 +17,11 @@ typedef struct
 }gnss_data_struct;
 
 
-static luat_rtos_task_handle gnss_task_handle;
+enum
+{
+	EVENT_NEW_GNSS_DATA = 1,
+};
+
 static luat_rtos_task_handle gnss_parse_task_handle;
 
 static int libminmea_parse_data(const char *data, size_t len)
@@ -45,10 +43,7 @@ static int libminmea_parse_data(const char *data, size_t len)
             }
             memcpy(nmea_tmp_buff, data + prev, offset - prev - 1);
             nmea_tmp_buff[offset - prev - 1] = 0x00;
-            if (strstr(nmea_tmp_buff, "GNRMC"))
-            {
-                parse_nmea((const char *)nmea_tmp_buff);
-            }
+            parse_nmea((const char *)nmea_tmp_buff);
             prev = offset + 1;
         }
     }
@@ -57,46 +52,10 @@ static int libminmea_parse_data(const char *data, size_t len)
 
 void luat_uart_recv_cb(int uart_id, uint32_t data_len)
 {
-    char *data_buff = malloc(data_len + 1);
-    memset(data_buff, 0, data_len + 1);
-    luat_uart_read(uart_id, data_buff, data_len);
-    gnss_data_struct *gnss = malloc(sizeof(gnss_data_struct));
-    gnss->gnss_data = data_buff;
-    gnss->gnss_data_len = data_len;
-    if(luat_rtos_message_send(gnss_parse_task_handle, 0, (void *)gnss) != 0)
-    {
-        free(gnss->gnss_data);
-        free(gnss);
-    }
-}
-
-static void gnss_setup_task(void *param)
-{
-    luat_uart_t uart = {
-        .id = UART_ID,
-        .baud_rate = 115200,
-        .data_bits = 8,
-        .stop_bits = 1,
-        .parity = 0};
-    luat_uart_setup(&uart);
-
-
-    luat_uart_ctrl(UART_ID, LUAT_UART_SET_RECV_CALLBACK, luat_uart_recv_cb);
-#if USE_780ETGG
-    luat_gpio_cfg_t gpio_cfg;
-	luat_gpio_set_default_cfg(&gpio_cfg);
-	gpio_cfg.pin = HAL_GPIO_13;
-	luat_gpio_open(&gpio_cfg);
-    luat_gpio_set(HAL_GPIO_13,1);
-#endif
-    
-
-    task_ephemeris();
-    while (1)
-    {
-        luat_rtos_task_sleep(5000);
-    }
-    luat_rtos_task_delete(gnss_task_handle);
+	if (data_len)
+	{
+		luat_rtos_event_send(gnss_parse_task_handle, EVENT_NEW_GNSS_DATA, 0, 0, 0, 0);
+	}
 }
 
 int parse_nmea(const char *gnssdata)
@@ -241,31 +200,84 @@ int parse_nmea(const char *gnssdata)
 }
 static void gnss_parse_task(void *param)
 {
+    luat_uart_t uart = {
+        .id = UART_ID,
+#if USE_780EPVH
+		.baud_rate = 9600,
+#else
+        .baud_rate = 115200,
+#endif
+        .data_bits = 8,
+        .stop_bits = 1,
+		.bufsz = 4096,
+        .parity = 0};
+    luat_uart_setup(&uart);
+
+
+    luat_uart_ctrl(UART_ID, LUAT_UART_SET_RECV_CALLBACK, luat_uart_recv_cb);
+    luat_mcu_xtal_ref_output(1, 0);
+#if USE_780ETGG
+    luat_gpio_cfg_t gpio_cfg;
+	luat_gpio_set_default_cfg(&gpio_cfg);
+	gpio_cfg.pin = HAL_GPIO_13;
+	luat_gpio_open(&gpio_cfg);
+    luat_gpio_set(HAL_GPIO_13,1);
+#endif
+#if USE_780EPVH
+    luat_gpio_cfg_t gpio_cfg;
+	luat_gpio_set_default_cfg(&gpio_cfg);
+	gpio_cfg.pin = HAL_GPIO_23;
+	luat_gpio_open(&gpio_cfg);
+    luat_gpio_set(HAL_GPIO_23,1);	//GNSS VCC-BAK
+	gpio_cfg.pin = HAL_GPIO_17;
+	gpio_cfg.alt_fun = 4;
+	luat_gpio_open(&gpio_cfg);
+    luat_gpio_set(HAL_GPIO_17,1);	//GNSS VCC
+#endif
+    luat_event_t event;
+    Buffer_Struct nmea_data_buffer;
+    uint32_t read_len, i;
+    uint8_t temp[128];
+    uint8_t new_line_flag = 0;
+    OS_InitBuffer(&nmea_data_buffer, 4096);
     while (1)
     {
-        uint32_t id;
-        gnss_data_struct *gnss = NULL;
-        if(0 == luat_rtos_message_recv(gnss_parse_task_handle, &id, (void **)&gnss, LUAT_WAIT_FOREVER))
-        {
-            LUAT_DEBUG_PRINT("gnssdata:\n %s", gnss->gnss_data);
-            libminmea_parse_data(gnss->gnss_data, gnss->gnss_data_len);
-            if(gnss->gnss_data != NULL)
-            {
-                free(gnss->gnss_data);
-                gnss->gnss_data = NULL;
-            }
-            if(gnss != NULL)
-            {
-                free(gnss);
-                gnss = NULL;
-            }
-        }
+    	luat_rtos_event_recv(gnss_parse_task_handle, EVENT_NEW_GNSS_DATA, &event, NULL, LUAT_WAIT_FOREVER);
+    	read_len = luat_uart_read(UART_ID, temp, 128);
+    	if (read_len)
+    	{
+    		do
+    		{
+    			OS_BufferWrite(&nmea_data_buffer, temp, read_len);
+    			read_len = luat_uart_read(UART_ID, temp, 128);
+    		}while(read_len > 0);
+    		do
+    		{
+    			new_line_flag = 0;
+    			for (i = 0; i < nmea_data_buffer.Pos; i++)
+    			{
+    				if ('\n' == nmea_data_buffer.Data[i])
+    				{
+    					if (i >= 6 && ('\r' == nmea_data_buffer.Data[i-1]))
+    					{
+        					new_line_flag = 1;
+        					nmea_data_buffer.Data[i] = 0;
+        					LUAT_DEBUG_PRINT("gnssdata:\n %s", nmea_data_buffer.Data);
+        					parse_nmea((const char *)nmea_data_buffer.Data);
+    					}
+    					OS_BufferRemove(&nmea_data_buffer, i+1);
+    					break;
+    				}
+    			}
+    		}while(new_line_flag);
+    	}
+
     }
 }
 static void task_gnss_init(void)
 {
-    luat_rtos_task_create(&gnss_parse_task_handle, 1024 * 20, 30, "gnss_parse", gnss_parse_task, NULL, 10);
-    luat_rtos_task_create(&gnss_task_handle, 1024 * 20, 20, "gnss", gnss_setup_task, NULL, NULL);
+    luat_rtos_task_create(&gnss_parse_task_handle, 1024 * 8, 30, "gnss_parse", gnss_parse_task, NULL, 16);
+    task_ephemeris();
 }
 
 extern void network_init(void);

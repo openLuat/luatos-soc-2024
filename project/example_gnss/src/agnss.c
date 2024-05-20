@@ -539,7 +539,7 @@ static void ephemeris_get_task(void *param)
 }
 void task_ephemeris(void)
 {
-    luat_rtos_task_create(&http_task_handle, 10 * 1024, 20, "http", ephemeris_get_task, NULL, 10);
+    luat_rtos_task_create(&http_task_handle, 6 * 1024, 20, "http", ephemeris_get_task, NULL, 10);
 }
 
 void network_init(void)
