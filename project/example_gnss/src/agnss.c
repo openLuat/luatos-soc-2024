@@ -15,7 +15,12 @@
 #define LBSLOC_SERVER_UDP_IP "bs.openluat.com" // 基站定位网址
 #define LBSLOC_SERVER_UDP_PORT 12411           // 端口
 #define UART_ID 2
-
+#define USE_HD8128
+#ifdef USE_HD8128
+#define EPH_HOST "http://download.openluat.com/9501-xingli/HD_GPS_BDS.hdb"
+#else
+#define EPH_HOST "http://download.openluat.com/9501-xingli/HXXT_GPS_BDS.hdb"
+#endif
 /// @brief 合宙IOT 项目productkey ，必须加上，否则定位失败
 static char *productKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 static luat_rtos_task_handle lbsloc_task_handle = NULL;
@@ -334,7 +339,7 @@ void lbsloc_request(void)
     else
         LUAT_DEBUG_PRINT("lbsloc task create fail");
 }
-#define EPH_HOST "http://download.openluat.com/9501-xingli/HXXT_GPS_BDS_AGNSS_DATA.dat"
+
 
 
 static void luatos_mobile_event_callback(LUAT_MOBILE_EVENT_E event, uint8_t index, uint8_t status)
