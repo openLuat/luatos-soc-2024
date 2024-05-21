@@ -244,8 +244,18 @@ static void mqtt_task(void *param)
 	opts.host = MQTT_HOST;
 	opts.port = MQTT_PORT;
 	luat_mqtt_set_connopts(luat_mqtt_ctrl, &opts);
-
-	luat_mobile_get_imei(0, clientId, sizeof(clientId)-1);
+	while (1)
+	{
+		if (luat_mobile_get_imsi(0, clientId, sizeof(clientId)-1) <= 0)
+		{
+			luat_rtos_task_sleep(500);
+		}
+		else
+		{
+			LUAT_DEBUG_PRINT("use id %s", clientId);
+			break;
+		}
+	}
 	mqtt_init(&(luat_mqtt_ctrl->broker), clientId);
 	mqtt_init_auth(&(luat_mqtt_ctrl->broker), "user", "password");
 
