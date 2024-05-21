@@ -161,7 +161,7 @@ static const luat_i2s_conf_t luat_i2s_conf_es8311 ={
 };
 
 static const luat_audio_codec_conf_t luat_audio_codec_es8311 = {
-    .i2c_id = 1,
+    .i2c_id = 0,
     .i2s_id = TEST_I2S_ID,
     .codec_opts = &codec_opts_es8311,
 };
