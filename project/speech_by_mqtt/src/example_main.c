@@ -374,7 +374,7 @@ RX_DATA_DONE:
 				break;
 			}
 			play_block_check_cnt_start++;
-			if (play_block_cnt_last <= (play_block_check_cnt_start + 1))
+			if (play_block_cnt_last <= (play_block_check_cnt_start + 2))
 			{
 				LUAT_DEBUG_PRINT("broadcast play need resync! %u,%u", play_block_cnt_last, play_block_check_cnt_start);
 				play_block_cnt_last = 0;
