@@ -55,7 +55,7 @@
 #define PCM_ONE_FRAME_BLOCK_NUM	(5)	//1帧数据包含5个20ms
 #define PCM_CACHE_FRAME_BEFORE_PLAY	(5)	//缓存N帧数据后再开始播放
 static const uint8_t  amr_wb_byte_len[] = {17, 23, 32, 36, 40, 46, 50, 58, 60, 5, 0, 0, 0, 0, 0, 0};
-static const uint8_t amr_zero_data[61] = {
+static const uint8_t amr_wb_zero_data[61] = {
 		0x44, 0x11, 0x06, 0x30, 0x33, 0xbe, 0xce, 0xb3,
 		0xa0, 0xd3, 0x12, 0x40, 0xeb, 0x50, 0x87, 0xb4,
 		0xff, 0xd6, 0x42, 0x40, 0x18, 0x08, 0x1a, 0xe5,
@@ -125,6 +125,7 @@ typedef struct
 	luat_rtos_task_handle mqtt_task_handle;
 	luat_rtos_task_handle key_task_handle;
 	luat_rtos_timer_t download_loop_timer;
+	luat_rtos_timer_t download_no_data_timer;
 	volatile uint32_t record_block_cnt;
 	amr_wb_save_struct amr_wb_save_buffer[8];
 	uint8_t audio_enable;
@@ -137,8 +138,9 @@ typedef struct
 	uint8_t mqtt_ready;
 	uint8_t downlink_state;
 	uint8_t amr_wb_save_buffer_point;
-//	uint8_t amr_dummy[64];
-//	uint8_t amr_dummy_len;
+	uint8_t download_data_flag;
+	uint8_t amr_dummy[64];
+	uint8_t amr_dummy_len;
 }speech_ctrl_t;
 
 #define MQTT_HOST    	"lbsmqtt.airm2m.com"   				// MQTT服务器的地址和端口号
@@ -174,6 +176,7 @@ enum
 	EVENT_MQTT_UPLINK_DATA,
 	EVENT_MQTT_CHECK_DOWNLINK,
 	EVENT_MQTT_FORCE_SYNC,
+	EVENT_MQTT_FORCE_STOP,
 	EVENT_KEY_PRESS,
 	EVENT_AMR_START_TRUE_PLAY,
 	EVENT_AMR_START,
@@ -221,9 +224,23 @@ static void end_broadcast_play(void)
 	LUAT_DEBUG_PRINT("broadcast play end!");
 	OS_DeInitBuffer(&speechc.downlink_cache);
 	luat_rtos_timer_stop(speechc.download_loop_timer);
+	luat_rtos_timer_stop(speechc.download_no_data_timer);
 	speechc.downlink_state = DL_STATE_IDLE;
 	speechc.play_no_more_data = 1;
 	luat_rtos_event_send(speechc.speech_task_handle, EVENT_AMR_PLAY_STOP, 0, 0, 0, 0);
+
+}
+
+static LUAT_RT_RET_TYPE download_timeout(LUAT_RT_CB_PARAM)
+{
+	if (speechc.download_data_flag)
+	{
+		speechc.download_data_flag = 0;
+	}
+	else
+	{
+		luat_rtos_event_send(speechc.mqtt_task_handle, EVENT_MQTT_FORCE_STOP, 0, 0, 0, 0);
+	}
 }
 
 static LUAT_RT_RET_TYPE download_loop(LUAT_RT_CB_PARAM)
@@ -248,6 +265,7 @@ static void mqtt_task(void *param)
 	char remote_client[16];
 	char clientId[16] = {0};
 	luat_rtos_timer_create(&speechc.download_loop_timer);
+	luat_rtos_timer_create(&speechc.download_no_data_timer);
 	luat_mqtt_ctrl_t *luat_mqtt_ctrl = (luat_mqtt_ctrl_t *)luat_heap_malloc(sizeof(luat_mqtt_ctrl_t));
 	luat_mqtt_init(luat_mqtt_ctrl, NW_ADAPTER_INDEX_LWIP_GPRS);
 
@@ -338,6 +356,7 @@ static void mqtt_task(void *param)
 						}
 
 					}
+					speechc.download_data_flag = 1;
 					switch(speechc.downlink_state)
 					{
 					case DL_STATE_IDLE:
@@ -349,6 +368,7 @@ static void mqtt_task(void *param)
 						cache_data_cnt = 1;
 						play_block_check_cnt_start = play_block_cnt_last;
 						speechc.downlink_state = DL_STATE_WAIT_CACHE_OK;
+						luat_rtos_timer_start(speechc.download_loop_timer, 3000, 1, download_timeout, NULL);
 						break;
 					case DL_STATE_WAIT_CACHE_OK:
 						OS_BufferWrite(&speechc.downlink_cache, (void *)(event.param2 + 20), event.param3 - 20);
@@ -393,7 +413,7 @@ RX_DATA_DONE:
 				LUAT_DEBUG_PRINT("add blank data");
 				for(i = 0; i < PCM_ONE_FRAME_BLOCK_NUM; i++)
 				{
-					OS_WriteFifo(&speechc.downlink_buffer, amr_zero_data, 61);
+					OS_WriteFifo(&speechc.downlink_buffer, speechc.amr_dummy, 61);
 				}
 				break;
 			}
@@ -406,7 +426,7 @@ RX_DATA_DONE:
 				speechc.downlink_state = DL_STATE_PLAY_WAIT_CACHE_OK;
 				for(i = 0; i < PCM_ONE_FRAME_BLOCK_NUM; i++)
 				{
-					OS_WriteFifo(&speechc.downlink_buffer, amr_zero_data, 61);
+					OS_WriteFifo(&speechc.downlink_buffer, speechc.amr_dummy, 61);
 				}
 			}
 			break;
@@ -440,9 +460,13 @@ RX_DATA_DONE:
 			speechc.downlink_state = DL_STATE_PLAY_WAIT_CACHE_OK;
 			for(i = 0; i < PCM_ONE_FRAME_BLOCK_NUM; i++)
 			{
-				OS_WriteFifo(&speechc.downlink_buffer, amr_zero_data, 61);
+				OS_WriteFifo(&speechc.downlink_buffer, speechc.amr_dummy, 61);
 			}
 			speechc.resync_flag = 0;
+			break;
+		case EVENT_MQTT_FORCE_STOP:
+			LUAT_DEBUG_PRINT("broadcast long time no data!");
+			end_broadcast_play();
 			break;
 		case EVENT_MQTT_MSG:
 			switch(event.param1)
@@ -584,6 +608,7 @@ static void speech_task(void *arg)
 //	{
 //		DBG("0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x", speechc.amr_dummy[i], speechc.amr_dummy[i+1], speechc.amr_dummy[i+2], speechc.amr_dummy[i+3], speechc.amr_dummy[i+4], speechc.amr_dummy[i+5], speechc.amr_dummy[i+6], speechc.amr_dummy[i+7]);
 //	}
+	memcpy(speechc.amr_dummy, amr_wb_zero_data, 61);
 	record_cnt = 0;
 	need_stop_record = 0;
 	need_stop_play = 0;
@@ -651,7 +676,7 @@ static void speech_task(void *arg)
 						speechc.play_no_more_data = 0;
 						LUAT_DEBUG_PRINT("play need stop!");
 					}
-					luat_audio_inter_amr_decode(pcm_buff, amr_zero_data, &out_len);
+					luat_audio_inter_amr_decode(pcm_buff, speechc.amr_dummy, &out_len);
 				}
 			}
 ARM_ENCODE:
