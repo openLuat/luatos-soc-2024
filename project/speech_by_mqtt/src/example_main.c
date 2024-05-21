@@ -50,8 +50,10 @@
 #define VOICE_VOL   70
 #define MIC_VOL     75
 
-#define DEMO_TYPE_BROADCAST
-#define DEMO_TYPE_SPEECH
+#define AMR_ONE_FRAME_LEN	640
+#define PCM_BLOCK_LEN	(AMR_ONE_FRAME_LEN)
+#define PCM_ONE_FRAME_BLOCK_NUM	(5)	//1帧数据包含5个20ms
+#define PCM_CACHE_FRAME_BEFORE_PLAY	(5)	//缓存N帧数据后再开始播放
 
 #if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
 #if 0
@@ -102,6 +104,11 @@ static void log_on(void)
 
 typedef struct
 {
+	uint16_t amr_save_data_len;
+	uint8_t amr_save_data[64 * PCM_ONE_FRAME_BLOCK_NUM];
+}amr_wb_save_struct;
+typedef struct
+{
 	BSP_FifoStruct downlink_buffer;
 	Buffer_Struct downlink_cache;
 	luat_rtos_task_handle speech_task_handle;
@@ -109,6 +116,7 @@ typedef struct
 	luat_rtos_task_handle key_task_handle;
 	luat_rtos_timer_t download_loop_timer;
 	volatile uint32_t record_block_cnt;
+	amr_wb_save_struct amr_wb_save_buffer[8];
 	uint8_t amr_dummy[64];
 	uint8_t amr_dummy_len;
 	uint8_t audio_enable;
@@ -119,16 +127,14 @@ typedef struct
 	uint8_t codec_exsit;
 	uint8_t mqtt_ready;
 	uint8_t downlink_state;
+	uint8_t amr_wb_save_buffer_point;
 }speech_ctrl_t;
 
 #define MQTT_HOST    	"lbsmqtt.airm2m.com"   				// MQTT服务器的地址和端口号
 #define MQTT_PORT		1884
 static const char topic_global[] = "speech_demo/all";
 static speech_ctrl_t speechc = {0};
-#define AMR_ONE_FRAME_LEN	640
-#define PCM_BLOCK_LEN	(AMR_ONE_FRAME_LEN)
-#define PCM_ONE_FRAME_BLOCK_NUM	(5)	//1帧数据包含5个20ms
-#define PCM_CACHE_FRAME_BEFORE_PLAY	(5)	//缓存N帧数据后再开始播放
+
 static int record_cb(uint8_t id ,luat_i2s_event_t event, uint8_t *rx_data, uint32_t rx_len, void *param);
 static const luat_i2s_conf_t luat_i2s_conf_es8311 ={
 	.id = TEST_I2S_ID,
@@ -217,8 +223,6 @@ static void mqtt_task(void *param)
 {
 	luat_event_t event;
 	Buffer_Struct uplink;
-	uint64_t up_cnt = 0;
-	uint64_t down_cnt = 0;
 	OS_InitBuffer(&uplink, 1024);
 	OS_InitBuffer(&speechc.downlink_cache, 4096);
 	int ret = -1;
@@ -284,7 +288,6 @@ static void mqtt_task(void *param)
 				}
 				else
 				{
-					down_cnt += event.param3 - 20;
 					if (speechc.downlink_state)
 					{
 						if (memcmp(client_id, remote_client, 15))
@@ -395,13 +398,18 @@ RX_DATA_DONE:
 				if (PACKET_TYPE_BROADCAST_DATA == event.param1)
 				{
 					OS_BufferWrite(&uplink, &speechc.record_block_cnt, 4);
-					OS_BufferWrite(&uplink, (uint8_t *)event.param2, event.param3);
+					OS_BufferWrite(&uplink, speechc.amr_wb_save_buffer[event.param2].amr_save_data, speechc.amr_wb_save_buffer[event.param2].amr_save_data_len);
 					speechc.record_block_cnt++;
+					//LUAT_DEBUG_PRINT("upload buffer %d, len %d", event.param2, speechc.amr_wb_save_buffer[event.param2].amr_save_data_len);
+					speechc.amr_wb_save_buffer[event.param2].amr_save_data_len = 0;
 				}
-				up_cnt += event.param3;
 				mqtt_publish(&(luat_mqtt_ctrl->broker), topic_global, uplink.Data, uplink.Pos, 0);
 			}
-			free((char *)event.param2);
+			else
+			{
+				//LUAT_DEBUG_PRINT("upload buffer %d, len %d", event.param2, speechc.amr_wb_save_buffer[event.param2].amr_save_data_len);
+				speechc.amr_wb_save_buffer[event.param2].amr_save_data_len = 0;
+			}
 			break;
 		case EVENT_MQTT_MSG:
 			switch(event.param1)
@@ -479,10 +487,13 @@ static void start_broadcast_record(void)
 	luat_gpio_set(SPEECH_LED_PIN, 1);
 	LUAT_DEBUG_PRINT("record start!");
 	speechc.record_block_cnt = 0;
+	speechc.amr_wb_save_buffer_point = 0;
+	speechc.amr_wb_save_buffer[0].amr_save_data_len = 0;
 }
 static void speech_task(void *arg)
 {
-	uint64_t check_time;
+	uint64_t check_time = 0;
+	uint64_t amr_times = 0;
 	luat_debug_set_fault_mode(LUAT_DEBUG_FAULT_HANG);
 	OS_InitFifo(&speechc.downlink_buffer, luat_heap_malloc(1 << 14), 14);
 	luat_audio_play_global_init(NULL, NULL, NULL, NULL, NULL);
@@ -521,7 +532,7 @@ static void speech_task(void *arg)
 	luat_audio_init(MULTIMEDIA_ID, TEST_VOL, TEST_MIC_VOL);		//初始化音频
 
 	luat_rtos_timer_t play_start_timer = luat_create_rtos_timer(start_play_callback, NULL, NULL);
-	Buffer_Struct record_buffer = {0};
+
 	uint16_t pcm_dummy[PCM_BLOCK_LEN >> 1] = {0};
 
 	uint16_t pcm_buff[PCM_BLOCK_LEN >> 1];
@@ -563,7 +574,7 @@ static void speech_task(void *arg)
 			if (OS_CheckFifoUsedSpace(&speechc.downlink_buffer))
 			{
 				OS_QueryFifo(&speechc.downlink_buffer, amr_buff, 1);
-				switch(amr_buff[0] >> 3)
+				switch((amr_buff[0] >> 3) & 0x0f)
 				{
 				case 8:
 					temp_len = 61;
@@ -575,7 +586,7 @@ static void speech_task(void *arg)
 					temp_len = 1;
 					break;
 				default:
-					LUAT_DEBUG_ASSERT(0, "ERROR AMR PARAM");
+					LUAT_DEBUG_ASSERT(0, "ERROR AMR PARAM, %d", (amr_buff[0] >> 3) & 0x0f);
 					break;
 				}
 				OS_ReadFifo(&speechc.downlink_buffer, amr_buff, temp_len);
@@ -615,18 +626,25 @@ static void speech_task(void *arg)
 ARM_ENCODE:
 			if (speechc.record_enable)
 			{
-				luat_audio_inter_amr_encode(pcm_data, amr_buff, &out_len);
-				if (!record_cnt)
+				if (!speechc.mqtt_ready)
 				{
-					OS_InitBuffer(&record_buffer, 512);
+					need_stop_record = 1;
 				}
+				luat_audio_inter_amr_encode(pcm_data, amr_buff, &out_len);
 				record_cnt++;
-				OS_BufferWrite(&record_buffer, amr_buff, out_len);
+				memcpy(speechc.amr_wb_save_buffer[speechc.amr_wb_save_buffer_point].amr_save_data + speechc.amr_wb_save_buffer[speechc.amr_wb_save_buffer_point].amr_save_data_len, amr_buff, out_len);
+				speechc.amr_wb_save_buffer[speechc.amr_wb_save_buffer_point].amr_save_data_len += out_len;
 				if (record_cnt >= PCM_ONE_FRAME_BLOCK_NUM)
 				{
 					record_cnt = 0;
-					luat_rtos_event_send(speechc.mqtt_task_handle, EVENT_MQTT_UPLINK_DATA, PACKET_TYPE_BROADCAST_DATA, record_buffer.Data, record_buffer.Pos, 0);
-					memset(&record_buffer, 0, sizeof(record_buffer));
+					luat_rtos_event_send(speechc.mqtt_task_handle, EVENT_MQTT_UPLINK_DATA, PACKET_TYPE_BROADCAST_DATA, speechc.amr_wb_save_buffer_point, 0, 0);
+					//LUAT_DEBUG_PRINT("upload buffer %d", speechc.amr_wb_save_buffer_point);
+					speechc.amr_wb_save_buffer_point = (speechc.amr_wb_save_buffer_point + 1) & 7;
+					if (speechc.amr_wb_save_buffer[speechc.amr_wb_save_buffer_point].amr_save_data_len)
+					{
+						LUAT_DEBUG_PRINT("record buffer %d is full!", speechc.amr_wb_save_buffer_point);
+					}
+					speechc.amr_wb_save_buffer[speechc.amr_wb_save_buffer_point].amr_save_data_len = 0;
 					if (need_stop_record)
 					{
 						LUAT_DEBUG_PRINT("upload stop!");
@@ -652,10 +670,21 @@ ARM_ENCODE:
 				luat_meminfo_opt_sys(LUAT_HEAP_SRAM, &total, &alloc, &peak);
 				LUAT_DEBUG_PRINT("sram total %u, used %u, max used %u", total, alloc, peak);
 			}
+			else
+			{
+				amr_times++;
+				if (luat_mcu_tick64_ms() >= (check_time + (amr_times + 1) * 20))
+				{
+					LUAT_DEBUG_PRINT("amr codec timeout! %llu", amr_times);
+				}
+			}
 
 			break;
 		case EVENT_AMR_START_TRUE_PLAY:
+			check_time = luat_mcu_tick64_ms();
+			amr_times = 0;
 			luat_audio_record_and_play(MULTIMEDIA_ID, 16000, luat_audio_inter_amr_pcm_address(), 640, 3);
+			//luat_audio_record_and_play(MULTIMEDIA_ID, 8000, luat_audio_inter_amr_pcm_address(), 320, 6);
 			LUAT_DEBUG_PRINT("true play start!");
 			break;
 		case EVENT_AMR_START:
@@ -666,11 +695,15 @@ ARM_ENCODE:
 				luat_audio_inter_amr_init(1, 8);
 				play_delay = 2;
 				record_cnt = 0;
-				luat_audio_record_and_play(MULTIMEDIA_ID, 16000, NULL, 4000, 2);
+				luat_audio_record_and_play(MULTIMEDIA_ID, 16000, NULL, 640, 3);
+				//luat_audio_record_and_play(MULTIMEDIA_ID, 8000, NULL, 320, 6);
+				check_time = luat_mcu_tick64_ms();
+				amr_times = 0;
 				if (speechc.record_enable)
 				{
 					start_broadcast_record();
 				}
+
 			}
 
 			break;
