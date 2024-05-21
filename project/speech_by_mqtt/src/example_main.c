@@ -54,7 +54,17 @@
 #define PCM_BLOCK_LEN	(AMR_ONE_FRAME_LEN)
 #define PCM_ONE_FRAME_BLOCK_NUM	(5)	//1帧数据包含5个20ms
 #define PCM_CACHE_FRAME_BEFORE_PLAY	(5)	//缓存N帧数据后再开始播放
-
+static const uint8_t  amr_wb_byte_len[] = {17, 23, 32, 36, 40, 46, 50, 58, 60, 5, 0, 0, 0, 0, 0, 0};
+static const uint8_t amr_zero_data[61] = {
+		0x44, 0x11, 0x06, 0x30, 0x33, 0xbe, 0xce, 0xb3,
+		0xa0, 0xd3, 0x12, 0x40, 0xeb, 0x50, 0x87, 0xb4,
+		0xff, 0xd6, 0x42, 0x40, 0x18, 0x08, 0x1a, 0xe5,
+		0x02, 0x22, 0x96, 0x11, 0x29, 0x48, 0x49, 0xcb,
+		0x52, 0x22, 0x89, 0x06, 0x78, 0xc0, 0x08, 0x00,
+		0xb1, 0x18, 0x8b, 0x83, 0x24, 0xc7, 0x58, 0x74,
+		0xad, 0x19, 0x0d, 0xd3, 0xb0, 0x5b, 0x08, 0xa8,
+		0xcb, 0xba, 0xaf, 0xf2, 0x58
+};
 #if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
 #if 0
 #include "audioCfg.h"   //struct AudioConfig_t
@@ -117,17 +127,18 @@ typedef struct
 	luat_rtos_timer_t download_loop_timer;
 	volatile uint32_t record_block_cnt;
 	amr_wb_save_struct amr_wb_save_buffer[8];
-	uint8_t amr_dummy[64];
-	uint8_t amr_dummy_len;
 	uint8_t audio_enable;
 	uint8_t record_enable;
 	uint8_t play_enable;
 	uint8_t play_no_more_data;
+	uint8_t resync_flag;
 	uint8_t codec_ready;
 	uint8_t codec_exsit;
 	uint8_t mqtt_ready;
 	uint8_t downlink_state;
 	uint8_t amr_wb_save_buffer_point;
+//	uint8_t amr_dummy[64];
+//	uint8_t amr_dummy_len;
 }speech_ctrl_t;
 
 #define MQTT_HOST    	"lbsmqtt.airm2m.com"   				// MQTT服务器的地址和端口号
@@ -162,6 +173,7 @@ enum
 	EVENT_MQTT_DOWNLINK_DATA,
 	EVENT_MQTT_UPLINK_DATA,
 	EVENT_MQTT_CHECK_DOWNLINK,
+	EVENT_MQTT_FORCE_SYNC,
 	EVENT_KEY_PRESS,
 	EVENT_AMR_START_TRUE_PLAY,
 	EVENT_AMR_START,
@@ -363,7 +375,6 @@ static void mqtt_task(void *param)
 						if (cache_data_cnt >= PCM_CACHE_FRAME_BEFORE_PLAY)
 						{
 							cache_data_cnt = 0;
-							play_block_check_cnt_start = play_block_cnt_last;
 							LUAT_DEBUG_PRINT("broadcast replay start! %u", play_block_check_cnt_start);
 							speechc.downlink_state = DL_STATE_PLAY;
 							OS_WriteFifo(&speechc.downlink_buffer, speechc.downlink_cache.Data, speechc.downlink_cache.Pos);
@@ -382,7 +393,7 @@ RX_DATA_DONE:
 				LUAT_DEBUG_PRINT("add blank data");
 				for(i = 0; i < PCM_ONE_FRAME_BLOCK_NUM; i++)
 				{
-					OS_WriteFifo(&speechc.downlink_buffer, speechc.amr_dummy, speechc.amr_dummy_len);
+					OS_WriteFifo(&speechc.downlink_buffer, amr_zero_data, 61);
 				}
 				break;
 			}
@@ -391,10 +402,11 @@ RX_DATA_DONE:
 			{
 				LUAT_DEBUG_PRINT("broadcast play need resync! %u,%u", play_block_cnt_last, play_block_check_cnt_start);
 				play_block_cnt_last = 0;
+				cache_data_cnt = 0;
 				speechc.downlink_state = DL_STATE_PLAY_WAIT_CACHE_OK;
 				for(i = 0; i < PCM_ONE_FRAME_BLOCK_NUM; i++)
 				{
-					OS_WriteFifo(&speechc.downlink_buffer, speechc.amr_dummy, speechc.amr_dummy_len);
+					OS_WriteFifo(&speechc.downlink_buffer, amr_zero_data, 61);
 				}
 			}
 			break;
@@ -420,6 +432,17 @@ RX_DATA_DONE:
 				//LUAT_DEBUG_PRINT("upload buffer %d, len %d", event.param2, speechc.amr_wb_save_buffer[event.param2].amr_save_data_len);
 				speechc.amr_wb_save_buffer[event.param2].amr_save_data_len = 0;
 			}
+			break;
+		case EVENT_MQTT_FORCE_SYNC:
+			LUAT_DEBUG_PRINT("broadcast play force resync! %u,%u", play_block_cnt_last, play_block_check_cnt_start);
+			play_block_cnt_last = 0;
+			cache_data_cnt = 0;
+			speechc.downlink_state = DL_STATE_PLAY_WAIT_CACHE_OK;
+			for(i = 0; i < PCM_ONE_FRAME_BLOCK_NUM; i++)
+			{
+				OS_WriteFifo(&speechc.downlink_buffer, amr_zero_data, 61);
+			}
+			speechc.resync_flag = 0;
 			break;
 		case EVENT_MQTT_MSG:
 			switch(event.param1)
@@ -553,9 +576,14 @@ static void speech_task(void *arg)
 	uint8_t out_len, temp_len, record_cnt, need_stop_record, need_stop_play, wait_stop_play;
 	uint16_t *pcm_data;
 	//准备空白数据
-	luat_audio_inter_amr_init(1, 8);	//7是NB最高音质，WB最高是8
-	luat_audio_inter_amr_encode(pcm_dummy, speechc.amr_dummy, &speechc.amr_dummy_len);
-	luat_audio_inter_amr_deinit();
+//	luat_audio_inter_amr_init(1, 8);	//7是NB最高音质，WB最高是8
+//	luat_audio_inter_amr_encode(pcm_dummy, speechc.amr_dummy, &speechc.amr_dummy_len);
+//	luat_audio_inter_amr_deinit();
+//	DBG("%d", speechc.amr_dummy_len);
+//	for(int i = 0; i < speechc.amr_dummy_len; i+= 8)
+//	{
+//		DBG("0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x", speechc.amr_dummy[i], speechc.amr_dummy[i+1], speechc.amr_dummy[i+2], speechc.amr_dummy[i+3], speechc.amr_dummy[i+4], speechc.amr_dummy[i+5], speechc.amr_dummy[i+6], speechc.amr_dummy[i+7]);
+//	}
 	record_cnt = 0;
 	need_stop_record = 0;
 	need_stop_play = 0;
@@ -584,21 +612,14 @@ static void speech_task(void *arg)
 			if (OS_CheckFifoUsedSpace(&speechc.downlink_buffer))
 			{
 				OS_QueryFifo(&speechc.downlink_buffer, amr_buff, 1);
-				switch((amr_buff[0] >> 3) & 0x0f)
+				if ( ((amr_buff[0] >> 3) > 0x0f) || ((amr_buff[0] & 0x07) != 0x04) )
 				{
-				case 8:
-					temp_len = 61;
-					break;
-				case 9:
-					temp_len = 6;
-					break;
-				case 15:
-					temp_len = 1;
-					break;
-				default:
-					LUAT_DEBUG_ASSERT(0, "ERROR AMR PARAM, %d", (amr_buff[0] >> 3) & 0x0f);
-					break;
+					LUAT_DEBUG_PRINT("ERROR AMR PARAM! %x", amr_buff[0]);
+					speechc.resync_flag = 1;
+					luat_rtos_event_send(speechc.mqtt_task_handle, EVENT_MQTT_FORCE_SYNC, PACKET_TYPE_BROADCAST_END, 0, 0, 0);
+					goto ARM_ENCODE;
 				}
+				temp_len = amr_wb_byte_len[(amr_buff[0] >> 3)] + 1;
 				OS_ReadFifo(&speechc.downlink_buffer, amr_buff, temp_len);
 				luat_audio_inter_amr_decode(pcm_buff, amr_buff, &out_len);
 				goto ARM_ENCODE;
@@ -618,7 +639,7 @@ static void speech_task(void *arg)
 					wait_stop_play = 1;
 					need_stop_play = 0;
 				}
-				else if (speechc.play_enable && !speechc.play_no_more_data)
+				else if (speechc.play_enable && !speechc.play_no_more_data && !speechc.resync_flag)
 				{
 					LUAT_DEBUG_ASSERT(0, "NO DATA");
 				}
@@ -630,7 +651,7 @@ static void speech_task(void *arg)
 						speechc.play_no_more_data = 0;
 						LUAT_DEBUG_PRINT("play need stop!");
 					}
-					luat_audio_inter_amr_decode(pcm_buff, speechc.amr_dummy, &out_len);
+					luat_audio_inter_amr_decode(pcm_buff, amr_zero_data, &out_len);
 				}
 			}
 ARM_ENCODE:
