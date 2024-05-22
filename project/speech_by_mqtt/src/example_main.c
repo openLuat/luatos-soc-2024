@@ -3,7 +3,8 @@
 //demo使用的mqtt做为服务器协议
 //已实现广播模式，即一个人说话，其他人全部都能接收到，按住BOOT，等NET灯亮，开始录音上行，松开BOOT，NET灯灭，结束录音，如果多个人同时上行，谁先上行，谁的话就被广播出来
 //demo重点演示对音频数据的处理，网络部分处理需要用户根据实际情况进行优化
-//如果需要低功耗，需要把ES8311的控制引脚改为AGPIO
+//上线后，led慢闪，录音时常亮，播放时快闪，录音优先于播放
+//如果需要低功耗，需要把ES8311的控制引脚改为AGPIO，无数据交互时，LED灯关闭
 #include "common_api.h"
 #include "luat_gpio.h"
 #include "luat_mobile.h"
@@ -13,6 +14,7 @@
 #include "luat_debug.h"
 #include "luat_mem.h"
 #include "luat_mcu.h"
+#include "luat_pwm.h"
 
 #include "luat_audio_play.h"
 #include "luat_uart.h"
@@ -27,7 +29,7 @@
 #define PA_PWR_PIN HAL_GPIO_25
 #define PA_PWR_PIN_ALT_FUN	0
 #define SPEECH_LED_PIN HAL_GPIO_27
-#define SPEECH_LED_PIN_ALT_FUN	0
+#define SPEECH_LED_PWM	4
 #define SPEECH_CTRL_PIN HAL_GPIO_0
 #define SPEECH_CTRL_PIN_ALT_FUN	0
 
@@ -50,6 +52,7 @@
 #define VOICE_VOL   70
 #define MIC_VOL     75
 
+//#define LOW_POWER_ENABLE
 #define AMR_ONE_FRAME_LEN	640
 #define PCM_BLOCK_LEN	(AMR_ONE_FRAME_LEN)
 #define PCM_ONE_FRAME_BLOCK_NUM	(5)	//1帧数据包含5个20ms
@@ -124,6 +127,7 @@ typedef struct
 	luat_rtos_task_handle speech_task_handle;
 	luat_rtos_task_handle mqtt_task_handle;
 	luat_rtos_task_handle key_task_handle;
+	luat_rtos_task_handle led_task_handle;
 	luat_rtos_timer_t download_loop_timer;
 	luat_rtos_timer_t download_no_data_timer;
 	volatile uint32_t record_block_cnt;
@@ -183,6 +187,12 @@ enum
 	EVENT_AMR_RECORD_STOP,
 	EVENT_AMR_PLAY_STOP,
 	EVENT_KEY_PIN_IRQ,
+	EVENT_LED_OFF_LINE,
+	EVENT_LED_ON_LINE,
+	EVENT_LED_DOWNLOAD_START,
+	EVENT_LED_DOWNLOAD_END,
+	EVENT_LED_UPLOAD_START,
+	EVENT_LED_UPLOAD_END,
 
 	PACKET_TYPE_BROADCAST_DATA = 0,
 	PACKET_TYPE_BROADCAST_END,
@@ -228,6 +238,7 @@ static void end_broadcast_play(void)
 	speechc.downlink_state = DL_STATE_IDLE;
 	speechc.play_no_more_data = 1;
 	luat_rtos_event_send(speechc.speech_task_handle, EVENT_AMR_PLAY_STOP, 0, 0, 0, 0);
+	luat_rtos_event_send(speechc.led_task_handle, EVENT_LED_DOWNLOAD_END, 0, 0, 0, 0);
 
 }
 
@@ -369,6 +380,7 @@ static void mqtt_task(void *param)
 						play_block_check_cnt_start = play_block_cnt_last;
 						speechc.downlink_state = DL_STATE_WAIT_CACHE_OK;
 						luat_rtos_timer_start(speechc.download_loop_timer, 3000, 1, download_timeout, NULL);
+						luat_rtos_event_send(speechc.led_task_handle, EVENT_LED_DOWNLOAD_START, 0, 0, 0, 0);
 						break;
 					case DL_STATE_WAIT_CACHE_OK:
 						OS_BufferWrite(&speechc.downlink_cache, (void *)(event.param2 + 20), event.param3 - 20);
@@ -496,10 +508,12 @@ RX_DATA_DONE:
 				LUAT_DEBUG_PRINT("mqtt_subscribe ok");
 				OS_ReInitBuffer(&uplink, 1024);
 				speechc.mqtt_ready = 1;
+				luat_rtos_event_send(speechc.led_task_handle, EVENT_LED_ON_LINE, 0, 0, 0, 0);
 				break;
 			case MQTT_MSG_DISCONNECT:
 				LUAT_DEBUG_PRINT("luat_mqtt_cb mqtt disconnect");
 				end_broadcast_play();
+				luat_rtos_event_send(speechc.led_task_handle, EVENT_LED_OFF_LINE, 0, 0, 0, 0);
 				break;
 			case MQTT_MSG_TIMER_PING:
 				luat_mqtt_ping(luat_mqtt_ctrl);
@@ -541,11 +555,11 @@ static LUAT_RT_RET_TYPE start_play_callback(LUAT_RT_CB_PARAM)
 
 static void start_broadcast_record(void)
 {
-	luat_gpio_set(SPEECH_LED_PIN, 1);
 	LUAT_DEBUG_PRINT("record start!");
 	speechc.record_block_cnt = 0;
 	speechc.amr_wb_save_buffer_point = 0;
 	speechc.amr_wb_save_buffer[0].amr_save_data_len = 0;
+	luat_rtos_event_send(speechc.led_task_handle, EVENT_LED_UPLOAD_START, 0, 0, 0, 0);
 }
 static void speech_task(void *arg)
 {
@@ -660,7 +674,6 @@ static void speech_task(void *arg)
 				}
 				else if (need_stop_play)
 				{
-					LUAT_DEBUG_PRINT("wait play stop!");
 					wait_stop_play = 1;
 					need_stop_play = 0;
 				}
@@ -674,7 +687,6 @@ static void speech_task(void *arg)
 					{
 						need_stop_play = 1;
 						speechc.play_no_more_data = 0;
-						LUAT_DEBUG_PRINT("play need stop!");
 					}
 					luat_audio_inter_amr_decode(pcm_buff, speechc.amr_dummy, &out_len);
 				}
@@ -707,7 +719,7 @@ ARM_ENCODE:
 						luat_rtos_event_send(speechc.mqtt_task_handle, EVENT_MQTT_UPLINK_DATA, PACKET_TYPE_BROADCAST_END, 0, 0, 0);
 						need_stop_record = 0;
 						speechc.record_enable = 0;
-						luat_gpio_set(SPEECH_LED_PIN, 0);
+						luat_rtos_event_send(speechc.led_task_handle, EVENT_LED_UPLOAD_END, PACKET_TYPE_BROADCAST_END, 0, 0, 0);
 						luat_gpio_ctrl(SPEECH_CTRL_PIN, LUAT_GPIO_CMD_SET_IRQ_MODE, LUAT_GPIO_RISING_IRQ);
 					}
 				}
@@ -856,6 +868,76 @@ WAIT_PRESS:
 	}
 }
 
+static void led_task(void *p)
+{
+	uint8_t channel = 4;
+	uint8_t is_online = 0;
+	uint8_t is_download = 0;
+	uint8_t is_upload = 0;
+	luat_event_t event;
+	while(1)
+	{
+
+		luat_rtos_event_recv(speechc.led_task_handle, 0, &event, NULL, LUAT_WAIT_FOREVER);
+		LUAT_DEBUG_PRINT("led require %d", event.id - EVENT_LED_OFF_LINE);
+		switch(event.id)
+		{
+		case EVENT_LED_OFF_LINE:
+			is_online = 0;
+			is_download = 0;
+			luat_pwm_close(channel);
+			break;
+		case EVENT_LED_ON_LINE:
+			is_online = 1;
+			is_download = 0;
+#ifdef LOW_POWER_ENABLE
+			luat_pwm_close(channel);
+#else
+			luat_pwm_open(channel, 1, 100, 0);
+#endif
+			break;
+		case EVENT_LED_DOWNLOAD_START:
+			is_download = 1;
+			if (!is_upload && is_online)
+			{
+				luat_pwm_open(channel, 10, 500, 0);
+			}
+			break;
+		case EVENT_LED_DOWNLOAD_END:
+			is_download = 0;
+			if (!is_upload && is_online)
+			{
+				luat_pwm_open(channel, 1, 100, 0);
+			}
+			break;
+		case EVENT_LED_UPLOAD_START:
+			is_upload = 1;
+			luat_pwm_open(channel, 10000, 1000, 0);
+			break;
+		case EVENT_LED_UPLOAD_END:
+			is_upload = 0;
+			if (is_download && is_online)
+			{
+				luat_pwm_open(channel, 10, 500, 0);
+			}
+			else if (is_online)
+			{
+#ifdef LOW_POWER_ENABLE
+				luat_pwm_close(channel);
+#else
+				luat_pwm_open(channel, 1, 100, 0);
+#endif
+			}
+			else
+			{
+				luat_pwm_close(channel);
+			}
+			break;
+		}
+
+	}
+}
+
 static void speech_demo_init(void)
 {
 	luat_gpio_cfg_t gpio_cfg;
@@ -871,12 +953,9 @@ static void speech_demo_init(void)
 	gpio_cfg.alt_fun = CODEC_PWR_PIN_ALT_FUN;
 	luat_gpio_open(&gpio_cfg);
 
-	gpio_cfg.pin = SPEECH_LED_PIN;
-	gpio_cfg.alt_fun = SPEECH_LED_PIN_ALT_FUN;
-	luat_gpio_open(&gpio_cfg);
-
 	luat_rtos_task_create(&speechc.speech_task_handle, 4 * 1024, 100, "speech", speech_task, NULL, 64);
 	luat_rtos_task_create(&speechc.key_task_handle, 2 * 1024, 10, "key", key_task, NULL, 16);
+	luat_rtos_task_create(&speechc.led_task_handle, 2 * 1024, 10, "led", led_task, NULL, 16);
 	luat_rtos_task_create(&speechc.mqtt_task_handle, 4 * 1024, 50, "mqtt", mqtt_task, NULL, 0);
 
 }

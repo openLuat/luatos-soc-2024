@@ -8,7 +8,7 @@
 #include "luat_debug.h"
 #include "luat_pwm.h"
 #include "luat_mcu.h"
-
+#include "slpman.h"
 #include "core_hwtimer.h"
 
 #define EIGEN_TIMER(n)             ((TIMER_TypeDef *) (AP_TIMER0_BASE_ADDR + 0x1000*n))
@@ -851,4 +851,18 @@ int __USER_FUNC_IN_RAM__ HWTimer_GetIrqLine(uint8_t HWTimerID)
 	return g_s_pwm_table[HWTimerID].irq_line;
 }
 
+int luat_lppwm_ec_open(uint8_t idx, uint8_t prd, uint16_t highPeriod, uint16_t lowPeriod)
+{
+	if (idx > 2) return -1;
+	slpManSetAPwmEnable(idx, 0);
+	slpManSetAPwmCfg(idx, prd, highPeriod, lowPeriod);
+	slpManSetAPwmEnable(idx, 1);
+	return 0;
+}
 
+int luat_lppwm_ec_close(uint8_t idx)
+{
+	if (idx > 2) return -1;
+	slpManSetAPwmEnable(idx, 0);
+	return 0;
+}
