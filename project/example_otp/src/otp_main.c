@@ -29,24 +29,22 @@
 static void otp_example(void *param)
 {
 	luat_rtos_task_sleep(1500);
-	
 	// EC618共有3个otp分区, 编号分别是 1,2,3
-	// 每个分区的大小是 256 字节
-	char buff[256] = {0};
+	// 每个分区的大小是 128 字节
+	char buff[128] = {0};
 
 	// OTP读写没有太多技巧
-	luat_otp_read(1, buff, 0, 256);
+	LUAT_DEBUG_PRINT("read result %d", luat_otp_read(1, buff, 0, 128));
 
-	luat_otp_erase(1, 0, 256);
+	LUAT_DEBUG_PRINT("erase result %d", luat_otp_erase(1, 0, 128));
 
 	// 生成一些随机数据,模拟业务数据
-	luat_crypto_trng(buff, 256);
-
-	luat_otp_write(1, buff, 0, 256);
+	luat_crypto_trng(buff, 128);
+	LUAT_DEBUG_PRINT("write result %d", luat_otp_write(1, buff, 0, 128));
 
 	// 唯一值得注意的是lock函数
 	// 一旦加锁, 再也无法erase和write,慎重测试
-	// luat_otp_lock(1);
+	// LUAT_DEBUG_PRINT("lock result %d", luat_otp_lock(1));
 
 	while(1)
 	{

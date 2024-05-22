@@ -41,7 +41,7 @@ uint8_t FLASH_otpHandle(FLASH_OTP_OPS opType, uint32_t addr, uint8_t* bufPtr, ui
 int luat_otp_read(int zone, char* buff, size_t offset, size_t len) {
     uint8_t ret = 0;
     uint32_t addr = ((uint32_t)zone << 12) + offset;
-    if (zone >= 1 && zone <= 3) {
+    if (zone >= 1 && zone <= 3 && ((offset + len) <= 128)) {
         if (offset + len > luat_otp_size(zone)) {
             len = luat_otp_size(zone) - offset;
         }
@@ -58,7 +58,7 @@ int luat_otp_read(int zone, char* buff, size_t offset, size_t len) {
 int luat_otp_write(int zone, char* buff, size_t offset, size_t len) {
     uint8_t ret = 0;
     uint32_t addr = ((uint32_t)zone << 12) + offset;
-    if (zone >= 1 && zone <= 3) {
+    if (zone >= 1 && zone <= 3 && ((offset + len) <= 128)) {
         if (offset + len > luat_otp_size(zone)) {
             len = luat_otp_size(zone) - offset;
         }
@@ -73,7 +73,7 @@ int luat_otp_erase(int zone, size_t offset, size_t len) {
     (void)offset;
     (void)len;
     uint32_t addr = ((uint32_t)zone << 12);
-    if (zone >= 1 && zone <= 3) {
+    if (zone >= 1 && zone <= 3 && ((offset + len) <= 128)) {
         #ifdef __LUATOS__
         LLOGI("otp erase zone %d %08X", zone, addr);
         #endif
@@ -95,7 +95,7 @@ int luat_otp_lock(int zone) {
 
 size_t luat_otp_size(int zone) {
     if (zone >= 1 && zone <= 3) {
-        return 256;
+        return 128;
     }
     return 0;
 }
