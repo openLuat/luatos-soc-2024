@@ -2090,7 +2090,7 @@ void soc_set_netif(struct netif *netif)
 	prvlwip.lwip_netif = netif;
 	if (!prvlwip.lwip_netif)
 	{
-		platform_send_event(prvlwip.task_handle, EV_LWIP_NETIF_LINK_STATE, 0, 0, 1);
+		platform_send_event(prvlwip.task_handle, EV_LWIP_NETIF_LINK_STATE, 0, 0, NW_ADAPTER_INDEX_LWIP_GPRS);
 	}
 	else
 	{
@@ -2141,4 +2141,9 @@ void luat_socket_check_ready(uint32_t param, uint8_t *is_ipv6)
 	{
 		*is_ipv6 = (prvlwip.ec618_ipv6.type == IPADDR_TYPE_V6);
 	}
+}
+
+int net_lwip_check_netif_ready(uint8_t adapter_index)
+{
+	return prvlwip.netif_network_ready;
 }
