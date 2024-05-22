@@ -905,9 +905,21 @@ static void led_task(void *p)
 			break;
 		case EVENT_LED_DOWNLOAD_END:
 			is_download = 0;
-			if (!is_upload && is_online)
+			if (is_upload)
 			{
+				break;
+			}
+			if (is_online)
+			{
+#ifdef LOW_POWER_ENABLE
+				luat_pwm_close(channel);
+#else
 				luat_pwm_open(channel, 1, 100, 0);
+#endif
+			}
+			else
+			{
+				luat_pwm_close(channel);
 			}
 			break;
 		case EVENT_LED_UPLOAD_START:
