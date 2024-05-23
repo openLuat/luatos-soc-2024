@@ -8,8 +8,7 @@
 #include "luat_gpio.h"
 #include "agnss.h"
 #define UART_ID 2
-#define USE_780ETGG 0 //如果使用780ETGG 需要设置为1
-#define USE_780EPVH 1 //如果使用780EPVH 需要设置为1
+#define USE_HD8128
 static const uint8_t HD8128_UART0_115200_CMD[] = {0xf1,0xd9,0x06,0x00,0x08,0x00,0x00,0x00,0x00,0x00,0x00,0xc2,0x01,0x00,0xd1,0xe0};
 typedef struct
 {
@@ -216,11 +215,7 @@ static void gnss_parse_task(void *param)
 {
     luat_uart_t uart = {
         .id = UART_ID,
-#if USE_780EPVH
-		.baud_rate = 115200,
-#else
         .baud_rate = 115200,
-#endif
         .data_bits = 8,
         .stop_bits = 1,
 		.bufsz = 4096,
@@ -231,7 +226,7 @@ static void gnss_parse_task(void *param)
     luat_uart_ctrl(UART_ID, LUAT_UART_SET_RECV_CALLBACK, luat_uart_recv_cb);
     luat_mcu_xtal_ref_output(1, 0);
     gnss_work_mode = 1;
-#if USE_780ETGG
+#ifdef CHIP_EC716
     luat_gpio_cfg_t gpio_cfg;
 	luat_gpio_set_default_cfg(&gpio_cfg);
 	gpio_cfg.pin = HAL_GPIO_16;
@@ -241,7 +236,7 @@ static void gnss_parse_task(void *param)
 	luat_gpio_open(&gpio_cfg);
     luat_gpio_set(HAL_GPIO_13,1);	//GNSS VCC
 #endif
-#if USE_780EPVH
+#ifdef CHIP_EC718
     luat_gpio_cfg_t gpio_cfg;
 	luat_gpio_set_default_cfg(&gpio_cfg);
 	gpio_cfg.pin = HAL_GPIO_23;

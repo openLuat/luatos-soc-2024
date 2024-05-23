@@ -150,7 +150,5 @@ void luat_mcu_set_hardfault_mode(int mode)
 
 void luat_mcu_xtal_ref_output(uint8_t main_enable, uint8_t slow_32k_enable)
 {
-#if defined CHIP_EC718
 	slpManDCXOOutputEn(main_enable);
-#endif
 }
