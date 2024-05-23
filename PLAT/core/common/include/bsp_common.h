@@ -622,7 +622,7 @@ uint32_t OS_ReadFifo(BSP_FifoStruct *Fifo, uint8_t *Buf, uint32_t Size);
 uint32_t OS_QueryFifo(BSP_FifoStruct *Fifo, uint8_t *Buf, uint32_t Size);
 uint32_t OS_CheckFifoUsedSpace(BSP_FifoStruct *Fifo);
 void OS_DeleteFifo(BSP_FifoStruct *Fifo, uint32_t Size);
-
+void OS_ClearFifo(BSP_FifoStruct *Fifo);
 #endif
 
 
