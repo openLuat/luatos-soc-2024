@@ -26,8 +26,14 @@
 //AIR780EP和AIR780EPV支持内置编解码amr，同时默认在编码时开启降噪功能，在build.bat里设置set DENOISE_FORCE=enable 或者 set CHIP_TARGET=ec718pv
 //开启内置降噪功能后，会使能宏定义FEATURE_AMR_CP_ENABLE和FEATURE_VEM_CP_ENABLE
 //AIR780EP音频扩展板配置，如果用的ES8311而且要低功耗的，不建议用LDO_CTL，换成AGPIO，不换AGPIO的话，需要看休眠演示，在唤醒后重新初始化codec
+//#define USE_AIR780EPVH
+#ifdef USE_AIR780EPVH
+#define CODEC_PWR_PIN HAL_GPIO_17
+#define CODEC_PWR_PIN_ALT_FUN	4
+#else
 #define CODEC_PWR_PIN HAL_GPIO_16
 #define CODEC_PWR_PIN_ALT_FUN	4
+#endif
 #ifndef CHIP_EC716
 #define PA_PWR_PIN HAL_GPIO_25
 #define PA_PWR_PIN_ALT_FUN	0
@@ -369,6 +375,7 @@ static void demo_task(void *arg)
 	luat_audio_set_bus_type(MULTIMEDIA_ID,LUAT_MULTIMEDIA_AUDIO_BUS_I2S);	//设置音频总线类型
 	luat_audio_setup_codec(MULTIMEDIA_ID, codec_conf);					//设置音频codec
 #if (TEST_USE_ES8311==1)
+#ifndef USE_AIR780EPVH	//AIR780EPVH固定是I2C0不需要做兼容
 	luat_i2c_setup(I2C_ID0, 1);
 	luat_i2c_setup(I2C_ID1, 1);
 	uint8_t reg = 0xfd;
@@ -388,6 +395,7 @@ static void demo_task(void *arg)
 	{
 		LUAT_DEBUG_PRINT("NO ES8311!!!");
 	}
+#endif
 #endif
 #ifdef PA_NO_CTRL
 	luat_audio_config_pa(MULTIMEDIA_ID, 0xff, PA_ON_LEVEL, PWR_SLEEP_DELAY, PA_DELAY);//配置音频pa

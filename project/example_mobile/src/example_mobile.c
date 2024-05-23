@@ -37,10 +37,9 @@ static void sms_event_cb(uint32_t event, void *param)
 {
 	LUAT_DEBUG_PRINT("短信event%d,%x",event, param);
 }
-
+static luat_mobile_cell_info_t s_cell_info;
 static void mobile_event_cb(LUAT_MOBILE_EVENT_E event, uint8_t index, uint8_t status)
 {
-	luat_mobile_cell_info_t cell_info;
 	luat_mobile_signal_strength_info_t signal_info;
 	uint16_t mcc;
 	uint8_t csq, i, mnc;
@@ -109,23 +108,23 @@ static void mobile_event_cb(LUAT_MOBILE_EVENT_E event, uint8_t index, uint8_t st
 		{
 		case LUAT_MOBILE_CELL_INFO_UPDATE:
 			LUAT_DEBUG_PRINT("周期性搜索小区信息完成一次");
-			luat_mobile_get_last_notify_cell_info(&cell_info);
-			if (cell_info.lte_service_info.cid)
+			luat_mobile_get_last_notify_cell_info(&s_cell_info);
+			if (s_cell_info.lte_service_info.cid)
 			{
 				LUAT_DEBUG_PRINT("服务小区信息 mcc %x mnc %x cellid %u band %d tac %u pci %u earfcn %u is_tdd %d rsrp %d rsrq %d snr %d rssi %d",
-						cell_info.lte_service_info.mcc, cell_info.lte_service_info.mnc, cell_info.lte_service_info.cid,
-						cell_info.lte_service_info.band, cell_info.lte_service_info.tac, cell_info.lte_service_info.pci, cell_info.lte_service_info.earfcn,
-						cell_info.lte_service_info.is_tdd, cell_info.lte_service_info.rsrp, cell_info.lte_service_info.rsrq,
-						cell_info.lte_service_info.snr, cell_info.lte_service_info.rssi);
+						s_cell_info.lte_service_info.mcc, s_cell_info.lte_service_info.mnc, s_cell_info.lte_service_info.cid,
+						s_cell_info.lte_service_info.band, s_cell_info.lte_service_info.tac, s_cell_info.lte_service_info.pci, s_cell_info.lte_service_info.earfcn,
+						s_cell_info.lte_service_info.is_tdd, s_cell_info.lte_service_info.rsrp, s_cell_info.lte_service_info.rsrq,
+						s_cell_info.lte_service_info.snr, s_cell_info.lte_service_info.rssi);
 			}
-			for (i = 0; i < cell_info.lte_neighbor_info_num; i++)
+			for (i = 0; i < s_cell_info.lte_neighbor_info_num; i++)
 			{
-				if (cell_info.lte_info[i].cid)
+				if (s_cell_info.lte_info[i].cid)
 				{
-					LUAT_DEBUG_PRINT("邻小区 %d mcc %x mnc %x cellid %u tac %u pci %u", i + 1, cell_info.lte_info[i].mcc,
-							cell_info.lte_info[i].mnc, cell_info.lte_info[i].cid, cell_info.lte_info[i].tac, cell_info.lte_info[i].pci);
-					LUAT_DEBUG_PRINT("邻小区 %d earfcn %u rsrp %d rsrq %d snr %d", i + 1, cell_info.lte_info[i].earfcn, cell_info.lte_info[i].rsrp,
-							cell_info.lte_info[i].rsrq, cell_info.lte_info[i].snr);
+					LUAT_DEBUG_PRINT("邻小区 %d mcc %x mnc %x cellid %u tac %u pci %u", i + 1, s_cell_info.lte_info[i].mcc,
+							s_cell_info.lte_info[i].mnc, s_cell_info.lte_info[i].cid, s_cell_info.lte_info[i].tac, s_cell_info.lte_info[i].pci);
+					LUAT_DEBUG_PRINT("邻小区 %d earfcn %u rsrp %d rsrq %d snr %d", i + 1, s_cell_info.lte_info[i].earfcn, s_cell_info.lte_info[i].rsrp,
+							s_cell_info.lte_info[i].rsrq, s_cell_info.lte_info[i].snr);
 				}
 			}
 			break;
