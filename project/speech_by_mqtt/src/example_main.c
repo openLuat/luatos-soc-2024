@@ -24,8 +24,14 @@
 #include "luat_mqtt.h"
 
 //硬件相关宏定义
+//#define USE_AIR780EPVH
+#ifdef USE_AIR780EPVH
+#define CODEC_PWR_PIN HAL_GPIO_17
+#define CODEC_PWR_PIN_ALT_FUN	4
+#else
 #define CODEC_PWR_PIN HAL_GPIO_16
 #define CODEC_PWR_PIN_ALT_FUN	4
+#endif
 #define PA_PWR_PIN HAL_GPIO_25
 #define PA_PWR_PIN_ALT_FUN	0
 #define SPEECH_LED_PIN HAL_GPIO_27
@@ -572,7 +578,7 @@ static void speech_task(void *arg)
 	luat_i2s_set_user_data(TEST_I2S_ID, &speechc);
 	luat_audio_set_bus_type(MULTIMEDIA_ID,LUAT_MULTIMEDIA_AUDIO_BUS_I2S);
 	luat_audio_setup_codec(MULTIMEDIA_ID, &luat_audio_codec_es8311);					//设置音频codec
-#if 1
+#ifndef USE_AIR780EPVH	//AIR780EPVH固定是I2C0不需要做兼容
 	//自适应I2C，适配多种开发板，实际产品不需要，保留1个就够了
 	luat_i2c_setup(I2C_ID0, 1);
 	luat_i2c_setup(I2C_ID1, 1);
