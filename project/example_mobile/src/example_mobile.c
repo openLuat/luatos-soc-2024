@@ -24,14 +24,6 @@
 #include "luat_mobile.h"
 #include "luat_debug.h"
 
-/* 
-// 打开此注释可以禁用从基站同步时间的功能，由用户自有协议控制同步时间
-// return 0时，表示禁用基站同步时间，return 1，表示启用基站同步时间
-int soc_mobile_is_sync_time_enable(void) 
-{
-	return 0;
-} 
-*/
 
 static void sms_event_cb(uint32_t event, void *param)
 {
@@ -281,6 +273,11 @@ void task_init(void)
 	luat_mobile_set_check_network_period(120000);
 	luat_mobile_set_sim_id(2);
 	luat_mobile_set_sim_detect_sim0_first();
+	/* 
+		正常情况下基站默认会向设备同步时间，下面这个接口可以启用或禁用基站同步时间功能，由用户是否用自有协议控制同步时间
+		传入0，表示禁用基站同步时间，传入1，表示启用基站同步时间
+	*/
+	// luat_mobile_set_sync_time(0);
 	luat_rtos_task_handle task_handle;
 	luat_rtos_task_create(&task_handle, 8*1024, 50, "test", task_run, NULL, 32);
 }

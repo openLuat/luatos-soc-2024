@@ -24,14 +24,6 @@
 #include "luat_mobile.h"
 #include "luat_debug.h"
 
-/* 
-// 打开此注释可以禁用从基站同步时间的功能，由用户自有协议控制同步时间
-// return 0时，表示禁用基站同步时间，return 1，表示启用基站同步时间
-int soc_mobile_is_sync_time_enable(void) 
-{
-	return 0;
-} 
-*/
 
 extern int is_online;
 
