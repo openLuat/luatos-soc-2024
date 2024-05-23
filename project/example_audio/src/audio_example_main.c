@@ -26,6 +26,7 @@
 //AIR780EP和AIR780EPV支持内置编解码amr，同时默认在编码时开启降噪功能，在build.bat里设置set DENOISE_FORCE=enable 或者 set CHIP_TARGET=ec718pv
 //开启内置降噪功能后，会使能宏定义FEATURE_AMR_CP_ENABLE和FEATURE_VEM_CP_ENABLE
 //AIR780EP音频扩展板配置，如果用的ES8311而且要低功耗的，不建议用LDO_CTL，换成AGPIO，不换AGPIO的话，需要看休眠演示，在唤醒后重新初始化codec
+//air780epvh打开USE_AIR780EPVH
 //#define USE_AIR780EPVH
 #ifdef USE_AIR780EPVH
 #define CODEC_PWR_PIN HAL_GPIO_17
@@ -395,6 +396,8 @@ static void demo_task(void *arg)
 	{
 		LUAT_DEBUG_PRINT("NO ES8311!!!");
 	}
+#else
+	luat_i2c_setup(I2C_ID0, 1);
 #endif
 #endif
 #ifdef PA_NO_CTRL

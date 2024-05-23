@@ -602,6 +602,8 @@ static void speech_task(void *arg)
 		LUAT_DEBUG_PRINT("NO ES8311!!!");
 		while (1) {luat_rtos_task_sleep(1000000);}
 	}
+#else
+	luat_i2c_setup(I2C_ID0, 1);
 #endif
 
 	luat_audio_config_pa(MULTIMEDIA_ID, PA_PWR_PIN, PA_ON_LEVEL, PWR_SLEEP_DELAY, PA_DELAY);//配置音频pa
