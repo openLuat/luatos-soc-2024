@@ -19,6 +19,9 @@
 
 #include "little_flash.h"
 
+//验证型demo，目前确认是无法实现目标，已废弃
+#if 0
+
 #define FLASH_SPI_ID SPI_ID0
 #define FLASH_SPI_CS HAL_GPIO_8
 #define FALSH_SPI_BR (51200000)
@@ -368,3 +371,5 @@ static void test_audio_demo_init(void)
 }
 
 INIT_TASK_EXPORT(test_audio_demo_init, "1");
+
+#endif
