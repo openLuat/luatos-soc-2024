@@ -259,7 +259,7 @@ static luat_spi_device_t sfud_spi_dev = {
     .spi_config.bit_dict = 0,
     .spi_config.master = 1,
     .spi_config.mode = 0,
-    .spi_config.bandrate = 51200000,
+    .spi_config.bandrate = 44000000,	//杜邦线再高就不稳定了，直接焊接可以到51.2M
     .spi_config.cs = SFUD_SPI_CS
 };
 extern sfud_flash sfud_flash_tables[];

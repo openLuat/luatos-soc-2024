@@ -22,7 +22,7 @@
 
 #define FLASH_SPI_ID SPI_ID0
 #define FLASH_SPI_CS HAL_GPIO_8
-#define FALSH_SPI_BR (51200000)
+#define FALSH_SPI_BR (44000000) //杜邦线再高就不稳定了，直接焊接可以到51.2M
 
 #ifndef CHIP_EC716
 #define PA_PWR_PIN HAL_GPIO_25

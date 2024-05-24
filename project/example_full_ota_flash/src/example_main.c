@@ -70,13 +70,16 @@ static luat_spi_device_t sfud_spi_dev = {
     .spi_config.bit_dict = 0,
     .spi_config.master = 1,
     .spi_config.mode = 0,
-    .spi_config.bandrate = 51200000,
+    .spi_config.bandrate = 44000000, //杜邦线再高就不稳定了，直接焊接可以到51.2M
     .spi_config.cs = SFUD_SPI_CS,
 	.user_data = (void *)&spiflash_power_pin,
 };
 
 #define PROJECT_VERSION  "1.0.0"                  		 //使用合宙iot升级的话此字段必须存在，并且强制固定格式为x.x.x, x可以为任意的数字
-
+const char *soc_get_sdk_version(void)
+{
+	return PROJECT_VERSION;
+}
 #ifdef OTA_BY_IOT
 #define PROJECT_KEY "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"  //修改为自己iot上面的PRODUCT_KEY，这里是一个错误的，使用合宙iot升级的话此字段必须存在
 #define PROJECT_NAME "example_full_ota"  //使用合宙iot升级的话此字段必须存在，可以任意修改，但和升级包的必须一致
