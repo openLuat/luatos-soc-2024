@@ -33,6 +33,23 @@
 #include "flash_rt.h"
 #include "mem_map.h"
 
+static int flash_addrsss_check(uint32_t addr)
+{
+	if (addr >= AP_FLASH_XIP_ADDR) {
+		addr -= AP_FLASH_XIP_ADDR;
+	}
+	if ((addr >= NVRAM_FACTORY_PHYSICAL_BASE) && (addr < NVRAM_FACTORY_PHYSICAL_BASE + NVRAM_FACTORY_PHYSICAL_SIZE)) {
+		DBG("invaild address %x", addr);
+		return -1;
+	}
+    if (addr >= NVRAM_PHYSICAL_BASE)
+    {
+    	DBG("invaild address %x", addr);
+    	return -1;
+    }
+    return 0;
+}
+
 int luat_flash_read(char* buff, size_t addr, size_t len) {
     int ret = 0;
     if (len == 0)
@@ -46,9 +63,12 @@ int luat_flash_write(char* buff, size_t addr, size_t len) {
     int ret = 0;
     if (len == 0)
         return 0;
-    if (addr >= NVRAM_PHYSICAL_BASE)
+    if (flash_addrsss_check(addr))
     {
-    	DBG("address %x", addr);
+    	return -1;
+    }
+    if (flash_addrsss_check(addr+len))
+    {
     	return -1;
     }
     // 注意, BSP_QSPI_Write_Safe 的buf不能是flash上的常量数据
@@ -82,9 +102,12 @@ int luat_flash_write(char* buff, size_t addr, size_t len) {
 
 int luat_flash_erase(size_t addr, size_t len) {
     int ret = 0;
-    if (addr >= NVRAM_PHYSICAL_BASE)
+    if (flash_addrsss_check(addr))
     {
-    	DBG("address %x", addr);
+    	return -1;
+    }
+    if (flash_addrsss_check(addr+len))
+    {
     	return -1;
     }
     ret = FLASH_eraseSafe(addr, len);
@@ -92,9 +115,12 @@ int luat_flash_erase(size_t addr, size_t len) {
 }
 
 int luat_flash_write_without_check(char* buff, size_t addr, size_t len) {
-    if (addr >= NVRAM_PHYSICAL_BASE)
+    if (flash_addrsss_check(addr))
     {
-    	DBG("address %x", addr);
+    	return -1;
+    }
+    if (flash_addrsss_check(addr+len))
+    {
     	return -1;
     }
 	int ret = FLASH_writeSafe((uint8_t *)buff, addr, len);
