@@ -211,15 +211,14 @@ static int luat_fota_erase_spi_flash(uint32_t address)
 	int i;
 	uint8_t cmd[4];
 	uint8_t status;
-	cmd[0] = 0x06;
-	luat_fota_spi_flash_cmd(cmd, NULL, 1);
 	status = luat_fota_spi_flash_status();
 	if (status & 0x01)
 	{
-		LLOGE("spi flash busy!");
+		LLOGE("spi flash busy %x!", status);
 		return -1;
 	}
-
+	cmd[0] = 0x06;
+	luat_fota_spi_flash_cmd(cmd, NULL, 1);
 	BytesPutBe32(cmd, address & 0x00ffffff);
 	cmd[0] = 0xd8;
 	luat_fota_spi_flash_cmd(cmd, NULL, 4);
@@ -252,7 +251,7 @@ static int luat_fota_write_spi_flash(uint32_t address, uint8_t *data, uint32_t l
 	status = luat_fota_spi_flash_status();
 	if (status & 0x01)
 	{
-		LLOGE("spi flash busy!");
+		LLOGE("spi flash busy %x!", status);
 		return -1;
 	}
 	while(finish_len < len)
@@ -299,12 +298,12 @@ static void luat_fota_cal_spi_flash_data_md5(unsigned char output[16])
 	uint8_t *rx = malloc(4096);
 	MD5_START(g_s_fota.md5_ctx);
 	luat_gpio_set(g_s_fota.cs_pin, 0);
-	uint8_t cmd[5];
+	uint8_t cmd[4] = {0};
 	BytesPutBe32(cmd, g_s_fota.start_address & 0x00ffffff);
-	cmd[0] = 0x0b;
-	SPI_BlockTransfer(g_s_fota.spi_id, cmd, NULL, 5);
+	cmd[0] = 0x03;
+	SPI_BlockTransfer(g_s_fota.spi_id, cmd, rx, 4);
 	uint32_t finish_len = 0;
-	uint32_t read_len;
+	uint32_t read_len = 0;
 	while(finish_len < g_s_fota.p_fota_file_head->CommonDataLen)
 	{
 		read_len = ((g_s_fota.p_fota_file_head->CommonDataLen - finish_len) > 4096)?4096:(g_s_fota.p_fota_file_head->CommonDataLen - finish_len);
@@ -312,8 +311,8 @@ static void luat_fota_cal_spi_flash_data_md5(unsigned char output[16])
 		MD5_UPDATE(g_s_fota.md5_ctx, rx, read_len);
 		finish_len += read_len;
 	}
-	SPI_BlockTransfer(g_s_fota.spi_id, tx, rx, 4096);
-	MD5_UPDATE(g_s_fota.md5_ctx, rx, 4096);
+//	SPI_BlockTransfer(g_s_fota.spi_id, tx, rx, 4096);
+//	MD5_UPDATE(g_s_fota.md5_ctx, rx, 4096);
 	luat_gpio_set(g_s_fota.cs_pin, 1);
 	MD5_FINISH(g_s_fota.md5_ctx, output);
 	free(tx);
@@ -469,7 +468,7 @@ REPEAT:
 		if (g_s_fota.ota_done_len >= g_s_fota.p_fota_file_head->CommonDataLen)
 		{
 			LLOGI("common data done, now checking %x", g_s_fota.start_address);
-			uint8_t md5[16];
+			uint8_t md5[16] = {0};
 			if (g_s_fota.start_address)
 			{
 				luat_fota_cal_spi_flash_data_md5(md5);
@@ -481,9 +480,26 @@ REPEAT:
 				MD5_FINISH(g_s_fota.md5_ctx, md5);
 			}
 
-			//if (memcmp(md5, g_s_fota.p_fota_file_head->CommonMD5, 16))
-			if (0)
+			if (memcmp(md5, g_s_fota.p_fota_file_head->CommonMD5, 16))
 			{
+				DBG("%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x", md5[0],md5[1],md5[2],md5[3],md5[4],md5[5],md5[6],md5[7],md5[8],md5[9],md5[10],md5[11],md5[12],md5[13],md5[14],md5[15]);
+				DBG("%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+						g_s_fota.p_fota_file_head->CommonMD5[0],
+						g_s_fota.p_fota_file_head->CommonMD5[1],
+						g_s_fota.p_fota_file_head->CommonMD5[2],
+						g_s_fota.p_fota_file_head->CommonMD5[3],
+						g_s_fota.p_fota_file_head->CommonMD5[4],
+						g_s_fota.p_fota_file_head->CommonMD5[5],
+						g_s_fota.p_fota_file_head->CommonMD5[6],
+						g_s_fota.p_fota_file_head->CommonMD5[7],
+						g_s_fota.p_fota_file_head->CommonMD5[8],
+						g_s_fota.p_fota_file_head->CommonMD5[9],
+						g_s_fota.p_fota_file_head->CommonMD5[10],
+						g_s_fota.p_fota_file_head->CommonMD5[11],
+						g_s_fota.p_fota_file_head->CommonMD5[12],
+						g_s_fota.p_fota_file_head->CommonMD5[13],
+						g_s_fota.p_fota_file_head->CommonMD5[14],
+						g_s_fota.p_fota_file_head->CommonMD5[15]);
 				LLOGE("全量包或者脚本包完整性检测失败");
 				g_s_fota.ota_state = OTA_STATE_IDLE;
 				g_s_fota.data_buffer.Pos = 0;
