@@ -244,6 +244,17 @@ int luat_adc_read(int id, int* val, int* val2) {
     if (!adc_exist(id))
         return -1;
     int t = 1000;
+    uint32_t adcReadyTimeout = 30; // at most 30ms
+
+    while((slpManCheckADCReady() == false) && adcReadyTimeout)
+    {
+    	vTaskDelay(1);
+        adcReadyTimeout--;
+    }
+    if (!adcReadyTimeout)
+    {
+    	DBG("adc ready timeout error!!!");
+    }
     switch (id)
     {
     case 0:
