@@ -23,8 +23,10 @@
 #include "luat_debug.h"
 
 #include "luat_adc.h"
-
+#include "luat_pm.h"
 luat_rtos_task_handle adc_task_handle;
+
+//#define ADC_SLEEP_TEST
 
 static void task_test_adc(void *param)
 {
@@ -74,7 +76,10 @@ static void task_test_adc(void *param)
     luat_adc_open(3 , NULL);
     luat_adc_open(LUAT_ADC_CH_CPU, NULL);
     luat_adc_open(LUAT_ADC_CH_VBAT, NULL);
-
+#ifdef ADC_SLEEP_TEST
+    luat_pm_power_ctrl(LUAT_PM_POWER_USB, 0);
+    luat_pm_force(LUAT_PM_SLEEP_MODE_LIGHT);
+#endif
     while (1)
     {
         luat_rtos_task_sleep(1000);
