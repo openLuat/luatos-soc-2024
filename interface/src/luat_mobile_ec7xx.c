@@ -217,14 +217,7 @@ int luat_mobile_set_sim_pin(int sim_id, uint8_t operation, char pin1[9], char pi
 
 int luat_mobile_soft_sim_switch(uint8_t enable)
 {
-	if(enable != 0 && enable != 1)
-	{
-		return -1;
-	}
-	EcSimCfgSetParams cfg = {0};
-	cfg.softsimPresent = TRUE;
-	cfg.bSoftSim = enable;
-	return appSetECSIMCFGSync(&cfg);
+	luat_mobile_softsim_onoff(enable);
 }
 
 
