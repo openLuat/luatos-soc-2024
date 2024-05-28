@@ -24,6 +24,8 @@
 #include "luat_rtos.h"
 #include "luat_mem.h"
 #include "luat_debug.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 luat_rtos_task_handle task1_handle;
 luat_rtos_task_handle task2_handle;
@@ -57,12 +59,15 @@ static void task1(void *param)
 	}
 }
 
+static char run_time_info[2048];
+
 static void task2(void *param)
 {
 	while(1)
 	{
 		luat_rtos_task_sleep(1000);
-		LUAT_DEBUG_PRINT("task2 loop");
+		vTaskGetRunTimeStats_ec(run_time_info);
+		LUAT_DEBUG_PRINT("task run time info:\r\n%s", run_time_info);
 		// 去掉下面的注释, 可以关闭日志打印
 		// luat_debug_print_onoff(0);
 	}
