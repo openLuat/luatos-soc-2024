@@ -217,7 +217,7 @@ int luat_mobile_set_sim_pin(int sim_id, uint8_t operation, char pin1[9], char pi
 
 int luat_mobile_soft_sim_switch(uint8_t enable)
 {
-	luat_mobile_softsim_onoff(enable);
+	return luat_mobile_softsim_onoff(enable);
 }
 
 
