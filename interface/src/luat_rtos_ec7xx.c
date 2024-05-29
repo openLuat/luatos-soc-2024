@@ -519,3 +519,56 @@ void luat_rtos_exit_critical(uint32_t critical)
 {
 	OS_ExitCritical(critical);
 }
+
+#include "soc_service.h"
+/**
+ * @brief 启动task运行时间记录功能，必须在task调度前启用
+ */
+void luat_rtos_task_run_time_record_enable(void)
+{
+	soc_task_record_on_off(1);
+}
+extern void *pvPortMemAlignMallocEC(size_t xWantedSize, size_t align);
+/**
+ * @brief 打印所有task运行时间和占用百分比
+ */
+void luat_rtos_task_run_time_record_print(uint8_t print_ticks)
+{
+	StaticTask_t *handle;
+	uint64_t now_time = soc_get_poweron_time_tick();
+	if (print_ticks)
+	{
+		soc_printf("now ticks %llu", now_time);
+	}
+	TaskRunTimeRecord_t *record = pvPortMemAlignMallocEC(sizeof(TaskRunTimeRecord_t) * TASK_RECORD_MAX, 8);
+	if (record)
+	{
+		luat_rtos_task_suspend_all();
+		if (soc_task_record_get(record, TASK_RECORD_MAX))
+		{
+			luat_rtos_task_resume_all();
+			uint32_t per, m;
+			for(int i = 0; i < TASK_RECORD_MAX; i++)
+			{
+				if (record[i].tcb)
+				{
+					handle = (StaticTask_t *)record[i].tcb;
+					per = record[i].RunTime * 1000 / now_time;
+					if (print_ticks)
+					{
+						soc_printf("task %s \t ticks %llu \t cpu time percent %u‰", handle->ucDummy7, record[i].RunTime, per);
+					}
+					else
+					{
+						soc_printf("task %s \t cpu time percent %u‰", handle->ucDummy7, per);
+					}
+				}
+			}
+		}
+		else
+		{
+			luat_rtos_task_resume_all();
+		}
+		free(record);
+	}
+}

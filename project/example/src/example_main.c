@@ -59,15 +59,12 @@ static void task1(void *param)
 	}
 }
 
-static char run_time_info[2048];
-
 static void task2(void *param)
 {
 	while(1)
 	{
 		luat_rtos_task_sleep(1000);
-		vTaskGetRunTimeStats_ec(run_time_info);
-		LUAT_DEBUG_PRINT("task run time info:\r\n%s", run_time_info);
+		luat_rtos_task_run_time_record_print(0);
 		// 去掉下面的注释, 可以关闭日志打印
 		// luat_debug_print_onoff(0);
 	}
@@ -80,6 +77,7 @@ static void task_demoE_init(void)
 
 static void task_demoF_init(void)
 {
+	luat_rtos_task_run_time_record_enable();
 	luat_rtos_task_create(&task2_handle, 2*1024, 50, "task2", task2, NULL, 0);
 }
 
