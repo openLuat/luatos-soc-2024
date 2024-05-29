@@ -1,6 +1,7 @@
 #include "ec7xx.h"
 #include "stdint.h"
 #include "mem_map.h"
+#include "pwrkey.h"
 #define AP_BODY_MAX_SIZE           AP_FLASH_LOAD_SIZE
 #define AP_BODY_FLASH_OFFSET_ADDR  (AP_FLASH_LOAD_ADDR - AP_FLASH_XIP_ADDR)
 uint32_t soc_ap_body_max_size(void)
@@ -13,7 +14,11 @@ uint32_t soc_ap_body_head(void)
 	return AP_BODY_FLASH_OFFSET_ADDR;
 }
 __attribute__((weak)) void user_code_run(void *param) {;}
-
+__attribute__((weak)) void user_code_init(void)
+{
+    if(pwrKeyGetPwrKeyMode() == PWRKEY_PWRON_MODE)
+        pwrkeyPwrOnDebounce(2000);
+}
 #include "sctdef.h"
 extern void Bltransfer_Control(uint32_t p_base_addr);
 PLAT_BL_AIRAM_PRE2_TEXT void soc_bl(void)

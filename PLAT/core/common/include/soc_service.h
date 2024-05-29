@@ -10,6 +10,7 @@
 #include "common_api.h"
 #define RNDIS_CID	8
 #define IMS_CID	15
+#define TASK_RECORD_MAX	(64)
 typedef enum SOC_MISC_EVENT
 {
 	SOC_MISC_VBUS_OFF,
@@ -175,6 +176,13 @@ enum
 };
 typedef void (* mobile_voice_data_input_fn)(uint8_t *input, uint32_t len, uint32_t sample_rate, uint8_t bits);
 
+typedef struct
+{
+	uint64_t RunTime;
+	void *tcb;
+	void *fun;
+}TaskRunTimeRecord_t;
+
 void soc_vsprintf(const char * format, va_list ap);
 
 
@@ -247,5 +255,6 @@ uint8_t soc_user_wfi_mode(void);
 void soc_set_sys_signal_callback(TaskFun_t fun);
 void soc_aon_gpio_save_state_enable(uint8_t on_off);
 int soc_aon_gpio_save_state(uint32_t gpio_sn, uint32_t state);
-
+void soc_task_record_on_off(uint8_t on_off);
+uint16_t soc_task_record_get(TaskRunTimeRecord_t *record, uint16_t max_cnt);
 #endif /* CORE_INCLUDE_SOC_SERVICE_H_ */

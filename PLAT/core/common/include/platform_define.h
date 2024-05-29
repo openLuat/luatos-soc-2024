@@ -214,6 +214,7 @@ enum
 
 #define SOC_TICK_1US	(26ul)
 #define SOC_TICK_1MS	(26000ul)
+#define SOC_TICK_10MS	(260000ul)
 #define SOC_TICK_1S		(26000000ul)
 #define SOC_TICK_TIMER	(3)
 

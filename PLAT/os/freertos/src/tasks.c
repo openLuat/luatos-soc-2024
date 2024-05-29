@@ -41,6 +41,10 @@ task.h is included from an application file. */
 #include "timers.h"
 #include "StackMacros.h"
 #include DEBUG_LOG_HEADER_FILE
+#ifdef __USER_CODE__
+extern void am_record_task(void *tcb, uint8_t is_on);
+extern void am_record_task_start(void);
+#endif
 
 
 
@@ -1051,7 +1055,9 @@ FREERTOS_TASKS_TEXT_SECTION static void prvAddNewTaskToReadyList( TCB_t *pxNewTC
 			/* If null is passed in here then it is the calling task that is
 			being deleted. */
 			pxTCB = prvGetTCBFromHandle( xTaskToDelete );
-
+#ifdef __USER_CODE__
+			am_record_task(pxTCB, 0);
+#endif
 			/* Remove task from the ready list. */
 			if( uxListRemove( &( pxTCB->xStateListItem ) ) == ( UBaseType_t ) 0 )
 			{
@@ -1895,7 +1901,9 @@ BaseType_t xReturn;
 		xNextTaskUnblockTime = portMAX_DELAY;
 		xSchedulerRunning = pdTRUE;
 		xTickCount = ( TickType_t ) 0U;
-
+#ifdef __USER_CODE__
+		am_record_task_start();
+#endif
 		/* If configGENERATE_RUN_TIME_STATS is defined then the following
 		macro must be defined to configure the timer/counter used to generate
 		the run time counter time base. */
@@ -2823,7 +2831,9 @@ FREERTOS_TASKS_TEXT_SECTION void vTaskSwitchContext( void )
 	{
 		xYieldPending = pdFALSE;
 		traceTASK_SWITCHED_OUT();
-
+#ifdef __USER_CODE__
+		am_record_task(pxCurrentTCB, 1);
+#endif
 		#if ( configGENERATE_RUN_TIME_STATS == 1 )
 		{
 				//#ifdef portALT_GET_RUN_TIME_COUNTER_VALUE
