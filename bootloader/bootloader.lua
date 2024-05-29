@@ -49,7 +49,9 @@ target("driver",function()
                 csdk_root.."/PLAT/driver/chip/ec7xx/ap/src/wdt.c",
                 csdk_root.."/PLAT/driver/chip/ec7xx/ap/src/usb_bl/open/*.c",
                 csdk_root.."/PLAT/driver/chip/ec7xx/ap/src/usb_bl/usb_device/*.c",
-                csdk_root.."/PLAT/driver/chip/ec7xx/common/gcc/memcpy-armv7m.S")
+                csdk_root.."/PLAT/driver/chip/ec7xx/common/gcc/memcpy-armv7m.S",
+				--user code
+				csdk_root.."/bootloader/*.c")
 
 	remove_files(
                 csdk_root.."/PLAT/project/ec7xx_0h00/ap/apps/bootloader/code/main/system_ec7xx.c",
