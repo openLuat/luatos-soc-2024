@@ -31,5 +31,6 @@
  */
 void user_code_init(void)
 {
+	//if(pwrKeyGetPwrKeyMode() == PWRKEY_PWRON_MODE)	//这个打开的话，就需要luat_pm_power_ctrl(LUAT_PM_POWER_POWERKEY_MODE, 1)才能有效
 	pwrkeyPwrOnDebounce(2000); //长按2000ms开机，时间自己控制，如果不写，则pwrkey短按就开机
 }
