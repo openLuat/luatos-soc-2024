@@ -9,11 +9,11 @@
 #define SIM_INSERT              LUAT_GPIO_LOW
 
 static luat_rtos_task_handle g_s_task_handle;
-
+static luat_mobile_cell_info_t g_s_cell_info;
+static luat_mobile_signal_strength_info_t g_s_signal_info;
 static void luatos_mobile_event_callback(LUAT_MOBILE_EVENT_E event, uint8_t index, uint8_t status)
 {
-	luat_mobile_cell_info_t cell_info;
-	luat_mobile_signal_strength_info_t signal_info;
+
 	uint16_t mcc;
 	uint8_t csq, i, mnc;
 	char imsi[20];
@@ -81,35 +81,35 @@ static void luatos_mobile_event_callback(LUAT_MOBILE_EVENT_E event, uint8_t inde
 		{
 		case LUAT_MOBILE_CELL_INFO_UPDATE:
 			LUAT_DEBUG_PRINT("周期性搜索小区信息完成一次");
-			luat_mobile_get_last_notify_cell_info(&cell_info);
-			if (cell_info.lte_service_info.cid)
+			luat_mobile_get_last_notify_cell_info(&g_s_cell_info);
+			if (g_s_cell_info.lte_service_info.cid)
 			{
 				LUAT_DEBUG_PRINT("服务小区信息 mcc %x mnc %x cellid %u band %d tac %u pci %u earfcn %u is_tdd %d rsrp %d rsrq %d snr %d rssi %d",
-						cell_info.lte_service_info.mcc, cell_info.lte_service_info.mnc, cell_info.lte_service_info.cid,
-						cell_info.lte_service_info.band, cell_info.lte_service_info.tac, cell_info.lte_service_info.pci, cell_info.lte_service_info.earfcn,
-						cell_info.lte_service_info.is_tdd, cell_info.lte_service_info.rsrp, cell_info.lte_service_info.rsrq,
-						cell_info.lte_service_info.snr, cell_info.lte_service_info.rssi);
+						g_s_cell_info.lte_service_info.mcc, g_s_cell_info.lte_service_info.mnc, g_s_cell_info.lte_service_info.cid,
+						g_s_cell_info.lte_service_info.band, g_s_cell_info.lte_service_info.tac, g_s_cell_info.lte_service_info.pci, g_s_cell_info.lte_service_info.earfcn,
+						g_s_cell_info.lte_service_info.is_tdd, g_s_cell_info.lte_service_info.rsrp, g_s_cell_info.lte_service_info.rsrq,
+						g_s_cell_info.lte_service_info.snr, g_s_cell_info.lte_service_info.rssi);
 			}
-			for (i = 0; i < cell_info.lte_neighbor_info_num; i++)
+			for (i = 0; i < g_s_cell_info.lte_neighbor_info_num; i++)
 			{
-				if (cell_info.lte_info[i].cid)
+				if (g_s_cell_info.lte_info[i].cid)
 				{
-					LUAT_DEBUG_PRINT("邻小区 %d mcc %x mnc %x cellid %u tac %u pci %u", i + 1, cell_info.lte_info[i].mcc,
-							cell_info.lte_info[i].mnc, cell_info.lte_info[i].cid, cell_info.lte_info[i].tac, cell_info.lte_info[i].pci);
-					LUAT_DEBUG_PRINT("邻小区 %d earfcn %u rsrp %d rsrq %d snr %d", i + 1, cell_info.lte_info[i].earfcn, cell_info.lte_info[i].rsrp,
-							cell_info.lte_info[i].rsrq, cell_info.lte_info[i].snr);
+					LUAT_DEBUG_PRINT("邻小区 %d mcc %x mnc %x cellid %u tac %u pci %u", i + 1, g_s_cell_info.lte_info[i].mcc,
+							g_s_cell_info.lte_info[i].mnc, g_s_cell_info.lte_info[i].cid, g_s_cell_info.lte_info[i].tac, g_s_cell_info.lte_info[i].pci);
+					LUAT_DEBUG_PRINT("邻小区 %d earfcn %u rsrp %d rsrq %d snr %d", i + 1, g_s_cell_info.lte_info[i].earfcn, g_s_cell_info.lte_info[i].rsrp,
+							g_s_cell_info.lte_info[i].rsrq, g_s_cell_info.lte_info[i].snr);
 				}
 			}
 			break;
 		case LUAT_MOBILE_SIGNAL_UPDATE:
 			LUAT_DEBUG_PRINT("服务小区信号状态变更");
-			luat_mobile_get_last_notify_signal_strength_info(&signal_info);
+			luat_mobile_get_last_notify_signal_strength_info(&g_s_signal_info);
 			luat_mobile_get_last_notify_signal_strength(&csq);
-			if (signal_info.luat_mobile_lte_signal_strength_vaild)
+			if (g_s_signal_info.luat_mobile_lte_signal_strength_vaild)
 			{
-				LUAT_DEBUG_PRINT("rsrp %d, rsrq %d, snr %d, rssi %d, csq %d %d", signal_info.lte_signal_strength.rsrp,
-						signal_info.lte_signal_strength.rsrq, signal_info.lte_signal_strength.snr,
-						signal_info.lte_signal_strength.rssi, csq, luat_mobile_rssi_to_csq(signal_info.lte_signal_strength.rssi));
+				LUAT_DEBUG_PRINT("rsrp %d, rsrq %d, snr %d, rssi %d, csq %d %d", g_s_signal_info.lte_signal_strength.rsrp,
+						g_s_signal_info.lte_signal_strength.rsrq, g_s_signal_info.lte_signal_strength.snr,
+						g_s_signal_info.lte_signal_strength.rssi, csq, luat_mobile_rssi_to_csq(g_s_signal_info.lte_signal_strength.rssi));
 			}
 
 			break;

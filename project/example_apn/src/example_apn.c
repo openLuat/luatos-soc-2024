@@ -27,6 +27,10 @@
 #ifndef AUTO_APN_TEST
 static g_s_test_cid = 2;
 #endif
+
+luat_mobile_cell_info_t cell_info;
+luat_mobile_signal_strength_info_t signal_info;
+
 static void sms_event_cb(uint32_t event, void *param)
 {
 	LUAT_DEBUG_PRINT("短信event%d,%x",event, param);
@@ -34,8 +38,6 @@ static void sms_event_cb(uint32_t event, void *param)
 
 static void mobile_event_cb(LUAT_MOBILE_EVENT_E event, uint8_t index, uint8_t status)
 {
-	luat_mobile_cell_info_t cell_info;
-	luat_mobile_signal_strength_info_t signal_info;
 	int apn_len;
 	uint8_t csq, i;
 	char imsi[20];
