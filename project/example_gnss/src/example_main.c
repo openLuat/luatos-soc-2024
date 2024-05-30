@@ -5,7 +5,7 @@
 #include "luat_rtos.h"
 #include "luat_debug.h"
 #include "luat_uart.h"
-#include "luat_gpio.h"
+#include "luat_pm.h"
 #include "agnss.h"
 #define UART_ID 2
 #define USE_HD8128
@@ -226,27 +226,7 @@ static void gnss_parse_task(void *param)
     luat_uart_ctrl(UART_ID, LUAT_UART_SET_RECV_CALLBACK, luat_uart_recv_cb);
     luat_mcu_xtal_ref_output(1, 0);
     gnss_work_mode = 1;
-#ifdef CHIP_EC716
-    luat_gpio_cfg_t gpio_cfg;
-	luat_gpio_set_default_cfg(&gpio_cfg);
-	gpio_cfg.pin = HAL_GPIO_16;
-	luat_gpio_open(&gpio_cfg);
-    luat_gpio_set(HAL_GPIO_16,1);	//GNSS VCC-BAK
-	gpio_cfg.pin = HAL_GPIO_13;
-	luat_gpio_open(&gpio_cfg);
-    luat_gpio_set(HAL_GPIO_13,1);	//GNSS VCC
-#endif
-#ifdef CHIP_EC718
-    luat_gpio_cfg_t gpio_cfg;
-	luat_gpio_set_default_cfg(&gpio_cfg);
-	gpio_cfg.pin = HAL_GPIO_23;
-	luat_gpio_open(&gpio_cfg);
-    luat_gpio_set(HAL_GPIO_23,1);	//GNSS VCC-BAK
-	gpio_cfg.pin = HAL_GPIO_17;
-	gpio_cfg.alt_fun = 4;
-	luat_gpio_open(&gpio_cfg);
-    luat_gpio_set(HAL_GPIO_17,1);	//GNSS VCC
-#endif
+    luat_pm_power_ctrl(LUAT_PM_POWER_GPS, 1);
     luat_event_t event;
     Buffer_Struct nmea_data_buffer;
     uint32_t read_len, i;

@@ -11,6 +11,7 @@
 #include "plat_config.h"
 #include "reset.h"
 #include "luat_wdt.h"
+#include "slpman.h"
 #ifdef __LUATOS__
 #include "luat_msgbus.h"
 #define LUAT_LOG_TAG "pm"
@@ -309,6 +310,37 @@ int luat_pm_power_ctrl(int id, uint8_t onoff)
 	case LUAT_PM_POWER_USB:
 		soc_set_usb_sleep(!onoff);
 		soc_usb_onoff(onoff);
+		break;
+	case LUAT_PM_POWER_GPS:
+		if (onoff)
+		{
+			slpManDCXOOutputEn(1);
+#ifdef CHIP_EC716
+			GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(HAL_GPIO_16, 0), 0, 0, 0);
+			GPIO_Config(HAL_GPIO_16, 0, 1);
+			GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(HAL_GPIO_13, 0), 0, 0, 0);
+			GPIO_Config(HAL_GPIO_13, 0, 1);
+#endif
+#ifdef CHIP_EC718
+			GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(HAL_GPIO_23, 0), 0, 0, 0);
+			GPIO_Config(HAL_GPIO_23, 0, 1);
+			GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(HAL_GPIO_17, 4), 4, 0, 0);
+			GPIO_Config(HAL_GPIO_17, 0, 1);
+#endif
+		}
+		else
+		{
+#ifdef CHIP_EC716
+			GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(HAL_GPIO_13, 0), 0, 0, 0);
+			GPIO_Config(HAL_GPIO_13, 0, 0);
+			slpManDCXOOutputEn(0);
+#endif
+#ifdef CHIP_EC718
+			GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(HAL_GPIO_17, 4), 4, 0, 0);
+			GPIO_Config(HAL_GPIO_17, 0, 0);
+			slpManDCXOOutputEn(0);
+#endif
+		}
 		break;
 	case LUAT_PM_POWER_POWERKEY_MODE:
 		if(BSP_GetPlatConfigItemValue(PLAT_CONFIG_ITEM_PWRKEY_MODE) != onoff)
