@@ -2,6 +2,12 @@
 #include "luat_mobile.h"
 #include "luat_mcu.h"
 #include "luat_rtos.h"
+
+#include "luat_rtos.h"
+#include "luat_crypto.h"
+#include "luat_mem.h"
+#include "mbedtls/debug.h"
+
 #include "dns_def.h"
 #include "common_api.h"
 #include "luat_network_adapter.h"
