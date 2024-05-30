@@ -84,6 +84,7 @@ HalCodecFuncList_t es8374DefaultHandle =
     .halCodecGetVolumeFunc      = es8374GetVolume,
     //.halCodecEnablePAFunc       = es8374EnablePA,
     .halCodecSetMicVolumeFunc   = es8374SetMicVolume,
+    .halCodecGetMicVolumeFunc   = NULL,
     .halCodecLock               = NULL,
     .handle                     = NULL,
     .halCodecGetDefaultCfg      = es8374GetDefaultCfg,
@@ -714,7 +715,7 @@ HalCodecSts_e es8374GetVoiceMute(uint8_t *mute)
     return CODEC_EOK;
 }
 
-HalCodecSts_e es8374SetMicVolume(uint8_t micGain, int micVolume)
+HalCodecSts_e es8374SetMicVolume(HalCodecCfg_t* codecHalCfg, uint8_t micGain, int micVolume)
 {
     uint8_t level = micVolume;
     uint8_t value = ADC_VOLUME_MUTE;

@@ -36,8 +36,8 @@ const HalCodecTlvDefault_t codecTlvDefaultVal =
 
     .rxDigGain0     = 0,
     .rxAnaGain0     = 0,
-    .rxDigGain50    = 0x80,
-    .rxAnaGain50    = 0x80,
+    .rxDigGain50    = 0,
+    .rxAnaGain50    = 0,
     .rxDigGain100   = 0xff,
     .rxAnaGain100   = 0xff,
 };
@@ -225,12 +225,12 @@ HalCodecSts_e halCodecGetVolume(HalCodecFuncList_t* codecHal, HalCodecCfg_t* cod
     return ret;
 }
 
-HalCodecSts_e halCodecSetMicVolume(HalCodecFuncList_t* codecHal, uint8_t micGain, int volume, bool needLock)
+HalCodecSts_e halCodecSetMicVolume(HalCodecFuncList_t* codecHal, HalCodecCfg_t* codecHalCfg, uint8_t micGain, int volume, bool needLock)
 {
     int32_t ret;
     HAL_CODEC_CHECK_NULL(codecHal, "audio_hal handle is null", -1);
     if (needLock) halCodecLock(codecHal->halCodecLock);
-    ret = codecHal->halCodecSetMicVolumeFunc(micGain, volume);
+    ret = codecHal->halCodecSetMicVolumeFunc(codecHalCfg, micGain, volume);
     if (needLock) halCodecUnlock(codecHal->halCodecLock);
     return ret;
 }

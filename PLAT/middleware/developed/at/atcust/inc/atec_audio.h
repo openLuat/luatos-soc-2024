@@ -109,37 +109,37 @@
 #define ATC_ECAD_CODEC_3_EX_PA_GAIN_VAL_DEF                   10
 
 #define ATC_ECAD_CODEC_4_TX_DIG_GAIN_VAL_MIN                   0
-#define ATC_ECAD_CODEC_4_TX_DIG_GAIN_VAL_MAX                   100
+#define ATC_ECAD_CODEC_4_TX_DIG_GAIN_VAL_MAX                   255
 #define ATC_ECAD_CODEC_4_TX_DIG_GAIN_VAL_DEF                   1
 
 #define ATC_ECAD_CODEC_5_TX_ANA_GAIN_VAL_MIN                   0
-#define ATC_ECAD_CODEC_5_TX_ANA_GAIN_VAL_MAX                   100
+#define ATC_ECAD_CODEC_5_TX_ANA_GAIN_VAL_MAX                   255
 #define ATC_ECAD_CODEC_5_TX_ANA_GAIN_VAL_DEF                   1
 
 #define ATC_ECAD_CODEC_6_RX_DIG_GAIN0_VAL_MIN                   0
-#define ATC_ECAD_CODEC_6_RX_DIG_GAIN0_VAL_MAX                   100
+#define ATC_ECAD_CODEC_6_RX_DIG_GAIN0_VAL_MAX                   255
 #define ATC_ECAD_CODEC_6_RX_DIG_GAIN0_VAL_DEF                   0
 
 #define ATC_ECAD_CODEC_7_RX_ANA_GAIN0_VAL_MIN                   0
-#define ATC_ECAD_CODEC_7_RX_ANA_GAIN0_VAL_MAX                   100
+#define ATC_ECAD_CODEC_7_RX_ANA_GAIN0_VAL_MAX                   255
 #define ATC_ECAD_CODEC_7_RX_ANA_GAIN0_VAL_DEF                   0
 
 #define ATC_ECAD_CODEC_8_RX_DIG_GAIN50_VAL_MIN                   0
-#define ATC_ECAD_CODEC_8_RX_DIG_GAIN50_VAL_MAX                   100
-#define ATC_ECAD_CODEC_8_RX_DIG_GAIN50_VAL_DEF                   0
+#define ATC_ECAD_CODEC_8_RX_DIG_GAIN50_VAL_MAX                   255
+#define ATC_ECAD_CODEC_8_RX_DIG_GAIN50_VAL_DEF                   128
 
 #define ATC_ECAD_CODEC_9_RX_ANA_GAIN50_VAL_MIN                   0
-#define ATC_ECAD_CODEC_9_RX_ANA_GAIN50_VAL_MAX                   100
-#define ATC_ECAD_CODEC_9_RX_ANA_GAIN50_VAL_DEF                   0
+#define ATC_ECAD_CODEC_9_RX_ANA_GAIN50_VAL_MAX                   255
+#define ATC_ECAD_CODEC_9_RX_ANA_GAIN50_VAL_DEF                   128
 
 #define ATC_ECAD_CODEC_10_RX_DIG_GAIN100_VAL_MIN                   0
-#define ATC_ECAD_CODEC_10_RX_DIG_GAIN100_VAL_MAX                   100
-#define ATC_ECAD_CODEC_10_RX_DIG_GAIN100_VAL_DEF                   0
+#define ATC_ECAD_CODEC_10_RX_DIG_GAIN100_VAL_MAX                   255
+#define ATC_ECAD_CODEC_10_RX_DIG_GAIN100_VAL_DEF                   255
 
 
 #define ATC_ECAD_CODEC_11_RX_ANA_GAIN100_VAL_MIN                   0
-#define ATC_ECAD_CODEC_11_RX_ANA_GAIN100_VAL_MAX                   100
-#define ATC_ECAD_CODEC_11_RX_ANA_GAIN100_VAL_DEF                   0
+#define ATC_ECAD_CODEC_11_RX_ANA_GAIN100_VAL_MAX                   255
+#define ATC_ECAD_CODEC_11_RX_ANA_GAIN100_VAL_DEF                   255
 
 #define ATC_ECAD_AMR_1_MODE_VAL_MIN                   0
 #define ATC_ECAD_AMR_1_MODE_VAL_MAX                   10
@@ -260,8 +260,7 @@ CmsRetId ecAudioSpeechCfg(const AtCmdInputContext *pAtCmdReq);
 CmsRetId ecAudioCfgEqCancel(void);
 CmsRetId  ecAudioCfgEqInputData(UINT8 chanId, UINT8 *pData, INT16 dataLength);
 CmsRetId ecAudioFixedSrcCfg(const AtCmdInputContext *pAtCmdReq);
-CmsRetId ecAudioSetVolume(const AtCmdInputContext *pAtCmdReq);
-
+CmsRetId ecAudioSetSpeakerVol(const AtCmdInputContext *pAtCmdReq);
 
 #endif
 

@@ -581,14 +581,14 @@ uint32_t measure_time(uint32_t *val)
 }
 /**
   \fn          
-  \brief    测量数据导出文件 
+  \brief 
   \return
 */
 #ifdef FEATURE_SUBSYS_STORAGE_ENABLE
 #include "storage.h"
 const char *measurecsv = "D:/timelog.csv";
 const char *csvtitle = "index,function,timestamp,used(ms)\n";
-// 打开文件
+
 lfs_file_t file = {0};
 static uint32_t timeindex = 0;
 static void measure_csv_export(void *func, uint32_t usedtime)

@@ -119,8 +119,17 @@
 /*UE receive unreach udp packet,UE ignore it and not reply icmp unreachable message */
 #define UDP_UNREACHABLE_PACKET_NEED_REPLY_ICMP_ERROR_MESSAGE 0
 
+#ifdef  FEATURE_IMS_ENABLE
 /*define dump log IP packet max size*/
 #define TCPIP_MAX_IP_PKG_DUMP_LEN   2000
+#else
+/*define dump log IP packet max size*/
+#ifdef __USER_CODE__
+#define TCPIP_MAX_IP_PKG_DUMP_LEN   1508
+#else
+#define TCPIP_MAX_IP_PKG_DUMP_LEN   150
+#endif
+#endif
 
 /*define dump log ETHER packet max size*/
 #define TCPIP_MAX_ETH_PKG_DUMP_LEN   100

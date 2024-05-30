@@ -21,6 +21,7 @@
  *                    INCLUDES                                                *
  *----------------------------------------------------------------------------*/
 #include "ccio_misc.h"
+#include "mw_nvm_audio.h"
 
 
 #ifdef __cplusplus
@@ -83,13 +84,18 @@ typedef struct
 {
     uint8_t  getOrSet;
     uint32_t atHandle;
-    uint8_t  setVal;
+    uint8_t  speakerGain;
+    uint8_t  speakerSetVal;
+    uint8_t  micSetGain;
+    uint8_t  micSetVol;
 }AudioCodec_t;
 
 typedef struct
 {
     uint8_t  getOrSet;
     int32_t  rspVal;
+    uint8_t  micGain;
+    int32_t  micVol;
 }AudioCodecRsp_t;
 
 typedef struct
@@ -107,8 +113,13 @@ typedef enum
     APP_WORKING = 1
 }AudioAppState_e;
 
-#define    CODEC_VAL_SET    (0)
-#define    CODEC_VAL_GET    (1)
+#define    CODEC_FAST_INIT              (0)
+#define    CODEC_FAST_DEINIT            (1)
+#define    CODEC_SPEAKER_VAL_SET        (2)
+#define    CODEC_SPEAKER_VAL_GET        (3)
+#define    CODEC_MIC_VAL_SET            (4)
+#define    CODEC_MIC_VAL_GET            (5)
+
 
 #define    CODEC_IND_INDEX  (1)
 
@@ -221,6 +232,12 @@ int32_t audioFreeToneMem();
 */
 void audioFastInit();
 
+/**
+  \fn          audioFastDeInit
+  \brief      Just used for AT commands.
+*/
+void audioFastDeInit();
+
 
 /**
   \fn          audioAppStartPlaySound
@@ -302,6 +319,40 @@ void audioRegisterStopRecordCb(i2sStopRecordCbFunc cb);
   \returns     int
 */
 int32_t audioMsgApp2Ccio(uint8_t state);
+
+/**
+  \fn          audioSetCurrentMode
+  \brief      Set current device mode.
+  \param[in]      AudioParaCfgDeviceType_e  mode;
+  \returns     void
+*/
+void audioSetCurrentMode(AudioParaCfgDeviceType_e mode);
+
+/**
+  \fn          audioGetCurrentMode
+  \brief      Get current device mode.
+  \param[in]      null;
+  \returns     AudioParaCfgDeviceType_e
+*/
+AudioParaCfgDeviceType_e audioGetCurrentMode();
+
+/**
+  \fn          audioSetCurrentDirection
+  \brief      Set current device direction.
+  \param[in]      null;
+  \returns     void
+*/
+void audioSetCurrentDirection(uint8_t direction);
+
+/**
+  \fn          audioGetCurrentDirection
+  \brief      Get current device direction.
+  \param[in]      NULL;
+  \returns     direction
+*/
+
+uint8_t audioGetCurrentDirection();
+
 
 
 

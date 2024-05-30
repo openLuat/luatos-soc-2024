@@ -211,11 +211,17 @@ void BSP_LoadPlatConfigFromFs(void)
 
 
 
+#if (PLAT_CFG_GRP_CNT==1)
 //CHECK the size align to grp unit
 SIZE_OF_TYPE_EQUAL_TO_SZX(plat_cfg_sc_grp0_all_data_st, SCALE_AREA_GRP_UNIT_SIZE)
 
 //CHECK the size of plat_config_fs_t legal
-SIZE_OF_TYPE_EQUAL_TO_CALX(plat_config_fs_t, PLAT_CFG_FIX_BASE_SIZE+PLAT_CFG_SCALE_CONTROL_SIZE()+SCALE_AREA_GRP_UNIT_SIZE)
+SIZE_OF_TYPE_EQUAL_TO_CALX(plat_config_fs_t, PLAT_CFG_FIX_BASE_SIZE+PLAT_CFG_SCALE_CONTROL_SIZE()+SCALE_AREA_GRP_UNIT_SIZE*PLAT_CFG_GRP_CNT)
+#else
+
+#error "plat cfg fs, scale area mode, group more then 1, add size check here"
+#endif
+
 
 
 #define PLAT_CFG_SCALE_LOAD_FAST_PASS 1
@@ -261,6 +267,20 @@ static void BSP_SetFsPlatCfgScalArCtrl(void)
     //{
     //    g_fsPlatConfig.recPrevArAllSzForUpg = g_fsPlatConfig.scaleAreaAllSize-SCALE_AREA_SCALE_UNIT_SIZE;
     //}    
+    #if (PLAT_CFG_GRP_CNT>=1)
+    g_fsPlatConfig.recScaleAreaGrpNum = PLAT_CFG_GRP_CNT -1;
+    #else
+    #error "plat cfg fs scale mode, area group number should large then 1"
+    #endif    
+    
+    if (g_fsPlatConfig.scaleAreaAllSize >= (SCALE_AREA_GRP_UNIT_SIZE+ PLAT_CFG_SCALE_CONTROL_SIZE()))
+    {
+        g_fsPlatConfig.recPrevArAllSzForUpg = g_fsPlatConfig.scaleAreaAllSize-SCALE_AREA_GRP_UNIT_SIZE - PLAT_CFG_SCALE_CONTROL_SIZE();
+    }           
+    else
+    {
+        g_fsPlatConfig.recPrevArAllSzForUpg = 0;
+    }
 }
 
 
@@ -286,7 +306,7 @@ PLAT_BL_CIRAM_FLASH_TEXT static uint8_t BSP_RdAndCalcCrcValue(OSAFILE fp, config
         {
             bufSize = RestCalDataSz;
          }
-        RestCalDataSz -= CALC_BUF_SIZE;
+        RestCalDataSz -= bufSize;
         if (OsaFseek(fp, sizeof(config_file_header_t)+RestCalDataSz, SEEK_SET)!=0)
         {
             return PLAT_CFG_SCALE_LOAD_SEEK_ERR;
@@ -501,7 +521,7 @@ void BSP_LoadPlatConfigFromFs(void)
                 ////////////////////////////////branch for downgrade start ////////////////////////////////////////////////////////////////////////////////////
                 // scaleAreaStartMark, scaleAreaPureData0-scaleAreaPureDataX, scaleAreaEndMark, recScaleAreaGrpNum , recPrevArAllSzForUpg,scaleAreaAllSize
                  //seek to loaded_scaleAreaEndMark
-                if (OsaFseek(fp, fileHeader.fileBodySize    \
+                if (OsaFseek(fp, sizeof(config_file_header_t) + fileHeader.fileBodySize    \
                                             - sizeof(g_fsPlatConfig.scaleAreaEndMark)  \
                                             -sizeof(g_fsPlatConfig.recScaleAreaGrpNum)  \
                                             -sizeof(loaded_recPrevArAllSzForUpg)  \
@@ -526,7 +546,7 @@ void BSP_LoadPlatConfigFromFs(void)
                     break;                  
                 }            
 
-                if (OsaFseek(fp, fileHeader.fileBodySize    \
+                if (OsaFseek(fp, sizeof(config_file_header_t) + fileHeader.fileBodySize    \
                                             -sizeof(loaded_recPrevArAllSzForUpg)  \
                                             -sizeof(loaded_scaleAreaAllSize),  \
                                              SEEK_SET)!=0)
@@ -639,8 +659,8 @@ void BSP_LoadPlatConfigFromFs(void)
             //start mark loc same to cur g_fsPlatConfig.scaleAreaStartMark
             loaded_scaleAreaStartMark = g_fsPlatConfig.scaleAreaStartMark;
             loaded_scaleAreaEndMark = *((uint16_t*)(p_g_fsPlatConfig + fileHeader.fileBodySize
-                                                                            -sizeof(g_fsPlatConfig.scaleAreaEndMark)
-                                                                            - sizeof(g_fsPlatConfig.scaleAreaAllSize)));
+                -PLAT_CFG_SCALE_CTRL_TAIL_SIZE()));
+
             
             if (loaded_scaleAreaStartMark!=PLAT_CFG_SCALE_START_MARK)
             {

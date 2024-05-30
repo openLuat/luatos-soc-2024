@@ -106,16 +106,26 @@ typedef struct _EPAT_AudioParaCfgCodec_Tag
 {
     UINT16  isDmic;                
     UINT16  isExPa;              
-    INT16  exPaGain;
-    INT16  txDigGain;
-    INT16  txAnaGain;
-    INT16  rxDigGain0;
-    INT16  rxAnaGain0;
-    INT16  rxDigGain50;
-    INT16  rxAnaGain50;
-    INT16  rxDigGain100;
-    INT16  rxAnaGain100;
+    INT16   exPaGain;
+    INT16   txDigGain;   // bit15: flag; 
+    INT16   txAnaGain;   // bit15: flag; 
+    
+    INT16   rxDigGain0;
+    INT16   rxAnaGain0;
+    INT16   rxDigGain50; 
+    INT16   rxAnaGain50; 
+    INT16   rxDigGain100;
+    INT16   rxAnaGain100;
 }AudioParaCfgCodec_t;
+
+typedef enum
+{
+    HAND_SET             = 0,
+    HEAD_SET_3_4_POLE    = 1,
+    HEAD_SET             = 2,
+    HANDS_OFF            = 3
+}AudioParaCfgDeviceType_e;
+
 
 typedef struct AudioParaCfgCodecDev_Tag
 {
@@ -438,8 +448,8 @@ typedef enum _EPAT_AtcAudioTypeMapping_Tag
     AUDIO_CFG_TLV_CODEC_TXANAGAIN       = 0x100204,
     AUDIO_CFG_TLV_CODEC_RXDIGGAIN0      = 0x100205,
     AUDIO_CFG_TLV_CODEC_RXANAGAIN0      = 0x100206,
-    AUDIO_CFG_TLV_CODEC_RXDIGGAIN50     = 0x100207,
-    AUDIO_CFG_TLV_CODEC_RXANAGAIN50     = 0x100208,
+    AUDIO_CFG_TLV_CODEC_RXDIGUSRSET     = 0x100207,
+    AUDIO_CFG_TLV_CODEC_RXANAUSRSET     = 0x100208,
     AUDIO_CFG_TLV_CODEC_RXDIGGAIN100    = 0x100209,
     AUDIO_CFG_TLV_CODEC_RXANAGAIN100    = 0x10020A,
     

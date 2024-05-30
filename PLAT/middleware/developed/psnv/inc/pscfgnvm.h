@@ -149,7 +149,7 @@ typedef enum _EPAT_PsConfigParamId_Enum
     CERRC_CFG_ENABLE_LOGGED_MDT,                    /* TV,  BOOL enableLoggedMDT */
 
     CCM_CFG_SMALL_UL_TBS_OPT,                       /* TV,  BOOL smallUlTbsOpt */
-
+    CERRC_CFG_L2_EXT_SN_CAPA_BITMAP,                /* TV,  UINT8,L2 extended SN capability definition,via bitmap. */
     /*
      * !!!!  PARAM ID !!!!
      * 1> Only allowed

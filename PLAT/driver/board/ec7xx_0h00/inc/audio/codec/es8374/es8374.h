@@ -226,7 +226,7 @@ HalCodecSts_e es8374GetVoiceMute(uint8_t *mute);
   \return    -CODEC_EOK   -CODEC_ERR
   \note
  */ 
-HalCodecSts_e es8374SetMicVolume(uint8_t micGain, int micVolume);
+HalCodecSts_e es8374SetMicVolume(HalCodecCfg_t* codecHalCfg, uint8_t micGain, int micVolume);
 
 /**
  * @brief Print all ES8374 registers

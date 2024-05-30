@@ -1493,6 +1493,7 @@ PS_PART10_ServingCellInfo;
 //PlmnIdentityInfo
 typedef struct _EPAT_PS_RRC_CerrcBarredCellInfoTag
 {
+    UINT32                                  cellIdentity;
     UINT32                                  carrierFreq;
     UINT16                                  phyCellId;
     UINT16                                  barTimeLength;

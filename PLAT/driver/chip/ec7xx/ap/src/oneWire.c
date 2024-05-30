@@ -57,7 +57,6 @@ void owSetMode(OwModeSel_e mode)
         OW->ATCR = EIGEN_VAL2FLD(OW_ATCR_WRRD_RDDLY, 11);
 #endif
 #else
-        OW->ECR |= OW_ECR_RXD_MJR_Msk;
 
         A = 2;  // 6us
         B = 12; // 64us
@@ -110,7 +109,7 @@ uint8_t read()
     uint8_t retData, rmjData;
 
     OW->IOR &= ~OW_IOR_IO_SWOEN_Msk;
-    rmjData = EIGEN_FLD2VAL(OW_ECR_RXD_MJR, OW->ECR);
+    rmjData = 0;
 
     if (rmjData > 0)
     {

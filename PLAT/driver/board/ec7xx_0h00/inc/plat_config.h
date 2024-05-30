@@ -158,6 +158,7 @@ If recPrevArAllSzForUpg not same with current scaleAreaAllSize real size, then i
 
 
 
+#define PLAT_CFG_GRP_CNT 1
 #define PLAT_CFG_FIX_BASE_SIZE 18
 
 #define SCALE_AREA_GRP_UNIT_SIZE 16

@@ -3483,8 +3483,7 @@ typedef struct {
 #define OW_ECR_AUTO_CGEN_Pos                     (2)
 #define OW_ECR_AUTO_CGEN_Msk                     (0x1UL << OW_ECR_AUTO_CGEN_Pos)
 
-#define OW_ECR_RXD_MJR_Pos                       (3)
-#define OW_ECR_RXD_MJR_Msk                       (0x1UL << OW_ECR_RXD_MJR_Pos)
+
 /** @} */
 
 /** @name CDR - OW_CDR register */

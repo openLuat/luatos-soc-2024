@@ -230,7 +230,7 @@ int32_t ccioBuildMsgVolteStopRec(CcioChanMessage_t *chmsg, CcioChanMessageId_e m
 int32_t ccioBuildMsgVolteStopPlay(CcioChanMessage_t *chmsg, CcioChanMessageId_e msgId, CcioDsaVolteStopPlay_t *stopPlay);
 int32_t ccioBuildMsgVolteStartRec(CcioChanMessage_t *chmsg, CcioChanMessageId_e msgId, CcioDsaVolteStartRec_t *startRec);
 int32_t ccioBuildMsgVolteStartPlay(CcioChanMessage_t *chmsg, CcioChanMessageId_e msgId, CcioDsaVolteStartPlay_t *startPlay);
-int32_t ccioBuildMsgHandleCodec(CcioChanMessage_t *chmsg, CcioChanMessageId_e msgId, CcioDsaVolteHandleCodec_t *handleCodec);
+int32_t ccioBuildMsgHandleCodec(CcioChanMessage_t *chmsg, CcioChanMessageId_e msgId, CcioDsaVolteHandleCodec_t *handleCodecParam);
 int32_t ccioBuildMsgFromApp(CcioChanMessage_t *chmsg, CcioChanMessageId_e msgId, CcioDsaVolteMsgFromApp_t *msgFromApp);
 
 #ifdef __cplusplus

@@ -62,12 +62,12 @@ extern "C" {
 #define ES8311_SYSTEM_REG11             0x11 // system 
 #define ES8311_SYSTEM_REG12             0x12 // system, Enable DAC 
 #define ES8311_SYSTEM_REG13             0x13 // system 
-#define ES8311_SYSTEM_REG14             0x14 // system, select DMIC, select analog pga gain 
+#define ES8311_SYSTEM_REG14             0x14 // system, mic gain, select DMIC, select analog pga gain 
 
 // ADC
 #define ES8311_ADC_REG15                0x15 // ADC, adc ramp rate, dmic sense 
 #define ES8311_ADC_REG16                0x16 // ADC 
-#define ES8311_ADC_REG17                0x17 // ADC, volume 
+#define ES8311_ADC_REG17                0x17 // ADC, mic volume 
 #define ES8311_ADC_REG18                0x18 // ADC, alc enable and winsize 
 #define ES8311_ADC_REG19                0x19 // ADC, alc maxlevel 
 #define ES8311_ADC_REG1A                0x1A // ADC, alc automute 
@@ -241,7 +241,10 @@ HalCodecSts_e es8311GetVoiceMute(int *mute);
   \return    -CODEC_EOK   -CODEC_ERR
   \note
  */ 
-HalCodecSts_e es8311SetMicVolume(uint8_t micGain, int micVolume);
+HalCodecSts_e es8311SetMicVolume(HalCodecCfg_t* codecHalCfg, uint8_t micGain, int micVolume);
+
+HalCodecSts_e es8311GetMicVolume(HalCodecCfg_t* codecHalCfg, uint8_t *micGain, int *micVolume);
+
 
 /**
  * @brief Print all ES8311 registers

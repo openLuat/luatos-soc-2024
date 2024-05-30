@@ -1433,10 +1433,11 @@ IRQ_HANDLE:
         (void) lpusart->core_regs->FCR0;
         lpusart->core_regs->FCR0 &= ~USART_FCR0_RXFIFO_FLUSH_Msk;
 
+        event = ARM_USART_EVENT_AUTO_BAUDRATE_DONE;
+
         // pattern is right and no error happens
         if(lpusart->info->xfer.rx_dump_val & 0x1)
         {
-            event = ARM_USART_EVENT_AUTO_BAUDRATE_DONE;
 
             // can switch to lpuart
             lpusart->aon_regs->DLR = lpusart->aon_regs->ABDR;
@@ -1449,6 +1450,13 @@ IRQ_HANDLE:
         {
             // Either exceeding the max speed of lpuart or pattern is wrong, switch to normal uart in both cases, reset have to be performed for the latter case
             lpusart->core_regs->RXSR = 0;
+
+            // There's possibilty that lpuart rx_busy won't be cleared on exceeding the max speed of lpuart which causing issue when change back to lpuart
+            if(UART_readLSR(&(lpusart->core_regs->LSR)) & USART_LSR_LUAC_RX_BUSY_Msk)
+            {
+                GPR_swReset(RST_LPUA);
+            }
+
             lpusart->aon_regs->CR0 &= ~LPUSARTAON_CR0_CLK_ENABLE_Msk;
 
         }

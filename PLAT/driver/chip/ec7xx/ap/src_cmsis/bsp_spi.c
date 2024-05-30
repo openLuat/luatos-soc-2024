@@ -854,7 +854,7 @@ int32_t SPI_PowerControl(ARM_POWER_STATE state, SPI_RESOURCES *spi)
             // setup DMA setting registers
             spi->reg->DRLR = EIGEN_VAL2FLD(SPI_DRLR_TX_REQ_LVL, 8) | EIGEN_VAL2FLD(SPI_DRLR_RX_REQ_LVL, 9);
 
-            spi->reg->DRRCR = EIGEN_VAL2FLD(SPI_DRRCR_RX_WAIT_CYCLE, 0x7) | \
+            spi->reg->DRRCR = EIGEN_VAL2FLD(SPI_DRRCR_RX_WAIT_CYCLE, 0x1F) | \
                               EIGEN_VAL2FLD(SPI_DRRCR_READ_DEPTH_ONE_BURST, 0x7) | \
                               SPI_DRRCR_RX_REQ_MODE_Msk | SPI_DRRCR_RX_TO_REQ_EN_Msk | SPI_DRRCR_RX_EOR_MODE_Msk;
 
@@ -1756,8 +1756,8 @@ void SPI_DmaRxEvent(uint32_t event, SPI_RESOURCES *spi)
             DMA_stopChannel(spi->dma->tx_instance, spi->dma->tx_ch, true);
             DMA_stopChannel(spi->dma->rx_instance, spi->dma->rx_ch, true);
 
-            spi->info->xfer.rx_cnt = DMA_getChannelCount(spi->dma->rx_instance, spi->dma->rx_ch);
-            spi->info->xfer.tx_cnt = spi->info->xfer.rx_cnt;
+            spi->info->xfer.rx_cnt = DMA_getChannelCount(spi->dma->rx_instance, spi->dma->rx_ch) / spi->info->data_width;
+            spi->info->xfer.tx_cnt = DMA_getChannelCount(spi->dma->tx_instance, spi->dma->tx_ch) / spi->info->data_width;
 
             spi->reg->DMACR = 0;
             spi->info->status.busy = 0;

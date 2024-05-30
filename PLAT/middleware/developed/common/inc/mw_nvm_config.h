@@ -9,6 +9,7 @@
  ****************************************************************************/
 #include "osacfgnvm.h"
 #include "mw_common.h"
+#include "hal_codec.h"
 
 /*
  * Differences between these MW config/AON files:
@@ -111,6 +112,9 @@ typedef enum _EPAT_MidWareCfgParamId_Enum
     MW_CFG_AT_CHAN_5_CONFIG,        /* TLV,  MWNvmCfgAtChanConfig, AT channel 5 */
     MW_CFG_AT_CHAN_6_CONFIG,        /* TLV,  MWNvmCfgAtChanConfig, AT channel 6 */
     MW_CFG_AT_CHAN_7_CONFIG,        /* TLV,  MWNvmCfgAtChanConfig, AT channel 7 */
+
+    // new add id for usr set codec volumn
+    MW_CFG_USR_CODEC_VOLUMN,        /* TLV,  MWNvmCfgUsrSetCodecVolumn */
 
     MW_CFG_PARAM_END,
     /* As need a bitmap to record which CFG is set/configed, here limit the MAX ID to 256, than 8 words bitmap is enough  */
@@ -316,6 +320,9 @@ typedef struct _SIG_EPAT_MW_CFG_DM_CMCC_PARAM_2
     uint16_t retryInter;
     uint16_t retryNum;
 }MWNvmCfgDmCmccParam2;
+
+
+
 
 /*
  * Voltage low and thermal high alarm
@@ -595,6 +602,10 @@ typedef struct MidWareNvmConfig_Tag
     * used for cmcc dm4.0, paramId: MW_CFG_DM_CMCC_PARAM2
     */
     MWNvmCfgDmCmccParam2     dmCmccParam2;        // 12 bytes
+    /*
+    * used for usr set codec speaker volumn
+    */
+    MWNvmCfgUsrSetCodecVolumn     usrSetCodecVolumn;
 }MidWareNvmConfig;
 
 
@@ -984,6 +995,9 @@ void mwNvmCfgSetAndSaveUrcRIRingIncomingParam(UINT8 chanId, const MWNvmCfgUrcRIR
 UINT16 mwNvmCfgGetUrcSignalTypeParam(void);
 void mwNvmCfgSetAndSaveUrcSignalTypeParam(UINT16 usSignalType);
 
+//void mwCfgDefaultUsrCodecVolumn(MWNvmCfgUsrSetCodecVolumn *pUsrCodecVolumn);
+void mwNvmCfgGetUsrCodecVolumn(MWNvmCfgUsrSetCodecVolumn *pUsrCodecVolumn);
+void mwNvmCfgSetAndSaveUsrCodecVolumn(UINT16 usrDigVolumn, UINT16 usrAnaVolumn);
 
 #endif
 

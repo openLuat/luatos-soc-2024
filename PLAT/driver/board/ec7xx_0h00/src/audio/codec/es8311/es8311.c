@@ -77,12 +77,20 @@ HalCodecFuncList_t es8311DefaultHandle =
     .halCodecGetVolumeFunc      = es8311GetVolume,
     //.halCodecEnablePAFunc           = es8311EnablePA,
     .halCodecSetMicVolumeFunc   = es8311SetMicVolume,
+    .halCodecGetMicVolumeFunc   = es8311GetMicVolume,
     .halCodecLock               = NULL,
     .handle                     = NULL,
     .halCodecGetDefaultCfg      = es8311GetDefaultCfg,
 };
 
-
+#if (USE_NV_VOLUME)
+AudioParaCfgCodec_t  mwNvmAudioCodec1;
+AudioParaCfgCodec_t  mwNvmAudioCodec2;
+MWNvmCfgUsrSetCodecVolumn usrCodecVolumn;
+MWNvmCfgUsrSetCodecVolumn usrCodecVolumn2;
+#endif
+extern void mwNvmCfgGetUsrCodecVolumn(MWNvmCfgUsrSetCodecVolumn *pUsrCodecVolumn);
+extern void mwNvmCfgSetAndSaveUsrCodecVolumn(UINT16 usrDigVolumn, UINT16 usrAnaVolumn);
 
 /*----------------------------------------------------------------------------*
  *                      PRIVATE VARIABLES                                     *
@@ -156,6 +164,7 @@ static const struct _coeffDiv coeffDiv[] =
 };
 
 static uint8_t dacVolBak, adcVolBak;
+static uint8_t micVolGainBak;
 static bool isHasPA;
 //static int slope, offset;
 //static int gain0 = -955, gain100 = 320; // mul or divide 10 to a integer
@@ -180,7 +189,7 @@ static int32_t es8311WriteReg(uint8_t regAddr, uint16_t data)
         ret = halI2cWrite(ES8311_IICADDR, cmd, 2, &rxNack, true);
     }
 #if 0
-#ifdef FEATURE_OS_ENABLE        
+#ifdef FEATURE_OS_ENABLE
     DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311WriteReg_1, P_DEBUG, "reg write: reg=%x, data=%x", regAddr, data);
 #else      
     printf("reg write: reg=%02x, data=%02x\n", regAddr, data);
@@ -237,10 +246,11 @@ static void es8311Standby(uint8_t* dacVolB, uint8_t* adcVolB)
 }
 
 // set es8311 ADC into suspend mode
-static void es8311AdcStandby(uint8_t* adcVolB)
+static void es8311AdcStandby(uint8_t* adcVolB, uint8_t* micGainB)
 {
-    DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311suspend_1, P_DEBUG, "Enter into es8311 adc suspend");
     es8311ReadReg(ES8311_ADC_REG17, adcVolB);
+    es8311ReadReg(ES8311_SYSTEM_REG14, micGainB);
+    DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311suspend_1, P_DEBUG, "Enter es8311 adc suspend, adcVolB:0x%x, micGainB:0x%x", *adcVolB, *micGainB);
     es8311WriteReg(ES8311_ADC_REG17,            0x00);
     es8311WriteReg(ES8311_SDPOUT_REG0A,         0x40);
     es8311WriteReg(ES8311_SYSTEM_REG0E,         0x7f);
@@ -277,14 +287,14 @@ static HalCodecSts_e es8311AllResume()
     es8311WriteReg(ES8311_RESET_REG00,          0x80);
 #ifdef FEATURE_OS_ENABLE
     osDelay(1);
-#else    
+#else
     delay_us(1000);
 #endif    
     es8311WriteReg(ES8311_SYSTEM_REG0D,         0x01);
     es8311WriteReg(ES8311_CLK_MANAGER_REG02,    0x00);
     es8311WriteReg(ES8311_DAC_REG37,            0x08);
     es8311WriteReg(ES8311_ADC_REG15,            0x40);
-    es8311WriteReg(ES8311_SYSTEM_REG14,         0x18);
+    es8311WriteReg(ES8311_SYSTEM_REG14,         micVolGainBak);//0x18);
     es8311WriteReg(ES8311_SYSTEM_REG12,         0x00);
     es8311WriteReg(ES8311_SYSTEM_REG0E,         0x00);
     es8311WriteReg(ES8311_DAC_REG32,            dacVolBak);
@@ -308,7 +318,7 @@ static HalCodecSts_e es8311AdcResume()
     es8311WriteReg(ES8311_SYSTEM_REG0D,         0x01);
     es8311WriteReg(ES8311_DAC_REG37,            0x08);
     es8311WriteReg(ES8311_ADC_REG15,            0x00);
-    es8311WriteReg(ES8311_SYSTEM_REG14,         0x18);
+    es8311WriteReg(ES8311_SYSTEM_REG14,         micVolGainBak);//0x18);
     es8311WriteReg(ES8311_SYSTEM_REG0E,         0x02);
     es8311WriteReg(ES8311_ADC_REG17,            adcVolBak);
 #ifdef FEATURE_OS_ENABLE
@@ -399,37 +409,64 @@ HalCodecSts_e es8311Init(HalCodecCfg_t *codecCfg)
 #ifdef FEATURE_OS_ENABLE
 #if (USE_NV_VOLUME)
     AudioParaCfgCommon_t mAudioCfgCommon;
-    AudioParaCfgCodec_t  mwNvmAudioCodec;
     ecAudioCfgTlvStore *pMwNvmAudioCfg = NULL;
 
     // get default gain value
     memset((char *)&mAudioCfgCommon, 0x0, sizeof(mAudioCfgCommon));
+    mAudioCfgCommon.mode   = codecCfg->deviceMode;
     mAudioCfgCommon.device = codecCfg->codecDeviceType;
-    mAudioCfgCommon.direct = DIRECTION_RX;
+    mAudioCfgCommon.direct = codecCfg->direction;
+    DEBUG_PRINT(UNILOG_PLA_MIDWARE, es8311DefaultCfg_0, P_WARNING, "mode: %d, device: %d, direct: %d", mAudioCfgCommon.mode, mAudioCfgCommon.device, mAudioCfgCommon.direct);
 
+    // to get mic volumn and default 0/100 volume
     pMwNvmAudioCfg = (ecAudioCfgTlvStore *)OsaAllocZeroMemory(sizeof(ecAudioCfgTlvStore)+ sizeof(AudioParaSphEQBiquard_t)*EC_ADCFG_SPEECH_EQ_BIQUARD_NUMB*EC_ADCFG_SPEECH_TX_NUMB
                     + sizeof(AudioParaSphEQBiquard_t)*EC_ADCFG_SPEECH_EQ_BIQUARD_NUMB*EC_ADCFG_SPEECH_RX_NUMB + sizeof(UINT16)*EC_ADCFG_SPEECH_ANS_EQ_BAND_NUMB*EC_ADCFG_SPEECH_RX_NUMB
                      + sizeof(UINT16)*EC_ADCFG_SPEECH_ANS_EQ_BAND_NUMB*EC_ADCFG_SPEECH_TX_NUMB);
     if (FALSE == mwNvmAudioCfgRead(pMwNvmAudioCfg))
     {
-        DEBUG_PRINT(UNILOG_PLA_MIDWARE, ec8311DefaultCfg_1, P_WARNING, "MW NVM Audio, Read Audio Storage memory failure, try again !");
+        DEBUG_PRINT(UNILOG_PLA_MIDWARE, es8311DefaultCfg_1, P_WARNING, "MW NVM Audio, Read Audio Storage memory failure, try again !");
         if (FALSE == mwNvmAudioCfgRead(pMwNvmAudioCfg))
         {
-            DEBUG_PRINT(UNILOG_PLA_MIDWARE, ec8311DefaultCfg_2, P_WARNING, "MW NVM Audio, Read Audio Storage memory failure !");
+            DEBUG_PRINT(UNILOG_PLA_MIDWARE, es8311DefaultCfg_2, P_WARNING, "MW NVM Audio, Read Audio Storage memory failure !");
             OsaFreeMemory(&pMwNvmAudioCfg);
             return FALSE;
         }
     }
     
-    mwNvmAudioCfgCodecGet(&mAudioCfgCommon, &mwNvmAudioCodec, pMwNvmAudioCfg);
+    mwNvmAudioCfgCodecGet(&mAudioCfgCommon, &mwNvmAudioCodec1, pMwNvmAudioCfg);
 
-    codecCfg->codecVolParam.defaultVal.rxDigGain0   = -955;//mwNvmAudioCodec.rxDigGain0;
-    codecCfg->codecVolParam.defaultVal.rxDigGain100 = 320;//mwNvmAudioCodec.rxDigGain100;
-    
+    if ((mwNvmAudioCodec1.rxDigGain0 == 0) &&  (mwNvmAudioCodec1.rxDigGain100 == 0))
+    {
+        // this board hasn't calibrated, so use default db val
+        codecCfg->codecVolParam.defaultVal.rxDigGain0   = -955;
+        codecCfg->codecVolParam.defaultVal.rxDigGain100 = 320;
+        DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311init_7, P_DEBUG, " this board hasn't calibrated");
+    }
+    else
+    {
+    #if 0
+        // this board has calibrated, so use new db val
+        remain = mwNvmAudioCodec1.rxDigGain0 % 5;
+        mwNvmAudioCodec1.rxDigGain0 -= remain;
+
+        remain = mwNvmAudioCodec1.rxDigGain100 % 5;
+        mwNvmAudioCodec1.rxDigGain100 -= remain;
+    #endif
+
+        // mwNvmAudioCodec1.rxDigGain0 ranges from 0~255
+        codecCfg->codecVolParam.defaultVal.rxDigGain0   = -955 + 5 * mwNvmAudioCodec1.rxDigGain0;
+        codecCfg->codecVolParam.defaultVal.rxDigGain100 = -955 + 5 * mwNvmAudioCodec1.rxDigGain100;
+        DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311init_8, P_DEBUG, " this board has calibrated, gain0:%d, gain100:%d", codecCfg->codecVolParam.defaultVal.rxDigGain0, codecCfg->codecVolParam.defaultVal.rxDigGain100);
+    }
+
     codecCfg->codecVolParam.offset = codecCfg->codecVolParam.defaultVal.rxDigGain0 * 128;
     codecCfg->codecVolParam.slope  = (codecCfg->codecVolParam.defaultVal.rxDigGain100 - codecCfg->codecVolParam.defaultVal.rxDigGain0) * 1024/100;
-    DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311init_7, P_DEBUG, "offset: %d, slope:%d", codecCfg->codecVolParam.offset, codecCfg->codecVolParam.slope);
+    DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311init_9, P_DEBUG, "offset: %d, slope:%d", codecCfg->codecVolParam.offset, codecCfg->codecVolParam.slope);
     OsaFreeMemory(&pMwNvmAudioCfg);
+
+
+    mwNvmCfgGetUsrCodecVolumn(&usrCodecVolumn);
+    DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311init_10, P_DEBUG, "init get nv speaker vol. rxDigUsrSet:%d, rxAnaUsrSet:%d", usrCodecVolumn.rxDigUsrSet, usrCodecVolumn.rxAnaUsrSet);
 #endif    
 #endif
     #if 0
@@ -675,7 +712,7 @@ HalCodecSts_e es8311Init(HalCodecCfg_t *codecCfg)
 
 void es8311DeInit()
 {
-    //es8311PwrDown(0);
+    //es8311PwrDown();
     halI2cDeInit(true);
 }
 
@@ -818,10 +855,10 @@ HalCodecSts_e es8311Start(HalCodecMode_e mode)
     ret |= es8311WriteReg(ES8311_SDPIN_REG09,   dacIface);
     ret |= es8311WriteReg(ES8311_SDPOUT_REG0A,  adcIface);
 
-    ret |= es8311WriteReg(ES8311_ADC_REG17,     0x88/*0xBF*/);
+   // ret |= es8311WriteReg(ES8311_ADC_REG17,     0x88/*0xBF*/);
     ret |= es8311WriteReg(ES8311_SYSTEM_REG0E,  0x02);
     ret |= es8311WriteReg(ES8311_SYSTEM_REG12,  0x28/*0x00*/);
-    ret |= es8311WriteReg(ES8311_SYSTEM_REG14,  0x18/*0x1A*/);
+   // ret |= es8311WriteReg(ES8311_SYSTEM_REG14,  0x18/*0x1A*/);
 
     // pdm dmic enable or disable
     uint8_t regv = 0;
@@ -837,7 +874,7 @@ HalCodecSts_e es8311Start(HalCodecMode_e mode)
         regv &= ~(0x40);
         ret |= es8311WriteReg(ES8311_SYSTEM_REG14, regv);
     }
-    es8311WriteReg(ES8311_SYSTEM_REG14, 0x18);  //add for debug
+   // es8311WriteReg(ES8311_SYSTEM_REG14, 0x18);  //add for debug
 
     ret |= es8311WriteReg(ES8311_SYSTEM_REG0D, 0x01);
     ret |= es8311WriteReg(ES8311_ADC_REG15, 0x00/*0x40*/);
@@ -856,7 +893,7 @@ HalCodecSts_e es8311Stop(HalCodecMode_e mode)
     switch(mode)
     {
         case CODEC_MODE_ENCODE:
-        es8311AdcStandby(&adcVolBak);
+        es8311AdcStandby(&adcVolBak, &micVolGainBak);
         break;
 
         case CODEC_MODE_DECODE:
@@ -919,9 +956,13 @@ HalCodecSts_e es8311Resume(HalCodecMode_e mode)
 HalCodecSts_e es8311SetVolume(HalCodecCfg_t* codecHalCfg, int volume)
 {
     HalCodecSts_e res = CODEC_EOK;
+
+#ifdef FEATURE_OS_ENABLE
 #if (USE_NV_VOLUME)    
+    //bool saveRet = true;
     int calGainDb = 0; // calculated db, should divide 10
     uint8_t regValWrite = 0;
+#endif
 #endif
 
     if (volume <= 0)
@@ -937,6 +978,7 @@ HalCodecSts_e es8311SetVolume(HalCodecCfg_t* codecHalCfg, int volume)
     
     DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311SetVolume_1, P_DEBUG, "Es8311 Set volume:%d", volume);
 
+#ifdef FEATURE_OS_ENABLE
 #if (USE_NV_VOLUME)
     /* 1. get default tuning value
 
@@ -956,11 +998,19 @@ HalCodecSts_e es8311SetVolume(HalCodecCfg_t* codecHalCfg, int volume)
 
      // 3. write into reg
      res = es8311WriteReg(ES8311_DAC_REG32, regValWrite);
+
+     // 4. write into nv
+    usrCodecVolumn.rxDigUsrSet &= ~0xff;
+    usrCodecVolumn.rxDigUsrSet |= volume;
+    mwNvmCfgSetAndSaveUsrCodecVolumn(usrCodecVolumn.rxDigUsrSet, usrCodecVolumn.rxAnaUsrSet);
+
+    mwNvmCfgGetUsrCodecVolumn(&usrCodecVolumn2);
+    DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311SetVolume_2, P_DEBUG, "rxDigUsrSet:%d, rxAnaUsrSet:%d", usrCodecVolumn2.rxDigUsrSet, usrCodecVolumn2.rxAnaUsrSet);
 #else
     int vol = volume * 2550 / 1000; // volume * (rxDigGain100 - rxDigGain0) / 100
     res = es8311WriteReg(ES8311_DAC_REG32, vol);
 #endif
-
+#endif
     return res;
 }
 
@@ -969,14 +1019,15 @@ HalCodecSts_e es8311GetVolume(HalCodecCfg_t* codecHalCfg, int *volume)
     HalCodecSts_e res = CODEC_EOK;
     uint8_t regVal = 0;
 #if (USE_NV_VOLUME)    
-    int calGainDb = 0;
+    //int calGainDb = 0;
 #endif
 
     es8311ReadReg(ES8311_DAC_REG32, &regVal);
     
 #if (USE_NV_VOLUME)
-    calGainDb = regVal*5 + codecHalCfg->codecVolParam.defaultVal.rxDigGain0;
-    *volume = (calGainDb - codecHalCfg->codecVolParam.offset/128) * 1024 / codecHalCfg->codecVolParam.slope;
+    //calGainDb = regVal*5 + codecHalCfg->codecVolParam.defaultVal.rxDigGain0;
+    //*volume = (calGainDb - codecHalCfg->codecVolParam.offset/128) * 1024 / codecHalCfg->codecVolParam.slope;
+    *volume = usrCodecVolumn.rxDigUsrSet & 0xff;
 #else
     *volume = regVal * 1000 / 2550;
 #endif
@@ -1007,34 +1058,46 @@ HalCodecSts_e es8311GetVoiceMute(int *mute)
     return res;
 }
 
-HalCodecSts_e es8311SetMicVolume(uint8_t micGain, int micVolume)
+HalCodecSts_e es8311SetMicVolume(HalCodecCfg_t* codecHalCfg, uint8_t micGain, int micVolume)
+{
+    HalCodecSts_e res = CODEC_EOK;
+    
+    uint8_t regv = 0;
+    es8311ReadReg(ES8311_SYSTEM_REG14, &regv);
+    regv &= ~0xf; // clear low 4bits, maintain high 4bits, because high bits is dmic indication
+    regv |= (1<<4 | micGain);
+    DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311SetMicVolume_2, P_DEBUG, "Es8311 reg set, micGain:%d, micVolume:%d", regv, micVolume);
+    res = es8311WriteReg(ES8311_SYSTEM_REG14, regv);
+    res = es8311WriteReg(ES8311_ADC_REG17, micVolume);
+    micVolGainBak = regv;
+
+    return res;
+}
+
+HalCodecSts_e es8311GetMicVolume(HalCodecCfg_t* codecHalCfg, uint8_t* micGain, int *micVolume)
 {
     HalCodecSts_e res = CODEC_EOK;
 
-    if (micVolume <= 0)
-    {
-        //return es8311SetMute(1);
-        micVolume = 0;
-    }
+    es8311ReadReg(ES8311_SYSTEM_REG14, micGain);
+    es8311ReadReg(ES8311_ADC_REG17, (uint8_t*)micVolume);
 
-    if (micVolume >= 100)
-    {
-        micVolume = 100;
-    }
+    #if 0
+    *micVolume = mwNvmAudioCodec1.txDigGain & 0xff;//regVal * 1000 / 2550;
+    *micGain = mwNvmAudioCodec1.txAnaGain & 0xff;//regVal1 & 0xf;
+    #endif
 
-    int vol = micVolume * 2550 / 1000;
-    DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311SetMicVolume_1, P_DEBUG, "Es8311 Set mic volume:%d", micVolume);
-    
-    res = es8311WriteReg(ES8311_SYSTEM_REG14, (1<<4 | micGain));
-    res = es8311WriteReg(ES8311_ADC_REG17, vol);
+    *micGain = *micGain & 0xf;
+
+    DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311getMicVolume_1, P_DEBUG, "Get Mic gain:%d, mic volume:%d", *micGain, *micVolume);
     return res;
 }
+
 
 void es8311ReadAll()
 {
     uint8_t reg = 0;
 
-#ifdef FEATURE_OS_ENABLE        
+#ifdef FEATURE_OS_ENABLE
     DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311ReadAll_1, P_DEBUG, "now read 8311 all");
 #else      
     printf("now read 8311 all\n");
@@ -1043,14 +1106,14 @@ void es8311ReadAll()
     for (int i = 0; i < 0x4A; i++) 
     {
         es8311ReadReg(i, &reg);
-#ifdef FEATURE_OS_ENABLE        
+#ifdef FEATURE_OS_ENABLE
         DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311ReadAll_2, P_DEBUG, "REG:%x, %x", reg, i);
 #else      
         printf("reg = 0x%02x, val = 0x%02x\n", i, reg);
 #endif
     }
 
-#ifdef FEATURE_OS_ENABLE        
+#ifdef FEATURE_OS_ENABLE
     DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311ReadAll_3, P_DEBUG, "now read 8311 all end");
 #else      
     printf("now read 8311 all end\n");

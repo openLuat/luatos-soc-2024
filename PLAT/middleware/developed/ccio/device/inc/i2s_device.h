@@ -56,8 +56,8 @@ typedef struct
     uint8_t             mainUsage;       /**< refer to 'CsioDevType_e' */
     uint8_t             bmCreateFlag;    /**< refer to 'CcioTaskOperFlag_e', bitmap type */
     uint16_t            rbufFlags :4;    /**< which rbuf will be used? refer to 'CcioRbufUsage_e' */
-    uint16_t            custFlags :3;    /**< flags for customers' private purpose */
-    uint16_t            rsvdBits  :9;
+    uint16_t            custFlags :4;    /**< flags for customers' private purpose */
+    uint16_t            rsvdBits  :8;
 }I2sDevConf_t;
 
 typedef struct
@@ -105,7 +105,8 @@ typedef enum
     AUDIO_OWNER_NONE          = 0,
     AUDIO_OWNER_APP_PLAY      = 1,
     AUDIO_OWNER_APP_RECORD    = 2,
-    AUDIO_OWNER_IMS           = 3
+    AUDIO_OWNER_IMS           = 3,
+    AUDIO_OWNER_AT            = 4
 }I2sOwner_e;
 
 typedef struct
@@ -143,7 +144,7 @@ int32_t i2sStopHandle(uint8_t stopType, uint8_t audioType);
  *
  * @param toneSrc               Tone PCM src array. Defined in rawData.c/callAlertRing16k, change it to your own pcm data.
  * @param toneSize              Tone total size, the "callAlertRing16k" array size.
- * @param dmaTrunkSize      DMA trunk size every transfer, maximux value is 8k-1. 
+ * @param dmaTrunkSize      DMA trunk size every transfer, maximux value is 8k-1.
  *                                          Change it to a value that can be divided by toneSize, it means dmaDescriptorNum = toneSize /dmaTrunkSize.
  * @param sampleRateUse    If use 8k samplerate, set it to 8000; If use 16k samplerate, set it to 16000;
  * @return null
