@@ -614,15 +614,19 @@ static void ec618_signal_to_luat_signal(CmiMmCesqInd *cesq_info, luat_mobile_sig
 
 int luat_mobile_get_cell_info(luat_mobile_cell_info_t  *info)
 {
-	BasicCellListInfo bcListInfo;
-	int result = appGetECBCInfoSync(&bcListInfo);
+	BasicCellListInfo *bcListInfo = (BasicCellListInfo *)malloc(sizeof(BasicCellListInfo));
+	if (!bcListInfo) return -1;
+	memset(bcListInfo, 0, sizeof(BasicCellListInfo));
+	int result = appGetECBCInfoSync(bcListInfo);
 	if (!result)
 	{
-		ec618_cell_to_luat_cell(&bcListInfo, info);
+		ec618_cell_to_luat_cell(bcListInfo, info);
+		free(bcListInfo);
 		return 0;
 	}
 	else
 	{
+		free(bcListInfo);
 		return -1;
 	}
 }
@@ -635,9 +639,12 @@ int luat_mobile_get_cell_info_async(uint8_t max_time)
 
 int luat_mobile_get_last_notify_cell_info(luat_mobile_cell_info_t  *info)
 {
-	BasicCellListInfo bcListInfo = {0};
-	soc_mobile_get_cell_info(&bcListInfo);
-	ec618_cell_to_luat_cell(&bcListInfo, info);
+	BasicCellListInfo *bcListInfo = (BasicCellListInfo *)malloc(sizeof(BasicCellListInfo));
+	if (!bcListInfo) return -1;
+	memset(bcListInfo, 0, sizeof(BasicCellListInfo));
+	soc_mobile_get_cell_info(bcListInfo);
+	ec618_cell_to_luat_cell(bcListInfo, info);
+	free(bcListInfo);
 	return 0;
 }
 
