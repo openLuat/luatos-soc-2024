@@ -7,34 +7,59 @@
 
 #include "libemqtt.h"
 #include "luat_mqtt.h"
+#include "luat_mcu.h"
+#include "luat_uart.h"
 
+// 是否开启SSL
 #define MQTT_DEMO_SSL 			1
+// 是否自动重连
 #define MQTT_DEMO_AUTOCON 		1
+// 上行时的QOS值
 #define MQTT_DEMO_PUB_QOS 		1
+
+// MQTT服务器信息, 仅支持MQTT3.1.1协议, 不支持 3.1和5.0协议, 不支持 mqtt over websocket
 #if (MQTT_DEMO_SSL == 1)
 #define MQTT_HOST    	"airtest.openluat.com"   				// MQTTS服务器的地址和端口号
-#define MQTT_PORT		8883
-#define CLIENT_ID    	"123456789"          
+#define MQTT_PORT		8883      
 #define USERNAME    	"user"                 
 #define PASSWORD    	"password"   
 #else
 #define MQTT_HOST    	"lbsmqtt.airm2m.com"   				// MQTT服务器的地址和端口号
 #define MQTT_PORT		1884
-#define CLIENT_ID    	"123456789"         //替换自己的CLIENT_ID ,请看一下本.c代码的 183~190行,本demo 的CLIENT_ID 使用的是设备的imei号
 #define USERNAME    	"username"                 
 #define PASSWORD    	"password"   
 #endif 
 
-static char mqtt_sub_topic[] = "test_topic";
-// static char mqtt_sub_topic1[] = "test_topic1";
-// static char mqtt_sub_topic2[] = "test_topic2";
-static char mqtt_pub_topic[] = "test_topic";
-static char mqtt_send_payload[] = "hello mqtt_test!!!";
+#define CLIENT_ID    	"123456789"         // 缺省ClientId, 本demo会用IMEI号填充
+// MQTT的Client Id, 默认会用IMEI填充
+static char mqtt_client_id[128] = {0};
 
-// static char mqtt_will_topic[] = "test_will";				// 测试遗嘱
-// static char mqtt_will_payload[] = "hello, i was dead";
+// topic里的%s, 在本example中, 在上行时会先用imei格式化
+
+// 订阅的主题及模板, downlink
+static char mqtt_sub_topic_tmpl[] = "/sys/%s/sub";
+static char mqtt_sub_topic[256]; // 可以自行填入值, 默认会用tmpl进行格式化
+// 发布的主题, uplink
+static char mqtt_pub_topic_tmpl[] = "/sys/%s/pub";
+static char mqtt_pub_topic[256]; // 可以自行填入值, 默认会用tmpl进行格式化
+
+
+// UART透传演示, 设置为-1可关闭
+// MAIN UART ==> 1
+// AUX  UART ==> 2
+// 718P/718PV 有 UART3
+#define MQTT_DEMO_UART_ID 		1
+#define MQTT_DEMO_UART_BAUD 	115200
+
+// MQTT控制器句柄
+static luat_mqtt_ctrl_t *mymqtt;
 
 #if (MQTT_DEMO_SSL == 1)
+// MQTT支持的加密有:
+// 单向无校验(无服务器证书)
+// 单向有校验(需要服务器证书)
+// 双向校验(需要服务器证书和客户端证书)
+
 static const char *testCaCrt = \
 {
     \
@@ -119,28 +144,43 @@ static const char *testclientPk= \
 
 static luat_rtos_task_handle mqtt_task_handle;
 
-static void luat_mqtt_cb(luat_mqtt_ctrl_t *luat_mqtt_ctrl, uint16_t event){
-	int ret;
+static void luat_mqtt_cb(luat_mqtt_ctrl_t *ctrl, uint16_t event){
+	int ret = 0;
+	const uint8_t* ptr = NULL;
+	uint16_t msgid = 0;
+	uint16_t message_id  = 0;
+	char mqtt_send_payload[128] = {0};
 	switch (event)
 	{
 	case MQTT_MSG_CONNACK:{
+		// 连接成功, 鉴权完成
 		LUAT_DEBUG_PRINT("mqtt_connect ok");
 
-		LUAT_DEBUG_PRINT("mqtt_subscribe");
-		uint16_t msgid = 0;
-		mqtt_subscribe(&(luat_mqtt_ctrl->broker), mqtt_sub_topic, &msgid, 1);
+		// 订阅Topic
+		LUAT_DEBUG_PRINT("mqtt_subscribe %s", mqtt_sub_topic);
+		mqtt_subscribe(&(ctrl->broker), mqtt_sub_topic, &msgid, 1);
 
-		LUAT_DEBUG_PRINT("publish");
-		uint16_t message_id  = 0;
-		mqtt_publish_with_qos(&(luat_mqtt_ctrl->broker), mqtt_pub_topic, mqtt_send_payload, strlen(mqtt_send_payload), 0, MQTT_DEMO_PUB_QOS, &message_id);
+		// 数据上行
+		char iccid[32] = {0};
+		char imsi[32] = {0};
+		luat_mobile_get_iccid(index, iccid, sizeof(iccid));
+		luat_mobile_get_imsi(index, imsi, sizeof(imsi));
+		sprintf(mqtt_send_payload, "{\"iccid\":\"%s\", \"imsi\":\"%s\"}", iccid, imsi);
+		LUAT_DEBUG_PRINT("publish %s data %s", mqtt_pub_topic, mqtt_send_payload);
+		mqtt_publish_with_qos(&(ctrl->broker), mqtt_pub_topic, mqtt_send_payload, strlen(mqtt_send_payload), 1, MQTT_DEMO_PUB_QOS, &message_id);
 		break;
 	}
 	case MQTT_MSG_PUBLISH : {
-		const uint8_t* ptr;
-		uint16_t topic_len = mqtt_parse_pub_topic_ptr(luat_mqtt_ctrl->mqtt_packet_buffer, &ptr);
-		LUAT_DEBUG_PRINT("pub_topic: %.*s",topic_len,ptr);
-		uint16_t payload_len = mqtt_parse_pub_msg_ptr(luat_mqtt_ctrl->mqtt_packet_buffer, &ptr);
-		LUAT_DEBUG_PRINT("pub_msg: %.*s",payload_len,ptr);
+		// 数据下行
+		uint16_t topic_len = mqtt_parse_pub_topic_ptr(ctrl->mqtt_packet_buffer, &ptr);
+		LUAT_DEBUG_PRINT("downlink topic: %.*s",topic_len,ptr);
+		uint16_t payload_len = mqtt_parse_pub_msg_ptr(ctrl->mqtt_packet_buffer, &ptr);
+		LUAT_DEBUG_PRINT("downlink payload: %.*s",payload_len,ptr);
+		// 这里添加自己的业务逻辑, 下面是演示, 直接透传到UART
+		// 将MQTT数据透传到UART
+		#if MQTT_DEMO_UART_ID > 0
+		luat_uart_write(MQTT_DEMO_UART_ID, ptr, payload_len);
+		#endif
 		break;
 	}
 	case MQTT_MSG_TCP_TX_DONE:
@@ -152,38 +192,38 @@ static void luat_mqtt_cb(luat_mqtt_ctrl_t *luat_mqtt_ctrl, uint16_t event){
 		break;
 	case MQTT_MSG_PUBACK : 
 	case MQTT_MSG_PUBCOMP : {
-		LUAT_DEBUG_PRINT("msg_id: %d",mqtt_parse_msg_id(luat_mqtt_ctrl->mqtt_packet_buffer));
+		LUAT_DEBUG_PRINT("uplink ack msg_id: %d",mqtt_parse_msg_id(ctrl->mqtt_packet_buffer));
 		break;
 	}
 	case MQTT_MSG_RELEASE : {
-		LUAT_DEBUG_PRINT("luat_mqtt_cb mqtt release");
+		LUAT_DEBUG_PRINT("mqtt release msg!!");
 		break;
 	}
 	case MQTT_MSG_DISCONNECT : { // mqtt 断开(只要有断开就会上报,无论是否重连)
-		LUAT_DEBUG_PRINT("luat_mqtt_cb mqtt disconnect");
+		LUAT_DEBUG_PRINT("mqtt disconnect msg!!");
 		break;
 	}
 	case MQTT_MSG_TIMER_PING : {
-		luat_mqtt_ping(luat_mqtt_ctrl);
+		luat_mqtt_ping(ctrl);
 		break;
 	}
 	case MQTT_MSG_RECONNECT : {
-if (MQTT_DEMO_AUTOCON == 1)
-{
-		luat_mqtt_reconnect(luat_mqtt_ctrl);
-}
+		if (MQTT_DEMO_AUTOCON == 1)
+		{
+			luat_mqtt_reconnect(ctrl);
+		}
 		break;
 	}
 	case MQTT_MSG_CLOSE : { // mqtt 关闭(不会再重连)  注意：一定注意和MQTT_MSG_DISCONNECT区别，如果要做手动重连处理推荐在这里 */
 		LUAT_DEBUG_PRINT("luat_mqtt_cb mqtt close");
-if (MQTT_DEMO_AUTOCON == 0){
-	ret = luat_mqtt_connect(luat_mqtt_ctrl);
-	if (ret) {
-		LUAT_DEBUG_PRINT("mqtt connect ret=%d\n", ret);
-		luat_mqtt_close_socket(luat_mqtt_ctrl);
-		return;
-	}
-}
+		if (MQTT_DEMO_AUTOCON == 0){
+			ret = luat_mqtt_connect(ctrl);
+			if (ret) {
+				LUAT_DEBUG_PRINT("mqtt connect ret=%d\n", ret);
+				luat_mqtt_close_socket(ctrl);
+				return;
+			}
+		}
 		break;
 	}
 	default:
@@ -192,16 +232,44 @@ if (MQTT_DEMO_AUTOCON == 0){
 	return;
 }
 
-static void luat_mqtt_task(void *param)
+// MQTT主任务
+static void mqtt_task(void *param)
 {
 	int ret = -1;
-	luat_mqtt_ctrl_t *luat_mqtt_ctrl = (luat_mqtt_ctrl_t *)luat_heap_malloc(sizeof(luat_mqtt_ctrl_t));
-	ret = luat_mqtt_init(luat_mqtt_ctrl, NW_ADAPTER_INDEX_LWIP_GPRS);
+	// 对mqtt的信息进行初始化
+
+	// 首先是client id
+	if (mqtt_client_id[0] == 0) {
+		ret = luat_mobile_get_imei(0, mqtt_client_id, sizeof(mqtt_client_id)-1);
+		if(ret <= 0){
+			LUAT_DEBUG_PRINT("imei get fail!!!!!");
+			memcpy(mqtt_client_id, CLIENT_ID, strlen(CLIENT_ID));
+		}
+	}
+
+	// 然后是topic
+	if (mqtt_sub_topic[0] == 0) {
+		sprintf(mqtt_sub_topic, mqtt_sub_topic_tmpl, mqtt_client_id);
+	}
+	if (mqtt_pub_topic[0] == 0) {
+		sprintf(mqtt_pub_topic, mqtt_pub_topic_tmpl, mqtt_client_id);
+	}
+
+	// 打印mqtt三元组及topic信息
+	LUAT_DEBUG_PRINT("MQTT_HOST:         %s", MQTT_HOST);
+	LUAT_DEBUG_PRINT("MQTT_PORT:         %d", MQTT_PORT);
+	LUAT_DEBUG_PRINT("MQTT_CLIENT_ID:    %s", mqtt_client_id);
+	LUAT_DEBUG_PRINT("mqtt_sub_topic:    %s", mqtt_sub_topic);
+	LUAT_DEBUG_PRINT("mqtt_pub_topic:    %s", mqtt_pub_topic);
+
+
+	mymqtt = (luat_mqtt_ctrl_t *)luat_heap_malloc(sizeof(luat_mqtt_ctrl_t));
+	ret = luat_mqtt_init(mymqtt, NW_ADAPTER_INDEX_LWIP_GPRS);
 	if (ret) {
 		LUAT_DEBUG_PRINT("mqtt init FAID ret %d", ret);
 		return;
 	}
-	luat_mqtt_ctrl->ip_addr.type = 0xff;
+	mymqtt->ip_addr.type = 0xff;
 	luat_mqtt_connopts_t opts = {0};
 
 #if (MQTT_DEMO_SSL == 1)
@@ -217,49 +285,48 @@ static void luat_mqtt_task(void *param)
 #endif 
 	opts.host = MQTT_HOST;
 	opts.port = MQTT_PORT;
-	ret = luat_mqtt_set_connopts(luat_mqtt_ctrl, &opts);
+	ret = luat_mqtt_set_connopts(mymqtt, &opts);
 
-	char clientId[16] = {0};
-	ret = luat_mobile_get_imei(0, clientId, sizeof(clientId)-1);
-	if(ret <= 0){
-		LUAT_DEBUG_PRINT("imei get fail");
-		mqtt_init(&(luat_mqtt_ctrl->broker), CLIENT_ID);
+	mqtt_init(&(mymqtt->broker), mqtt_client_id);
+	mqtt_init_auth(&(mymqtt->broker), USERNAME, PASSWORD);
+
+	// luat_mqtt_ctrl->netc->is_debug = 1;   // 开启底层debug信息
+	mymqtt->keepalive = 240;         // MQTT PING 间隔
+	mymqtt->broker.clean_session = 1;
+
+	if (MQTT_DEMO_AUTOCON == 1) // 自动重连
+	{
+		mymqtt->reconnect = 1;
+		mymqtt->reconnect_time = 3000; // 延迟3秒重连
 	}
-	else
-		mqtt_init(&(luat_mqtt_ctrl->broker), clientId);
 
-	mqtt_init_auth(&(luat_mqtt_ctrl->broker), USERNAME, PASSWORD);
-
-	// luat_mqtt_ctrl->netc->is_debug = 1;// debug信息
-	luat_mqtt_ctrl->broker.clean_session = 1;
-	luat_mqtt_ctrl->keepalive = 240;
-
-if (MQTT_DEMO_AUTOCON == 1)
-{
-	luat_mqtt_ctrl->reconnect = 1;
-	luat_mqtt_ctrl->reconnect_time = 3000;
-}
-
-	// luat_mqtt_set_will(luat_mqtt_ctrl, mqtt_will_topic, mqtt_will_payload, strlen(mqtt_will_payload), 0, 0); // 测试遗嘱
+	// 测试遗嘱
+	// luat_mqtt_set_will(luat_mqtt_ctrl, mqtt_will_topic, mqtt_will_payload, strlen(mqtt_will_payload), 0, 0); 
 	
-	luat_mqtt_set_cb(luat_mqtt_ctrl,luat_mqtt_cb);
-	luat_mqtt_ctrl->netc->is_debug = 1;
+	luat_mqtt_set_cb(mymqtt,luat_mqtt_cb);
 	LUAT_DEBUG_PRINT("mqtt_connect");
-	ret = luat_mqtt_connect(luat_mqtt_ctrl);
+	ret = luat_mqtt_connect(mymqtt);
 	if (ret) {
+		// 发起连接, 非阻塞的
 		LUAT_DEBUG_PRINT("mqtt connect ret=%d\n", ret);
-		luat_mqtt_close_socket(luat_mqtt_ctrl);
+		luat_mqtt_close_socket(mymqtt);
 		return;
 	}
 	LUAT_DEBUG_PRINT("wait mqtt_state ...");
 
+	uint16_t message_id = 0;
+	char mqtt_send_payload[256] = {0};
 	while(1){
-		if (luat_mqtt_state_get(luat_mqtt_ctrl) == MQTT_STATE_READY){
-			uint16_t message_id = 0;
-			mqtt_publish_with_qos(&(luat_mqtt_ctrl->broker), mqtt_pub_topic, mqtt_send_payload, strlen(mqtt_send_payload), 0, MQTT_DEMO_PUB_QOS, &message_id);
+		if (luat_mqtt_state_get(mymqtt) == MQTT_STATE_READY){
+			sprintf(mqtt_send_payload, "{\"ticks\":%u}", luat_mcu_ticks());
+			ret = mqtt_publish_with_qos(&(mymqtt->broker), mqtt_pub_topic, mqtt_send_payload, strlen(mqtt_send_payload), 1, MQTT_DEMO_PUB_QOS, &message_id);
+			LUAT_DEBUG_PRINT("uplink topic %s data %s msgid %d ret %d", mqtt_pub_topic, mqtt_send_payload, message_id, ret);
 		}
 		luat_rtos_task_sleep(5000);
 	}
+
+	// task结束, 删除自身
+	luat_rtos_task_delete(mqtt_task_handle);
 }
 
 static void luatos_mobile_event_callback(LUAT_MOBILE_EVENT_E event, uint8_t index, uint8_t status)
@@ -278,12 +345,52 @@ static void luatos_mobile_event_callback(LUAT_MOBILE_EVENT_E event, uint8_t inde
 	}
 }
 
-static void luat_libemqtt_init(void)
+#if MQTT_DEMO_UART_ID > 0
+static void uart_recv_cb(uint8_t *data, uint32_t len);
+#endif
+
+static void my_mqtt_init(void)
 {
 	luat_mobile_set_sim_detect_sim0_first();
 	luat_mobile_event_register_handler(luatos_mobile_event_callback);
 
-	luat_rtos_task_create(&mqtt_task_handle, 2 * 1024, 10, "libemqtt", luat_mqtt_task, NULL, 16);
+	luat_rtos_task_create(&mqtt_task_handle, 8 * 1024, 10, "mqtt_task", mqtt_task, NULL, 16);
+
+	#if MQTT_DEMO_UART_ID > 0
+	luat_uart_t uart = {
+        .id = MQTT_DEMO_UART_ID,
+        .baud_rate = MQTT_DEMO_UART_BAUD,
+        .data_bits = 8,
+        .stop_bits = 1,
+        .parity    = 0
+    };
+	LUAT_DEBUG_PRINT("初始化MQTT-UART透传");
+	LUAT_DEBUG_PRINT("uart setup result %d", luat_uart_setup(&uart));
+    LUAT_DEBUG_PRINT("uart ctrl result %d", luat_uart_ctrl(MQTT_DEMO_UART_ID, LUAT_UART_SET_RECV_CALLBACK, uart_recv_cb));
+	#endif
 }
 
-INIT_TASK_EXPORT(luat_libemqtt_init, "1");
+// 接收UART数据, 透传到MQTT
+#if MQTT_DEMO_UART_ID > 0
+static char uart_rxbuff[2048];
+static void uart_recv_cb(uint8_t *data, uint32_t len) {
+	int ready = mymqtt != NULL && luat_mqtt_state_get(mymqtt) == MQTT_STATE_READY;
+	int message_id = 0;
+	int ret = 0;
+    while (1) {
+        len = luat_uart_read(MQTT_DEMO_UART_ID, uart_rxbuff, 2048);
+        if (len <= 0) {
+            break;
+        }
+		if (ready != MQTT_STATE_READY) {
+			LUAT_DEBUG_PRINT("MQTT连接未就绪, 丢弃数据 %d %d", MQTT_DEMO_UART_ID, len);
+		}
+		else {
+			ret = mqtt_publish_with_qos(&(mymqtt->broker), mqtt_pub_topic, uart_rxbuff, len, 1, MQTT_DEMO_PUB_QOS, &message_id);
+			LUAT_DEBUG_PRINT("uplink topic %s len %d msgid %d ret %d", mqtt_pub_topic, len, message_id, ret);
+		}
+    }
+}
+#endif
+
+INIT_TASK_EXPORT(my_mqtt_init, "1");
