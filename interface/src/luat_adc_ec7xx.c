@@ -699,7 +699,7 @@ int luat_adc_read(int id, int* val, int* val2) {
     if (!ret)
     {
     	*val = adc_ctrl[id].result;
-    	if (id != 5)
+    	if (id < 4)
     	{
 #ifdef __LUATOS__
     		*val2 = HAL_ADC_CalibrateRawCode(adc_ctrl[id].result) * (uint32_t)adc_ctrl[id].p1 / (uint32_t)adc_ctrl[id].p2 / 1000;
@@ -710,6 +710,10 @@ int luat_adc_read(int id, int* val, int* val2) {
             {
             	*val2 = 0;
             }
+    	}
+    	else if (id == 4)
+    	{
+    		*val2 = HAL_ADC_CalibrateRawCode(adc_ctrl[id].result) * (uint32_t)adc_ctrl[id].p1 / (uint32_t)adc_ctrl[id].p2 / 1000;
     	}
     	else
     	{
