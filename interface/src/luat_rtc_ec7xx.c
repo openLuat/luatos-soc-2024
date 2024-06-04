@@ -56,7 +56,7 @@ int luat_rtc_get_timezone(void)
 
 
 
-#ifdef __LUATOS__
+
 
 void luat_rtc_set_tamp32(uint32_t tamp) {
 	Time_UserDataStruct Time;
@@ -76,7 +76,7 @@ void luat_rtc_set_tamp32(uint32_t tamp) {
         mwAonSetNitzUtcTimeSyncFlag(1);
     }
 }
-
+#ifdef __LUATOS__
 int luat_rtc_timer_start(int id, struct tm *tblock){
     (void)id;
     (void)tblock;
