@@ -1,8 +1,8 @@
 DbVersion
-611534359,100
+429667945,100
 <end>
 BuildInfo
-The current data file was built by the Application Ver. 2.2.81.216, Mon Jun  3 12:35:23 2024
+The current data file was built by the Application Ver. 2.2.81.216, Tue Jun  4 16:53:22 2024
 <end>
 EnumVals
 0,0,0,0,PHY_ONLINE,PHY_ICS_MODULE,PhyIcsMeasMainEntrance_1,P_ERROR,swLogPrintf("Incorrect ICS stage ( %d ) for new euArfcn arranged for ICS MEAS ");
@@ -9333,5 +9333,5 @@ MW_INFO_PHY_EDRX_PARAM,midWareNvmInfoPhyEdrxParam
 plat_config,plat_config_fs_t
 <end>
 OptionalSegment
-optional_sk_01,19265614F33F43FFE6AC1715ADD06FF3543ED47CC469FA0CDC8E5FC9B4D368BA
+optional_sk_01,A6DC3F66FAFD4F57DAB2BB525BBEAC9631EB16B41D746F3BE687B35BAD1F3DA0
 <end>
