@@ -92,6 +92,59 @@
             },
             {
                 "icon": "zmdi-input-composite",
+                "name": "@CHIPS",
+                "content": "模组芯片方案选择",
+                "rsize": 0,
+                "children": [
+                    {
+                        "icon": "zmdi-puzzle-piece",
+                        "name": "@chip_comment1",
+                        "content": "本小节是选固件的芯片方案的, 如果您不知道选哪个, 就不需要勾选本小节的任意选项",
+                        "rsize": 0
+                    },
+                    {
+                        "icon": "zmdi-puzzle-piece",
+                        "name": "@chip_comment2",
+                        "content": "不同芯片方案的固件,是不通用的, 只有一个特例就是EC718P固件可以单向刷到EC718PV方案的模组",
+                        "rsize": 0
+                    },
+                    {
+                        "icon": "zmdi-puzzle-piece",
+                        "name": "@EC718P",
+                        "content": "EC718P方案, 兼容Air780EP模组及对应的海外模组",
+                        "rsize": 0
+                    },
+                    {
+                        "icon": "zmdi-puzzle-piece",
+                        "name": "@EC718PV",
+                        "content": "EC718PV方案, 兼容Air780EPV/Air780EPVH模组",
+                        "rsize": 0,
+                        "children": [
+                            {
+                                "name": "@volte",
+                                "content": "仅Air780EPV系列支持(带V字母), 非Air780EPV系列不要选这个,会无法启动",
+                                "rsize": 600240,
+                                "fsize": 288052,
+                                "dft": false
+                            }
+                        ]
+                    },
+                    {
+                        "icon": "zmdi-puzzle-piece",
+                        "name": "@EC718E",
+                        "content": "EC718E方案, 兼容Air780EE",
+                        "rsize": 0
+                    },
+                    {
+                        "icon": "zmdi-puzzle-piece",
+                        "name": "@EC716E",
+                        "content": "EC716E方案, 兼容Air780EQ模组",
+                        "rsize": 0
+                    }
+                ]
+            },
+            {
+                "icon": "zmdi-input-composite",
                 "name": "@DEV",
                 "content": "基础外设",
                 "rsize": 0,
@@ -226,21 +279,6 @@
                 "content": "降噪功能",
                 "rsize": 0,
                 "dft": false
-            },
-            {
-                "icon": "zmdi-puzzle-piece",
-                "name": "@718PV",
-                "content": "语音通话(即VoLTE功能)",
-                "rsize": 0,
-                "children": [
-                    {
-                        "name": "@volte",
-                        "content": "仅Air780EPV系列支持(带V字母), Air780EP系列不要选这个,会无法启动",
-                        "rsize": 600240,
-                        "fsize": 288052,
-                        "dft": false
-                    }
-                ]
             },
             {
                 "icon": "zmdi-puzzle-piece",
