@@ -214,9 +214,10 @@ target("csdk",function()
     -- printf
     add_files(luatos_root.."/components/printf/*.c")
     -- weak
-    add_files(luatos_root.."/luat/weak/luat_spi_device.c",
-            luatos_root.."/luat/weak/luat_malloc_weak.c",
-            luatos_root.."/luat/weak/luat_mem_weak.c")
+    add_files(luatos_root.."/luat/weak/luat_malloc_weak.c",
+            luatos_root.."/luat/weak/luat_mem_weak.c",
+            luatos_root.."/luat/weak/luat_spi_device.c",
+            luatos_root.."/luat/weak/luat_i2c_weak.c")
     -- littlefs
     add_files(csdk_root.."/thirdparty/littlefs/**.c")
     -- vfs
