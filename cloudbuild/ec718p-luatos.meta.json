@@ -372,13 +372,6 @@
                         "rsize": -100240,
                         "fsize": 288052,
                         "dft": false
-                    },
-                    {
-                        "name" : "@tts_16k",
-                        "content": "选用16k的TTS资源,默认也是16k",
-                        "rsize" : 0,
-                        "fsize" : 288052,
-                        "dft"   : false
                     }
                 ]
             },
@@ -388,13 +381,6 @@
                 "content": "工具库",
                 "rsize": 0,
                 "children": [
-                    {
-                        "name": "repl",
-                        "content": "REPL(读取-解析-执行)循环",
-                        "rsize": 10908,
-                        "fsize": 284260,
-                        "dft": false
-                    },
                     {
                         "name": "cjson",
                         "content": "JSON序列化与反序列化",
@@ -428,13 +414,6 @@
                         "content": "NMEA解析,解析GNSS/GPS的数据",
                         "rsize": 6232,
                         "fsize": 293652,
-                        "dft": false
-                    },
-                    {
-                        "name": "fdb",
-                        "content": "[不推荐使用]kv数据库,掉电不丢,推荐改用fskv库",
-                        "rsize": 10832,
-                        "fsize": 298252,
                         "dft": false
                     },
                     {
@@ -569,6 +548,13 @@
                         "content": "64位数据处理库",
                         "rsize": 10008,
                         "fsize": 274360,
+                        "dft": false
+                    },
+                    {
+                        "name": "repl",
+                        "content": "REPL(读取-解析-执行)循环",
+                        "rsize": 10908,
+                        "fsize": 284260,
                         "dft": false
                     },
                     {
@@ -1177,6 +1163,22 @@
                         "fsize": 357620,
                         "dft": false
                     }
+                ]
+            },
+            {
+                "icon": "zmdi-card-sd",
+                "name": "@OUTDATE",
+                "content": "已废弃的选项或库",
+                "rsize": 0,
+                "children": [
+                    {
+                        "name": "fdb",
+                        "content": "[不推荐使用]kv数据库,掉电不丢,推荐改用fskv库",
+                        "rsize": 10832,
+                        "fsize": 298252,
+                        "dft": false
+                    },
+
                 ]
             }
         ]
