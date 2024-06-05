@@ -288,6 +288,14 @@ function description_common()
             cprint(format("${cyan}chip_target : ${red}%s",chip_target))
             cprint(format("${cyan}lspd_mode : ${red}%s",get_config("lspd_mode")))
             cprint(format("${cyan}denoise_force : ${red}%s",get_config("denoise_force")))
+
+            local project_dir = target:values("project_dir")
+            if project_dir:find("@") or project_dir:find("%%")  or project_dir:find("~") or project_dir:find(" ") then
+                error("project_dir should not contain special characters")
+            end
+            if csdk_root:find("@") or csdk_root:find("%%")  or csdk_root:find("~") or csdk_root:find(" ") then
+                error("csdk_root should not contain special characters")
+            end
         end
 
         assert(os.isdir(target:values("luatos_root")),"luatos_root:"..target:values("luatos_root").." not exist")

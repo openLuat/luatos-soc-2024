@@ -125,6 +125,11 @@ target(project_name,function()
     -- fskv
     add_includedirs(luatos_root.."/components/fskv",{public = true})
     add_files(luatos_root.."/components/fskv/*.c")
+    -- fdb
+    add_includedirs(luatos_root.."/components/flashdb/inc",{public = true})
+    add_files(luatos_root.."/components/flashdb/src/*.c")
+    add_includedirs(luatos_root.."/components/fal/inc",{public = true})
+    add_files(luatos_root.."/components/fal/src/*.c")
     -- fonts
     add_includedirs(luatos_root.."/components/luatfonts",{public = true})
     add_files(luatos_root.."/components/luatfonts/*.c")
