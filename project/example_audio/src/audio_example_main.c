@@ -554,6 +554,9 @@ static void demo_task(void *arg)
 			LUAT_DEBUG_PRINT("psram total %u, used %u, max used %u", total, alloc, peak);
 			luat_meminfo_opt_sys(LUAT_HEAP_SRAM, &total, &alloc, &peak);
 			LUAT_DEBUG_PRINT("sram total %u, used %u, max used %u", total, alloc, peak);
+#ifdef LOW_POWER_TEST
+			luat_mobile_set_flymode(0, 1);
+#endif
 			luat_rtos_task_sleep(2000);
 		}
 #if 0 //双向对讲功能使用单独demo
