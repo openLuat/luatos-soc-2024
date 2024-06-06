@@ -10,12 +10,16 @@
 
 // 请访问 https://netlab.luatos.com 获取新的端口号,之后修改remote_ip port再进行编译
 const char remote_ip[] = "112.125.89.8";
-const int port = 43041;
+const int port = 43982;
 
 //心跳内容
 const char heart_beat[] = "heart_beat!";
 //心跳周期
 const int heart_beat_timer = 5*60*1000;
+
+//要进入的休眠等级
+#define SLEEP_MODE_LEVEL LUAT_PM_POWER_MODE_HIGH_PERFORMANCE//500微安模式
+//#define SLEEP_MODE_LEVEL LUAT_PM_POWER_MODE_BALANCED      //200微安模式
 
 enum
 {
@@ -38,6 +42,8 @@ static int32_t luat_test_socket_callback(void *pdata, void *param)
 static void luat_test_task(void *param)
 {
     LUAT_DEBUG_PRINT("开始测试");
+    //配置电源管理，日志打印会停止，USB会被断开
+    luat_pm_set_power_mode(SLEEP_MODE_LEVEL, LUAT_PM_POWER_MODE_NORMAL);
     /* 
         出现异常后默认为死机重启
         demo这里设置为LUAT_DEBUG_FAULT_HANG_RESET出现异常后尝试上传死机信息给PC工具，上传成功或者超时后重启
@@ -88,8 +94,7 @@ static void luat_test_task(void *param)
             if (!result)
             {
                 LUAT_DEBUG_PRINT("已联网，进入休眠模式");
-                luat_pm_power_ctrl(LUAT_PM_POWER_USB, 0);   //插着USB的时候需要关闭USB电源
-                luat_pm_request(LUAT_PM_SLEEP_MODE_LIGHT);  //进入超低功耗模式
+
                 while(!result)
                 {
                     result = network_wait_rx(g_s_network_ctrl, heart_beat_timer, &is_break, &is_timeout);
@@ -102,19 +107,8 @@ static void luat_test_task(void *param)
                                 result = network_rx(g_s_network_ctrl, rx_data, 1024 * 8, 0, NULL, NULL, &rx_len);
                                 if (rx_len > 0)
                                 {
-                                    //退出休眠
-                                    luat_pm_request(LUAT_PM_SLEEP_MODE_NONE);//退出休眠
-                                    luat_pm_power_ctrl(LUAT_PM_POWER_USB, 1);//打开USB电源，方便看日志
-                                    luat_rtos_task_sleep(2000);
-                                    LUAT_DEBUG_PRINT("rx %d", rx_len);
-                                    LUAT_DEBUG_PRINT("rx data %s",rx_data);
-                                    LUAT_DEBUG_PRINT("收到数据，被唤醒，等待十秒后继续睡");
-                                    //等待10秒
-                                    luat_rtos_task_sleep(10000);
-                                    LUAT_DEBUG_PRINT("再次休眠");
-                                    //再次休眠
-                                    luat_pm_power_ctrl(LUAT_PM_POWER_USB, 0);   //重新关闭USB电源
-                                    luat_pm_request(LUAT_PM_SLEEP_MODE_LIGHT);  //重新进入超低功耗模式
+                                    //回复一条数据，表示收到了
+                                    result = network_tx(g_s_network_ctrl, (const uint8_t*)rx_data, rx_len, 0, NULL, 0, &tx_len, 15000);
                                 }
                             }while(!result && rx_len > 0);
                         }
