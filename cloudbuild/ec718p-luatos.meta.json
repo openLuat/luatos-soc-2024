@@ -936,20 +936,6 @@
                                 "dft": false
                             },
                             {
-                                "name": "USE_U8G2_SARASA_M8_CHINESE",
-                                "content": "8pix等宽中文字体,调用时使用 lcd.font_sarasa_m8_chinese",
-                                "rsize": 251984,
-                                "fsize": 604416,
-                                "dft": false
-                            },
-                            {
-                                "name": "USE_U8G2_SARASA_M10_CHINESE",
-                                "content": "10pix等宽中文字体 lcd.font_sarasa_m10_chinese",
-                                "rsize": 331664,
-                                "fsize": 604416,
-                                "dft": false
-                            },
-                            {
                                 "name": "USE_U8G2_SARASA_M12_CHINESE",
                                 "content": "12pix等宽中文字体,同理,u8g2.font_sarasa_m12_chinese 也可以的",
                                 "rsize": 388176,
