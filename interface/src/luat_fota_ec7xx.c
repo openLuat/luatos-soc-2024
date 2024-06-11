@@ -108,6 +108,7 @@ typedef struct
 	uint8_t spi_id;
 	uint8_t cs_pin;
 	uint8_t power_pin;
+	uint8_t is_inited;
 }luat_fota_ctrl_t;
 
 enum
@@ -170,6 +171,7 @@ static void luat_fota_finish(void)
 	g_s_fota.p_fota_file_head = NULL;
 	OS_DeInitBuffer(&g_s_fota.data_buffer);
 	g_s_fota.start_address = 0;
+	g_s_fota.is_inited = 0;
 	LLOGI("fota type %d ok!, wait reboot", g_s_fota.ota_type);
 }
 
@@ -321,6 +323,7 @@ static void luat_fota_cal_spi_flash_data_md5(unsigned char output[16])
 
 int luat_fota_init(uint32_t start_address, uint32_t len, luat_spi_device_t* spi_device, const char *path, uint32_t pathlen)
 {
+	if (g_s_fota.is_inited) return 0;
 	if ((start_address >= 0xe0000000) && spi_device)
 	{
 		g_s_fota.start_address = start_address;
@@ -339,7 +342,7 @@ int luat_fota_init(uint32_t start_address, uint32_t len, luat_spi_device_t* spi_
 			LLOGE("no spi flash!");
 			return -1;
 		}
-		LLOGE("spi flash use spi %d cs %d power pin %d!", g_s_fota.spi_id, g_s_fota.cs_pin, g_s_fota.power_pin);
+		LLOGD("spi flash use spi %d cs %d power pin %d!", g_s_fota.spi_id, g_s_fota.cs_pin, g_s_fota.power_pin);
 	}
 
 	if (!g_s_fota.crc32_table)
@@ -379,6 +382,7 @@ int luat_fota_init(uint32_t start_address, uint32_t len, luat_spi_device_t* spi_
 		FLASH_writeSafe((uint8_t *)&Head, __SOC_OTA_INFO_DATA_SAVE_ADDRESS__, sizeof(Head));
 	}
 	OS_ReInitBuffer(&g_s_fota.data_buffer, __FLASH_SECTOR_SIZE__ * 4);
+	g_s_fota.is_inited = 1;
 	return 0;
 }
 
@@ -628,9 +632,11 @@ int luat_fota_end(uint8_t is_ok)
 		{
 			FLASH_eraseSafe(__SOC_OTA_INFO_DATA_SAVE_ADDRESS__, __FLASH_SECTOR_SIZE__);
 		}
+		g_s_fota.is_inited = 0;
 		LLOGE("fota failed");
 		return -1;
 	}
+	g_s_fota.is_inited = 0;
 	return 0;
 }
 

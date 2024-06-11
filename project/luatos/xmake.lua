@@ -36,7 +36,7 @@ target(project_name,function()
         local LUAT_SCRIPT_SIZE = tonumber(conf_data:match("\r#define LUAT_SCRIPT_SIZE (%d+)") or conf_data:match("\n#define LUAT_SCRIPT_SIZE (%d+)"))
         local LUAT_SCRIPT_OTA_SIZE = tonumber(conf_data:match("\r#define LUAT_SCRIPT_OTA_SIZE (%d+)") or conf_data:match("\n#define LUAT_SCRIPT_OTA_SIZE (%d+)"))
         -- print(string.format("script zone %d ota %d", LUAT_SCRIPT_SIZE, LUAT_SCRIPT_OTA_SIZE))
-        if chip_target == "ec718pv" and LUAT_SCRIPT_SIZE > 128 then
+        if chip_target == "ec718pv" and LUAT_SCRIPT_SIZE > 128 and LUAT_SCRIPT_OTA_SIZE > 0 then
             LUAT_SCRIPT_SIZE = 128
             LUAT_SCRIPT_OTA_SIZE = 96
         end
@@ -44,6 +44,9 @@ target(project_name,function()
         local LUA_SCRIPT_OTA_ADDR = FLASH_FOTA_REGION_START - LUAT_SCRIPT_OTA_SIZE * 1024
         local script_addr = string.format("%X", LUA_SCRIPT_ADDR)
         local full_addr = string.format("%X", LUA_SCRIPT_OTA_ADDR)
+		if LUAT_SCRIPT_OTA_SIZE == 0 then
+			target:add("defines","FULL_OTA_SAVE_ADDR=0xe0000000",{public = true})
+		end
         -- print("LUA_SCRIPT_ADDR",LUA_SCRIPT_ADDR)
         -- print("LUA_SCRIPT_OTA_ADDR",LUA_SCRIPT_OTA_ADDR)
         -- print("script_addr",script_addr)
