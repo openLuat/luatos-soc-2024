@@ -594,6 +594,13 @@
                         "rsize": 1024,
                         "fsize": 1024,
                         "dft": false
+                    },
+                    {
+                        "name": "@full_fota",
+                        "content": "(测试阶段)开启全量升级的支持,需要外挂flash",
+                        "rsize": -8192,
+                        "fsize": 1024,
+                        "dft": false
                     }
                 ]
             },
