@@ -1,8 +1,8 @@
 DbVersion
-1414863892,100
+1620533281,100
 <end>
 BuildInfo
-The current data file was built by the Application Ver. 2.2.81.216, Tue Jun  4 16:53:47 2024
+The current data file was built by the Application Ver. 2.2.81.216, Tue Jun 11 17:23:12 2024
 <end>
 EnumVals
 0,0,0,0,PHY_ONLINE,PHY_ICS_MODULE,PhyIcsMeasMainEntrance_1,P_ERROR,swLogPrintf("Incorrect ICS stage ( %d ) for new euArfcn arranged for ICS MEAS ");
@@ -1885,62 +1885,64 @@ fa11162d9422e3d927d4392eeeecbd3834b252a85b42aaa8492f7b40ff9be0c9f2fac2d7cf4115cc
 270336,554081024,0,0,PLAT_AP,CCIO,USBD_NEXT_XFER_1,P_SIG,swLogPrintf("usbd ( %d ) : avlbSize ( %d ) < avlbThres ( %d / %d ) ! waiting more... ");
 270336,554083584,0,0,PLAT_AP,CCIO,USBD_NEXT_XFER_2,P_VALUE,swLogPrintf("usbd ( %d ) : next xfer @N.WR ( +%d|%d ) / N.RD ( %d ) / A.SZ ( %d ) / G.T.E ( %d ) ");
 270336,554084864,0,0,PLAT_AP,CCIO,USBD_GET_RX_CONF,P_INFO,swLogPrintf("usbd ( %d ) : rxWinSize ( %d ) , xferCnt ( %d ) ");
-270336,554086912,0,0,PLAT_AP,CCIO,USBD_ETH_MEDIA_STATE_1,P_SIG,swLogPrintf("media ( %d ) state ( %d ) ind , errno ( %d ) ! ");
-270336,554088704,0,0,PLAT_AP,CCIO,USBD_ETH_MEDIA_STATE_3,P_ERROR,swLogPrintf("error! eth media ( %d ) state ( %d ) ind timeout ( 200ms ) ! ");
-270336,554090752,0,0,PLAT_AP,CCIO,USBD_DCD_STATUS,P_SIG,swLogPrintf("usbd ( %d ) : set serl dcd state ( 0x%x ) ! ");
-270336,554092544,0,0,PLAT_AP,CCIO,USBD_PULSE_RI_DONE,P_SIG,swLogPrintf("usbd ( %d ) : pulse ri done! ");
-270336,554095360,0,0,PLAT_AP,CCIO,USBD_RI_STATUS_1,P_SIG,swLogPrintf("usbd ( %d ) : set serl ri state ( %d * %d / %d ) ");
-270336,554096640,0,0,PLAT_AP,CCIO,USBD_RI_STATUS_2,P_SIG,swLogPrintf("usbd ( %d ) : restore high level ");
-270336,554098688,0,0,PLAT_AP,CCIO,USBD_RI_STATUS_3,P_ERROR,swLogPrintf("usbd ( %d ) : create ri timer error! ");
-270336,554100736,0,0,PLAT_AP,CCIO,USBD_RI_STATUS_4,P_WARNING,swLogPrintf("usbd ( %d ) : ri cycleCnt > 15!!! ");
-270336,554102784,0,0,PLAT_AP,CCIO,USBD_EXEC_INSTR_1,P_DEBUG,swLogPrintf("recv usb instr : %e<CcioDevExecFlags_e> ");
-270336,554105088,0,0,PLAT_AP,CCIO,USBD_OUTPUT_0,P_WARNING,swLogPrintf("usbd ( %d ) : disabled! discard all dlpdu ( 0x%x ) ... ");
-270336,554107136,0,0,PLAT_AP,CCIO,USBD_OUTPUT_3,P_ERROR,swLogPrintf("usbd ( %d ) : sct tx err ( %d ) ! discard all pending dlpdu... ");
-270336,554109184,0,0,PLAT_AP,CCIO,USBD_OUTPUT_SIGNAL_2,P_WARNING,swLogPrintf("usbd ( %d ) : unsupported ifType-%e<UsbIfType_e>! ");
-270336,554111232,0,0,PLAT_AP,CCIO,USBD_OUTPUT_SIGNAL_3,P_WARNING,swLogPrintf("usbd ( %d ) : output pstn serl state failure ( %d ) ! ");
-270336,554113024,0,0,PLAT_AP,CCIO,USBD_RNDIS_EVT_INIT,P_WARNING,swLogPrintf("usbd ( %d ) : chdevStatusCb ? = NULL ");
-270336,554115072,0,0,PLAT_AP,CCIO,USBD_RNDIS_EVT_DEINIT,P_WARNING,swLogPrintf("usbd ( %d ) : chdevStatusCb ? = NULL ");
-270336,554117632,0,0,PLAT_AP,CCIO,USBD_CTS_EVT_2,P_SIG,swLogPrintf("usbd ( %d ) : cts state ( %d --> %d ) ");
-270336,554119680,0,0,PLAT_AP,CCIO,USBD_DTR_EVT_2,P_SIG,swLogPrintf("usbd ( %d ) : dtr state ( %d --> %d ) ");
-270336,554121728,0,0,PLAT_AP,CCIO,USBD_CFG_OUT_XFER_0,P_DEBUG,swLogPrintf("usbd ( %d ) : cfg xfer , type : %e<UsbIfType_e> , size : %d! ");
-270336,554123520,0,0,PLAT_AP,CCIO,USBD_CFG_OUT_XFER_1,P_ERROR,swLogPrintf("usbd ( %d ) : err! cfg next xfer fail , ret = %d ");
-270336,554125312,0,0,PLAT_AP,CCIO,USBD_CREATE_1,P_INFO,swLogPrintf("create usb device ( %d ) ");
-270336,554127360,0,0,PLAT_AP,CCIO,USBD_CREATE_2,P_SIG,swLogPrintf("usbd ( %d ) : serve as an agent... ");
-270336,554129408,0,0,PLAT_AP,CCIO,USBD_DESTROY_1,P_INFO,swLogPrintf("destroy usb device ( %d ) ");
-270336,554131456,0,0,PLAT_AP,CCIO,USBD_DESTROY_2,P_SIG,swLogPrintf("usbd ( %d ) : no more serve as an agent... ");
-270336,554133504,0,0,PLAT_AP,CCIO,USBD_DESTROY_3,P_SIG,swLogPrintf("usbd ( %d ) : serve as a new agent... ");
-270336,554136064,0,0,PLAT_AP,CCIO,USBD_INPUT_1,P_WARNING,swLogPrintf("usbd ( %d ) : not in working state ( %d ) or not enabled ( %d ) ! ");
-270336,554137600,0,0,PLAT_AP,CCIO,USBD_INPUT_2,P_SIG,swLogPrintf("usbd ( %d ) : special pattern ( +++ ) ! ");
-270336,554139648,0,0,PLAT_AP,CCIO,USBD_NOTIFY_STATE_1,P_SIG,swLogPrintf("usbd : notify isr state ( %d ) ! ");
-270336,554141696,0,0,PLAT_AP,CCIO,USBD_NOTIFY_STATE_2,P_WARNING,swLogPrintf("usbd : unsupp state ( %d ) ! ");
-270336,554144000,0,0,PLAT_AP,CCIO,USBD_ECM_EVT_1,P_SIG,swLogPrintf("usbd ( %d ) recv ecm event ( 0x%x ) ! ");
-270336,554145792,0,0,PLAT_AP,CCIO,USBD_ECM_EVT_2,P_WARNING,swLogPrintf("usbd ( %d ) : chdevStatusCb ? = NULL ");
-270336,554148096,0,0,PLAT_AP,CCIO,USBD_ECM_EVT_3,P_WARNING,swLogPrintf("usbd ( %d ) : unsupp flags ( %d ) ! ");
-270336,554149888,0,0,PLAT_AP,CCIO,USBD_RNDIS_EVT,P_SIG,swLogPrintf("usbd recv rndis event ( 0x%x ) ! ");
-270336,554152192,0,0,PLAT_AP,CCIO,USBD_SERL_EVT_1,P_DEBUG,swLogPrintf("usbd ( %d ) : serl request set-line-state ( 0x%x ) ! ");
-270336,554154240,0,0,PLAT_AP,CCIO,USBD_SERL_EVT_3,P_WARNING,swLogPrintf("usbd ( %d ) : not in working state ( %d ) ! ");
-270336,554156032,0,0,PLAT_AP,CCIO,USBD_EP_UNBLOCK_TO_SCT_1,P_SIG,swLogPrintf("usb EP unblock ( %d ) notif to sct! ");
-270336,554158848,0,0,PLAT_AP,CCIO,USBD_TABLE_INIT_0,P_VALUE,swLogPrintf("elem_idx ( %d ) : cls_type ( %d ) , inep ( %d ) , outep ( %d ) ! ");
-270336,554160896,0,0,PLAT_AP,CCIO,USBD_TABLE_INIT_1,P_VALUE,swLogPrintf("usbd ( %d ) : %e<UsbIfType_e> , inep ( %d ) , outep ( %d ) ! ");
-270336,554162432,0,0,PLAT_AP,CCIO,USBD_TABLE_INIT_2,P_VALUE,swLogPrintf("And ulgInepNum ( %d ) @usbd ( %d ) ! ");
-270336,554164224,0,0,PLAT_AP,CCIO,NETIF_ADD_ENT_1,P_ERROR,swLogPrintf("unsupp lanType ( %d ) err! ");
-270336,554166272,0,0,PLAT_AP,CCIO,NETIF_ADD_ENT_2,P_WARNING,swLogPrintf("gNetifEntMan [ %d ] is already added to the list!! ");
-270336,554168320,0,0,PLAT_AP,CCIO,NETIF_DEL_ENT_1,P_WARNING,swLogPrintf("gNetifEntMan [ %d ] is not found in the list!! ");
-270336,554170624,0,0,PLAT_AP,CCIO,NETIF_ACT_CTX_1,P_SIG,swLogPrintf("lanEnt ( %d ) : netCid ( %d ) is activated! ");
-270336,554172416,0,0,PLAT_AP,CCIO,NETIF_GET_SUBX_ENT_1,P_ERROR,swLogPrintf("netCid ( %d ) : no entity exist! ");
-270336,554174464,0,0,PLAT_AP,CCIO,ETH_PREVIEW,P_WARNING,swLogPrintf("unsupported ether type ( 0x%x ) ");
-270336,554177536,0,0,PLAT_AP,CCIO,ETH_HAS_OBZP,P_SIG,swLogPrintf("xferCnt ( %d / %d ) , magic ( 0x%x ) , obzp ( %d ) @ulpdu ( 0x%x ) ");
-270336,554178817,0,0,PLAT_AP,CCIO,ETH_DATA_INPUT,P_INFO,swLogPrintf("%s ( %d ) ulpdu fast input... ");
-270336,554180608,0,0,PLAT_AP,CCIO,ETH_DATA_OUTPUT_1,P_VALUE,swLogPrintf("eth : %e<CcioChanMessageId_e> dlpdu output... ");
-270336,554182656,0,0,PLAT_AP,CCIO,ETH_DATA_FAST_OUTPUT_1,P_VALUE,swLogPrintf("eth : %e<CcioChanMessageId_e> dlpdu fast output... ");
-270336,554184704,0,0,PLAT_AP,CCIO,OPAQ_GET_SUBXENT_1,P_ERROR,swLogPrintf("opaqCid ( %d ) : no entity exist! ");
-270336,554187008,0,0,PLAT_AP,CCIO,OPAQ_ACTIVATE_CTX_1,P_SIG,swLogPrintf("serlEnt ( 0x%x ) : opaqCid ( %d ) is activated! ");
-270336,554188800,0,0,PLAT_AP,CCIO,OPAQ_ACTIVATE_CTX_2,P_WARNING,swLogPrintf("gptOpaqEntMan [ %d ] is already added to the list!! ");
-270336,554191104,0,0,PLAT_AP,CCIO,OPAQ_DEACTIVATE_CTX_1,P_SIG,swLogPrintf("serlEnt ( 0x%x ) : opaqCid ( %d ) is deactivated! ");
-270336,554192896,0,0,PLAT_AP,CCIO,OPAQ_DEACTIVATE_CTX_2,P_WARNING,swLogPrintf("gptOpaqEntMan [ %d ] is not found in the list!! ");
-270336,554195720,0,0,PLAT_AP,CCIO,OPAQ_GET_PEND_LIST,P_INFO,swLogPrintf("opaqCid ( %d / 0x%x ) : %d %s line ( s ) in total... ");
-270336,554196992,0,0,PLAT_AP,CCIO,OPAQ_DATA_INPUT,P_INFO,swLogPrintf("opaqCid ( %d ) : opaq data input... ");
-270336,554199296,0,0,PLAT_AP,CCIO,OPAQ_DATA_OUTPUT_EX_3,P_ERROR,swLogPrintf("opaqCid ( %d ) : dlpdu count ( %d ) overflows!! ");
+270336,554086400,0,0,PLAT_AP,CCIO,USBD_SET_STATIC_CONF_1,P_WARNING,swLogPrintf("usbd ( %d ) : flow-ctrl-triggered , waiting... ");
+270336,554088448,0,0,PLAT_AP,CCIO,USBD_SET_STATIC_CONF_2,P_ERROR,swLogPrintf("usbd ( %d ) : no-enough rbuf for rx-err! ");
+270336,554091008,0,0,PLAT_AP,CCIO,USBD_ETH_MEDIA_STATE_1,P_SIG,swLogPrintf("media ( %d ) state ( %d ) ind , errno ( %d ) ! ");
+270336,554092800,0,0,PLAT_AP,CCIO,USBD_ETH_MEDIA_STATE_3,P_ERROR,swLogPrintf("error! eth media ( %d ) state ( %d ) ind timeout ( 200ms ) ! ");
+270336,554094848,0,0,PLAT_AP,CCIO,USBD_DCD_STATUS,P_SIG,swLogPrintf("usbd ( %d ) : set serl dcd state ( 0x%x ) ! ");
+270336,554096640,0,0,PLAT_AP,CCIO,USBD_PULSE_RI_DONE,P_SIG,swLogPrintf("usbd ( %d ) : pulse ri done! ");
+270336,554099456,0,0,PLAT_AP,CCIO,USBD_RI_STATUS_1,P_SIG,swLogPrintf("usbd ( %d ) : set serl ri state ( %d * %d / %d ) ");
+270336,554100736,0,0,PLAT_AP,CCIO,USBD_RI_STATUS_2,P_SIG,swLogPrintf("usbd ( %d ) : restore high level ");
+270336,554102784,0,0,PLAT_AP,CCIO,USBD_RI_STATUS_3,P_ERROR,swLogPrintf("usbd ( %d ) : create ri timer error! ");
+270336,554104832,0,0,PLAT_AP,CCIO,USBD_RI_STATUS_4,P_WARNING,swLogPrintf("usbd ( %d ) : ri cycleCnt > 15!!! ");
+270336,554106880,0,0,PLAT_AP,CCIO,USBD_EXEC_INSTR_1,P_DEBUG,swLogPrintf("recv usb instr : %e<CcioDevExecFlags_e> ");
+270336,554109184,0,0,PLAT_AP,CCIO,USBD_OUTPUT_0,P_WARNING,swLogPrintf("usbd ( %d ) : disabled! discard all dlpdu ( 0x%x ) ... ");
+270336,554111232,0,0,PLAT_AP,CCIO,USBD_OUTPUT_3,P_ERROR,swLogPrintf("usbd ( %d ) : sct tx err ( %d ) ! discard all pending dlpdu... ");
+270336,554113280,0,0,PLAT_AP,CCIO,USBD_OUTPUT_SIGNAL_2,P_WARNING,swLogPrintf("usbd ( %d ) : unsupported ifType-%e<UsbIfType_e>! ");
+270336,554115328,0,0,PLAT_AP,CCIO,USBD_OUTPUT_SIGNAL_3,P_WARNING,swLogPrintf("usbd ( %d ) : output pstn serl state failure ( %d ) ! ");
+270336,554117120,0,0,PLAT_AP,CCIO,USBD_RNDIS_EVT_INIT,P_WARNING,swLogPrintf("usbd ( %d ) : chdevStatusCb ? = NULL ");
+270336,554119168,0,0,PLAT_AP,CCIO,USBD_RNDIS_EVT_DEINIT,P_WARNING,swLogPrintf("usbd ( %d ) : chdevStatusCb ? = NULL ");
+270336,554121728,0,0,PLAT_AP,CCIO,USBD_CTS_EVT_2,P_SIG,swLogPrintf("usbd ( %d ) : cts state ( %d --> %d ) ");
+270336,554123776,0,0,PLAT_AP,CCIO,USBD_DTR_EVT_2,P_SIG,swLogPrintf("usbd ( %d ) : dtr state ( %d --> %d ) ");
+270336,554125824,0,0,PLAT_AP,CCIO,USBD_CFG_OUT_XFER_0,P_DEBUG,swLogPrintf("usbd ( %d ) : cfg xfer , type : %e<UsbIfType_e> , size : %d! ");
+270336,554127616,0,0,PLAT_AP,CCIO,USBD_CFG_OUT_XFER_1,P_ERROR,swLogPrintf("usbd ( %d ) : err! cfg next xfer fail , ret = %d ");
+270336,554129408,0,0,PLAT_AP,CCIO,USBD_CREATE_1,P_INFO,swLogPrintf("create usb device ( %d ) ");
+270336,554131456,0,0,PLAT_AP,CCIO,USBD_CREATE_2,P_SIG,swLogPrintf("usbd ( %d ) : serve as an agent... ");
+270336,554133504,0,0,PLAT_AP,CCIO,USBD_DESTROY_1,P_INFO,swLogPrintf("destroy usb device ( %d ) ");
+270336,554135552,0,0,PLAT_AP,CCIO,USBD_DESTROY_2,P_SIG,swLogPrintf("usbd ( %d ) : no more serve as an agent... ");
+270336,554137600,0,0,PLAT_AP,CCIO,USBD_DESTROY_3,P_SIG,swLogPrintf("usbd ( %d ) : serve as a new agent... ");
+270336,554140160,0,0,PLAT_AP,CCIO,USBD_INPUT_1,P_WARNING,swLogPrintf("usbd ( %d ) : not in working state ( %d ) or not enabled ( %d ) ! ");
+270336,554141696,0,0,PLAT_AP,CCIO,USBD_INPUT_2,P_SIG,swLogPrintf("usbd ( %d ) : special pattern ( +++ ) ! ");
+270336,554143744,0,0,PLAT_AP,CCIO,USBD_NOTIFY_STATE_1,P_SIG,swLogPrintf("usbd : notify isr state ( %d ) ! ");
+270336,554145792,0,0,PLAT_AP,CCIO,USBD_NOTIFY_STATE_2,P_WARNING,swLogPrintf("usbd : unsupp state ( %d ) ! ");
+270336,554148096,0,0,PLAT_AP,CCIO,USBD_ECM_EVT_1,P_SIG,swLogPrintf("usbd ( %d ) recv ecm event ( 0x%x ) ! ");
+270336,554149888,0,0,PLAT_AP,CCIO,USBD_ECM_EVT_2,P_WARNING,swLogPrintf("usbd ( %d ) : chdevStatusCb ? = NULL ");
+270336,554152192,0,0,PLAT_AP,CCIO,USBD_ECM_EVT_3,P_WARNING,swLogPrintf("usbd ( %d ) : unsupp flags ( %d ) ! ");
+270336,554153984,0,0,PLAT_AP,CCIO,USBD_RNDIS_EVT,P_SIG,swLogPrintf("usbd recv rndis event ( 0x%x ) ! ");
+270336,554156288,0,0,PLAT_AP,CCIO,USBD_SERL_EVT_1,P_DEBUG,swLogPrintf("usbd ( %d ) : serl request set-line-state ( 0x%x ) ! ");
+270336,554158336,0,0,PLAT_AP,CCIO,USBD_SERL_EVT_3,P_WARNING,swLogPrintf("usbd ( %d ) : not in working state ( %d ) ! ");
+270336,554160128,0,0,PLAT_AP,CCIO,USBD_EP_UNBLOCK_TO_SCT_1,P_SIG,swLogPrintf("usb EP unblock ( %d ) notif to sct! ");
+270336,554162944,0,0,PLAT_AP,CCIO,USBD_TABLE_INIT_0,P_VALUE,swLogPrintf("elem_idx ( %d ) : cls_type ( %d ) , inep ( %d ) , outep ( %d ) ! ");
+270336,554164992,0,0,PLAT_AP,CCIO,USBD_TABLE_INIT_1,P_VALUE,swLogPrintf("usbd ( %d ) : %e<UsbIfType_e> , inep ( %d ) , outep ( %d ) ! ");
+270336,554166528,0,0,PLAT_AP,CCIO,USBD_TABLE_INIT_2,P_VALUE,swLogPrintf("And ulgInepNum ( %d ) @usbd ( %d ) ! ");
+270336,554168320,0,0,PLAT_AP,CCIO,NETIF_ADD_ENT_1,P_ERROR,swLogPrintf("unsupp lanType ( %d ) err! ");
+270336,554170368,0,0,PLAT_AP,CCIO,NETIF_ADD_ENT_2,P_WARNING,swLogPrintf("gNetifEntMan [ %d ] is already added to the list!! ");
+270336,554172416,0,0,PLAT_AP,CCIO,NETIF_DEL_ENT_1,P_WARNING,swLogPrintf("gNetifEntMan [ %d ] is not found in the list!! ");
+270336,554174720,0,0,PLAT_AP,CCIO,NETIF_ACT_CTX_1,P_SIG,swLogPrintf("lanEnt ( %d ) : netCid ( %d ) is activated! ");
+270336,554176512,0,0,PLAT_AP,CCIO,NETIF_GET_SUBX_ENT_1,P_ERROR,swLogPrintf("netCid ( %d ) : no entity exist! ");
+270336,554178560,0,0,PLAT_AP,CCIO,ETH_PREVIEW,P_WARNING,swLogPrintf("unsupported ether type ( 0x%x ) ");
+270336,554181632,0,0,PLAT_AP,CCIO,ETH_HAS_OBZP,P_SIG,swLogPrintf("xferCnt ( %d / %d ) , magic ( 0x%x ) , obzp ( %d ) @ulpdu ( 0x%x ) ");
+270336,554182913,0,0,PLAT_AP,CCIO,ETH_DATA_INPUT,P_INFO,swLogPrintf("%s ( %d ) ulpdu fast input... ");
+270336,554184704,0,0,PLAT_AP,CCIO,ETH_DATA_OUTPUT_1,P_VALUE,swLogPrintf("eth : %e<CcioChanMessageId_e> dlpdu output... ");
+270336,554186752,0,0,PLAT_AP,CCIO,ETH_DATA_FAST_OUTPUT_1,P_VALUE,swLogPrintf("eth : %e<CcioChanMessageId_e> dlpdu fast output... ");
+270336,554188800,0,0,PLAT_AP,CCIO,OPAQ_GET_SUBXENT_1,P_ERROR,swLogPrintf("opaqCid ( %d ) : no entity exist! ");
+270336,554191104,0,0,PLAT_AP,CCIO,OPAQ_ACTIVATE_CTX_1,P_SIG,swLogPrintf("serlEnt ( 0x%x ) : opaqCid ( %d ) is activated! ");
+270336,554192896,0,0,PLAT_AP,CCIO,OPAQ_ACTIVATE_CTX_2,P_WARNING,swLogPrintf("gptOpaqEntMan [ %d ] is already added to the list!! ");
+270336,554195200,0,0,PLAT_AP,CCIO,OPAQ_DEACTIVATE_CTX_1,P_SIG,swLogPrintf("serlEnt ( 0x%x ) : opaqCid ( %d ) is deactivated! ");
+270336,554196992,0,0,PLAT_AP,CCIO,OPAQ_DEACTIVATE_CTX_2,P_WARNING,swLogPrintf("gptOpaqEntMan [ %d ] is not found in the list!! ");
+270336,554199816,0,0,PLAT_AP,CCIO,OPAQ_GET_PEND_LIST,P_INFO,swLogPrintf("opaqCid ( %d / 0x%x ) : %d %s line ( s ) in total... ");
+270336,554201088,0,0,PLAT_AP,CCIO,OPAQ_DATA_INPUT,P_INFO,swLogPrintf("opaqCid ( %d ) : opaq data input... ");
+270336,554203392,0,0,PLAT_AP,CCIO,OPAQ_DATA_OUTPUT_EX_3,P_ERROR,swLogPrintf("opaqCid ( %d ) : dlpdu count ( %d ) overflows!! ");
 272384,557843200,0,0,PLAT_AP,ATCMD,atRfTestCmdCnf_2,P_VALUE,swLogPrintf("CmdLen = %d , CmdFlag = %d , rc = %d , chaanId = %d ");
 272384,557844481,0,0,PLAT_AP,ATCMD,atRfTestCmdCnf_3,P_SIG,swLogPrintf("Regs : %s ");
 272384,557846528,0,0,PLAT_AP,ATCMD,atRfTestCmdCnf_6,P_SIG,swLogPrintf("SarAdc 1st : 0x%x ");
@@ -8404,5 +8406,5 @@ MW_INFO_PHY_EDRX_PARAM,midWareNvmInfoPhyEdrxParam
 plat_config,plat_config_fs_t
 <end>
 OptionalSegment
-optional_sk_01,79A85E9DC2B415653763A7997557A32B6ACEFF35A50393FC73E16593A613F7A8
+optional_sk_01,A8C85575B772C871D6E9469E70B913B896180E8BB0C36852274ACFD1F1C16B61
 <end>
