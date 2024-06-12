@@ -83,7 +83,9 @@
 #endif
 
 #if defined FEATURE_IMS_ENABLE	//VOLTE固件才支持通话测试
+#ifndef USE_AIR780EPVH	//用EPVH的话默认先不要测通话
 #define CALL_TEST		//通话测试会关闭掉其他测试，防止冲突
+#endif
 #endif
 
 #define RECORD_ONCE_LEN	10	   //单声道 8K录音单次10个编码块，总共200ms回调 320B 20ms，amr编码要求，20ms一个块
