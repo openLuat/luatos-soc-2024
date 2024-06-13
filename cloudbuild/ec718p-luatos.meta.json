@@ -601,6 +601,13 @@
                         "rsize": -8192,
                         "fsize": 1024,
                         "dft": false
+                    },
+                    {
+                        "name": "LUAT_CONF_FONTS_OLD_STYLE",
+                        "content": "使用老的U8G2字体文件, 使得老版本差分升级时,差分包大小不会超标. 新用户不要选这个选项!!!",
+                        "rsize": 1024,
+                        "fsize": 1024,
+                        "dft": false
                     }
                 ]
             },
