@@ -311,21 +311,7 @@ void luat_openlibs(lua_State *L) {
 
 extern const char *soc_get_chip_name(void);
 const char* luat_os_bsp(void) {
-#if defined TYPE_EC718S
-    return "EC718S";
-#elif defined TYPE_EC716S
-    return "EC716S";
-#elif defined TYPE_EC716E
-    return "EC716E";
-#elif defined TYPE_EC718P
-    return "EC718P";
-#elif defined TYPE_EC718H
-    return "EC718H";
-#elif defined TYPE_EC718U
-    return "EC718U";
-#else
-    return "EC7XX";
-#endif
+	return soc_get_chip_name();
 }
 
 /** 设备进入待机模式 */
