@@ -197,7 +197,7 @@ static void task_run(void *param)
 	luat_mobile_user_ctrl_apn();
 #endif
 	/*
-		设置专网卡APN信息时，如需要设置在第一路承载（CID 1），则必须使用自动模式去激活
+		设置专网卡APN信息时，如需要设置在第一路承载（CID 1，即默认承载），则必须使用自动模式去激活
 
 		如果是其他路承载，自动模式还是手动模式都可以
 
@@ -208,7 +208,8 @@ static void task_run(void *param)
 		apn信息需要在开机注网前配置好
 	*/
 #ifdef AUTO_APN_TEST
-	//如果之前用过特殊APN的卡，现在开机就要转回普通卡，建议删除原先设置的APN信息，调用下面的del接口即可
+	//2024.6.13前的版本，如果之前用过特殊APN的卡，现在开机就要转回普通卡，建议删除原先设置的APN信息，调用下面的del接口即可
+	//2024.6.13后的版本，默认承载信息不再保存flash，重启后原先信息不再保存，但是不明白默认承载概念的，请继续删除原先设置的APN信息
 //	luat_mobile_del_apn(0,1,0);
 	luat_mobile_user_apn_auto_active(0, 1, 3,3, "CMIOTTQJ",8,"ceshi",5,"tqj123456",9);
 #endif
@@ -225,6 +226,7 @@ static void task_run(void *param)
 	LUAT_DEBUG_PRINT("MUID %s", muid);
 	char apn[64] = {0};
 	luat_rtos_task_sleep(10000);
+
 	//这里演示运行一段时间后，再删掉已经设置的APN
 	luat_mobile_user_apn_auto_active(0, 0, 0,0, NULL, 0, NULL, 0, NULL, 0);	//删掉RAM里缓存的
 	luat_mobile_user_ctrl_apn_stop();//变回自动配置
@@ -233,7 +235,6 @@ static void task_run(void *param)
 	luat_mobile_del_apn(0,1,0);//删除系统保存的
 	luat_mobile_set_flymode(0, 0);//退出飞行模式
 
-	//luat_mobile_reset_stack();
 	while(1)
 	{
 		luat_rtos_task_sleep(10000);
