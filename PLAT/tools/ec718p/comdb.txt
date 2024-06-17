@@ -1,8 +1,8 @@
 DbVersion
-1515872703,100
+850486985,100
 <end>
 BuildInfo
-The current data file was built by the Application Ver. 2.2.81.216, Fri Jun 14 09:51:02 2024
+The current data file was built by the Application Ver. 2.2.81.216, Mon Jun 17 12:41:45 2024
 <end>
 EnumVals
 0,0,0,0,PHY_ONLINE,PHY_ICS_MODULE,PhyIcsMeasMainEntrance_0,P_INFO,swLogPrintf("ICS MEAS of euArfcn %d will be started ");
@@ -415,74 +415,76 @@ EnumVals
 11264,23326720,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyRxHwTaskConfig_31,P_INFO,swLogPrintf("loopCnt of while in RxHwTaskConfig is %d ");
 11264,23330560,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyRxHwTaskConfig_32,P_INFO,swLogPrintf("sysTime is 0x%X|%d , sysDbgTime1 is 0x%X|%d , rxTimeL1 is %d , sysDbgTime2 is 0x%X|%d , rxTimeL2 is %d ");
 11264,23332863,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyRxHwTaskConfig_20,P_WARNING,swLogPrintf("Rx HwTask reStart after stopped 1ms before! ");
-11264,23334911,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyHwTaskConfig_1,P_WARNING,swLogPrintf("HW task has been cancelled ");
-11264,23336959,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyHwTaskConfig_2,P_WARNING,swLogPrintf("No HW tasks need be configured ");
-11264,23336960,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,phyHwHalt,P_INFO,swLogPrintf("PhyHwHalt! Reason = %e<PhyHwHaltReason> ");
-11264,23339008,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyHwTaskAssertResetSchd_00,P_ERROR,swLogPrintf("unexpected PHY ASSERT RESET process , currRxBmp = 0x%X ");
-11264,23341312,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyHwTaskAssertResetSchd_10,P_WARNING,swLogPrintf("HW task defined by ID %d existed with starting time of 0x%X ");
-11264,23343104,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyHwTaskAssertResetSchd_11,P_WARNING,swLogPrintf("HW task of RXPAUSE_MEASGAP existed with starting time of 0x%X ");
-11264,23347199,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyPchTimerExpiredProc_0,P_INFO,swLogPrintf("Skip PCH Event Add Del Due to MAC Reset for Handover ");
-11264,23349247,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyPagingConfigReqHandle_1,P_WARNING,swLogPrintf("Get CephyPagingConfigReg in wrong state ");
-11264,23349248,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyPchDciDecPostProc_0,P_INFO,swLogPrintf("Paging received and reported to PS at 0x%X! ");
-11264,23351552,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,phySchdInit,P_INFO,swLogPrintf("CHIPID = %d! PhySchdInitEvent = %e<PhySchdInitEvent> ");
-11264,23353344,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyCerrcInitConfigReport_0,P_ERROR,swLogPrintf("RF calibration table error , bandNum in cali table is : %d ");
-11264,23357439,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyHandleDeactReq_1,P_WARNING,swLogPrintf("Pending DEACT_REQ because CEAXC post process has been started ");
-11264,23359487,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyHandleHandoverReq_0,P_SIG,swLogPrintf("Handover will happen with cell not changed ");
-11264,23361535,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyHandleHandoverReq_1,P_WARNING,swLogPrintf("Cell is not in neighbour list during handover MIB process ");
-11264,23363583,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyRxPauseStartTimeCalc_0,P_WARNING,swLogPrintf("Wait for other pending signal! ");
-11264,23364352,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyRxPauseStartTimeCalc_1,P_WARNING,swLogPrintf("Signal pending overlap with measgap! RxPauseTime = 0x%X , RxResumeTime = 0x%X ; MeasGap : RxPauseTime = 0x%X , RxResumeTime = 0x%X ");
-11264,23365888,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySigPendingResumeTimeAdjust_0,P_INFO,swLogPrintf("adjust starting time of RX_RESUME from 0x%X to 0x%X ");
-11264,23369727,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySib1ConfigProcess_0,P_SIG,swLogPrintf("SIB1 Config pending! ");
-11264,23371775,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyComnCnfgProcess_0,P_SIG,swLogPrintf("CommonConfig pending! ");
-11264,23373823,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyDediConfigProcess_00,P_ERROR,swLogPrintf("buffer of cephyDedicatedConfigReq overflow ");
-11264,23375871,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyDediConfigProcess_01,P_WARNING,swLogPrintf("buffer new coming cephyDedicatedConfigReq because last one has NOT been parsed ");
-11264,23376128,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,phyMeasBuffRel_0,P_ERROR,swLogPrintf("PhyMeasBuffRelease ( 0 : MIB , 1 : ICS , 2 : MEAS ) = %d , measBuffInUse = %d , error!!! ");
-11264,23378176,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyRxGap4SigPendingInCdrxInact_0,P_WARNING,swLogPrintf("%d pending SIG encounter CDRX INACT state with signal pasring bitmap 0x%X ");
-11264,23382015,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyTxStopPostProc_0,P_WARNING,swLogPrintf("mac data unready or c-rnti-config later ");
-11264,23384063,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyAuxAdcCnf_0,P_ERROR,swLogPrintf("invalid internal temperature ");
-11264,23384064,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyAuxAdcCnf_1,P_INFO,swLogPrintf("Current temperature = %d ");
-11264,23386112,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySigParser_0,P_ERROR,swLogPrintf("Received SIG_CEPHY_NEXT_CELL_SEARCH_REQ under wrong PhyState : %e<PhyState> ");
-11264,23388160,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySigParser,P_ERROR,swLogPrintf("Not defined signal recevied from PS , sigId = 0x%X ");
-11264,23392255,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,phyAtCmdDataDumpProc,P_WARNING,swLogPrintf("Wait to send dump command in PHY IDLE or CONNECT state! ");
-11264,23394303,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,phyRaStatisCntInc,P_WARNING,swLogPrintf("PhyRaStatisCntInc : Wrong type input! ");
-11264,23396096,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyRaStatisInfo_0,P_SIG,swLogPrintf("PhyRaStatisInfo : raSuccNum = %d , accessReqNum = %d , preambleTxNum = %d , rarRecvNum = %d , msg3TxNum = %d , msg4RecvNum = %d , rarTmrExpNum = %d , crTmrExpNum = %d ");
-11264,23396352,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyTxStatisInfo_1,P_SIG,swLogPrintf("PhyTxStatisInfo : txPowerInsufficientNum = %d ");
-11264,23400447,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,phyStatisOperReq_0,P_SIG,swLogPrintf("PS Request for start statis info report! ");
-11264,23402495,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,phyStatisOperReq_1,P_SIG,swLogPrintf("PS Request for stop statis info report! ");
-11264,23403264,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,CephySetTxPowerReq_1,P_WARNING,swLogPrintf("PS Request for TxPower! type : %d , targetPower = %d , maxPower = %d , minPower = %d ");
-11264,23406591,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySpecialCaseRrm823Satisfied_0,P_INFO,swLogPrintf("special case RRM 8.2.3 satisfied ");
-11264,23406592,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySpecialCaseInfoUpdt_1,P_INFO,swLogPrintf("Special Case No = 0x%X ");
-11264,23408896,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyStaticCfgPagingSet_0,P_INFO,swLogPrintf("pagingDciBmp = 0x%X , pagingDecBmp = 0x%X ");
-11264,23410688,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyStaticCfgPagingReport_0,P_INFO,swLogPrintf("Orig staticCfgPaingInfo = %d% ");
-11264,23414783,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyMibStart_0,P_INFO,swLogPrintf("Schedule MIB with PCH task adding in advance ");
-11264,23416831,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyMibStart_1,P_WARNING,swLogPrintf("SCMIB and Idle Paging arraged in the same subframe ");
-11264,23418879,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyMibStart_2,P_WARNING,swLogPrintf("SCMIB and Idle Paging arraged in two continous subframe ");
-11264,23420927,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySib1Start_0,P_INFO,swLogPrintf("Schedule SIB1 with PCH task adding in advance ");
-11264,23422975,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySibxStart_1,P_INFO,swLogPrintf("Receiving SYS_INFO_REQ ( SCELL SIBX ) while MEAS_TASK is ongoing ");
-11264,23423488,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyScellSysInfoReq_0,P_INFO,swLogPrintf("MIB MODIFY REQ Received , schdTime = 0x%x , timeDiff = 0x%x , mibBoudary = 0x%x ");
-11264,23427071,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyNcellSysInfoReq_1,P_WARNING,swLogPrintf("CELL MISS during cell reselection SIB1 process ");
-11264,23429119,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySysInfoStop_0,P_SIG,swLogPrintf("PLMN STOP ");
-11264,23431167,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySysInfoReport_1,P_WARNING,swLogPrintf("Skip Ncell MIB Reporting in Cell ReSelect ");
-11264,23433215,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySysInfoReport_0,P_WARNING,swLogPrintf("Skip Ncell MIB Reporting in ECGI ");
-11264,23433216,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySysInfoReport_2,P_SIG,swLogPrintf("PhySysInfoReport : barTimeLen = %d ");
-11264,23435776,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySysInfoReport_3,P_WARNING,swLogPrintf("PhySysInfoReport : CRC fail! mibFlag = %d , siReqScell = %d , siReqNcell = %d ");
-11264,23439359,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyMibMdfPrdTimeDiff,P_WARNING,swLogPrintf("Unxpected Modification Period Coeff in CAT1 mode ");
-11264,23441407,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyMibDecPostProc_0,P_INFO,swLogPrintf("NC MIB Dec Result Skipped ");
-11264,23443455,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySib1DciPostProc_0,P_INFO,swLogPrintf("NC SIB1 Dci Result Skipped ");
-11264,23445503,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySib1DecPostProc_0,P_INFO,swLogPrintf("NC SIB1 Dec Result Skipped ");
-11264,23447551,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySibxDecPostProc_3,P_SIG,swLogPrintf("received SI at window end ");
-11264,23449599,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySibxDecPostProc_1,P_SIG,swLogPrintf("report SI fail due to Scell is unreliable ");
-11264,23451647,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySibxDecPostProc_2,P_SIG,swLogPrintf("report SI fail due to Scell is unreliable ");
-11264,23452160,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySiRxPauseConflictProc_0,P_INFO,swLogPrintf("Si Rx Pause Conflict Proc : isAddBmp = %d , rxBitmap = 0x%X , CurrBitmap = 0x%X ");
-11264,23455743,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySibxSchdAftPageHwHalt_0,P_INFO,swLogPrintf("SIBx Schedule After Page HwHalt ");
-11264,23455744,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,MacTimerExpiredPostProc_0,P_ERROR,swLogPrintf("timeAlignmentTimer expired! , time value = %d ");
-11264,23459839,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,MacTimerExpiredPostProc_1,P_WARNING,swLogPrintf("skip TA timer expired process for special case ");
-11264,23461887,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,MacTimerExpiredPostProc_2,P_INFO,swLogPrintf("SW timer expired without matched expiredTime! ");
-11264,23463168,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyAssert_0,P_ERROR,swLogPrintf("PHY assert! Module = %e<UniLogPhyModuleIdType> , SubID = 0x%X , val1 = 0x%X , val2 = 0x%X , val3 = 0x%X , resetType = %d ");
-11264,23465983,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyAssert_3,P_WARNING,swLogPrintf("skip PS RESET process because previous one is ongoing ");
-11264,23468031,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyAssert_4,P_WARNING,swLogPrintf("start self-recovery for PHY_ASSERT ");
-11264,23468288,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,OsaCreateFastSignal_0,P_WARNING,swLogPrintf("runSigNumber = %d , runBigSigNumber = %d ");
-11264,23470080,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,EC718_CP_VERSION_0,P_WARNING,swLogPrintf("CP version = 0x%X ");
+11264,23334911,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyHwTaskConfigPostProc_0,P_WARNING,swLogPrintf("delete HWTASK_EVENT_CE_PARA_RECFG because algParaCnfgFlag of CE has been cleared ");
+11264,23336959,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyHwTaskConfig_1,P_WARNING,swLogPrintf("HW task has been cancelled ");
+11264,23339007,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyHwTaskConfig_2,P_WARNING,swLogPrintf("No HW tasks need be configured ");
+11264,23339008,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,phyHwHalt,P_INFO,swLogPrintf("PhyHwHalt! Reason = %e<PhyHwHaltReason> ");
+11264,23341056,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyHwTaskAssertResetSchd_00,P_ERROR,swLogPrintf("unexpected PHY ASSERT RESET process , currRxBmp = 0x%X ");
+11264,23343360,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyHwTaskAssertResetSchd_10,P_WARNING,swLogPrintf("HW task defined by ID %d existed with starting time of 0x%X ");
+11264,23345152,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyHwTaskAssertResetSchd_11,P_WARNING,swLogPrintf("HW task of RXPAUSE_MEASGAP existed with starting time of 0x%X ");
+11264,23349247,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyPchTimerExpiredProc_0,P_INFO,swLogPrintf("Skip PCH Event Add Del Due to MAC Reset for Handover ");
+11264,23351295,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyPagingConfigReqHandle_1,P_WARNING,swLogPrintf("Get CephyPagingConfigReg in wrong state ");
+11264,23351296,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyPchDciDecPostProc_0,P_INFO,swLogPrintf("Paging received and reported to PS at 0x%X! ");
+11264,23353600,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,phySchdInit,P_INFO,swLogPrintf("CHIPID = %d! PhySchdInitEvent = %e<PhySchdInitEvent> ");
+11264,23355392,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyCerrcInitConfigReport_0,P_ERROR,swLogPrintf("RF calibration table error , bandNum in cali table is : %d ");
+11264,23359487,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyHandleDeactReq_1,P_WARNING,swLogPrintf("Pending DEACT_REQ because CEAXC post process has been started ");
+11264,23361535,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyHandleHandoverReq_0,P_SIG,swLogPrintf("Handover will happen with cell not changed ");
+11264,23363583,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyHandleHandoverReq_1,P_WARNING,swLogPrintf("Cell is not in neighbour list during handover MIB process ");
+11264,23365631,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyRxPauseStartTimeCalc_0,P_WARNING,swLogPrintf("Wait for other pending signal! ");
+11264,23366400,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyRxPauseStartTimeCalc_1,P_WARNING,swLogPrintf("Signal pending overlap with measgap! RxPauseTime = 0x%X , RxResumeTime = 0x%X ; MeasGap : RxPauseTime = 0x%X , RxResumeTime = 0x%X ");
+11264,23367936,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySigPendingResumeTimeAdjust_0,P_INFO,swLogPrintf("adjust starting time of RX_RESUME from 0x%X to 0x%X ");
+11264,23371775,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySib1ConfigProcess_0,P_SIG,swLogPrintf("SIB1 Config pending! ");
+11264,23373823,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyComnCnfgProcess_0,P_SIG,swLogPrintf("CommonConfig pending! ");
+11264,23375871,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyDediConfigProcess_00,P_ERROR,swLogPrintf("buffer of cephyDedicatedConfigReq overflow ");
+11264,23377919,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyDediConfigProcess_01,P_WARNING,swLogPrintf("buffer new coming cephyDedicatedConfigReq because last one has NOT been parsed ");
+11264,23378176,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,phyMeasBuffRel_0,P_ERROR,swLogPrintf("PhyMeasBuffRelease ( 0 : MIB , 1 : ICS , 2 : MEAS ) = %d , measBuffInUse = %d , error!!! ");
+11264,23380224,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyRxGap4SigPendingInCdrxInact_0,P_WARNING,swLogPrintf("%d pending SIG encounter CDRX INACT state with signal pasring bitmap 0x%X ");
+11264,23384063,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyTxStopPostProc_0,P_WARNING,swLogPrintf("mac data unready or c-rnti-config later ");
+11264,23386111,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyAuxAdcCnf_0,P_ERROR,swLogPrintf("invalid internal temperature ");
+11264,23386112,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyAuxAdcCnf_1,P_INFO,swLogPrintf("Current temperature = %d ");
+11264,23388160,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySigParser_0,P_ERROR,swLogPrintf("Received SIG_CEPHY_NEXT_CELL_SEARCH_REQ under wrong PhyState : %e<PhyState> ");
+11264,23390208,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySigParser,P_ERROR,swLogPrintf("Not defined signal recevied from PS , sigId = 0x%X ");
+11264,23394303,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,phyAtCmdDataDumpProc,P_WARNING,swLogPrintf("Wait to send dump command in PHY IDLE or CONNECT state! ");
+11264,23396351,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,phyRaStatisCntInc,P_WARNING,swLogPrintf("PhyRaStatisCntInc : Wrong type input! ");
+11264,23398144,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyRaStatisInfo_0,P_SIG,swLogPrintf("PhyRaStatisInfo : raSuccNum = %d , accessReqNum = %d , preambleTxNum = %d , rarRecvNum = %d , msg3TxNum = %d , msg4RecvNum = %d , rarTmrExpNum = %d , crTmrExpNum = %d ");
+11264,23398400,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyTxStatisInfo_1,P_SIG,swLogPrintf("PhyTxStatisInfo : txPowerInsufficientNum = %d ");
+11264,23402495,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,phyStatisOperReq_0,P_SIG,swLogPrintf("PS Request for start statis info report! ");
+11264,23404543,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,phyStatisOperReq_1,P_SIG,swLogPrintf("PS Request for stop statis info report! ");
+11264,23405312,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,CephySetTxPowerReq_1,P_WARNING,swLogPrintf("PS Request for TxPower! type : %d , targetPower = %d , maxPower = %d , minPower = %d ");
+11264,23408639,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySpecialCaseRrm823Satisfied_0,P_INFO,swLogPrintf("special case RRM 8.2.3 satisfied ");
+11264,23408640,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySpecialCaseInfoUpdt_1,P_INFO,swLogPrintf("Special Case No = 0x%X ");
+11264,23410944,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyStaticCfgPagingSet_0,P_INFO,swLogPrintf("pagingDciBmp = 0x%X , pagingDecBmp = 0x%X ");
+11264,23412736,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyStaticCfgPagingReport_0,P_INFO,swLogPrintf("Orig staticCfgPaingInfo = %d% ");
+11264,23416831,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyMibStart_0,P_INFO,swLogPrintf("Schedule MIB with PCH task adding in advance ");
+11264,23418879,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyMibStart_1,P_WARNING,swLogPrintf("SCMIB and Idle Paging arraged in the same subframe ");
+11264,23420927,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyMibStart_2,P_WARNING,swLogPrintf("SCMIB and Idle Paging arraged in two continous subframe ");
+11264,23422975,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySib1Start_0,P_INFO,swLogPrintf("Schedule SIB1 with PCH task adding in advance ");
+11264,23425023,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySibxStart_1,P_INFO,swLogPrintf("Receiving SYS_INFO_REQ ( SCELL SIBX ) while MEAS_TASK is ongoing ");
+11264,23425536,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyScellSysInfoReq_0,P_INFO,swLogPrintf("MIB MODIFY REQ Received , schdTime = 0x%x , timeDiff = 0x%x , mibBoudary = 0x%x ");
+11264,23429119,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyNcellSysInfoReq_1,P_WARNING,swLogPrintf("CELL MISS during cell reselection SIB1 process ");
+11264,23431167,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySysInfoStop_0,P_SIG,swLogPrintf("PLMN STOP ");
+11264,23433215,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySysInfoReport_1,P_WARNING,swLogPrintf("Skip Ncell MIB Reporting in Cell ReSelect ");
+11264,23435263,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySysInfoReport_0,P_WARNING,swLogPrintf("Skip Ncell MIB Reporting in ECGI ");
+11264,23435264,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySysInfoReport_2,P_SIG,swLogPrintf("PhySysInfoReport : barTimeLen = %d ");
+11264,23437824,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySysInfoReport_3,P_WARNING,swLogPrintf("PhySysInfoReport : CRC fail! mibFlag = %d , siReqScell = %d , siReqNcell = %d ");
+11264,23441407,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyMibMdfPrdTimeDiff,P_WARNING,swLogPrintf("Unxpected Modification Period Coeff in CAT1 mode ");
+11264,23443455,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyMibDecPostProc_0,P_INFO,swLogPrintf("NC MIB Dec Result Skipped ");
+11264,23445503,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyMibDecPostProc_1,P_INFO,swLogPrintf("SC MIB Dec Result Skipped ");
+11264,23447551,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySib1DciPostProc_0,P_INFO,swLogPrintf("NC SIB1 Dci Result Skipped ");
+11264,23449599,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySib1DecPostProc_0,P_INFO,swLogPrintf("NC SIB1 Dec Result Skipped ");
+11264,23451647,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySibxDecPostProc_3,P_SIG,swLogPrintf("received SI at window end ");
+11264,23453695,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySibxDecPostProc_1,P_SIG,swLogPrintf("report SI fail due to Scell is unreliable ");
+11264,23455743,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySibxDecPostProc_2,P_SIG,swLogPrintf("report SI fail due to Scell is unreliable ");
+11264,23456256,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySiRxPauseConflictProc_0,P_INFO,swLogPrintf("Si Rx Pause Conflict Proc : isAddBmp = %d , rxBitmap = 0x%X , CurrBitmap = 0x%X ");
+11264,23459839,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhySibxSchdAftPageHwHalt_0,P_INFO,swLogPrintf("SIBx Schedule After Page HwHalt ");
+11264,23459840,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,MacTimerExpiredPostProc_0,P_ERROR,swLogPrintf("timeAlignmentTimer expired! , time value = %d ");
+11264,23463935,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,MacTimerExpiredPostProc_1,P_WARNING,swLogPrintf("skip TA timer expired process for special case ");
+11264,23465983,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,MacTimerExpiredPostProc_2,P_INFO,swLogPrintf("SW timer expired without matched expiredTime! ");
+11264,23467264,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyAssert_0,P_ERROR,swLogPrintf("PHY assert! Module = %e<UniLogPhyModuleIdType> , SubID = 0x%X , val1 = 0x%X , val2 = 0x%X , val3 = 0x%X , resetType = %d ");
+11264,23470079,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyAssert_3,P_WARNING,swLogPrintf("skip PS RESET process because previous one is ongoing ");
+11264,23472127,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,PhyAssert_4,P_WARNING,swLogPrintf("start self-recovery for PHY_ASSERT ");
+11264,23472384,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,OsaCreateFastSignal_0,P_WARNING,swLogPrintf("runSigNumber = %d , runBigSigNumber = %d ");
+11264,23474176,0,0,PHY_ONLINE,PHY_SCHEDULE_MODULE,EC718_CP_VERSION_0,P_WARNING,swLogPrintf("CP version = 0x%X ");
 12288,25167871,0,0,PHY_ONLINE,PHY_MAC_MODULE,phyMacApiInit_0,P_WARNING,swLogPrintf("gpPhyMacRaInfo is not NULL when IDLE2CONN! ");
 12288,25169919,0,0,PHY_ONLINE,PHY_MAC_MODULE,phyMacApiInit_1,P_WARNING,swLogPrintf("gpPhyMacApiCtrlInfo is not NULL when IDLE2CONN! ");
 12288,25171967,0,0,PHY_ONLINE,PHY_MAC_MODULE,phyMacApiInit_2,P_WARNING,swLogPrintf("gpPhyMacRaInfo is NULL when CONN2IDLE! ");
@@ -9639,5 +9641,5 @@ MW_INFO_PHY_EDRX_PARAM,midWareNvmInfoPhyEdrxParam
 plat_config,plat_config_fs_t
 <end>
 OptionalSegment
-optional_sk_01,B0CA328CD66D19E55302F65640227508686DC88D51E53D9AF415C2FA418B6B30
+optional_sk_01,D32D0D66B82B23BDE1275BCAA1A840D844059C1B80E5DAA80C3A0840C23B6589
 <end>
