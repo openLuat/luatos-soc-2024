@@ -53,7 +53,7 @@ function description_common()
 		set_showmenu(true)
         chip_target = get_config("chip_target")
         -- 先统一显示出来,后面支持动态显示在调整
-        set_description("lspd mode. enable can get more memory.ec718pv always enable, no need config. ec716e/ec716s/ec718s disable can get sms,wifi,hib power mode, enable can get rndis")
+        set_description("lspd mode. 716s/ec718s disable get sms,wifi,hib, enable get rndis. 718p/718e/716e/ enable get more memory. ec718pv always enable")
 
 		-- if chip_target ~= "ec718p" and chip_target ~= "ec718pv" and chip_target ~= "ec718e" then
 		-- 	set_description("lspd mode. enable can get sms,wifi,hib power mode, disable can get rndis")
