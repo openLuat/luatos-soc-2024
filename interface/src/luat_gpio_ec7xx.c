@@ -412,3 +412,8 @@ int luat_gpio_driver_ws2812b(int pin, uint8_t *data, uint32_t len, uint32_t fram
 	}
 	return 0;
 }
+
+int luat_gpio_driver_yhm27xx(uint32_t pin, uint8_t chip_id, uint8_t reg, uint8_t is_read, uint8_t *data)
+{
+	return GPIO_DriverYHM27XXShortMode(pin, chip_id, reg, is_read, data);
+}
