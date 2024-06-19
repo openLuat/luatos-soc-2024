@@ -175,4 +175,5 @@ uint32_t GPIO_ToPadEC7XX(uint32_t Pin, uint8_t AltFun);
 void GPIO_WakeupPadConfig(uint32_t Pin, uint8_t IsEnable, uint8_t IsRiseHigh, uint8_t IsFallLow, uint8_t Pullup, uint8_t Pulldown);
 
 void GPIO_DriverWS2812B(uint32_t Pin, uint8_t *Data, uint32_t Len, uint8_t Bit0H, uint8_t Bit0L, uint8_t Bit1H, uint8_t Bit1L);
+int GPIO_DriverYHM27XXShortMode(uint32_t Pin, uint8_t ChipID, uint8_t RegAddress, uint8_t IsRead, uint8_t *Data);
 #endif
