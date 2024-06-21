@@ -47,10 +47,7 @@ extern uint8_t gucPoolGroupSel;
 
 #endif /* configAPPLICATION_ALLOCATED_HEAP */
 
-#ifdef __USER_CODE__
-extern void soc_sys_force_wakeup_on_off(uint32_t mask_bit, uint8_t on_off);
-extern void tlsf_mem_get_record(tlsf_t tlsf, uint32_t *alloc, uint32_t *peak);
-#endif
+
 /*
  * Called automatically to setup the required heap structures the first time
  * pvPortMalloc() is called.
@@ -112,9 +109,6 @@ PLAT_PSRAM_HEAP6_RAMCODE void *pvPortMallocEC_Psram( size_t xWantedSize, unsigne
     #ifdef MM_DEBUG_EN
         if( pvReturn != NULL )
         {
-#ifdef __USER_CODE__
-        	soc_sys_force_wakeup_on_off(0, 1);
-#endif
             mm_malloc_trace(pvReturn, xWantedSize, funcPtr);
         }
     #endif
@@ -155,9 +149,6 @@ PLAT_PSRAM_HEAP6_RAMCODE void *pvPortReallocEC_Psram( void *pv, size_t xWantedSi
     #ifdef MM_DEBUG_EN
         if( pvReturn != NULL )
         {
-#ifdef __USER_CODE__
-        	soc_sys_force_wakeup_on_off(0, 1);
-#endif
             mm_malloc_trace(pvReturn, xWantedSize, (unsigned int)__GET_RETURN_ADDRESS());
         }
     #endif
@@ -184,15 +175,6 @@ PLAT_PSRAM_HEAP6_RAMCODE void  vPortFree_Psram( void *pv )
         #endif
         }
     }
-#ifdef __USER_CODE__
-    uint32_t alloc;
-    uint32_t peak;
-    tlsf_mem_get_record(pxTlsf_psram, &alloc, &peak);
-    if (!alloc)
-    {
-    	soc_sys_force_wakeup_on_off(0, 0);
-    }
-#endif
     xTaskResumeAll();
 }
 
@@ -327,6 +309,7 @@ PLAT_PSRAM_HEAP6_RAMCODE static void prvHeapInit_Psram( void )
 }
 
 #ifdef __USER_CODE__
+extern void tlsf_mem_get_record(tlsf_t tlsf, uint32_t *alloc, uint32_t *peak);
 FREERTOS_HEAP6_TEXT_SECTION void GetPSRAMHeapInfo(uint32_t *total, uint32_t *alloc, uint32_t *peak)
 {
 	vTaskSuspendAll();

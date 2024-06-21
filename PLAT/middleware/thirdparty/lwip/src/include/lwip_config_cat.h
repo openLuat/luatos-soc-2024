@@ -628,7 +628,11 @@
  * (only needed if you use the sequential API, like api_lib.c)
  */
 #if !defined MEMP_NUM_NETBUF || defined __DOXYGEN__
+#ifdef __USER_CODE__
+#define MEMP_NUM_NETBUF                24
+#else
 #define MEMP_NUM_NETBUF                 32
+#endif
 #endif
 
 /**
@@ -636,7 +640,11 @@
  * (only needed if you use the sequential API, like api_lib.c)
  */
 #if !defined MEMP_NUM_NETCONN || defined __DOXYGEN__
+#ifdef __USER_CODE__
+#define MEMP_NUM_NETCONN                14
+#else
 #define MEMP_NUM_NETCONN                23
+#endif
 #endif
 
 /**
@@ -1484,7 +1492,11 @@
  * an upper limit on the MSS advertised by the remote host.
  */
 #if !defined TCP_MSS || defined __DOXYGEN__
+#ifdef __USER_CODE__
+#define TCP_MSS                         1340
+#else
 #define TCP_MSS                         1440
+#endif
 #endif
 
 /**
