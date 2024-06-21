@@ -729,13 +729,15 @@ LUAT_MOBILE_SIM_STATUS_E luat_mobile_get_sim_status(void)
 
 LUAT_MOBILE_REGISTER_STATUS_E luat_mobile_get_register_status(void)
 {
-	CeregGetStateParams param;
-	int result = appGetCeregStateSync(&param);
-	if (!result)
-	{
-		return param.state;
-	}
-	return LUAT_MOBILE_STATUS_UNKNOW;
+	CmiPsCeregInd cereg;
+	soc_mobile_get_lte_service_info(&cereg);
+	return cereg.state;
+//	CeregGetStateParams param;
+//	int result = appGetCeregStateSync(&param);
+//	if (!result)
+//	{
+//		return param.state;
+//	}
 }
 
 int luat_mobile_event_register_handler(luat_mobile_event_callback_t callback_fun)
