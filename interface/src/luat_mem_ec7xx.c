@@ -29,6 +29,8 @@
 #include "common_api.h"
 #include "mem_map.h"
 #include "luat_mem.h"
+#include "luat_debug.h"
+#include "soc_service.h"
 //extern uint32_t start_up_buffer;
 //extern uint32_t end_ap_data;
 //uint32_t sys_heap_start = &(start_up_buffer);
@@ -37,6 +39,95 @@
 #include "FreeRTOS.h"
 extern void GetSRAMHeapInfo(uint32_t *total, uint32_t *alloc, uint32_t *peak);
 extern void GetPSRAMHeapInfo(uint32_t *total, uint32_t *alloc, uint32_t *peak);
+
+static llist_head prv_psram_record_list_head;
+typedef struct
+{
+	llist_head node;
+	void *address;
+}psram_record_t;
+
+
+static int find_record(void *node, void *ptr)
+{
+	psram_record_t *record = (psram_record_t *)node;
+	return (ptr == record->address);
+}
+
+
+static void *psram_malloc(size_t len)
+{
+	void* _ptr = pvPortMalloc_Psram(len);
+	if (_ptr)
+	{
+		luat_rtos_task_suspend_all();
+		if (!prv_psram_record_list_head.next || !prv_psram_record_list_head.prev)
+		{
+			INIT_LLIST_HEAD(&prv_psram_record_list_head);
+		}
+		psram_record_t *record = pvPortAssertMalloc(sizeof(psram_record_t));
+		record->address = _ptr;
+		if (llist_empty(&prv_psram_record_list_head))
+		{
+			soc_sys_force_wakeup_on_off(SOC_SYS_CTRL_PSRAM, 1);
+		}
+		llist_add_tail(&record->node, &prv_psram_record_list_head);
+		luat_rtos_task_resume_all();
+	}
+	return _ptr;
+}
+
+static void *psram_realloc(void* ptr, size_t len)
+{
+	void* _ptr = pvPortRealloc_Psram(ptr, len);
+	if (_ptr)
+	{
+		luat_rtos_task_suspend_all();
+		if (!prv_psram_record_list_head.next || !prv_psram_record_list_head.prev)
+		{
+			INIT_LLIST_HEAD(&prv_psram_record_list_head);
+		}
+		if (ptr)
+		{
+			psram_record_t *record =llist_traversal(&prv_psram_record_list_head, find_record, ptr);
+			LUAT_DEBUG_ASSERT(record, "no psram record");
+			record->address = _ptr;
+		}
+		else
+		{
+			psram_record_t *record = pvPortAssertMalloc(sizeof(psram_record_t));
+			record->address = _ptr;
+			if (llist_empty(&prv_psram_record_list_head))
+			{
+				soc_sys_force_wakeup_on_off(SOC_SYS_CTRL_PSRAM, 1);
+			}
+			llist_add_tail(&record->node, &prv_psram_record_list_head);
+		}
+		luat_rtos_task_resume_all();
+
+	}
+	return _ptr;
+}
+
+static void psram_free(void *ptr)
+{
+	vPortFree_Psram(ptr);
+	luat_rtos_task_suspend_all();
+	if (!prv_psram_record_list_head.next || !prv_psram_record_list_head.prev)
+	{
+		LUAT_DEBUG_ASSERT(0, "psram record not init");
+	}
+	psram_record_t *record =llist_traversal(&prv_psram_record_list_head, find_record, ptr);
+	LUAT_DEBUG_ASSERT(record, "no psram record");
+	llist_del(&record->node);
+	free(record);
+	if (llist_empty(&prv_psram_record_list_head))
+	{
+		soc_sys_force_wakeup_on_off(SOC_SYS_CTRL_PSRAM, 0);
+	}
+	luat_rtos_task_resume_all();
+
+}
 
 void* luat_heap_malloc(size_t len) {
     return malloc(len);
@@ -51,7 +142,7 @@ void luat_heap_free(void* ptr) {
 	}
 #if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
 	if ((uint32_t)ptr > PSRAM_START_ADDR && (uint32_t)ptr <= PSRAM_END_ADDR) {
-		vPortFree_Psram(ptr);
+		psram_free(ptr);
 		return ;
 	}
 #endif
@@ -70,10 +161,12 @@ void luat_meminfo_sys(size_t *total, size_t *used, size_t *max_used) {
 	GetSRAMHeapInfo(total, used, max_used);
 }
 
+
+
 void* luat_heap_opt_malloc(LUAT_HEAP_TYPE_E type,size_t len){
 	if (type == LUAT_HEAP_AUTO){
 #if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
-		void* _ptr = pvPortMalloc_Psram(len);
+		void* _ptr = psram_malloc(len);
 		if (_ptr) return _ptr;
 		else
 #endif
@@ -81,7 +174,7 @@ void* luat_heap_opt_malloc(LUAT_HEAP_TYPE_E type,size_t len){
 	}
 	else if(type == LUAT_HEAP_SRAM) return malloc(len);
 #if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
-	else if(type == LUAT_HEAP_PSRAM) return pvPortMalloc_Psram(len);
+	else if(type == LUAT_HEAP_PSRAM) return psram_malloc(len);
 #endif
 	else return NULL;
 }
@@ -93,7 +186,7 @@ void luat_heap_opt_free(LUAT_HEAP_TYPE_E type,void* ptr){
 void* luat_heap_opt_realloc(LUAT_HEAP_TYPE_E type,void* ptr, size_t len){
 	if (type == LUAT_HEAP_AUTO){
 #if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
-		void* _ptr = pvPortRealloc_Psram(ptr,len);
+		void* _ptr = psram_realloc(ptr,len);
 		if (_ptr) return _ptr;
 		else
 #endif
@@ -101,7 +194,7 @@ void* luat_heap_opt_realloc(LUAT_HEAP_TYPE_E type,void* ptr, size_t len){
 	}
 	else if(type == LUAT_HEAP_SRAM) return realloc(ptr, len);
 #if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
-	else if(type == LUAT_HEAP_PSRAM) return pvPortRealloc_Psram(ptr,len);
+	else if(type == LUAT_HEAP_PSRAM) return psram_realloc(ptr,len);
 #endif
 	else return NULL;
 }
@@ -109,15 +202,28 @@ void* luat_heap_opt_realloc(LUAT_HEAP_TYPE_E type,void* ptr, size_t len){
 void* luat_heap_opt_zalloc(LUAT_HEAP_TYPE_E type,size_t size){
 	if (type == LUAT_HEAP_AUTO){
 #if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
-		void* _ptr = pvPortZeroMalloc_Psram(1 * size);
-		if (_ptr) return _ptr;
+		void* _ptr = psram_malloc(size);
+		if (_ptr)
+		{
+			memset(_ptr, 0, size);
+			return _ptr;
+		}
 		else
 #endif
 			return calloc(1, size);
 	}
 	else if(type == LUAT_HEAP_SRAM) return calloc(1, size);
 #if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
-	else if(type == LUAT_HEAP_PSRAM) return pvPortZeroMalloc_Psram(1 * size);
+	else if(type == LUAT_HEAP_PSRAM)
+	{
+		void* _ptr = psram_malloc(size);
+		if (_ptr)
+		{
+			memset(_ptr, 0, size);
+
+		}
+		return _ptr;
+	}
 #endif
 	else return NULL;
 }
