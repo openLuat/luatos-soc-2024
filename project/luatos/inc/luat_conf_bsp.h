@@ -260,6 +260,8 @@
 #undef LUAT_USE_WEBSOCKET
 #undef LUAT_USE_FTP
 #undef LUAT_USE_CAMERA
+
+#define LUAT_USE_TTS_ONLY
 #endif
 
 //-------------------------------------------------------------------------------
@@ -381,8 +383,6 @@
 #ifndef LUAT_USE_MEDIA
 #define LUAT_USE_MEDIA 1
 #endif
-
-#define LUAT_USE_TTS_ONLY
 
 #endif
 
