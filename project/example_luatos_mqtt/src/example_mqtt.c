@@ -315,14 +315,28 @@ static void mqtt_task(void *param)
 	LUAT_DEBUG_PRINT("wait mqtt_state ...");
 
 	uint16_t message_id = 0;
-	char mqtt_send_payload[256] = {0};
+	char mqtt_send_payload[64] = {0};
+	char *big_data = luat_heap_opt_malloc(LUAT_HEAP_AUTO, 32 * 1024);
+	uint32_t all,now_used_block,max_used_block;
+	for (int i = 0; i < 32*1024; i++)
+	{
+		big_data[i] = (i % 10) + '0';
+	}
 	while(1){
 		if (luat_mqtt_state_get(mymqtt) == MQTT_STATE_READY){
 			sprintf(mqtt_send_payload, "{\"ticks\":%u}", luat_mcu_ticks());
 			ret = mqtt_publish_with_qos(&(mymqtt->broker), mqtt_pub_topic, mqtt_send_payload, strlen(mqtt_send_payload), 1, MQTT_DEMO_PUB_QOS, &message_id);
 			LUAT_DEBUG_PRINT("uplink topic %s data %s msgid %d ret %d", mqtt_pub_topic, mqtt_send_payload, message_id, ret);
+			ret = mqtt_publish_with_qos(&(mymqtt->broker), mqtt_pub_topic, big_data, 32 * 1024, 1, MQTT_DEMO_PUB_QOS, &message_id);
+			LUAT_DEBUG_PRINT("uplink big data topic %s msgid %d ret %d", mqtt_pub_topic, message_id, ret);
 		}
 		luat_rtos_task_sleep(5000);
+		luat_meminfo_opt_sys(LUAT_HEAP_SRAM, &all, &now_used_block, &max_used_block);
+		LUAT_DEBUG_PRINT("sram %d,%d,%d",all,now_used_block,max_used_block);
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+		luat_meminfo_opt_sys(LUAT_HEAP_PSRAM, &all, &now_used_block, &max_used_block);
+		LUAT_DEBUG_PRINT("prsam %d,%d,%d",all,now_used_block,max_used_block);
+#endif
 	}
 
 	// task结束, 删除自身
