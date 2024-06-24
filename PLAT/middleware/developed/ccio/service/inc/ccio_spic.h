@@ -35,7 +35,7 @@ extern "C" {
 #define SPIC_NOTIF_FLOWCTL_OFF      0x70000002
 typedef uint32_t  SpicNotif_t;
 
-/* return code for 'SPIC_STATUS_IND_MSG' */
+/* return code for 'SPIC_GEN_STATUS_IND_MSG' */
 #define SPIC_STATUS_SUCC            0x00000000
 #define SPIC_STATUS_FAIL            0xe0000001
 #define SPIC_STATUS_DATA_ERR        0xe0010002
@@ -52,7 +52,6 @@ typedef uint32_t  SpicStatus_t;
 #define SPIC_GEN_STATUS_IND_MSG     0x8001
 
 /* network message set for spi device */
-#define SPIC_NET_STATUS_IND_MSG     0x0400
 #define SPIC_NET_RESET_MSG          0x0401
 #define SPIC_NET_RESET_CMPLT        0x8401
 #define SPIC_NET_INITIAL_MSG        0x0402
@@ -99,8 +98,6 @@ typedef struct
     SpicNotif_t notif;
     uint32_t  rsvd;
 }SpicGenNotif_t;
-
-typedef SpicStatusInd_t SpicGenStatusInd_t;
 
 typedef struct
 {
@@ -171,13 +168,10 @@ typedef struct
     uint32_t  rsvd;
 }SpicNetKeepAliveCmplt_t;
 
-typedef SpicStatusInd_t SpicNetStatusInd_t;
-
-
 typedef union
 {
     SpicGenNotif_t          genNotif;
-    SpicGenStatusInd_t      genStatusInd;
+    SpicStatusInd_t         genStatusInd;
 
     SpicNetResetMsg_t       netResetMsg;
     SpicNetResetCmplt_t     netResetCmplt;
@@ -189,7 +183,6 @@ typedef union
     SpicNetSetCmplt_t       netSetCmplt;
     SpicNetKeepAliveMsg_t   netKeepAliveMsg;
     SpicNetKeepAliveCmplt_t netKeepAliveCmplt;
-    SpicNetStatusInd_t      netStatusInd;
 }SpicMsgBody_u;
 
 /*----------------------------------------------------------------------------*
@@ -198,7 +191,7 @@ typedef union
 int32_t  spiFrameHdrDecap(UlPduBlock_t **ulpdu, uint16_t *frameLen);
 
 int32_t  spicMsgFilter(UlPduBlock_t **ulpdu, uint8_t isSubx, void *extras);
-int32_t  spicMsgSend(CcioDevice_t *chdev, SpicStatus_t status);
+int32_t  spicMsgSend(CcioDevice_t *chdev, SpicMsgType_t type, SpicStatus_t status, void *args);
 
 #ifdef __cplusplus
 }

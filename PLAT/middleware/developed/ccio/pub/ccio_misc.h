@@ -96,7 +96,7 @@ extern "C" {
 #define CCIO_DLPDU_PEND_MAXNUM   64
 
 /* supported cmux dlc count for now */
-#define CCIO_CMUX_DLC_REAL_CNT   8
+#define CCIO_CMUX_DLC_REAL_CNT   CCIO_CHAN_VIRT_MAXNUM
 
 #define CCIO_ALIGN_UP(x,sz)      (((size_t)(x) + ((sz) - 1)) & (~((sz) - 1)))
 #define CCIO_ALIGN_DOWN(x,sz)    ((size_t)(x) & (~((sz) - 1)))
@@ -240,8 +240,9 @@ typedef struct CmuxFrameDesc
     uint8_t   inState;    /* refer to 'CmuxPdState_e' */
     uint8_t   inFcs;      /* fcs of input data */
     uint16_t  length;     /* remaining length of the frame */
-    uint16_t  isCmplt :1;
-    uint16_t  rsvdBit :15;
+    uint16_t  isCmplt  :1;
+    uint16_t  rsvdBits :7;
+    uint16_t  errno    :8;  /* CmuxFrameErrNo_e */
     UlPduBlockList_t frame; /* one complete frame */
 }CmuxFrameDesc_t;
 

@@ -60,9 +60,11 @@ typedef struct
     uint8_t            mainUsage;       /**< refer to 'CsioDevType_e' */
     uint8_t            speedType;       /**< refer to 'CcioSpeedType_e' */
     uint8_t            bmCreateFlag;    /**< refer to 'CcioTaskOperFlag_e', bitmap type */
-    uint8_t            isDftAtPort :1;  /**< default uartIdx for AT or not */
-    uint8_t            rbufFlags   :4;  /**< which rbuf will be used? refer to 'CcioRbufUsage_e' */
-    uint8_t            custFlags   :3;  /**< flags for customers' private purpose */
+    uint8_t            rsvd;
+    uint32_t           isDftAtPort :1;  /**< default uartIdx for AT or not */
+    uint32_t           rbufFlags   :4;  /**< which rbuf will be used? refer to 'CcioRbufUsage_e' */
+    uint32_t           custFlags   :4;  /**< flags for customers' private purpose */
+    uint32_t           rsvdBits    :23;
 }UartDevConf_t;
 
 

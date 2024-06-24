@@ -148,8 +148,9 @@ FREERTOS_HEAP6_TEXT_SECTION void *pvPortReallocEC( void *pv, size_t xWantedSize,
     #endif
         pvReturn = tlsf_realloc(pxTlsf, pv, xWantedSize, funcPtr);
     #ifdef MM_DEBUG_EN
-        if( pvReturn != NULL )
+        if( pvReturn != NULL && pvReturn != pv)
         {
+            mm_free_trace(pv);
             mm_malloc_trace(pvReturn, xWantedSize, (unsigned int)__GET_RETURN_ADDRESS());
         }
     #endif

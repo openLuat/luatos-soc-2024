@@ -978,8 +978,8 @@ HalCodecSts_e es8311SetVolume(HalCodecCfg_t* codecHalCfg, int volume)
     
     DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311SetVolume_1, P_DEBUG, "Es8311 Set volume:%d", volume);
 
-#ifdef FEATURE_OS_ENABLE
 #if (USE_NV_VOLUME)
+#ifdef FEATURE_OS_ENABLE
     /* 1. get default tuning value
 
             2. Gain[db] = volume[%] * slope/1024[db] + offset/128[db]

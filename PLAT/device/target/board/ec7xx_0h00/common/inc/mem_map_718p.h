@@ -69,22 +69,12 @@ flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 #if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
 #define AP_FLASH_LOAD_ADDR              (0x008BA000)
 
-#ifdef FEATURE_EXCEPTION_FLASH_DUMP_ENABLE
-#define AP_FLASH_LOAD_SIZE              (0x2CF000 - FLASH_EXCEP_DUMP_SIZE)//2876KB - 8KB
-#else
 #define AP_FLASH_LOAD_SIZE              (0x2CF000)//2876KB
-#endif
 #define AP_FLASH_LOAD_UNZIP_SIZE        (0x319000)//3172KB ,for ld
-
 #else
 #define AP_FLASH_LOAD_ADDR              (0x0087e000)
 
-#ifdef FEATURE_EXCEPTION_FLASH_DUMP_ENABLE
-#define AP_FLASH_LOAD_SIZE              (0x30b000 - FLASH_EXCEP_DUMP_SIZE)//3116KB - 8KB
-#else
 #define AP_FLASH_LOAD_SIZE              (0x30b000)//3116KB
-#endif
-
 #define AP_FLASH_LOAD_UNZIP_SIZE        (0x319000)//3172KB ,for ld
 #endif
 
@@ -102,6 +92,11 @@ flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 #define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START) // 48KB
 
 #ifdef FEATURE_FOTAPAR_ENABLE
+//fota addr and size
+#define FLASH_FOTA_REGION_START         (0x3ad000)
+#define FLASH_FOTA_REGION_LEN           (0x44000)//272KB
+#define FLASH_FOTA_REGION_END           (0x3f1000)
+#else
 //fota addr and size
 #define FLASH_FOTA_REGION_START         (0x3ad000)
 #define FLASH_FOTA_REGION_LEN           (0x44000)//272KB
@@ -149,11 +144,15 @@ flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 //#define BL_IMG_MERGE_ADDR               (0x00003000)
 
 // Flash Dump Macros
-#define FLASH_EXCEP_DUMP_ADDR            (AP_FLASH_LOAD_ADDR+AP_FLASH_LOAD_SIZE-AP_FLASH_XIP_ADDR)
+#define FLASH_EXCEP_DUMP_ADDR            (FLASH_FOTA_REGION_END - FLASH_EXCEP_DUMP_SIZE)
 #define FLASH_EXCEP_DUMP_SIZE            0x4000
 #define FLASH_EXCEP_DUMP_SECTOR_NUM      0x4
 #define FLASH_EXCEP_KEY_INFO_ADDR        0x0
 #define FLASH_EXCEP_KEY_INFO_LEN         0x0
+
+#if ((FLASH_EXCEP_DUMP_ADDR)>=(FLASH_FOTA_REGION_START)) && ((FLASH_EXCEP_DUMP_ADDR)<(FLASH_FOTA_REGION_END-0xB000))
+#error "Vaild excep dump area in FOTA region is [FLASH_FOTA_REGION_END-0xB000,FLASH_FOTA_REGION_END]."
+#endif
 
 #ifdef FEATURE_EXCEPTION_FLASH_DUMP_ENABLE
 /*

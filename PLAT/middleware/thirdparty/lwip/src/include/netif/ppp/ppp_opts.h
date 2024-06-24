@@ -85,7 +85,7 @@
 #define MEMP_NUM_PPP_PCB       1
 #endif
 
-#if PPP_SUPPORT
+//#if PPP_SUPPORT
 
 /**
  * MEMP_NUM_PPPOS_INTERFACES: the number of concurrently active PPPoS
@@ -283,7 +283,7 @@
  * Currently only supported for PPPoS.
  */
 #ifndef PPP_SERVER
-#define PPP_SERVER                      PPPOS_SUPPORT
+#define PPP_SERVER                      1
 #endif
 
 #if PPP_SERVER
@@ -611,6 +611,6 @@
 #define LWIP_INCLUDED_POLARSSL_ARC4     0
 #endif /* LWIP_INCLUDED_POLARSSL_ARC4 */
 
-#endif /* PPP_SUPPORT */
+//#endif /* PPP_SUPPORT */
 
 #endif /* LWIP_PPP_OPTS_H */

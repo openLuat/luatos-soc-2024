@@ -256,6 +256,43 @@ static void st7789CamPreviewStartStop(lcdDev_t* lcd, camPreviewStartStop_e previ
 {   
     if (previewStartStop)
     {
+
+#if (CAMERA_ENABLE_BF30A2)
+        // preview
+        lcdWriteCmd(0x36);
+        lcdWriteData(0x00);// 0: normal;   0x20: reverse, mirror image   0x40: x mirror
+        // lcdWriteData(0xa0);
+        lcdDrv->send(NULL, 0);
+        
+        lcdWriteCmd(0x2C);
+        // st7789AddrSet(lcd, 0, 0, 320-1, 240-1);
+        st7789AddrSet(lcd, 0, 0, 240-1, 320-1);
+
+        lspiDataFmt.wordSize = 7;
+        lspiDataFmt.txPack = 0;
+        lcdDrv->ctrl(LSPI_CTRL_DATA_FORMAT, 0);
+        
+        // lcd size
+        // lspiInfo.frameHeight = 480; // frame input height
+        // lspiInfo.frameWidth = 640; // frame input width
+        lspiInfo.frameHeight = 240; // frame input height
+        lspiInfo.frameWidth = 320; // frame input width
+        lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO, 0);
+        
+        lspiFrameInfoOut.frameHeightOut =320;//lcd->pra->height;//320; // frame output height
+        lspiFrameInfoOut.frameWidthOut = 240;//lcd->pra->width;//240; // frame output width
+
+        // lspiFrameInfoOut.frameHeightOut =320;//lcd->pra->height;//320; // frame output height
+        // lspiFrameInfoOut.frameWidthOut = 240;//lcd->pra->width;//240; // frame output width        
+        lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO_OUT, 0);
+
+        // lspiScaleInfo.rowScaleFrac =128;
+        // lspiScaleInfo.colScaleFrac = 128;
+
+        lspiScaleInfo.rowScaleFrac =128;
+        lspiScaleInfo.colScaleFrac = 128;
+        lcdDrv->ctrl(LSPI_CTRL_SCALE_INFO, 0);
+#elif (CAMERA_ENABLE_GC032A)
         // preview
         lcdWriteCmd(0x36);
         // lcdWriteData(0x00);// 0: normal;   0x20: reverse, mirror image   0x40: x mirror
@@ -290,6 +327,43 @@ static void st7789CamPreviewStartStop(lcdDev_t* lcd, camPreviewStartStop_e previ
         lspiScaleInfo.rowScaleFrac =64;
         lspiScaleInfo.colScaleFrac = 64;
         lcdDrv->ctrl(LSPI_CTRL_SCALE_INFO, 0);
+#elif (CAMERA_ENABLE_GC6153)
+        // preview
+        lcdWriteCmd(0x36);
+        lcdWriteData(0x00);// 0: normal;   0x20: reverse, mirror image   0x40: x mirror
+        // lcdWriteData(0xa0);
+        lcdDrv->send(NULL, 0);
+        
+        lcdWriteCmd(0x2C);
+        // st7789AddrSet(lcd, 0, 0, 320-1, 240-1);
+        st7789AddrSet(lcd, 0, 0, 240-1, 320-1);
+
+        lspiDataFmt.wordSize = 7;
+        lspiDataFmt.txPack = 0;
+        lcdDrv->ctrl(LSPI_CTRL_DATA_FORMAT, 0);
+        
+        // lcd size
+        // lspiInfo.frameHeight = 480; // frame input height
+        // lspiInfo.frameWidth = 640; // frame input width
+        lspiInfo.frameHeight = 240; // frame input height
+        lspiInfo.frameWidth = 320; // frame input width
+        lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO, 0);
+        
+        lspiFrameInfoOut.frameHeightOut =320;//lcd->pra->height;//320; // frame output height
+        lspiFrameInfoOut.frameWidthOut = 240;//lcd->pra->width;//240; // frame output width
+
+        // lspiFrameInfoOut.frameHeightOut =320;//lcd->pra->height;//320; // frame output height
+        // lspiFrameInfoOut.frameWidthOut = 240;//lcd->pra->width;//240; // frame output width        
+        lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO_OUT, 0);
+
+        // lspiScaleInfo.rowScaleFrac =128;
+        // lspiScaleInfo.colScaleFrac = 128;
+
+        lspiScaleInfo.rowScaleFrac =128;
+        lspiScaleInfo.colScaleFrac = 128;
+        lcdDrv->ctrl(LSPI_CTRL_SCALE_INFO, 0);
+#endif
+
 
         lspiTailorInfo.tailorLeft = 0; // frame output height
         lspiTailorInfo.tailorRight = 0; // frame output width

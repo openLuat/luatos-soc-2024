@@ -69,8 +69,7 @@ typedef struct
 {
     uint8_t    bmCreateFlag;    /**< refer to 'CcioTaskOperFlag_e', bitmap type */
     uint8_t    rbufFlags :4;    /**< which rbuf will be used? refer to 'CcioRbufUsage_e' */
-    uint8_t    custFlags :3;    /**< flags for customers' private purpose */
-    uint8_t    rsvdBits  :1;
+    uint8_t    custFlags :4;    /**< flags for customers' private purpose */
     uint8_t    rsvd[2];
 }UsbDevConf_t;
 

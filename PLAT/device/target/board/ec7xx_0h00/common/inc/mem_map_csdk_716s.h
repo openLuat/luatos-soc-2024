@@ -181,21 +181,39 @@ flash xip address(from ap/cp view): 0x00800000---0x00a00000
 #define SD_DATA_LOAD_SIZE               (0x100000)//1MB
 
 
-
-
-/*temp add here, need handle from caller !!!!*/
-
-
-
-// 512KB flash dump area for 8M flash
-#define FLASH_EXCEP_DUMP_ADDR            0x0
-#define FLASH_EXCEP_DUMP_SIZE            0x0
-#define FLASH_EXCEP_DUMP_SECTOR_NUM      0x0
+// Flash Dump Macros
+#define FLASH_EXCEP_DUMP_ADDR            (FLASH_FOTA_REGION_END - FLASH_EXCEP_DUMP_SIZE)
+#define FLASH_EXCEP_DUMP_SIZE            0x4000
+#define FLASH_EXCEP_DUMP_SECTOR_NUM      0x4
 #define FLASH_EXCEP_KEY_INFO_ADDR        0x0
 #define FLASH_EXCEP_KEY_INFO_LEN         0x0
 
+#if ((FLASH_EXCEP_DUMP_ADDR)>=(FLASH_FOTA_REGION_START)) && ((FLASH_EXCEP_DUMP_ADDR)<(FLASH_FOTA_REGION_END-0xB000))
+#error "Vaild excep dump area in FOTA region is [FLASH_FOTA_REGION_END-0xB000,FLASH_FOTA_REGION_END]."
+#endif
 
 
+#ifdef FEATURE_EXCEPTION_FLASH_DUMP_ENABLE
+/*
+ *	BaseAddress is FLASH_EXCEP_DUMP_ADDR and the dump space is FLASH_EXCEP_DUMP_SIZE.
+ *	offset 0                   offset 0x1000	          offset 0x3000
+ *	|--------------------------|--------------------------|--------------------------|
+ *	| 1K PLAT + 1K PHY + 2K PS |         8K UNILOG        |         4K CUST          |
+ *	|--------------------------|--------------------------|--------------------------|
+ */
+#define FLASH_EXCEP_DUMP_ADDR_OFFSET_PLAT    0x0000
+#define FLASH_EXCEP_DUMP_ADDR_OFFSET_PHY     0x0400
+#define FLASH_EXCEP_DUMP_ADDR_OFFSET_PS      0x0800
+#define FLASH_EXCEP_DUMP_ADDR_OFFSET_UNILOG  0x1000
+#define FLASH_EXCEP_DUMP_ADDR_OFFSET_CUST    0x3000
+#define FLASH_EXCEP_DUMP_SPACE_LIMIT_PLAT    (FLASH_EXCEP_DUMP_ADDR_OFFSET_PHY - FLASH_EXCEP_DUMP_ADDR_OFFSET_PLAT)
+#define FLASH_EXCEP_DUMP_SPACE_LIMIT_PHY     (FLASH_EXCEP_DUMP_ADDR_OFFSET_PS - FLASH_EXCEP_DUMP_ADDR_OFFSET_PHY)
+#define FLASH_EXCEP_DUMP_SPACE_LIMIT_PS      (FLASH_EXCEP_DUMP_ADDR_OFFSET_UNILOG - FLASH_EXCEP_DUMP_ADDR_OFFSET_PS)
+#define FLASH_EXCEP_DUMP_SPACE_LIMIT_UNILOG  (FLASH_EXCEP_DUMP_ADDR_OFFSET_CUST - FLASH_EXCEP_DUMP_ADDR_OFFSET_UNILOG)
+#define FLASH_EXCEP_DUMP_CUST_SPACE_LIMIT    (0x1000) /* Customer can change this macro depend on its real needs */
+#endif
+
+/*temp add here, need handle from caller !!!!*/
 
 
 /* -----------ram address define, TODO: need modify according to ram lauout-------------*/

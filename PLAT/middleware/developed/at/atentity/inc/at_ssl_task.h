@@ -156,7 +156,7 @@ typedef struct sslClientContextTag
     uint8_t clientId;
     uint8_t sslCxtId;
     uint32_t reqhandle;
-    uint16_t pid;
+    uint16_t pid;   /* rsvd: not used any more! */
     int socket;
     char* serverAddr;
     uint16_t serverPort;

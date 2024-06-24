@@ -157,11 +157,16 @@ flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 //#define BL_IMG_MERGE_ADDR               (0x00003000)
 
 // Flash Dump Macros
-#define FLASH_EXCEP_DUMP_ADDR            (AP_FLASH_LOAD_ADDR+AP_FLASH_LOAD_SIZE-AP_FLASH_XIP_ADDR)
-#define FLASH_EXCEP_DUMP_SIZE            0x0
-#define FLASH_EXCEP_DUMP_SECTOR_NUM      0x0
+// Flash Dump Macros
+#define FLASH_EXCEP_DUMP_ADDR            (FLASH_FOTA_REGION_END - FLASH_EXCEP_DUMP_SIZE)
+#define FLASH_EXCEP_DUMP_SIZE            0x4000
+#define FLASH_EXCEP_DUMP_SECTOR_NUM      0x4
 #define FLASH_EXCEP_KEY_INFO_ADDR        0x0
 #define FLASH_EXCEP_KEY_INFO_LEN         0x0
+
+#if ((FLASH_EXCEP_DUMP_ADDR)>=(FLASH_FOTA_REGION_START)) && ((FLASH_EXCEP_DUMP_ADDR)<(FLASH_FOTA_REGION_END-0xB000))
+#error "Vaild excep dump area in FOTA region is [FLASH_FOTA_REGION_END-0xB000,FLASH_FOTA_REGION_END]."
+#endif
 
 #ifdef FEATURE_EXCEPTION_FLASH_DUMP_ENABLE
 /*

@@ -41,17 +41,20 @@ typedef enum
 
 typedef enum
 {
-    CSIO_OCF_NORM = 0,
+    CSIO_OCF_NORM_BASE = 0,
+    CSIO_OCF_UNDEF = CSIO_OCF_NORM_BASE,
+    CSIO_OCF_IPOS,
     CSIO_OCF_UARTEST,
     CSIO_OCF_USBTEST,
     CSIO_OCF_SPITEST,
-    CSIO_OCF_MUX_BASE = 4,
-    CSIO_OCF_MUX_0 = CSIO_OCF_MUX_BASE,
+    CSIO_OCF_MUX_BASE = 8,
+    CSIO_OCF_MUX_UNDEF = CSIO_OCF_MUX_BASE,
+    CSIO_OCF_MUX_IPOS,
     CSIO_OCF_MUX_1,
     CSIO_OCF_MUX_2,
     CSIO_OCF_MUX_3,
 
-    CSIO_OCF_MAXNUM = 8   /* 3bits: custFlags */
+    CSIO_OCF_MAXNUM = 16   /* 4bits: custFlags */
 }CsioOpaqCustFlags_e;
 
 

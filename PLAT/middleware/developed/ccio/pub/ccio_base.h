@@ -72,17 +72,18 @@ extern "C" {
 #define CCIO_IP6_ID_MAXSIZE         8
 
 /* 5bits */
-#define CCIO_CHAN_MAXNUM            32
+#define CCIO_CHAN_MAXNUM            48
 #define CCIO_CHAN_USB_MAXNUM        6
 #define CCIO_CHAN_UART_MAXNUM       4
 #define CCIO_CHAN_SPI_MAXNUM        2
 #define CCIO_CHAN_I2S_MAXNUM        2
 #define CCIO_CHAN_I2C_MAXNUM        2
 #define CCIO_CHAN_VIRT_MAXNUM       8
-#define CCIO_CHAN_RADIO_MAXNUM      8
+#define CCIO_CHAN_RADIO_MAXNUM      16
 
-/* lan channel: usb/uart */
-#define CCIO_CHAN_LAN_MAXNUM       (CCIO_CHAN_USB_MAXNUM + CCIO_CHAN_UART_MAXNUM)
+/* lan channel: usb/uart/spi */
+#define CCIO_CHAN_LAN_MAXNUM       (CCIO_CHAN_USB_MAXNUM + CCIO_CHAN_UART_MAXNUM + CCIO_CHAN_SPI_MAXNUM)
+/* wan channel: radio(pdp) */
 #define CCIO_CHAN_WAN_MAXNUM       (CCIO_CHAN_RADIO_MAXNUM)
 
 #define CCIO_CHAN_ID_ANY            CCIO_CHAN_ID_UNDEF
@@ -116,18 +117,20 @@ extern "C" {
 #define CCIO_DEV_NO_MAX_I2S         CCIO_DEV_NO_MAX(CCIO_DEV_NO_BASE_I2S, CCIO_CHAN_I2S_MAXNUM)
 
 /*
- *  * 14~15 is reserved for other hw type, such as i2c, sdio...
+ *  * 14~23 is reserved for other hw type, such as i2c, sdio...
  */
 
-/* VIRTUAL: 16-23 */
-#define CCIO_DEV_NO_BASE_VIRT       16
+/* VIRTUAL: 24-31 */
+#define CCIO_DEV_NO_BASE_VIRT       24
 #define CCIO_DEV_NO_MAX_VIRT        CCIO_DEV_NO_MAX(CCIO_DEV_NO_BASE_VIRT, CCIO_CHAN_VIRT_MAXNUM)
 
-/* RADIO: 24-31 */
-#define CCIO_DEV_NO_BASE_RADIO      24
+/* stricted by 'pendTccm', thus, lan maxDevNo = 31 */
+
+/* RADIO: 32-47 */
+#define CCIO_DEV_NO_BASE_RADIO      32
 #define CCIO_DEV_NO_MAX_RADIO       CCIO_DEV_NO_MAX(CCIO_DEV_NO_BASE_RADIO, CCIO_CHAN_RADIO_MAXNUM)
 
-/* RSVD for future: 96-255 */
+/* RSVD for future: 48-255 */
 
 
 #define CCIO_DEV_ID_BIT_MAXNUM      32
@@ -136,7 +139,7 @@ extern "C" {
 #define CCIO_DEV_SUBTYPE_BIT_MAXNUM 4   /* bit14~17 */
 #define CCIO_DEV_TYPE_BIT_MAXNUM    4   /* bit18~21 */
 #define CCIO_DEV_HWTYPE_BIT_MAXNUM  4   /* bit22~25 */
-#define CCIO_DEV_RSVD_BIT_MAXNUM    3   /* bit26~28 */
+#define CCIO_DEV_RSVD_BIT_MAXNUM    6   /* bit26~31 */
 
 #define CCIO_DEV_NO_BIT_BEGIN       0
 #define CCIO_DEV_LLSN_BIT_BEGIN     8

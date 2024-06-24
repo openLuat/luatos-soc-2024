@@ -27,7 +27,6 @@
 #else
 #define AP_PKGIMG_LIMIT_SIZE (0x134000)
 #endif
-
 #if (defined MID_FEATURE_MODE) || (defined GCF_FEATURE_MODE)
 #define AP_PKGIMG_LNA (0x00874000)
 #define CP_PKGIMG_LIMIT_SIZE (0x5a000)

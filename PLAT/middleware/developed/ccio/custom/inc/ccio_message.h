@@ -202,7 +202,6 @@ int32_t ccioBuildMsgSerlDtrChg(CcioChanMessage_t *chmsg, CcioChanMessageId_e msg
 int32_t ccioBuildMsgSerlStateSet(CcioChanMessage_t *chmsg, CcioChanMessageId_e msgId, CcioSerlState_t *serlState);
 int32_t ccioBuildMsgUlfcMemEvent(CcioChanMessage_t *chmsg, CcioChanMessageId_e msgId, CcioUlfcMemEvent_t *ulfcMemEvt);
 int32_t ccioBuildMsgDlfcMemEvent(CcioChanMessage_t *chmsg, CcioChanMessageId_e msgId, CcioDlfcMemEvent_t *dlfcMemEvt);
-int32_t ccioBuildMsgTfcPolicyEnable(CcioChanMessage_t *chmsg, CcioChanMessageId_e msgId, CcioTfcPolicyEnable_t *tfcEnable);
 int32_t ccioBuildMsgRbufAlert(CcioChanMessage_t *chmsg, CcioChanMessageId_e msgId, CcioDsaRbufAlert_t *rbufAlert);
 
 int32_t ccioBuildMsgWanMediaNotif(CcioChanMessage_t *chmsg, CcioChanMessageId_e msgId, CcioDsaWanMediaNotif_t *dsaWanNotif);

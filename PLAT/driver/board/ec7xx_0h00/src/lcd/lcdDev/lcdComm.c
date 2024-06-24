@@ -51,12 +51,12 @@ DmaTransferConfig_t lcdDmaTxCfg =
   \brief       
   \return
 */
-static bool isFrameBusWaiting = false;
+static bool isFrameLspitransDone = false;
 static lcd_usp_cb user_usp_cb = NULL;
 static void spiEventHandler(void)
 {
     LSPI2->STAS |= (1<<31);
-    isFrameBusWaiting = false;
+    isFrameLspitransDone = true;
     if(user_usp_cb) user_usp_cb(LSPI2->STAS);
     #ifdef LCD_BL_PWM_ENABLE
     bus_cost_ms = millis()-cost_ms;
@@ -67,7 +67,7 @@ static void spiEventHandler(void)
   \brief       
   \return
 */
-static bool isFrameDmaWaiting = false;
+static bool isFrameDmatransDone = false;
 static lcd_dma_cb user_dma_cb = NULL;
 static void dmaEventHandler(uint32_t event)
 {
@@ -77,7 +77,7 @@ static void dmaEventHandler(uint32_t event)
             #ifdef LCD_BL_PWM_ENABLE
             dma_cost_ms = millis()-cost_ms;
             #endif
-            isFrameDmaWaiting = false;
+            isFrameDmatransDone = true;
             if(user_dma_cb){
                 user_dma_cb(event);
             } 
@@ -328,8 +328,6 @@ int spidmaTrans(lcdDev_t* lcd,void *sourceAddress,uint32_t totalLength)
     }
     dmaStartStop(true);
     // DMA_loadChannelDescriptorAndRun(DMA_INSTANCE_MP, lcdDmaTxCh, lcdDmaTxDesc);
-    isFrameBusWaiting = true;
-    isFrameDmaWaiting = true;
     #ifdef LCD_BL_PWM_ENABLE
     // LCD_TRACE(spidmaTrans, 8, "%d,%d;%dx%d+%d=%d,0x%X->0x%X",  \
     //         cost_ms, bus_cost_ms, package, ret, res, totalLength, reg, LSPI2->STAS);
@@ -349,35 +347,6 @@ int lspiWrite(uint32_t data)
     {    
         lspiDmaCtrl.txDmaReqEn = 0;
         lcdDrv->ctrl(LSPI_CTRL_DMA_CTRL, 0);
-
-        // lspiDataFmt.wordSize = 31;  
-        // lspiDataFmt.txPack = 0;
-        // lcdDrv->ctrl(LSPI_CTRL_DATA_FORMAT, 0);  
-
-        // lspiDataFmt.wordSize = 15;
-        // lspiDataFmt.txPack = 1;
-        // lcdDrv->ctrl(LSPI_CTRL_DATA_FORMAT, 0);
-        
-        // lspiCtrl.datSrc = 1;        // 0: data from camera; 1: data from memory
-        // lspiCtrl.colorModeIn = 3;   // RGB565
-        // lspiCtrl.colorModeOut = 1;  // RGB565
-        // lcdDrv->ctrl(LSPI_CTRL_CTRL, 0);
-        
-        // lspiInfo.frameHeight = 1;           //320; // frame input height
-        // lspiInfo.frameWidth = 1;            //240; // frame input width
-        // lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO, 0);
-        
-        // lspiScaleInfo.rowScaleFrac = 0;
-        // lspiScaleInfo.colScaleFrac = 0;
-        // lcdDrv->ctrl(LSPI_CTRL_SCALE_INFO, 0);
-
-        // lspiTailorInfo.tailorLeft = 0;      // frame output height
-        // lspiTailorInfo.tailorRight = 0;     // frame output width
-        // lcdDrv->ctrl(LSPI_CTRL_TAILOR_INFO, 0);
-        
-        // lspiFrameInfoOut.frameHeightOut = 1;    // frame output height
-        // lspiFrameInfoOut.frameWidthOut = 1;     // frame output width
-        // lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO_OUT, 0);
     }
 
     lspiCmdCtrl.wrRdn = 1;      // 1: wr   0: rd

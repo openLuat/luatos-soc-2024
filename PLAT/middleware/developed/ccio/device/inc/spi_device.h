@@ -49,10 +49,9 @@ typedef struct
 {
     uint8_t    mainUsage;       /**< refer to 'CsioDevType_e' */
     uint8_t    bmCreateFlag;    /**< refer to 'CcioTaskOperFlag_e', bitmap type */
-    uint8_t    rbufFlags   :4;  /**< which rbuf will be used? refer to 'CcioRbufUsage_e' */
-    uint8_t    custFlags   :3;  /**< flags for customers' private purpose */
-    uint8_t    rsvdBits    :1;
-    uint8_t    rsvd;
+    uint16_t   rbufFlags   :4;  /**< which rbuf will be used? refer to 'CcioRbufUsage_e' */
+    uint16_t   custFlags   :4;  /**< flags for customers' private purpose */
+    uint16_t   rsvdBits    :8;
 }SpiDevConf_t;
 
 

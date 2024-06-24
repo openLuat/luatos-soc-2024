@@ -37,7 +37,7 @@ flash xip address(from ap/cp view): 0x00800000---0x00a00000
 #elif defined FEATURE_LESSLOG_ENABLE &&FEATURE_MOREROM_ENABLE
 0x0001a000          |---------------------------------|
                     |      cp img 336KB               |
-0x00072000          |---------------------------------|
+0x0006e000          |---------------------------------|
                     |      ap img 1248KB              |
 #else
 0x0001a000          |---------------------------------|
@@ -115,7 +115,6 @@ flash xip address(from ap/cp view): 0x00800000---0x00a00000
 #define FLASH_FS_REGION_START           (0x1e6000)
 #define FLASH_FS_REGION_END             (0x1f2000)
 #define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START) // 48KB
-
 #else//mini, mid ,ram or rom 
 
 #ifdef MID_FEATURE_MODE
@@ -200,7 +199,7 @@ flash xip address(from ap/cp view): 0x00800000---0x00a00000
 
 
 #ifdef FEATURE_FOTAPAR_ENABLE
-#if defined (MID_FEATURE_MODE) || (FEATURE_MOREROM_ENABLE)
+#if (defined MID_FEATURE_MODE) || (defined FEATURE_MOREROM_ENABLE)
 #define FLASH_FOTA_REGION_START         (0x1ca000)
 #define FLASH_FOTA_REGION_LEN           (0x28000)   //160KB
 #define FLASH_FOTA_REGION_END           (0x1f2000)
@@ -210,11 +209,12 @@ flash xip address(from ap/cp view): 0x00800000---0x00a00000
 #define FLASH_FOTA_REGION_LEN           (0x40000)//256KB
 #define FLASH_FOTA_REGION_END           (0x1f2000)
 #endif
+#else
+//fota addr and size
+#define FLASH_FOTA_REGION_START         (0x1b2000)
+#define FLASH_FOTA_REGION_LEN           (0x40000)//256KB
+#define FLASH_FOTA_REGION_END           (0x1f2000)
 #endif
-
-
-
-
 
 
 //ap reliable addr and size
@@ -282,20 +282,37 @@ flash xip address(from ap/cp view): 0x00800000---0x00a00000
 #define SD_DATA_LOAD_ADDR               (0x00000000)
 #define SD_DATA_LOAD_SIZE               (0x100000)//1MB
 
-
-
-
-/*temp add here, need handle from caller !!!!*/
-
-
-
-// 512KB flash dump area for 8M flash
-#define FLASH_EXCEP_DUMP_ADDR            0x0
-#define FLASH_EXCEP_DUMP_SIZE            0x0
-#define FLASH_EXCEP_DUMP_SECTOR_NUM      0x0
+// Flash Dump Macros
+#define FLASH_EXCEP_DUMP_ADDR            (FLASH_FOTA_REGION_END - FLASH_EXCEP_DUMP_SIZE)
+#define FLASH_EXCEP_DUMP_SIZE            0x4000
+#define FLASH_EXCEP_DUMP_SECTOR_NUM      0x4
 #define FLASH_EXCEP_KEY_INFO_ADDR        0x0
 #define FLASH_EXCEP_KEY_INFO_LEN         0x0
 
+#if ((FLASH_EXCEP_DUMP_ADDR)>=(FLASH_FOTA_REGION_START)) && ((FLASH_EXCEP_DUMP_ADDR)<(FLASH_FOTA_REGION_END-0xB000))
+#error "Vaild excep dump area in FOTA region is [FLASH_FOTA_REGION_END-0xB000,FLASH_FOTA_REGION_END]."
+#endif
+
+
+#ifdef FEATURE_EXCEPTION_FLASH_DUMP_ENABLE
+/*
+ *	BaseAddress is FLASH_EXCEP_DUMP_ADDR and the dump space is FLASH_EXCEP_DUMP_SIZE.  
+ *	offset 0                   offset 0x1000	          offset 0x3000
+ *	|--------------------------|--------------------------|--------------------------|
+ *	| 1K PLAT + 1K PHY + 2K PS |         8K UNILOG        |         4K CUST          |
+ *	|--------------------------|--------------------------|--------------------------|
+ */
+#define FLASH_EXCEP_DUMP_ADDR_OFFSET_PLAT    0x0000
+#define FLASH_EXCEP_DUMP_ADDR_OFFSET_PHY     0x0400
+#define FLASH_EXCEP_DUMP_ADDR_OFFSET_PS      0x0800
+#define FLASH_EXCEP_DUMP_ADDR_OFFSET_UNILOG  0x1000
+#define FLASH_EXCEP_DUMP_ADDR_OFFSET_CUST    0x3000
+#define FLASH_EXCEP_DUMP_SPACE_LIMIT_PLAT    (FLASH_EXCEP_DUMP_ADDR_OFFSET_PHY - FLASH_EXCEP_DUMP_ADDR_OFFSET_PLAT)
+#define FLASH_EXCEP_DUMP_SPACE_LIMIT_PHY     (FLASH_EXCEP_DUMP_ADDR_OFFSET_PS - FLASH_EXCEP_DUMP_ADDR_OFFSET_PHY)
+#define FLASH_EXCEP_DUMP_SPACE_LIMIT_PS      (FLASH_EXCEP_DUMP_ADDR_OFFSET_UNILOG - FLASH_EXCEP_DUMP_ADDR_OFFSET_PS)
+#define FLASH_EXCEP_DUMP_SPACE_LIMIT_UNILOG  (FLASH_EXCEP_DUMP_ADDR_OFFSET_CUST - FLASH_EXCEP_DUMP_ADDR_OFFSET_UNILOG)
+#define FLASH_EXCEP_DUMP_CUST_SPACE_LIMIT    (0x1000) /* Customer can change this macro depend on its real needs */
+#endif
 
 
 

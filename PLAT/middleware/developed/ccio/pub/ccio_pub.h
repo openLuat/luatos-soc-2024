@@ -188,8 +188,8 @@ typedef struct CcioDevice
     uint32_t needCleanRb   :1;
     uint32_t waitCleanUlpcb:1;
     uint32_t codecType     :1;
-    uint32_t custFlags     :3;  /* flags for customers' private purpose */
-    uint32_t rsvBits2      :22;
+    uint32_t custFlags     :4;  /* flags for customers' private purpose */
+    uint32_t rsvBits2      :21;
     void    *semaId;            /* for sync, 'osSemaphoreId_t', via driver */
     void    *chent;             /* for fast accessing, via monitor */
 
@@ -198,8 +198,9 @@ typedef struct CcioDevice
     chdevExecFunc        chdevExecFn;    /* via driver */
     chdevStatusCallback  chdevStatusCb;  /* via monitor */
 
-    void  *txHead;     /* chain head for tx dlpdu, via driver */
-    void  *txTail;     /* chain tail for tx dlpdu, via driver */
+    void      *txHead;     /* chain head for tx dlpdu, via driver */
+    void      *txTail;     /* chain tail for tx dlpdu, via driver */
+    uint32_t   txCount;    /* chain node count */
 
     void  *extras;     /* privacy field for driver. */
 }CcioDevice_t;

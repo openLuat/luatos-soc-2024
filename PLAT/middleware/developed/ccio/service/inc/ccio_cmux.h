@@ -30,6 +30,16 @@ extern "C" {
 /*----------------------------------------------------------------------------*
  *                    MACROS                                                  *
  *----------------------------------------------------------------------------*/
+// the errno of the frames
+typedef enum _EPAT_CmuxFrameErrNo
+{
+    CMUX_FEN_EOK    = 0x0,     /* no error */
+    CMUX_FEN_ERR    = 0x1,     /* general error */
+    CMUX_FEN_EFCS   = 0x2,     /* bad fcs */
+    CMUX_FEN_EEF    = 0x3,     /* incorrect end flag */
+
+    CMUX_FEN_MAXNO  = 0xFF
+}CmuxFrameErrNo_e;
 
 #define CMUX_FRAME_HDR_MINSIZE  4
 #define CMUX_FRAME_HDR_MAXSIZE  5
@@ -187,8 +197,27 @@ typedef struct __PACKED
  *                    GLOBAL FUNCTIONS DECLEARATION                           *
  *----------------------------------------------------------------------------*/
 
+/**
+ * @brief cmuxFrameDecap(UlPduBlockList_t *list, CmuxFrameDesc_t *desc);
+ * @details extract a complete cmux frame from ulpdu list every time and no frame format any more
+ *
+ * @param list    The received uplink octect stream
+ * @param desc    description of the cmux frame
+ * @return 0 succ; < 0 failure with errno.
+ */
 int32_t cmuxFrameDecap(UlPduBlockList_t *list, CmuxFrameDesc_t *desc);
-int32_t cmuxFrameEncap(DlPduBlock_t *dlpdu, uint8_t initiator, uint8_t dlci, uint8_t type);
+
+/**
+ * @brief cmuxFrameEncap(DlPduBlock_t **dlpdu, uint8_t initiator, uint8_t dlci, uint8_t type);
+ * @details set cmux frame format for output data
+ *
+ * @param dlpdu      the output data to be set format and the remaining data to be set next time for memory lack if *dlpdu != NULL
+ * @param initiator  the device is an initiator side or not?
+ * @param dlci       index of cmux dlc
+ * @param type       frame type in frame format
+ * @return !NULL the output data with cmux format; NULL failure with errno.
+ */
+DlPduBlock_t* cmuxFrameEncap(DlPduBlock_t **dlpdu, uint8_t initiator, uint8_t dlci, uint8_t type);
 
 
 #ifdef __cplusplus
