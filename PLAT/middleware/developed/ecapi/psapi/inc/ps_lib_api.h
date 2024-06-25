@@ -1402,5 +1402,14 @@ CmsRetId appSmsGetMemStorageInfoSync(UINT8 smsMemType, UINT8 *pTotalNum, UINT8 *
 
 #endif
 
+/**
+  \fn          BOOL appSetCloudImeiNum(CHAR* imei)
+  \brief       Send cmi request to set cloud IMEI(the IMEI is composed of 15 digits)
+  \param[in]   CHAR* imei point to IMEI
+  \returns     true---success
+*/
+BOOL appSetCloudImeiNum(CHAR* imei);
+
+
 #endif
 
