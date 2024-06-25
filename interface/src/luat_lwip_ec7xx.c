@@ -3,7 +3,6 @@
 #include "luat_mcu.h"
 #include "luat_rtos.h"
 
-#include "luat_rtos.h"
 #include "luat_crypto.h"
 #include "luat_mem.h"
 #include "mbedtls/debug.h"
@@ -15,6 +14,7 @@
 #include "udp.h"
 #include "pssys.h"
 #include "api.h"
+#if (defined LUAT_USE_LWIP) || (defined __LUATOS__)
 #ifndef SOCKET_BUF_LEN
 #define SOCKET_BUF_LEN	(3 * TCP_MSS)
 #endif
@@ -2153,3 +2153,5 @@ int net_lwip_check_netif_ready(uint8_t adapter_index)
 {
 	return prvlwip.netif_network_ready;
 }
+
+#endif
