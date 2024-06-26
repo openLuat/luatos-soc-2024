@@ -1158,6 +1158,11 @@ PLAT_BL_CIRAM_FLASH_TEXT void BSP_LoadPlatConfigFromRawFlash(void)
 
     }
 
+#ifdef __USER_CODE__
+    g_rawFlashPlatConfig.usbNet = soc_user_usb_eth_mode();
+    g_rawFlashPlatConfig.pmuInCdrx = soc_user_cdrx_pmu_mode();
+    g_rawFlashPlatConfig.wfiMode = soc_user_wfi_mode();
+#endif
 }
 
 plat_config_raw_flash_t* BSP_GetRawFlashPlatConfig(void)
