@@ -24,7 +24,7 @@
 #include "luat_gpio.h"
 
 // ws2812b测试 所用的gpio编号
-#define TEST_PIN 	HAL_GPIO_27
+#define TEST_PIN 	HAL_GPIO_8
 
 static void task_test_ws2812(void *param)
 {
