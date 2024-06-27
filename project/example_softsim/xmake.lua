@@ -10,7 +10,8 @@ target(project_name,function()
     set_targetdir("$(buildir)/".. project_name .. "/")
     description_csdk()
     set_warnings("error")
-
+	--rndis
+	add_defines("LUAT_USE_RNDIS","LUAT_USE_RNDIS_NAT_MODE",{public = true})
     --加入代码和头文件
     add_includedirs("./inc",{public = true})
     add_files("./src/*.c",{public = true})
