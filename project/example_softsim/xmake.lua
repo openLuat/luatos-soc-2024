@@ -20,6 +20,6 @@ target(project_name,function()
 	if chip_target == "ec716s" then
 		add_linkgroups("tgt_app_service_lto", {whole = true,public = true})
 	else
-		add_linkgroups("tgt_app_service", {whole = true,public = true})
+		add_linkgroups("tgt_app_service_716e", {whole = true,public = true})
 	end
 end)
