@@ -69,11 +69,13 @@ static void task1(void *args)
         luat_pm_force(LUAT_PM_SLEEP_MODE_DEEP);
         //luat_pm_force(LUAT_PM_SLEEP_MODE_STANDBY);	//718S和716S开启最低功耗休眠需要额外占用OTA 96Kflash空间
         #endif
-        //早期模块WAKEPAD4设置成上拉关闭wakeup功能，在全IO开发板上功耗最低，已经废弃
-//        gpio_cfg.pin = HAL_WAKEUP_4;
-//        gpio_cfg.mode = LUAT_GPIO_INPUT;
-//        gpio_cfg.pull = LUAT_GPIO_PULLUP;
-//        luat_gpio_open(&gpio_cfg);
+#ifdef TYPE_EC718P
+        //780EP模块WAKEPAD4设置成上拉关闭wakeup功能，在全IO开发板上功耗最低，如果是其他板子，看情况注释掉
+        gpio_cfg.pin = HAL_WAKEUP_4;
+        gpio_cfg.mode = LUAT_GPIO_INPUT;
+        gpio_cfg.pull = LUAT_GPIO_PULLUP;
+        luat_gpio_open(&gpio_cfg);
+#endif
         luat_gpio_close(HAL_WAKEUP_PWRKEY);	//如果powerkey接地了，还需要再关闭powerkey上拉功能
 #ifdef CHIP_EC716
         luat_gpio_close(HAL_GPIO_16);	//关闭能省0.5uA
