@@ -174,7 +174,7 @@ static void luat_mqtt_cb(luat_mqtt_ctrl_t *ctrl, uint16_t event){
 		// 数据下行
 		uint16_t topic_len = mqtt_parse_pub_topic_ptr(ctrl->mqtt_packet_buffer, &ptr);
 		LUAT_DEBUG_PRINT("downlink topic: %.*s",topic_len,ptr);
-		uint16_t payload_len = mqtt_parse_pub_msg_ptr(ctrl->mqtt_packet_buffer, &ptr);
+		uint32_t payload_len = mqtt_parse_pub_msg_ptr(ctrl->mqtt_packet_buffer, &ptr);
 		LUAT_DEBUG_PRINT("downlink payload: %.*s",payload_len,ptr);
 		// 这里添加自己的业务逻辑, 下面是演示, 直接透传到UART
 		// 将MQTT数据透传到UART
