@@ -28,6 +28,9 @@
 
 #include "mem_map.h"
 
+// 使用前先详细阅读 readme.md 与 xmake.lua 
+// 使用前先详细阅读 readme.md 与 xmake.lua 
+// 使用前先详细阅读 readme.md 与 xmake.lua 
 
 static void flash_example(void *param)
 {

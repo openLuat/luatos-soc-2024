@@ -18,8 +18,7 @@ target(project_name,function()
        add_defines("AP_FLASH_LOAD_SIZE=0x1b7000",{public = true})
        add_defines("AP_PKGIMG_LIMIT_SIZE=0x1b7000",{public = true})
 	   -- add_defines("FULL_OTA_SAVE_ADDR=0x235000",{public = true}) -- FULL OTA才需要，这里不需要
-    end
-	if chip_target == "ec718s" or chip_target == "ec716s" then
+    elseif chip_target == "ec718s" or chip_target == "ec716s" then
 	-- 718S/716S程序区缩小到130000，剩余134000 - 130000 = 4000 16KB空间为用户区，如果开启WIFI扫描(低速编译disable)就是剩余132000 - 130000 = 2000 8KB空间为用户区
        add_defines("AP_FLASH_LOAD_SIZE=0x130000",{public = true})
        add_defines("AP_PKGIMG_LIMIT_SIZE=0x130000",{public = true})
