@@ -2118,7 +2118,7 @@ void net_lwip_set_rx_fast_ack(uint8_t adapter_index, uint8_t onoff)
 
 void net_lwip_set_tcp_rx_cache(uint8_t adapter_index, uint16_t tcp_mss_num)
 {
-	if (tcp_mss_num > 32)
+	if (tcp_mss_num > 48)
 	{
 		return;
 	}
