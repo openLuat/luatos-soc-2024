@@ -42,8 +42,12 @@ luat_rtos_task_handle task1_handle;
     718P调用gpio.setup配置中断时的IO编号对应是20--42，21--43，22--44
 */
 
+
+
+uint8_t soc_user_wfi_mode(void) {return 1;}
 static void task1(void *args)
 {
+	luat_debug_set_fault_mode( LUAT_DEBUG_FAULT_HANG_RESET);
 	luat_gpio_cfg_t gpio_cfg = {0};
     while(1)
     {
@@ -70,11 +74,37 @@ static void task1(void *args)
         //luat_pm_force(LUAT_PM_SLEEP_MODE_STANDBY);	//718S和716S开启最低功耗休眠需要额外占用OTA 96Kflash空间
         #endif
 #ifdef TYPE_EC718P
-        //780EP模块WAKEPAD4设置成上拉关闭wakeup功能，在全IO开发板上功耗最低，如果是其他板子，看情况注释掉
+        //780EP模块WAKEPAD设置成下面的上下拉配置，在全IO开发板上功耗相对较低，如果是其他板子，需要看具体情况配置
         gpio_cfg.pin = HAL_WAKEUP_4;
         gpio_cfg.mode = LUAT_GPIO_INPUT;
         gpio_cfg.pull = LUAT_GPIO_PULLUP;
         luat_gpio_open(&gpio_cfg);
+
+        gpio_cfg.pin = HAL_WAKEUP_0;
+        gpio_cfg.mode = LUAT_GPIO_INPUT;
+        gpio_cfg.pull = LUAT_GPIO_PULLUP;
+        luat_gpio_open(&gpio_cfg);
+
+        gpio_cfg.pin = HAL_WAKEUP_3;
+        gpio_cfg.mode = LUAT_GPIO_INPUT;
+        gpio_cfg.pull = LUAT_GPIO_PULLUP;
+        luat_gpio_open(&gpio_cfg);
+
+        gpio_cfg.pin = HAL_WAKEUP_2;
+        gpio_cfg.mode = LUAT_GPIO_INPUT;
+        gpio_cfg.pull = LUAT_GPIO_PULLDOWN;
+        luat_gpio_open(&gpio_cfg);
+
+        gpio_cfg.pin = HAL_WAKEUP_1;
+        gpio_cfg.mode = LUAT_GPIO_INPUT;
+        gpio_cfg.pull = LUAT_GPIO_PULLDOWN;
+        luat_gpio_open(&gpio_cfg);
+
+        gpio_cfg.pin = HAL_WAKEUP_5;
+        gpio_cfg.mode = LUAT_GPIO_INPUT;
+        gpio_cfg.pull = LUAT_GPIO_PULLDOWN;
+        luat_gpio_open(&gpio_cfg);
+        luat_gpio_close(HAL_WAKEUP_CHARGE);
 #endif
         luat_gpio_close(HAL_WAKEUP_PWRKEY);	//如果powerkey接地了，还需要再关闭powerkey上拉功能
 #ifdef CHIP_EC716
@@ -86,10 +116,8 @@ static void task1(void *args)
     }
 }
 
-
 static void luat_example_init(void)
 {
-    luat_debug_set_fault_mode( LUAT_DEBUG_FAULT_HANG_RESET);
     luat_rtos_task_create(&task1_handle, 2*1024, 50, "task1", task1, NULL, 0);
 }
 
