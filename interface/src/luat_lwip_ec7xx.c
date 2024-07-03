@@ -368,14 +368,14 @@ static void net_lwip_create_socket_now(uint8_t adapter_index, uint8_t socket_id)
 static void platform_send_event(void *p, uint32_t id, uint32_t param1, uint32_t param2, uint32_t param3);
 
 
-static int net_lwip_del_data_cache(void *p, void *u)
+static int32_t net_lwip_del_data_cache(void *p, void *u)
 {
 	socket_data_t *pdata = (socket_data_t *)p;
 	free(pdata->data);
 	return LIST_DEL;
 }
 
-static int net_lwip_next_data_cache(void *p, void *u)
+static int32_t net_lwip_next_data_cache(void *p, void *u)
 {
 	socket_ctrl_t *socket = (socket_ctrl_t *)u;
 	socket_data_t *pdata = (socket_data_t *)p;
@@ -389,7 +389,7 @@ static int net_lwip_next_data_cache(void *p, void *u)
 }
 
 
-static socket_data_t * net_lwip_create_data_node(uint8_t socket_id, uint8_t *data, uint32_t len, luat_ip_addr_t *remote_ip, uint16_t remote_port)
+static socket_data_t * net_lwip_create_data_node(uint8_t socket_id, const uint8_t *data, uint32_t len, const luat_ip_addr_t *remote_ip, uint16_t remote_port)
 {
 	socket_data_t *p = (socket_data_t *)malloc(sizeof(socket_data_t));
 	if (p)
@@ -437,12 +437,12 @@ static void net_lwip_callback_to_nw_task(uint8_t adapter_index, uint32_t event_i
 	{
 		if (event_id != EV_NW_SOCKET_CLOSE_OK)
 		{
-			event.Param3 = prvlwip.socket[param1].param;
+			event.Param3 = (uint32_t)prvlwip.socket[param1].param;
 			param.tag = prvlwip.socket[param1].tag;
 		}
 		else
 		{
-			event.Param3 = ((luat_network_cb_param_t *)param3)->param;
+			event.Param3 = (uint32_t)(((luat_network_cb_param_t *)param3)->param);
 			param.tag = ((luat_network_cb_param_t *)param3)->tag;
 		}
 	}
@@ -527,7 +527,7 @@ static void net_lwip_tcp_close_done(uint8_t adapter_index, int socket_id, uint8_
 	SOCKET_UNLOCK(socket_id);
 	if (notify)
 	{
-		net_lwip_callback_to_nw_task(adapter_index, EV_NW_SOCKET_CLOSE_OK, socket_id, 0, &cb_param);
+		net_lwip_callback_to_nw_task(adapter_index, EV_NW_SOCKET_CLOSE_OK, socket_id, 0, (uint32_t)&cb_param);
 	}
 }
 
@@ -634,7 +634,7 @@ SOCEKT_ERROR:
 	return ERR_OK;
 }
 
-static err_t net_lwip_tcp_err_cb(void *arg, err_t err)
+static void net_lwip_tcp_err_cb(void *arg, err_t err)
 {
 	int socket_id = ((uint32_t)arg) & 0x0000ffff;
 	uint8_t adapter_index = ((uint32_t)arg) >> 16;
@@ -650,7 +650,6 @@ static err_t net_lwip_tcp_err_cb(void *arg, err_t err)
 		NET_DBG("adapter %d socket %d not closing, but error %d", adapter_index, socket_id, err);
 		net_lwip_tcp_error(adapter_index, socket_id);
 	}
-	return 0;
 }
 
 static err_t net_lwip_tcp_fast_accept_cb(void *arg, struct tcp_pcb *newpcb, err_t err)
@@ -675,14 +674,14 @@ static err_t net_lwip_tcp_fast_accept_cb(void *arg, struct tcp_pcb *newpcb, err_
 	return ERR_OK;
 }
 
-static err_t net_lwip_tcp_accept_cb(void *arg, struct tcp_pcb *newpcb, err_t err)
-{
-	int socket_id = ((uint32_t)arg) & 0x0000ffff;
-	uint8_t adapter_index = ((uint32_t)arg) >> 16;
-	return ERR_OK;
-}
+//static err_t net_lwip_tcp_accept_cb(void *arg, struct tcp_pcb *newpcb, err_t err)
+//{
+////	int socket_id = ((uint32_t)arg) & 0x0000ffff;
+////	uint8_t adapter_index = ((uint32_t)arg) >> 16;
+//	return ERR_OK;
+//}
 
-static err_t net_lwip_udp_recv_cb(void *arg, struct udp_pcb *pcb, struct pbuf *p,
+static int net_lwip_udp_recv_cb(void *arg, struct udp_pcb *pcb, struct pbuf *p,
     const ip_addr_t *addr, u16_t port)
 {
 	int socket_id = ((uint32_t)arg) & 0x0000ffff;
@@ -720,11 +719,11 @@ static int32_t net_lwip_dns_check_result(void *data, void *param)
 			{
 				ip_result[i] = require->ip_result[i];
 			}
-			net_lwip_callback_to_nw_task(require->adapter_index, EV_NW_DNS_RESULT, require->result, ip_result, require->param);
+			net_lwip_callback_to_nw_task(require->adapter_index, EV_NW_DNS_RESULT, require->result, (uint32_t)ip_result, (uint32_t)require->param);
 		}
 		else
 		{
-			net_lwip_callback_to_nw_task(require->adapter_index, EV_NW_DNS_RESULT, 0, 0, require->param);
+			net_lwip_callback_to_nw_task(require->adapter_index, EV_NW_DNS_RESULT, 0, 0, (uint32_t)require->param);
 		}
 
 		return LIST_DEL;
@@ -747,7 +746,7 @@ ip_addr_t *net_lwip_get_ip6(void)
 	}
 }
 
-static err_t net_lwip_dns_recv_cb(void *arg, struct udp_pcb *pcb, struct pbuf *p,
+static int net_lwip_dns_recv_cb(void *arg, struct udp_pcb *pcb, struct pbuf *p,
     const ip_addr_t *addr, u16_t port)
 {
 	Buffer_Struct msg_buf;
@@ -784,7 +783,7 @@ static err_t net_lwip_dns_recv_cb(void *arg, struct udp_pcb *pcb, struct pbuf *p
 							prvlwip.dns_udp->local_ip = *t_ip;
 						}
 					}
-					err_t err = udp_sendto(prvlwip.dns_udp, out_p, &prvlwip.dns_client.dns_server[i], DNS_SERVER_PORT);
+					udp_sendto(prvlwip.dns_udp, out_p, &prvlwip.dns_client.dns_server[i], DNS_SERVER_PORT);
 					pbuf_free(out_p);
 				}
 				OS_DeInitBuffer(&tx_msg_buf);
@@ -827,7 +826,6 @@ static int net_lwip_get_full_ip_info(luat_ip_addr_t *ip, luat_ip_addr_t *submask
 static void net_lwip_dns_tx_next(Buffer_Struct *tx_msg_buf)
 {
 	int i;
-	err_t err;
 	struct pbuf *p;
 	dns_run(&prvlwip.dns_client, NULL, tx_msg_buf, &i);
 	if (tx_msg_buf->Pos || prvlwip.dns_client.new_result)
@@ -853,7 +851,7 @@ static void net_lwip_dns_tx_next(Buffer_Struct *tx_msg_buf)
 				}
 			}
 
-			err = udp_sendto(prvlwip.dns_udp, p, &prvlwip.dns_client.dns_server[i], DNS_SERVER_PORT);
+			udp_sendto(prvlwip.dns_udp, p, &prvlwip.dns_client.dns_server[i], DNS_SERVER_PORT);
 			pbuf_free(p);
 		}
 		OS_DeInitBuffer(tx_msg_buf);
@@ -866,7 +864,7 @@ static void net_lwip_dns_tx_next(Buffer_Struct *tx_msg_buf)
 uint32_t net_lwip_rand()
 {
 	PV_Union uPV;
-	luat_crypto_trng(uPV.u8, 4);
+	luat_crypto_trng((char *)uPV.u8, 4);
 	return uPV.u32;
 }
 
@@ -919,17 +917,17 @@ static void net_lwip_close_tcp(int socket_id)
 
 static void net_lwip_task(void *param)
 {
-	luat_network_cb_param_t cb_param;
+//	luat_network_cb_param_t cb_param;
 	OS_EVENT event = *((OS_EVENT *)param);
 	free(param);
 	Buffer_Struct tx_msg_buf = {0,0,0};
-	HANDLE cur_task = luat_get_current_task();
-	struct netif *netif;
+//	HANDLE cur_task = luat_get_current_task();
+//	struct netif *netif;
 	socket_data_t *p;
 	ip_addr_t *p_ip, *local_ip;
 	struct pbuf *out_p;
-	int error, i;
-	PV_Union uPV;
+	int error;
+//	PV_Union uPV;
 //	uint8_t active_flag;
 	uint8_t socket_id;
 	uint8_t adapter_index;
@@ -1110,7 +1108,7 @@ static void net_lwip_task(void *param)
 		{
 			platform_start_timer(prvlwip.dns_timer, 1000, 1);
 		}
-		dns_require_ipv6(&prvlwip.dns_client, event.Param1, event.Param2, event.Param3, (event.ID - EV_LWIP_SOCKET_DNS));
+		dns_require_ipv6(&prvlwip.dns_client, (char *)event.Param1, (void *)event.Param2, event.Param3, (event.ID - EV_LWIP_SOCKET_DNS));
 		net_lwip_dns_tx_next(&tx_msg_buf);
 		break;
 	case EV_LWIP_SOCKET_LISTEN:
@@ -1124,7 +1122,7 @@ static void net_lwip_task(void *param)
         IP_SET_TYPE_VAL(prvlwip.socket[socket_id].pcb.tcp->local_ip,  IPADDR_TYPE_ANY);
         IP_SET_TYPE_VAL(prvlwip.socket[socket_id].pcb.tcp->remote_ip, IPADDR_TYPE_ANY);
         prvlwip.socket[socket_id].pcb.tcp->sockid = -1;
-        prvlwip.socket[socket_id].listen_tcp = tcp_listen_with_backlog(prvlwip.socket[socket_id].pcb.tcp, 1);
+        prvlwip.socket[socket_id].listen_tcp = (struct tcp_pcb_listen *)tcp_listen_with_backlog(prvlwip.socket[socket_id].pcb.tcp, 1);
         if (!prvlwip.socket[socket_id].listen_tcp) {
         	NET_DBG("socket %d listen failed");
         	net_lwip_tcp_error(adapter_index, socket_id);
@@ -1132,7 +1130,7 @@ static void net_lwip_task(void *param)
         	PV_Union uPV;
         	uPV.u16[0] = socket_id;
         	uPV.u16[1] = adapter_index;
-        	prvlwip.socket[socket_id].listen_tcp->callback_arg = uPV.u32;
+        	prvlwip.socket[socket_id].listen_tcp->callback_arg = uPV.p;
         	prvlwip.socket[socket_id].listen_tcp->accept = net_lwip_tcp_fast_accept_cb;
         	prvlwip.socket[socket_id].pcb.tcp = NULL;
         	net_lwip_callback_to_nw_task(adapter_index, EV_NW_SOCKET_LISTEN, socket_id, 0, 0);
@@ -1149,7 +1147,7 @@ static void net_lwip_task(void *param)
 		}
 		if (prvlwip.socket[socket_id].listen_tcp)
 		{
-			tcp_close(prvlwip.socket[socket_id].listen_tcp);
+			tcp_close((struct tcp_pcb *)prvlwip.socket[socket_id].listen_tcp);
 			prvlwip.socket[socket_id].listen_tcp = NULL;
 			if (prvlwip.socket[socket_id].pcb.tcp)
 			{
@@ -1310,7 +1308,7 @@ static void net_lwip_create_socket_now(uint8_t adapter_index, uint8_t socket_id)
 		{
 			prvlwip.socket[socket_id].pcb.udp->recv_arg = uPV.p;
 			prvlwip.socket[socket_id].pcb.udp->recv = net_lwip_udp_recv_cb;
-			prvlwip.socket[socket_id].pcb.udp->err_arg = 0xffffffff;
+			prvlwip.socket[socket_id].pcb.udp->err_arg = (void *)0xffffffff;
 			prvlwip.socket[socket_id].pcb.udp->so_options |= SOF_BROADCAST|SOF_REUSEADDR;
 		}
 		else
@@ -1381,7 +1379,7 @@ static int net_lwip_create_socket(uint8_t is_tcp, uint64_t *tag, void *param, ui
 			net_lwip_create_socket_now(index, socket_id);
 			return socket_id;
 		}
-		platform_send_event(prvlwip.task_handle, EV_LWIP_SOCKET_CREATE, socket_id, 0, user_data);
+		platform_send_event(prvlwip.task_handle, EV_LWIP_SOCKET_CREATE, socket_id, 0, (uint32_t)user_data);
 	}
 	else
 	{
@@ -1398,7 +1396,7 @@ static int net_lwip_socket_connect(int socket_id, uint64_t tag,  uint16_t local_
 	if (result) return result;
 	prvlwip.socket[socket_id].local_port = local_port;
 	prvlwip.socket[socket_id].remote_port = remote_port;
-	platform_send_event(prvlwip.task_handle, EV_LWIP_SOCKET_CONNECT, socket_id, remote_ip, user_data);
+	platform_send_event(prvlwip.task_handle, EV_LWIP_SOCKET_CONNECT, socket_id, (uint32_t)remote_ip, (uint32_t)user_data);
 	return 0;
 }
 //作为server绑定一个port，开始监听
@@ -1407,7 +1405,7 @@ static int net_lwip_socket_listen(int socket_id, uint64_t tag,  uint16_t local_p
 	int result = net_lwip_check_socket(user_data, socket_id, tag);
 	if (result) return result;
 	prvlwip.socket[socket_id].local_port = local_port;
-	platform_send_event(prvlwip.task_handle, EV_LWIP_SOCKET_LISTEN, socket_id, local_port, user_data);
+	platform_send_event(prvlwip.task_handle, EV_LWIP_SOCKET_LISTEN, socket_id, local_port, (uint32_t)user_data);
 	return 0;
 }
 //作为server接受一个client
@@ -1425,7 +1423,7 @@ static int net_lwip_socket_disconnect(int socket_id, uint64_t tag,  void *user_d
 	int result = net_lwip_check_socket(user_data, socket_id, tag);
 	if (result) return result;
 	prvlwip.socket[socket_id].state = 1;
-	platform_send_event(prvlwip.task_handle, EV_LWIP_SOCKET_CLOSE, socket_id, 1, user_data);
+	platform_send_event(prvlwip.task_handle, EV_LWIP_SOCKET_CLOSE, socket_id, 1, (uint32_t)user_data);
 	return 0;
 }
 
@@ -1434,7 +1432,7 @@ static int net_lwip_socket_force_close(int socket_id, void *user_data)
 	if (prvlwip.socket[socket_id].in_use && !prvlwip.socket[socket_id].state)
 	{
 		prvlwip.socket[socket_id].state = 1;
-		platform_send_event(prvlwip.task_handle, EV_LWIP_SOCKET_CLOSE, socket_id, 0, user_data);
+		platform_send_event(prvlwip.task_handle, EV_LWIP_SOCKET_CLOSE, socket_id, 0, (uint32_t)user_data);
 	}
 	return 0;
 }
@@ -1564,7 +1562,7 @@ static int net_lwip_socket_send(int socket_id, uint64_t tag, const uint8_t *buf,
 	}
 
 	SOCKET_UNLOCK(socket_id);
-	platform_send_event(prvlwip.task_handle, EV_LWIP_SOCKET_TX, socket_id, 0, user_data);
+	platform_send_event(prvlwip.task_handle, EV_LWIP_SOCKET_TX, socket_id, 0, (uint32_t)user_data);
 	result = len;
 	return result;
 }
@@ -1949,7 +1947,7 @@ static int net_lwip_dns(const char *domain_name, uint32_t len, void *param, void
 	if ((uint32_t)user_data >= NW_ADAPTER_INDEX_LWIP_NETIF_QTY) return -1;
 	char *prv_domain_name = (char *)zalloc(len + 1);
 	memcpy(prv_domain_name, domain_name, len);
-	platform_send_event(prvlwip.task_handle, EV_LWIP_SOCKET_DNS, prv_domain_name, param, user_data);
+	platform_send_event(prvlwip.task_handle, EV_LWIP_SOCKET_DNS, (uint32_t)prv_domain_name, (uint32_t)param, (uint32_t)user_data);
 	return 0;
 }
 
@@ -1958,7 +1956,7 @@ static int net_lwip_dns_ipv6(const char *domain_name, uint32_t len, void *param,
 	if ((uint32_t)user_data >= NW_ADAPTER_INDEX_LWIP_NETIF_QTY) return -1;
 	char *prv_domain_name = (char *)zalloc(len + 1);
 	memcpy(prv_domain_name, domain_name, len);
-	platform_send_event(prvlwip.task_handle, (prvlwip.ec618_ipv6.type != IPADDR_TYPE_V6)?EV_LWIP_SOCKET_DNS:EV_LWIP_SOCKET_DNS_IPV6, prv_domain_name, param, user_data);
+	platform_send_event(prvlwip.task_handle, (prvlwip.ec618_ipv6.type != IPADDR_TYPE_V6)?EV_LWIP_SOCKET_DNS:EV_LWIP_SOCKET_DNS_IPV6, (uint32_t)prv_domain_name, (uint32_t)param, (uint32_t)user_data);
 	return 0;
 }
 
@@ -1989,7 +1987,7 @@ int net_lwip_set_static_ip(luat_ip_addr_t *ip, luat_ip_addr_t *submask, luat_ip_
 	p_ip[1] = submask?(*submask):ip_addr_any_type;
 	p_ip[2] = gateway?(*gateway):ip_addr_any_type;
 	p_ip[3] = ipv6?(*ipv6):ip_addr_any_type;
-	platform_send_event(prvlwip.task_handle, EV_LWIP_NETIF_SET_IP, p_ip, ipv6, user_data);
+	platform_send_event(prvlwip.task_handle, EV_LWIP_NETIF_SET_IP, (uint32_t)p_ip, (uint32_t)ipv6, (uint32_t)user_data);
 	return 0;
 }
 
@@ -2041,7 +2039,7 @@ static network_adapter_info prv_net_lwip_adapter =
 
 void net_lwip_register_adapter(uint8_t adapter_index)
 {
-	network_register_adapter(adapter_index, &prv_net_lwip_adapter, adapter_index);
+	network_register_adapter(adapter_index, &prv_net_lwip_adapter, (void *)((uint32_t)adapter_index));
 }
 
 int net_lwip_check_all_ack(int socket_id)
@@ -2086,7 +2084,7 @@ void soc_lwip_init_hook(void)
 	prvlwip.task_handle = luat_get_current_task();
 	prvlwip.dns_udp = udp_new();
 	prvlwip.dns_udp->recv = net_lwip_dns_recv_cb;
-	prvlwip.dns_udp->err_arg = 0xffffffff;
+	prvlwip.dns_udp->err_arg = (void *)0xffffffff;
 	udp_bind(prvlwip.dns_udp, NULL, 55);
 	dns_init_client(&prvlwip.dns_client);
 }
