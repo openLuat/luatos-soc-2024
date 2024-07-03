@@ -15,19 +15,21 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 0x00002000          |---------------------------------|
                     |      fuse mirror 4KB            |
 0x00003000          |---------------------------------|
-                    |      bl 128KB                   |
+                    |      bl 124KB + 4KB             |
 0x00023000          |---------------------------------|
                     |      rel data(factory)20KB      |
 0x00028000          |---------------------------------|
                     |      cp img 640KB               |
 0x000C8000          |---------------------------------|
-                    |      app img 6468KB             |
-0x00719000          |---------------------------------|
+                    |      app img 6144KB             |
+0x006C8000          |---------------------------------|
+                    |      fota 600KB                 |
+0x0075E000          |---------------------------------|
+                    |      lfs  428KB                 |
+0x007C9000          |---------------------------------|
+                    |      kv   64KB                  |
+0x007D9000          |---------------------------------|
                     |      hib backup 96KB            |
-0x00731000          |---------------------------------|
-                    |      lfs  256KB                 |
-0x00771000          |---------------------------------|
-                    |      fota 512KB                 |
 0x007f1000          |---------------------------------|
                     |      rel data 52KB              |
 0x007fe000          |---------------------------------|
@@ -56,38 +58,48 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 
 //bl addr and size
 #define BOOTLOADER_FLASH_LOAD_ADDR              (0x00803000)
-#define BOOTLOADER_FLASH_LOAD_SIZE              (0x20000)//128kB, real region size, tool will check when zip TODO:ZIP
+#define BOOTLOADER_FLASH_LOAD_SIZE              (0x1f000)//128kB, real region size, tool will check when zip TODO:ZIP
 #define BOOTLOADER_FLASH_LOAD_UNZIP_SIZE        (0x22000)//136KB ,for ld
 
 //ap image addr and size
-
-#define AP_FLASH_LOAD_ADDR              (0x008C8000)
-#ifdef FEATURE_EXCEPTION_FLASH_DUMP_ENABLE
-#define AP_FLASH_LOAD_SIZE              (0x651000 - FLASH_EXCEP_DUMP_SIZE)//6468KB - 16KB
+#ifdef __USER_MAP_CONF_FILE__	//user config ap fota fs kv
+#include __USER_MAP_CONF_FILE__
 #else
-#define AP_FLASH_LOAD_SIZE              (0x651000)//6468KB
+#define AP_FLASH_LOAD_ADDR              (0x008C8000)
+#ifndef AP_FLASH_LOAD_SIZE
+#define AP_FLASH_LOAD_SIZE              (0x600000)//6m
 #endif
+#ifndef FULL_OTA_SAVE_ADDR
+#define FULL_OTA_SAVE_ADDR              (0x0)
+#endif
+
 #define AP_FLASH_LOAD_UNZIP_SIZE        (0x6D6000)//7000KB ,for ld
 
+//fota addr and size
+#define FLASH_FOTA_REGION_START         (0x6C8000)
+#define FLASH_FOTA_REGION_LEN           (0x96000)//600KB
+#define FLASH_FOTA_REGION_END           (0x75E000)
+
+//fs addr and size
+#define FLASH_FS_REGION_START           (0x75E000)
+#define FLASH_FS_REGION_END             (0x7C9000)
+#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START) // 428KB
+
+#define FLASH_FDB_REGION_START			(0x7C9000)//64KB
+#define FLASH_FDB_REGION_END            (0x7d9000)
 
 //hib bakcup addr and size
 #define FLASH_HIB_BACKUP_EXIST          (1)
 #define FLASH_MEM_BACKUP_ADDR           (AP_FLASH_XIP_ADDR+FLASH_MEM_BACKUP_NONXIP_ADDR)
-#define FLASH_MEM_BACKUP_NONXIP_ADDR    (0x719000)
+#define FLASH_MEM_BACKUP_NONXIP_ADDR    (0x7d9000)
 #define FLASH_MEM_BACKUP_SIZE           (0x18000)//96KB
 #define FLASH_MEM_BLOCK_SIZE            (0x6000)
 #define FLASH_MEM_BLOCK_CNT             (0x4)
 
-//fs addr and size
-#define FLASH_FS_REGION_START           (0x731000)
-#define FLASH_FS_REGION_END             (0x771000)
-#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START) // 256KB
 
-#ifdef FEATURE_FOTAPAR_ENABLE
-//fota addr and size
-#define FLASH_FOTA_REGION_START         (0x771000)
-#define FLASH_FOTA_REGION_LEN           (0x80000)//512KB
-#define FLASH_FOTA_REGION_END           (0x7f1000)
+
+
+
 #endif
 
 //ap reliable addr and size
@@ -125,11 +137,16 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 //#define BL_IMG_MERGE_ADDR               (0x00003000)
 
 // Flash Dump Macros
-#define FLASH_EXCEP_DUMP_ADDR            (AP_FLASH_LOAD_ADDR+AP_FLASH_LOAD_SIZE-AP_FLASH_XIP_ADDR)
+#define FLASH_EXCEP_DUMP_ADDR            (FLASH_FOTA_REGION_END - FLASH_EXCEP_DUMP_SIZE)
 #define FLASH_EXCEP_DUMP_SIZE            0x4000
 #define FLASH_EXCEP_DUMP_SECTOR_NUM      0x4
 #define FLASH_EXCEP_KEY_INFO_ADDR        0x0
 #define FLASH_EXCEP_KEY_INFO_LEN         0x0
+
+#if ((FLASH_EXCEP_DUMP_ADDR)>=(FLASH_FOTA_REGION_START)) && ((FLASH_EXCEP_DUMP_ADDR)<(FLASH_FOTA_REGION_END-0xB000))
+#error "Vaild excep dump area in FOTA region is [FLASH_FOTA_REGION_END-0xB000,FLASH_FOTA_REGION_END]."
+#endif
+
 
 #ifdef FEATURE_EXCEPTION_FLASH_DUMP_ENABLE
 /*
