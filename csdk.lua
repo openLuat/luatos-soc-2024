@@ -43,7 +43,7 @@ function description_common()
     set_values("csdk_root", csdk_root)
     set_values("luatos_root", luatos_root)
 
-	option("chip_target", {default = "ec718p", showmenu = true, values={"ec716e","ec716s","ec718s","ec718e","ec718p","ec718pv"},description = "chip target"})
+	option("chip_target", {default = "ec718p", showmenu = true, values={"ec716e","ec716s","ec718s","ec718e","ec718p","ec718pv","ec718u"},description = "chip target"})
     add_options("chip_target")
     if has_config("chip_target") then chip_target = get_config("chip_target") end
 
@@ -53,7 +53,7 @@ function description_common()
 		set_showmenu(true)
         chip_target = get_config("chip_target")
         -- 先统一显示出来,后面支持动态显示在调整
-        set_description("lspd mode. 716s/ec718s disable get sms,wifi,hib, enable get rndis. 718p/718e/716e/ enable get more memory. ec718pv always enable")
+        set_description("lspd mode. 716s/ec718s disable get sms,wifi,hib, enable get rndis. 718p/718e/716e/ enable get more memory. ec718pv ec718u always enable")
 
 		-- if chip_target ~= "ec718p" and chip_target ~= "ec718pv" and chip_target ~= "ec718e" then
 		-- 	set_description("lspd mode. enable can get sms,wifi,hib power mode, disable can get rndis")
@@ -71,7 +71,7 @@ function description_common()
 		set_default(false)
 		set_showmenu(true)
         chip_target = get_config("chip_target")
-        set_description("denoise mode. enable can use amr encode to support noise reduction. only ec718p need config, other always disable, no need config ")
+        set_description("denoise mode. enable can use amr encode to support noise reduction. only ec718p need config. ec718u always enable ,other always disable, no need config ")
         -- after_check(function (option)
         --     if get_config("chip_target") ~= "ec718p" then
         --         option:enable(false)
@@ -93,9 +93,11 @@ function description_common()
         elseif chip_target == "ec716e" then
             CHIP = "ec716"
             add_defines("CHIP_EC716","TYPE_EC716E")
+        elseif chip_target == "ec718u" then
+            add_defines("CHIP_EC718","TYPE_EC718U")
         end
 
-        if (chip_target == "ec718p" or chip_target == "ec718e") and has_config("lspd_mode")  or chip_target == "ec718pv" or chip_target == "ec716s" or chip_target == "ec716e" or chip_target == "ec718s" then
+        if (chip_target == "ec718p" or chip_target == "ec718e") and has_config("lspd_mode") or chip_target == "ec718u" or chip_target == "ec718pv" or chip_target == "ec716s" or chip_target == "ec716e" or chip_target == "ec718s" then
             add_defines("OPEN_CPU_MODE")
         end
         add_includedirs(csdk_root.."/PLAT/driver/hal/ec7xx/ap/inc/"..CHIP,
@@ -107,7 +109,7 @@ function description_common()
         lib_ps_plat = "full"
         lib_fw = "oc"
         if has_config("lspd_mode") then
-            if chip_target == "ec718pv" then
+            if chip_target == "ec718pv" or chip_target == "ec718u" then
                 lib_fw = "audio"
                 lib_ps_plat = "ims"
                 add_defines("FEATURE_AMR_CP_ENABLE","FEATURE_VEM_CP_ENABLE")
@@ -124,7 +126,7 @@ function description_common()
         else 
             if chip_target == "ec718p" or chip_target == "ec718e" then
                 lib_ps_plat = "full"
-            elseif chip_target == "ec718pv" then
+            elseif chip_target == "ec718pv" or chip_target == "ec718u" then
                 lib_fw = "audio"
                 lib_ps_plat = "ims"
                 add_defines("FEATURE_AMR_CP_ENABLE","FEATURE_VEM_CP_ENABLE")
@@ -266,7 +268,7 @@ function description_common()
     on_load(function (target)
         local csdk_root = target:values("csdk_root")
         local chip_target = get_config("chip_target")
-        assert (chip_target == "ec718e" or chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718s" or chip_target == "ec716s" or chip_target == "ec716e" ,"target only support ec718e/ec718p/ec718pv/ec718s/ec716s/ec716e")
+        assert (chip_target == "ec718u" or chip_target == "ec718e" or chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718s" or chip_target == "ec716s" or chip_target == "ec716e" ,"target only support ec718u/ec718e/ec718p/ec718pv/ec718s/ec716s/ec716e")
         
         if target:name()== target:values("project_name") then
             cprint(format("${cyan}CPU : ${red}%s",os.cpuinfo("model_name")))

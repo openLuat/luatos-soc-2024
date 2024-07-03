@@ -9,12 +9,12 @@ function description_csdk()
             use_lto = true
         end
 
-        if chip_target == "ec718p" or chip_target == "ec718pv" then
+        if chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718u" then
             add_defines("PSRAM_FEATURE_ENABLE")
             --add_defines("FEATURE_EXCEPTION_FLASH_DUMP_ENABLE")
         end
 
-        if chip_target == "ec718pv" then
+        if chip_target == "ec718pv" or chip_target == "ec718u" then
             add_defines("FEATURE_IMS_ENABLE",
                         "FEATURE_IMS_CC_ENABLE",
                         "FEATURE_IMS_SMS_ENABLE",
@@ -188,7 +188,7 @@ target("csdk",function()
     if CHIP then
         add_files(csdk_root.."/PLAT/driver/chip/ec7xx/ap/src/"..CHIP.."/adc.c")
     end
-	if chip_target ~= "ec718pv" then
+	if chip_target ~= "ec718pv" and chip_target ~= "ec718u" then
 		remove_files(csdk_root.."/PLAT/driver/hal/ec7xx/ap/src/hal_voice_eng_mem.c")
 	end
 	remove_files(csdk_root.."/PLAT/driver/chip/ec7xx/ap/src/cspi.c",
@@ -225,7 +225,7 @@ target("csdk",function()
             luatos_root.."/luat/vfs/luat_vfs.c")
 
     -- cjson
-	if chip_target == "ec718pv" then
+	if chip_target == "ec718pv" or chip_target == "ec718u" then
 		add_files(luatos_root.."/components/cjson/*.c")
 	end
 
@@ -247,7 +247,7 @@ target(project_name..".elf",function()
         add_linkdirs(csdk_root.."/PLAT/prebuild/PS/lib/gcc/"..(chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6).."/"..lib_ps_plat)
         add_linkdirs(csdk_root.."/PLAT/prebuild/PLAT/lib/gcc/"..(chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6).."/"..lib_ps_plat)
         add_linkdirs(csdk_root.."/PLAT/libs/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(lib_ps_plat=="mid"and"-mid"or""))
-        if chip_target=="ec718pv" then
+        if chip_target=="ec718pv" or chip_target=="ec718u" then
             add_linkgroups("imsnv","ims", {whole = true})
         end
     end
