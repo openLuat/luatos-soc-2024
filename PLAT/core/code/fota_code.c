@@ -1111,3 +1111,6 @@ uint8_t  BSP_QSPI_Erase_Sector(uint32_t SectorAddress)
     return FLASH_eraseSectorSafe(SectorAddress);
 }
 #endif
+
+uint32_t BL_OTAInfoAddress(void) {return (BOOTLOADER_FLASH_LOAD_ADDR + BOOTLOADER_FLASH_LOAD_SIZE);}
+uint32_t BL_DFotaAddress(void) {return (FLASH_FOTA_REGION_START);}
