@@ -69,7 +69,7 @@
 //---------------FATFS特别配置
 // fatfs的长文件名和非英文文件名支持需要180k的ROM, 非常奢侈
 #define LUAT_USE_FATFS 1
-//#define LUAT_USE_FATFS_CHINESE
+// #define LUAT_USE_FATFS_CHINESE
 
 // #define LUAT_USE_PROFILER 1
 // #define LUAT_USE_MQTTCORE 1
@@ -143,8 +143,6 @@
 /**********U8G2&LCD&EINK FONT*************/
 // OPPOSANS
 #define USE_U8G2_OPPOSANSM_ENGLISH 1
-// #define USE_U8G2_OPPOSANSM8_CHINESE
-// #define USE_U8G2_OPPOSANSM10_CHINESE
 // #define USE_U8G2_OPPOSANSM12_CHINESE
 // #define USE_U8G2_OPPOSANSM16_CHINESE
 // #define USE_U8G2_OPPOSANSM24_CHINESE
@@ -166,6 +164,7 @@
 // #define LV_FONT_OPPOSANS_M_8
 // #define LV_FONT_OPPOSANS_M_10
 // #define LV_FONT_OPPOSANS_M_12
+// #define LV_FONT_OPPOSANS_M_14
 // #define LV_FONT_OPPOSANS_M_16
 
 //---------------------
@@ -221,8 +220,14 @@
 
 #ifndef LUAT_SCRIPT_SIZE
 
+
+#if defined TYPE_EC718U
+#define LUAT_SCRIPT_SIZE 512
+#define LUAT_SCRIPT_OTA_SIZE 360
+#else
 #define LUAT_SCRIPT_SIZE 256
 #define LUAT_SCRIPT_OTA_SIZE 192
+#endif
 
 // 适合tts_onchip的极限操作, 无需外置SPI FLASH也支持TTS.
 // 一定要看 LUAT_USE_TTS_ONCHIP的说明
@@ -264,6 +269,28 @@
 #define LUAT_USE_TTS_ONLY
 #endif
 
+#if defined TYPE_EC718U
+#ifndef LUAT_USE_FATFS_CHINESE
+#define LUAT_USE_FATFS_CHINESE
+#endif
+#ifndef LUAT_USE_TTS
+#define LUAT_USE_TTS
+#endif
+#ifndef LUAT_USE_TTS_ONCHIP
+#define LUAT_USE_TTS_ONCHIP
+#endif
+#ifndef USE_U8G2_OPPOSANSM12_CHINESE
+#define USE_U8G2_OPPOSANSM12_CHINESE
+#endif
+#ifndef LUAT_USE_LVGL
+#define LUAT_USE_LVGL
+#define LUAT_USE_LVGL_JPG 1 // 启用JPG解码支持
+#define LUAT_USE_LVGL_PNG 1 // 启用PNG解码支持
+#define LUAT_USE_LVGL_BMP 1 // 启用BMP解码支持
+#define LV_FONT_OPPOSANS_M_14
+#endif
+#endif
+
 //-------------------------------------------------------------------------------
 //<-- custom
 //------------------------------------------------------------------------------
@@ -283,6 +310,13 @@
 // // 一般无需修改. 若不需要使用SSL/TLS/TTS,可适当增加,但不应该超过256k
 #ifndef LUAT_HEAP_SIZE
 #define LUAT_HEAP_SIZE (250*1024)
+#endif
+
+#if defined TYPE_EC718U
+#if LUAT_HEAP_SIZE > (190*1024)
+#undef LUAT_HEAP_SIZE
+#define LUAT_HEAP_SIZE (190*1024)
+#endif
 #endif
 
 #if defined TYPE_EC718P && defined (FEATURE_IMS_ENABLE)
@@ -377,7 +411,7 @@
 // MCU引脚复用
 #define LUAT_MCU_IOMUX_CTRL 1
 
-#if defined TYPE_EC718P && defined (FEATURE_IMS_ENABLE)
+#if defined TYPE_EC718P && defined (FEATURE_IMS_ENABLE) || defined (TYPE_EC718U)
 #define LUAT_USE_VOLTE
 
 #ifndef LUAT_USE_MEDIA

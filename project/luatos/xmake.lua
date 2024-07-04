@@ -17,7 +17,7 @@ target(project_name,function()
     add_linkgroups("mp3", {whole = true,public = true})
     
     on_config(function(target)
-        assert (chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718e" or chip_target == "ec716e" ,"luatos only support ec718p/ec718pv/ec718e/ec716e")
+        assert (chip_target == "ec718u" or chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718e" or chip_target == "ec716e" ,"luatos only support ec718p/ec718pv/ec718e/ec716e")
         -- toolchains = target:tool("cc"):match('.+\\bin')
         -- local parameter = {"-E","-P"}
         -- for _, define_flasg in pairs(target:get("defines")) do
@@ -30,8 +30,11 @@ target(project_name,function()
         local ap_load_add
         if chip_target == "ec718p" and has_config("denoise_force") or chip_target == "ec718pv" then ap_load_add = "0x000Ba000" -- ec718pv AP_FLASH_LOAD_ADDR
         elseif chip_target == "ec718p" or chip_target == "ec718e" or chip_target == "ec716e" then ap_load_add = "0x0007e000"  -- ec718p AP_FLASH_LOAD_ADDR
+        elseif chip_target == "ec718u" then ap_load_add = "0x000C8000"  -- ec718u AP_FLASH_LOAD_ADDR
         end
-        local FLASH_FOTA_REGION_START = 0x340000 -- ec718p/ec718pv FLASH_FOTA_REGION_START
+        local FLASH_FOTA_REGION_START = 0x340000 -- ec718e/ec718p/ec718pv FLASH_FOTA_REGION_START
+        if chip_target == "ec718u" then FLASH_FOTA_REGION_START = 0x6C8000 -- ec718u FLASH_FOTA_REGION_START
+        end
         -- print("FLASH_FOTA_REGION_START",FLASH_FOTA_REGION_START)
         local LUAT_SCRIPT_SIZE = tonumber(conf_data:match("\r#define LUAT_SCRIPT_SIZE (%d+)") or conf_data:match("\n#define LUAT_SCRIPT_SIZE (%d+)"))
         local LUAT_SCRIPT_OTA_SIZE = tonumber(conf_data:match("\r#define LUAT_SCRIPT_OTA_SIZE (%d+)") or conf_data:match("\n#define LUAT_SCRIPT_OTA_SIZE (%d+)"))
@@ -67,7 +70,7 @@ target(project_name,function()
         end
     end)
 
-    if chip_target == "ec718pv" then
+    if chip_target == "ec718pv" or chip_target == "ec718u" then
         -- cc
         add_files(luatos_root.."/components/cc/*.c")
     end
@@ -196,7 +199,7 @@ target(project_name,function()
     add_includedirs(luatos_root.."/components/multimedia/amr_decode/oscl",{public = true})
     add_includedirs(luatos_root.."/components/multimedia/amr_decode/amr_nb/enc/src",{public = true})
     add_files(luatos_root.."/components/multimedia/**.c")
-	if chip_target == "ec718p" and has_config("denoise_force") or chip_target == "ec718pv" then
+	if chip_target == "ec718p" and has_config("denoise_force") or chip_target == "ec718pv" or chip_target == "ec718u" then
 		remove_files(luatos_root .. "/components/multimedia/amr_decode/**.c")
 	end
     -- network
