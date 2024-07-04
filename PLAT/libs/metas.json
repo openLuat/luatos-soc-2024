@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "update_time": "2024-07-03 16:11:01.098828",
+  "update_time": "2024-07-04 11:01:30.773984",
   "libs": {
     "ec718u": {
-      "sha1": "13e4e1e5996780416fedea804a99ff1e806c0677",
-      "size": 7189731
+      "sha1": "cdbf8f6cc476c146b8ba9158e0429d19461b987f",
+      "size": 7190766
     },
     "ec718p": {
       "sha1": "21f7cd7efaba28b5bb6cc77714377b2fdad29e4e",
