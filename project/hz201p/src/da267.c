@@ -66,6 +66,7 @@ static int gsensor_interrupt_cb(int pin, void *arg)
     {
         luat_rtos_event_send(gsensor_task_handle, 0, 0, 0, 0, 0);
     }
+    return 0;
 }
 
 static int da267_write_reg(uint8_t reg, uint8_t val)
