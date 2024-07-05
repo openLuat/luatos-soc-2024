@@ -357,7 +357,7 @@
 // //----------------------------------
 
 #define LUAT_WS2812B_MAX_CNT	(8)
-#define LUAT_USE_YHM27XX
+// #define LUAT_USE_YHM27XX
 
 #define LV_DISP_DEF_REFR_PERIOD 30
 #define LUAT_LV_DEBUG 0
