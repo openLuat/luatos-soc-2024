@@ -844,7 +844,8 @@ void BSP_SetFSAssertCount(uint32_t value)
 #ifdef __USER_CODE__	//user ctrl wfi mode, rndis/ecm mode
 extern uint8_t soc_user_wfi_mode(void);
 extern uint8_t soc_user_usb_eth_mode(void);
-__attribute__((weak)) uint8_t soc_user_cdrx_pmu_mode(void) {return 0;};
+PLAT_BL_CIRAM_FLASH_TEXT __attribute__((weak)) uint8_t soc_user_fault_action(void) {return EXCEP_OPTION_SILENT_RESET;};
+PLAT_BL_CIRAM_FLASH_TEXT __attribute__((weak)) uint8_t soc_user_log_port(void) {return PLAT_CFG_ULG_PORT_MIX;};
 #endif
 PLATCONFIG_BSS_SECTION plat_config_raw_flash_t g_rawFlashPlatConfig;
 
@@ -857,14 +858,14 @@ PLAT_BL_CIRAM_FLASH_TEXT static void BSP_SetDefaultRawFlashPlatConfig(void)
 {
 #ifdef __USER_CODE__
 
-    g_rawFlashPlatConfig.faultAction = 4;//silent anable
+    g_rawFlashPlatConfig.faultAction = soc_user_fault_action();//silent anable
     g_rawFlashPlatConfig.startWDT = 1;//start wdt
     g_rawFlashPlatConfig.uartDumpPort = 0xff; // default at port
     g_rawFlashPlatConfig.logControl = 0x2;
     g_rawFlashPlatConfig.uartBaudRate = 6000000;
     g_rawFlashPlatConfig.logLevel = P_DEBUG;
     g_rawFlashPlatConfig.logOwnerAndLevel = 0; //default all owner log level is 0
-    g_rawFlashPlatConfig.logPortSel = PLAT_CFG_ULG_PORT_MIX;//default MIX mode
+    g_rawFlashPlatConfig.logPortSel = soc_user_log_port();//default MIX mode
     g_rawFlashPlatConfig.usbCtrl = 0;//all en
     g_rawFlashPlatConfig.usbSlpMask = 0;  // no mask
     g_rawFlashPlatConfig.usbSlpThd = 0;
@@ -875,7 +876,7 @@ PLAT_BL_CIRAM_FLASH_TEXT static void BSP_SetDefaultRawFlashPlatConfig(void)
     g_rawFlashPlatConfig.usbVcomEnBitMap = 0;
     g_rawFlashPlatConfig.atPortBaudRate = 115200;
     g_rawFlashPlatConfig.fotaUrcPortSel = (PLAT_CFG_FOTA_URC_PORT_UART << 4) | 1;
-    g_rawFlashPlatConfig.pmuInCdrx = soc_user_cdrx_pmu_mode();
+    g_rawFlashPlatConfig.pmuInCdrx = 1;
     g_rawFlashPlatConfig.slpLimitEn = 0;
     g_rawFlashPlatConfig.slpLimitTime = 0;
     g_rawFlashPlatConfig.wfiMode = soc_user_wfi_mode();
@@ -1160,8 +1161,9 @@ PLAT_BL_CIRAM_FLASH_TEXT void BSP_LoadPlatConfigFromRawFlash(void)
 
 #ifdef __USER_CODE__
     g_rawFlashPlatConfig.usbNet = soc_user_usb_eth_mode();
-    g_rawFlashPlatConfig.pmuInCdrx = soc_user_cdrx_pmu_mode();
     g_rawFlashPlatConfig.wfiMode = soc_user_wfi_mode();
+    g_rawFlashPlatConfig.logPortSel = soc_user_log_port();
+    g_rawFlashPlatConfig.faultAction = soc_user_fault_action();
 #endif
 }
 
@@ -1305,11 +1307,7 @@ PLAT_BL_CIRAM_FLASH_TEXT uint32_t BSP_GetPlatConfigItemValue(plat_config_id_t id
             return g_rawFlashPlatConfig.fotaUsbUrcCtrl;
 
         case PLAT_CONFIG_ITEM_PMUINCDRX:
-#ifdef __USER_CODE__
-        	return soc_user_cdrx_pmu_mode();
-#else
         	return g_rawFlashPlatConfig.pmuInCdrx;
-#endif
 
 		case PLAT_CONFIG_ITEM_SLP_LIMIT_EN:
             return g_rawFlashPlatConfig.slpLimitEn;

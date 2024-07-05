@@ -157,7 +157,6 @@ flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 //#define BL_IMG_MERGE_ADDR               (0x00003000)
 
 // Flash Dump Macros
-// Flash Dump Macros
 #define FLASH_EXCEP_DUMP_ADDR            (FLASH_FOTA_REGION_END - FLASH_EXCEP_DUMP_SIZE)
 #define FLASH_EXCEP_DUMP_SIZE            0x4000
 #define FLASH_EXCEP_DUMP_SECTOR_NUM      0x4
