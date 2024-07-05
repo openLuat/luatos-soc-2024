@@ -23,6 +23,13 @@
 #include "luat_debug.h"
 #include "luat_gpio.h"
 
+/*
+说明：ws2812在Cat.1模组上挂载，如果在网络环境下使用会有干扰，因为网络优先级是最高的，
+会导致时序干扰造成某个灯珠颜色异常，效果不是很好，不推荐使用。如果认为影响较大，
+建议通过外挂MCU实现。
+
+*/
+
 // ws2812b测试 所用的gpio编号
 #define TEST_PIN 	HAL_GPIO_8
 
