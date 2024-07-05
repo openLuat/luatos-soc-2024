@@ -147,6 +147,9 @@ function description_common()
         if chip_target == "ec716e" then
             add_defines("FEATURE_MORERAM_ENABLE")
         end
+		if chip_target ~= "ec718s" then
+			add_defines("FEATURE_EXCEPTION_FLASH_DUMP_ENABLE")
+		end
     end
 
     add_defines("__USER_CODE__",
