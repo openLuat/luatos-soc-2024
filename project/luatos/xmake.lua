@@ -64,14 +64,14 @@ target(project_name,function()
         target:add("defines","AP_FLASH_LOAD_SIZE=0x"..script_addr.."-"..ap_load_add,{public = true})
         target:add("defines","AP_PKGIMG_LIMIT_SIZE=0x"..script_addr.."-"..ap_load_add,{public = true})
         target:add("linkgroups","tts_res", {whole = true,public = true})
-        local LUAT_USE_TTS_8K = conf_data:find("\r#define LUAT_USE_TTS_8K") or conf_data:find("\n#define LUAT_USE_TTS_8K")
+        local LUAT_USE_TTS_8K = conf_data:find("#define LUAT_USE_TTS_8K")
         if LUAT_USE_TTS_8K then
             target:add("linkgroups","aisound50_8K", {whole = true,public = true})
         else 
             target:add("linkgroups","aisound50_16K", {whole = true,public = true})
         end
 		target:add("linkgroups","image_decoder_0", {whole = true,public = true})
-        local LUAT_USE_TLS_DISABLE = conf_data:find("\r#define LUAT_USE_TLS_DISABLE") or conf_data:find("\n#define LUAT_USE_TLS_DISABLE")
+        local LUAT_USE_TLS_DISABLE = conf_data:find("#define LUAT_USE_TLS_DISABLE")
         if not LUAT_USE_TLS_DISABLE then
             -- mbedtls
             target:add("defines", "LUAT_USE_TLS",{public = true})
