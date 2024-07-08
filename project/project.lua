@@ -321,6 +321,7 @@ target(project_name..".elf",function()
         for _, includedirs_flasg in pairs(target:get("includedirs")) do
             table.insert(mem_parameter,"-I" .. includedirs_flasg)
         end
+        -- print("mem_parameter",mem_parameter)
         os.execv(toolchains .. "/arm-none-eabi-gcc",table.join(mem_parameter, {"-o",out_path .. "/mem_map.txt","-"}),{stdin = csdk_root .. "/PLAT/device/target/board/ec7xx_0h00/common/inc/mem_map.h"})
         os.cp(out_path .. "/mem_map.txt", "$(buildir)/"..project_name.."/mem_map.txt")
 		
@@ -394,6 +395,10 @@ target(project_name..".elf",function()
             -- print("FLASH_FOTA_REGION",FLASH_FOTA_REGION_START,FLASH_FOTA_REGION_END,FLASH_FOTA_REGION_LEN)
             local LUAT_SCRIPT_SIZE = tonumber(conf_data:match("\r#define LUAT_SCRIPT_SIZE (%d+)") or conf_data:match("\n#define LUAT_SCRIPT_SIZE (%d+)"))
             local LUAT_SCRIPT_OTA_SIZE = tonumber(conf_data:match("\r#define LUAT_SCRIPT_OTA_SIZE (%d+)") or conf_data:match("\n#define LUAT_SCRIPT_OTA_SIZE (%d+)"))
+            if chip_target ~= "ec718u" then
+                LUAT_SCRIPT_SIZE = tonumber(conf_data:match("#else\r\n#define LUAT_SCRIPT_SIZE (%d+)") or conf_data:match("#else\n#define LUAT_SCRIPT_SIZE (%d+)"))
+                LUAT_SCRIPT_OTA_SIZE = tonumber(conf_data:match("\r\n#define LUAT_SCRIPT_OTA_SIZE (%d+)\r\n#endif") or conf_data:match("\n#define LUAT_SCRIPT_OTA_SIZE (%d+)\n#endif"))
+            end
             -- print(string.format("script zone %d ota %d", LUAT_SCRIPT_SIZE, LUAT_SCRIPT_OTA_SIZE))
             if chip_target == "ec718pv" and LUAT_SCRIPT_SIZE > 128 then
                 LUAT_SCRIPT_SIZE = 128
