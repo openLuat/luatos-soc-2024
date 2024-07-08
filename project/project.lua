@@ -248,7 +248,7 @@ target(project_name..".elf",function()
         add_linkdirs(csdk_root.."/PLAT/prebuild/PLAT/lib/gcc/"..(chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6).."/"..lib_ps_plat)
         add_linkdirs(csdk_root.."/PLAT/libs/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(lib_ps_plat=="mid"and"-mid"or""))
         if chip_target=="ec718pv" or chip_target=="ec718u" then
-            add_linkgroups("imsnv","ims", {whole = true})
+            add_linkgroups("imsnv","ims","imsxml", {whole = true})
         end
     end
 
