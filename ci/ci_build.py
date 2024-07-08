@@ -117,7 +117,6 @@ def do_build_project(chip_target, project):
         env = os.environ.copy()
         env["XMAKE_LOG"] = "build.log"
         env["XMAKE_ROOT"] = "y"
-        subprocess.check_call(["xmake", "f", "--chip_target=%s" % chip_target, "-y"], cwd=project["path"], env=env)
         subprocess.check_call(["xmake", "clean"], cwd=project["path"], env=env)
         subprocess.check_call(["xmake", "f", "--chip_target=%s" % chip_target, "-y"], cwd=project["path"], env=env)
         subprocess.check_call(["xmake", "-y", "-P", "."], cwd=project["path"], env=env)
