@@ -322,6 +322,11 @@ target(project_name..".elf",function()
             table.insert(mem_parameter,"-I" .. includedirs_flasg)
         end
         -- print("mem_parameter",mem_parameter)
+
+        if project_name == 'luatos' then
+            os.execv(toolchains .. "/arm-none-eabi-gcc",table.join(mem_parameter, {"-o",out_path .. "/luat_conf_bsp.txt","-"}),{stdin = csdk_root .."/project/luatos/inc/luat_conf_bsp.h"})
+        end
+
         os.execv(toolchains .. "/arm-none-eabi-gcc",table.join(mem_parameter, {"-o",out_path .. "/mem_map.txt","-"}),{stdin = csdk_root .. "/PLAT/device/target/board/ec7xx_0h00/common/inc/mem_map.h"})
         os.cp(out_path .. "/mem_map.txt", "$(buildir)/"..project_name.."/mem_map.txt")
 		
@@ -379,13 +384,13 @@ target(project_name..".elf",function()
 
         if project_name == 'luatos' then
             local LUAT_BSP_VERSION = ""
-            local conf_data = io.readfile(csdk_root.."/project/luatos/inc/luat_conf_bsp.h")
+            local conf_data = io.readfile(out_path .. "/luat_conf_bsp.txt")
             for _, define_flasg in pairs(target:get("defines")) do
                 if define_flasg:startswith("LUAT_BSP_VERSION=")  then
                     LUAT_BSP_VERSION = define_flasg:match("LUAT_BSP_VERSION=\"(%w+)\"")
                 end
             end
-            local VM_64BIT = conf_data:find("\r#define LUAT_CONF_VM_64bit") or conf_data:find("\n#define LUAT_CONF_VM_64bit")
+            local VM_64BIT = conf_data:find("#define LUAT_CONF_VM_64bit")
             local mem_map_data = io.readfile("$(buildir)/"..project_name.."/mem_map.txt")
             local FLASH_FOTA_REGION_START = tonumber(mem_map_data:match("#define FLASH_FOTA_REGION_START%s+%((%g+)%)"))
             local FLASH_FOTA_REGION_END = tonumber(mem_map_data:match("#define FLASH_FOTA_REGION_END%s+%((%g+)%)"))
@@ -393,12 +398,8 @@ target(project_name..".elf",function()
             local FLASH_FS_REGION_END = tonumber(mem_map_data:match("#define FLASH_FS_REGION_END%s+%((%g+)%)"))
             local FLASH_FOTA_REGION_LEN = FLASH_FOTA_REGION_END - FLASH_FOTA_REGION_START
             -- print("FLASH_FOTA_REGION",FLASH_FOTA_REGION_START,FLASH_FOTA_REGION_END,FLASH_FOTA_REGION_LEN)
-            local LUAT_SCRIPT_SIZE = tonumber(conf_data:match("\r#define LUAT_SCRIPT_SIZE (%d+)") or conf_data:match("\n#define LUAT_SCRIPT_SIZE (%d+)"))
-            local LUAT_SCRIPT_OTA_SIZE = tonumber(conf_data:match("\r#define LUAT_SCRIPT_OTA_SIZE (%d+)") or conf_data:match("\n#define LUAT_SCRIPT_OTA_SIZE (%d+)"))
-            if chip_target ~= "ec718u" then
-                LUAT_SCRIPT_SIZE = tonumber(conf_data:match("#else\r\n#define LUAT_SCRIPT_SIZE (%d+)") or conf_data:match("#else\n#define LUAT_SCRIPT_SIZE (%d+)"))
-                LUAT_SCRIPT_OTA_SIZE = tonumber(conf_data:match("\r\n#define LUAT_SCRIPT_OTA_SIZE (%d+)\r\n#endif") or conf_data:match("\n#define LUAT_SCRIPT_OTA_SIZE (%d+)\n#endif"))
-            end
+            local LUAT_SCRIPT_SIZE = tonumber(conf_data:match("#define LUAT_SCRIPT_SIZE (%d+)"))
+            local LUAT_SCRIPT_OTA_SIZE = tonumber(conf_data:match("#define LUAT_SCRIPT_OTA_SIZE (%d+)"))
             -- print(string.format("script zone %d ota %d", LUAT_SCRIPT_SIZE, LUAT_SCRIPT_OTA_SIZE))
             if chip_target == "ec718pv" and LUAT_SCRIPT_SIZE > 128 then
                 LUAT_SCRIPT_SIZE = 128
