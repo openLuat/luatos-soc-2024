@@ -144,6 +144,35 @@
                 ]
             },
             {
+                "icon": "zmdi-puzzle-piece",
+                "name": "@REVS",
+                "content": "代码版本选择",
+                "rsize": 0,
+                "children": [
+                    {
+                        "name": "@rev_master_comment1",
+                        "content": "本小节是选择代码版本, 默认情况下是选代码库的最新代码,即master分支的最新代码",
+                        "rsize": 0,
+                        "fsize": 1024,
+                        "dft": false
+                    },
+                    {
+                        "name": "@rev_master_select",
+                        "content": "使用代码库的最新代码,即master分支的最新代码,默认也是最新代码.",
+                        "rsize": 0,
+                        "fsize": 1024,
+                        "dft": false
+                    },
+                    {
+                        "name": "@rev_release_v1002",
+                        "content": "选用V1002发行版的代码进行编译, 发布日期 2024.7.5",
+                        "rsize": 0,
+                        "fsize": 1024,
+                        "dft": false
+                    }
+                ]
+            },
+            {
                 "icon": "zmdi-input-composite",
                 "name": "@DEV",
                 "content": "基础外设",
