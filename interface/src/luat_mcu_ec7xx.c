@@ -126,17 +126,20 @@ void luat_mcu_iomux_ctrl(uint8_t type, uint8_t sn, int pad_index, uint8_t alt, u
 
 void luat_mcu_set_hardfault_mode(int mode)
 {
-	uint8_t new_mode = EXCEP_OPTION_DUMP_FLASH_EPAT_RESET;
+	uint8_t new_mode = EXCEP_OPTION_SILENT_RESET;
 	switch (mode)
 	{
 	case 0:
 		new_mode = EXCEP_OPTION_DUMP_FLASH_EPAT_LOOP;
 		break;
 	case 1:
-		new_mode = EXCEP_OPTION_DUMP_FLASH_RESET;
+		new_mode = EXCEP_OPTION_SILENT_RESET;
 		break;
 	case 2:
 		new_mode = EXCEP_OPTION_DUMP_FLASH_EPAT_RESET;
+		break;
+	case 3:
+		new_mode = EXCEP_OPTION_DUMP_KEY_INFO_SILENT_RESET;
 		break;
 	default:
 		return;
