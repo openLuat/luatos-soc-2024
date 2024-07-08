@@ -38,6 +38,10 @@ target(project_name,function()
         -- print("FLASH_FOTA_REGION_START",FLASH_FOTA_REGION_START)
         local LUAT_SCRIPT_SIZE = tonumber(conf_data:match("\r#define LUAT_SCRIPT_SIZE (%d+)") or conf_data:match("\n#define LUAT_SCRIPT_SIZE (%d+)"))
         local LUAT_SCRIPT_OTA_SIZE = tonumber(conf_data:match("\r#define LUAT_SCRIPT_OTA_SIZE (%d+)") or conf_data:match("\n#define LUAT_SCRIPT_OTA_SIZE (%d+)"))
+        if chip_target ~= "ec718u" then
+            LUAT_SCRIPT_SIZE = tonumber(conf_data:match("#else\r\n#define LUAT_SCRIPT_SIZE (%d+)") or conf_data:match("#else\n#define LUAT_SCRIPT_SIZE (%d+)"))
+            LUAT_SCRIPT_OTA_SIZE = tonumber(conf_data:match("\r\n#define LUAT_SCRIPT_OTA_SIZE (%d+)\r\n#endif") or conf_data:match("\n#define LUAT_SCRIPT_OTA_SIZE (%d+)\n#endif"))
+        end
         -- print(string.format("script zone %d ota %d", LUAT_SCRIPT_SIZE, LUAT_SCRIPT_OTA_SIZE))
         if chip_target == "ec718pv" and LUAT_SCRIPT_SIZE > 128 and LUAT_SCRIPT_OTA_SIZE > 0 then
             LUAT_SCRIPT_SIZE = 128
