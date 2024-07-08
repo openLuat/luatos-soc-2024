@@ -31,12 +31,15 @@ extern "C" {
 /*----------------------------------------------------------------------------*
  *                    MACROS                                                  *
  *----------------------------------------------------------------------------*/
-/* 'flags' definition, used for getting RxBuf! */
+/* 'flags' definition, used for 'spiDevNotifyEvent()' */
 typedef enum
 {
-    SPI_DEV_RBF_FOR_NEXT = 0,
-    SPI_DEV_RBF_FOR_INIT
-}SpiDevRxBufFlags_e;
+    SPI_DEV_EVENT_UNDEF = 0,
+    SPI_DEV_EVENT_FC,
+
+    SPI_DEV_EVENT_MAXNUM
+}SpiDevEventType_e;
+
 
 /*----------------------------------------------------------------------------*
  *                   DATA TYPE DEFINITION                                     *
@@ -49,9 +52,11 @@ typedef struct
 {
     uint8_t    mainUsage;       /**< refer to 'CsioDevType_e' */
     uint8_t    bmCreateFlag;    /**< refer to 'CcioTaskOperFlag_e', bitmap type */
-    uint16_t   rbufFlags   :4;  /**< which rbuf will be used? refer to 'CcioRbufUsage_e' */
-    uint16_t   custFlags   :4;  /**< flags for customers' private purpose */
-    uint16_t   rsvdBits    :8;
+    uint16_t   rbufFlags    :4; /**< which rbuf will be used? refer to 'CcioRbufUsage_e' */
+    uint16_t   rsvdBits     :12;
+    uint32_t   custFlags    :4;    /**< flags for customers' private purpose */
+    uint32_t   custExtras   :16;   /**< extra info for customers' private purpose */
+    uint32_t   rsvdBits2    :12;
 }SpiDevConf_t;
 
 
@@ -80,14 +85,15 @@ int32_t spiDevCreate(uint8_t spiIdx, SpiDevConf_t *devConf);
 int32_t spiDevDestroy(uint8_t spiIdx);
 
 /**
- * @brief spiDevTransform(uint32_t spiIdx, CsioDevType_e newType)
+ * @brief spiDevTransform(uint32_t spiIdx, CsioDevType_e newType, uint32_t extras)
  * @details transform a spi device into a new type
  *
- * @param spiIdx   spi device idx
+ * @param spiIdx    spi device idx
  * @param newType   The new stype of the device
+ * @param extras    The extra info for new device
  * @return NULL failure; !NULL the transformed device.
  */
-CcioDevice_t* spiDevTransform(uint32_t spiIdx, CsioDevType_e newType);
+CcioDevice_t* spiDevTransform(uint32_t spiIdx, CsioDevType_e newType, uint32_t extras);
 
 /**
  * @brief spiDevInput(uint8_t spiIdx, uint32_t xferCnt, uint32_t extras)
@@ -101,7 +107,7 @@ CcioDevice_t* spiDevTransform(uint32_t spiIdx, CsioDevType_e newType);
 int32_t spiDevInput(uint8_t spiIdx, uint32_t xferCnt, uint32_t extras);
 
 /**
- * @brief spiDevTryGetRxBuf(uint8_t spiIdx, uint8_t flags, uint16_t consumed)
+ * @brief spiDevTryGetRxBuf(uint8_t spiIdx, uint16_t xferCnt)
  * @details try to get the rbuf for initialization or next xfer
  *
  * @param spiIdx   spi device idx
@@ -129,6 +135,16 @@ int32_t spiDevPickTxBuf(uint8_t spiIdx, CcioBufDesc_t *desc);
  * @return 0 succ; < 0 failure with errno.
  */
 int32_t spiDevFreeTxBuf(uint8_t spiIdx, void *buf);
+
+/**
+ * @brief spiDevNotifyEvent(uint32_t flags, void *args)
+ * @details  ctrl event notification
+ *
+ * @param flags   event flags
+ * @param args    event args
+ * @return void.
+ */
+void spiDevNotifyEvent(uint32_t flags, void *args);
 
 
 #ifdef __cplusplus

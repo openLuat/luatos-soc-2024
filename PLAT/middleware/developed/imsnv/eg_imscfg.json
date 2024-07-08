@@ -6,9 +6,22 @@
 		"IpPcscf":null,
 		"ImsApn":"ims",
 		"IpType":3,
-		"AutoReg":true
-		"QuickReReg":true
-		"CallWaiting":true
+		"AutoReg":true,
+		"QuickReReg":true,
+		"CallWaiting":true,
+		"SsAutoQry":false,
+		"SsColpQry":false,
+		"SsColrQry":false,
+		"SsClipQry":false,
+		"SsClirQry":false,
+		"SsAuthType":0,
+		"SsIpPreferType":0,
+		"SsXcapRootUri":null,
+		"SsBsfRootUri":null,
+		"SsDigestName":null,
+		"SsDigestPwd":null,
+		"SsXcapLclPort":80,
+		"SsBsfLclPort":8080
 	},
 	"UA":
 	{

@@ -85,11 +85,13 @@ HalCodecFuncList_t es8311DefaultHandle =
 
 #if (USE_NV_VOLUME)
 AudioParaCfgCodec_t  mwNvmAudioCodec1;
-AudioParaCfgCodec_t  mwNvmAudioCodec2;
 MWNvmCfgUsrSetCodecVolumn usrCodecVolumn;
 MWNvmCfgUsrSetCodecVolumn usrCodecVolumn2;
+MWNvmCfgVolumnSetFlag     volumeSetFlag;
+MWNvmCfgVolumnSetFlag     volumeSetFlag2;
 #endif
 extern void mwNvmCfgGetUsrCodecVolumn(MWNvmCfgUsrSetCodecVolumn *pUsrCodecVolumn);
+extern void mwNvmCfgGetVolumnSetFlag(MWNvmCfgVolumnSetFlag *pVolumnSetFlag);
 extern void mwNvmCfgSetAndSaveUsrCodecVolumn(UINT16 usrDigVolumn, UINT16 usrAnaVolumn);
 
 /*----------------------------------------------------------------------------*
@@ -466,7 +468,9 @@ HalCodecSts_e es8311Init(HalCodecCfg_t *codecCfg)
 
 
     mwNvmCfgGetUsrCodecVolumn(&usrCodecVolumn);
+    mwNvmCfgGetVolumnSetFlag(&volumeSetFlag);
     DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311init_10, P_DEBUG, "init get nv speaker vol. rxDigUsrSet:%d, rxAnaUsrSet:%d", usrCodecVolumn.rxDigUsrSet, usrCodecVolumn.rxAnaUsrSet);
+    DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311init_11, P_DEBUG, "rxDigUsrSetFlag:%d, rxAnaUsrSetFlag:%d, txDigGainFlag%d, txAnaGainFlag:%d", volumeSetFlag.rxDigUsrSetFlag, volumeSetFlag.rxAnaUsrSetFlag, volumeSetFlag.txDigGainFlag, volumeSetFlag.txAnaGainFlag);
 #endif    
 #endif
     #if 0

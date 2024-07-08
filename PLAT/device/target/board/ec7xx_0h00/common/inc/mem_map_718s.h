@@ -33,25 +33,39 @@ flash xip address(from ap/cp view): 0x00800000---0x00a00000
                     |      cp img 336KB               |
 0x0006e000          |---------------------------------|
                     |      ap img 1248KB              |
-#else               
+#else
 0x0001a000          |---------------------------------|
                     |      cp img 352KB               |
 0x00072000          |---------------------------------|
                     |      ap img 1232KB              |
-#endif              
+#endif
 
 #if (defined MID_FEATURE_MODE) || (FEATURE_MOREROM_ENABLE)
 0x001a6000          |---------------------------------|
                     |      hib backup 96KB            |
 0x001be000          |---------------------------------|
+#if defined (FEATURE_FOTA_FS_ENABLE)
+                    |      lfs  160KB                 |
+0x001e6000          |---------------------------------|
+                    |      fota rsvd 48KB             |
+#else
                     |      lfs 48KB                   |
 0x001ca000          |---------------------------------|
                     |      fota 160KB                 |
+#endif
+
 #else
 0x001a6000          |---------------------------------|
+#if defined (FEATURE_FOTA_FS_ENABLE)
+                    |      lfs  256KB                 |
+0x001e6000          |---------------------------------|
+                    |      fota rsvd 48KB             |
+#else
                     |      lfs 48KB                   |
 0x001b2000          |---------------------------------|
                     |      fota 256KB                 |
+#endif
+
 #endif
 0x001f2000          |---------------------------------|
                     |      rel 52KB                   |
@@ -92,7 +106,7 @@ flash xip address(from ap/cp view): 0x00800000---0x00a00000
 #endif
 
 
-#ifdef GCF_FEATURE_MODE// occupy fota region for added gcf feature 
+#ifdef GCF_FEATURE_MODE// occupy fota region for added gcf feature
 #define AP_FLASH_LOAD_SIZE              (0x16e000)//1472KB-8KB for CP
 #define AP_FLASH_LOAD_UNZIP_SIZE        (0x17c000)//1528KB-8KB for CP ,for ld
 
@@ -107,7 +121,7 @@ flash xip address(from ap/cp view): 0x00800000---0x00a00000
 //fs addr and size
 #define FLASH_FS_REGION_START           (0x1e6000)
 #define FLASH_FS_REGION_END             (0x1f2000)
-#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START) // 48KB
+#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START)  // 48KB
 
 #else//mini,mid or rom
 
@@ -125,13 +139,17 @@ flash xip address(from ap/cp view): 0x00800000---0x00a00000
 
 //fs addr and size
 #define FLASH_FS_REGION_START           (0x1be000)
-#define FLASH_FS_REGION_END             (0x1ca000)
-#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START) // 48KB
+#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START)
+#if defined (FEATURE_FOTA_FS_ENABLE)
+#define FLASH_FS_REGION_END             (0x1e6000)  // 160KB
+#else
+#define FLASH_FS_REGION_END             (0x1ca000)  // 48KB
+#endif
 
 #elif defined FEATURE_MOREROM_ENABLE //more rom
 #if defined FEATURE_LESSLOG_ENABLE//less log
 #define AP_FLASH_LOAD_SIZE              (0x138000)//1248KB
-#define AP_FLASH_LOAD_UNZIP_SIZE        (0x146000)//1304KB for ld 
+#define AP_FLASH_LOAD_UNZIP_SIZE        (0x146000)//1304KB for ld
 #else
 #define AP_FLASH_LOAD_SIZE              (0x134000)//1232KB
 #define AP_FLASH_LOAD_UNZIP_SIZE        (0x142000)//1288KB ,for ld
@@ -148,10 +166,12 @@ flash xip address(from ap/cp view): 0x00800000---0x00a00000
 
 //fs addr and size
 #define FLASH_FS_REGION_START           (0x1be000)
-#define FLASH_FS_REGION_END             (0x1ca000)
-#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START) // 48KB
-
-
+#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START)
+#if defined (FEATURE_FOTA_FS_ENABLE)
+#define FLASH_FS_REGION_END             (0x1e6000)  // 160KB
+#else
+#define FLASH_FS_REGION_END             (0x1ca000)  // 48KB
+#endif
 
 #else//mini
 #define AP_FLASH_LOAD_SIZE              (0x134000)//1232KB
@@ -167,29 +187,33 @@ flash xip address(from ap/cp view): 0x00800000---0x00a00000
 
 //fs addr and size
 #define FLASH_FS_REGION_START           (0x1a6000)
-#define FLASH_FS_REGION_END             (0x1b2000)
-#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START) // 48KB
-
+#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START)
+#if defined (FEATURE_FOTA_FS_ENABLE)
+#define FLASH_FS_REGION_END             (0x1e6000)  // 256KB
+#else
+#define FLASH_FS_REGION_END             (0x1b2000)  // 48KB
 #endif
 
 #endif
 
+#endif
 
-#ifdef FEATURE_FOTAPAR_ENABLE
+
+//fota addr and size
+#if defined (FEATURE_FOTA_FS_ENABLE)
+#define FLASH_FOTA_REGION_START         (0x1e6000)
+#define FLASH_FOTA_REGION_LEN           (0xc000)    //48KB
+#else
+
 #if defined (MID_FEATURE_MODE) || (FEATURE_MOREROM_ENABLE)
 #define FLASH_FOTA_REGION_START         (0x1ca000)
 #define FLASH_FOTA_REGION_LEN           (0x28000)   //160KB
-#define FLASH_FOTA_REGION_END           (0x1f2000)
 #else
-//fota addr and size
 #define FLASH_FOTA_REGION_START         (0x1b2000)
 #define FLASH_FOTA_REGION_LEN           (0x40000)   //256KB
+#endif
+#endif
 #define FLASH_FOTA_REGION_END           (0x1f2000)
-#endif
-#endif
-
-
-
 
 
 

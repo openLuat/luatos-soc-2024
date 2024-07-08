@@ -55,9 +55,11 @@ typedef struct
     I2sDrvInterface_t  *drvHandler;      /**< i2s driver handler */
     uint8_t             mainUsage;       /**< refer to 'CsioDevType_e' */
     uint8_t             bmCreateFlag;    /**< refer to 'CcioTaskOperFlag_e', bitmap type */
-    uint16_t            rbufFlags :4;    /**< which rbuf will be used? refer to 'CcioRbufUsage_e' */
-    uint16_t            custFlags :4;    /**< flags for customers' private purpose */
-    uint16_t            rsvdBits  :8;
+    uint16_t            rbufFlags   :4;  /**< which rbuf will be used? refer to 'CcioRbufUsage_e' */
+    uint16_t            rsvdBits    :12;
+    uint32_t            custFlags   :4;  /**< flags for customers' private purpose */
+    uint32_t            custExtras  :16; /**< extra info for customers' private purpose */
+    uint32_t            rsvdBits2   :12;
 }I2sDevConf_t;
 
 typedef struct

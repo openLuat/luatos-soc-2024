@@ -45,6 +45,15 @@
 #define ATC_COLP_0_VAL_MAX                       1
 #define ATC_COLP_0_VAL_DEFAULT                   0
 
+/* AT+CLIR */
+#define ATC_CLIR_0_VAL_MIN                       0
+#define ATC_CLIR_0_VAL_MAX                       2
+#define ATC_CLIR_0_VAL_DEFAULT                   0
+
+/* AT+COLR */
+#define ATC_COLR_0_VAL_MIN                       0
+#define ATC_COLR_0_VAL_MAX                       2
+#define ATC_COLR_0_VAL_DEFAULT                   0
 /* AT+CCWA */
 #define ATC_CCWA_0_VAL_MIN                       0
 #define ATC_CCWA_0_VAL_MAX                       1
@@ -76,7 +85,7 @@
 
 /*AT+CCFC*/
 #define ATC_CCFC_0_REASON_VAL_MIN               0
-#define ATC_CCFC_0_REASON_VAL_MAX               5
+#define ATC_CCFC_0_REASON_VAL_MAX               7
 #define ATC_CCFC_0_REASON_VAL_DEF               0
 
 #define ATC_CCFC_1_MOD_VAL_MIN               0
@@ -107,8 +116,11 @@ CmsRetId  ccCVHU(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  ccCHUP(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  ccCLCC(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  ccCRC(const AtCmdInputContext *pAtCmdReq);
+
 CmsRetId  ccCLIP(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  ccCOLP(const AtCmdInputContext *pAtCmdReq);
+CmsRetId  ccCLIR(const AtCmdInputContext *pAtCmdReq);
+CmsRetId  ccCOLR(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  ccCCWA(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  ccCHLD(const AtCmdInputContext *pAtCmdReq);
 

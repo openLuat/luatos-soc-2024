@@ -357,7 +357,7 @@
 
 /* >>> multiplex @next zone */
 #define FOTA_PMB_ZIP_DELTA_OFFS           (FOTA_PMB_NEXT_OFFS)
-#ifdef FOTA_NVM_FS_ENABLE
+#ifdef FEATURE_FOTA_FS_ENABLE
 #define FOTA_PMB_ZIP_DELTA_SIZE           (24 * FOTA_BUF_SIZE_1K + FOTA_PMB_GAP_SIZE)
 #else
 #define FOTA_PMB_ZIP_DELTA_SIZE           (0)

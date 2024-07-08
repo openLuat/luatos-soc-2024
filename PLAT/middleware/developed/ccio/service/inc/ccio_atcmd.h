@@ -84,7 +84,8 @@ typedef struct
 typedef struct
 {
     uint8_t  isClosed;
-    uint8_t  rsvd[3];
+    uint8_t  noCarrier;
+    uint8_t  rsvd[2];
     void    *chdev;
     void    *atosEnt;    /* AtosEntity_t */
 }AtCmdStopPppSessn_t;

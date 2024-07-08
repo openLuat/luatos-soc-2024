@@ -342,6 +342,28 @@ HalCodecSts_e es8374Init(HalCodecCfg_t *codecCfg)
     DEBUG_PRINT(UNILOG_PLA_DRIVER, es8374Init_2, P_DEBUG, "[ES8374] es8374Init_2: mode=%d, fmt=%d, samples=%d, bits=%d, channel=%d, polarity=%d",
                 codecCfg->codecIface.mode, codecCfg->codecIface.fmt, codecCfg->codecIface.samples, codecCfg->codecIface.bits, codecCfg->codecIface.channel, codecCfg->codecIface.polarity);
 
+    slpManAONIOPowerOn();
+
+    PadConfig_t padConfig;
+    PAD_getDefaultConfig(&padConfig);
+    padConfig.mux = PAD_MUX_ALT0;
+    PAD_setPinConfig(41, &padConfig);
+    GpioPinConfig_t config;
+    config.pinDirection = GPIO_DIRECTION_OUTPUT;
+    config.misc.initOutput = 1;
+    GPIO_pinConfig(2, 3, &config);
+
+    delay_us(200);
+
+    // agpio3, gpio23
+    PAD_getDefaultConfig(&padConfig);
+    padConfig.mux = PAD_MUX_ALT0;
+    PAD_setPinConfig(48, &padConfig);
+    config.pinDirection = GPIO_DIRECTION_OUTPUT;
+    config.misc.initOutput = 1;
+    GPIO_pinConfig(1, 7, &config);
+
+
     //codecI2cInit();
     halI2cInit(false);
 

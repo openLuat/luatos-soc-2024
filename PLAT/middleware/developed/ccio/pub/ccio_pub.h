@@ -189,7 +189,8 @@ typedef struct CcioDevice
     uint32_t waitCleanUlpcb:1;
     uint32_t codecType     :1;
     uint32_t custFlags     :4;  /* flags for customers' private purpose */
-    uint32_t rsvBits2      :21;
+    uint32_t custExtras    :16; /* extra info for customers' private purpose */
+    uint32_t rsvBits2      :5;
     void    *semaId;            /* for sync, 'osSemaphoreId_t', via driver */
     void    *chent;             /* for fast accessing, via monitor */
 
@@ -295,6 +296,9 @@ typedef struct
 typedef int32_t (*chanMsgBuildFunc)(CcioChanMessage_t *chmsg, uint32_t msgId, void *args);
 typedef int32_t (*chanMsgHandleFunc)(CcioChanMessage_t *chmsg);
 
+typedef void (*chanProviderInitFunc)(CcioDevice_t *chdev);
+typedef void (*chanProviderDeinitFunc)(CcioEntity_t *chent);
+typedef void (*chanProviderAlterFunc)(CcioEntity_t *chent, uint32_t newType);
 
 /*----------------------------------------------------------------------------*
  *                    GLOBAL FUNCTIONS DECLEARATION                           *

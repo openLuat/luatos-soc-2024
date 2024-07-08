@@ -16,7 +16,7 @@
 #include "imimedia.h"
 #include "imiss.h"
 
-CmsRetId ccSetATD(UINT32 atHandle, UINT8 *dialNumStr, UINT16 dialNumStrLen);
+CmsRetId ccSetATD(UINT32 atHandle, UINT8 *dialNumStr, UINT16 dialNumStrLen, UINT8 clir);
 CmsRetId ccSetATA(UINT32 atHandle);
 CmsRetId ccSetHangupCall(UINT32 atHandle);
 CmsRetId ccSetCSTA(UINT32 atHandle, UINT16 type);
@@ -43,5 +43,16 @@ CmsRetId ssSetCCFC
            UINT8    noRepTime,
            UINT32   atHandle);
 
+CmsRetId ssCLCK(UINT32   atHandle, UINT8 mode, UINT8 *pFac,UINT8 *pPwd,UINT8 class);
+
+
+CmsRetId ccGetCLIP(UINT32 atHandle);
+CmsRetId ccSetCLIP(UINT8 mode, UINT32 atHandle);
+CmsRetId ccSetCLIR(UINT8 mode, UINT32 atHandle);
+CmsRetId ccGetCLIR(UINT32 atHandle);
+CmsRetId ccSetCOLP(UINT8 mode, UINT32 atHandle);
+CmsRetId ccGetCOLP(UINT32 atHandle);
+CmsRetId ccSetCOLR(UINT8 mode, UINT32 atHandle);
+CmsRetId ccGetCOLR(UINT32 atHandle);
 #endif
 #endif

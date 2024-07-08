@@ -105,7 +105,7 @@
 #define ATC_ECAD_CODEC_2_IS_EX_PA_VAL_DEF                   1
 
 #define ATC_ECAD_CODEC_3_EX_PA_GAIN_VAL_MIN                   0
-#define ATC_ECAD_CODEC_3_EX_PA_GAIN_VAL_MAX                   100
+#define ATC_ECAD_CODEC_3_EX_PA_GAIN_VAL_MAX                   255
 #define ATC_ECAD_CODEC_3_EX_PA_GAIN_VAL_DEF                   10
 
 #define ATC_ECAD_CODEC_4_TX_DIG_GAIN_VAL_MIN                   0

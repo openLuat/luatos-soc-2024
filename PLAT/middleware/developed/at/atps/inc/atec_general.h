@@ -118,7 +118,7 @@
 #define ATC_CSCS_0_STR_DEFAULT              NULL
 
 /* AT+CLCK */
-#define ATC_CLCK_0_FAC_STR_MAX_LEN            2
+#define ATC_CLCK_0_FAC_STR_MAX_LEN            3
 #define ATC_CLCK_0_FAC_STR_DEFAULT            NULL
 #define ATC_CLCK_1_MODE_VAL_MIN                  0
 #define ATC_CLCK_1_MODE_VAL_MAX                  2
@@ -126,6 +126,12 @@
 #define ATC_CLCK_2_PIN_STR_MAX_LEN            8
 #define ATC_CLCK_2_PIN_STR_MIN_LEN            4
 #define ATC_CLCK_2_PIN_STR_DEFAULT            NULL
+
+#define ATC_CLCK_3_CLASS_VAL_MIN              0
+#define ATC_CLCK_3_CLASS_VAL_MAX              255
+#define ATC_CLCK_3_CLASS_VAL_DEFAULT          0
+
+
 
 /* AT+ECURC */
 #define ATC_ECURC_0_MAX_PARM_STR_LEN        16
@@ -165,6 +171,19 @@
 #define ATC_ECPPPHUP_0_VAL_MIN                      0
 #define ATC_ECPPPHUP_0_VAL_MAX                      2
 #define ATC_ECPPPHUP_0_VAL_DEFAULT                  1
+
+#ifdef FEATURE_IMS_UT_ENABLE
+#define VALID_CLCK_SER_TYPE(facName)     \
+             (strcasecmp((const CHAR*)facName, "AO") == 0  ||    \
+              strcasecmp((const CHAR*)facName, "OI") == 0  ||    \
+              strcasecmp((const CHAR*)facName, "OX") == 0  ||    \
+              strcasecmp((const CHAR*)facName, "AI") == 0  ||    \
+              strcasecmp((const CHAR*)facName, "IR") == 0  ||    \
+              strcasecmp((const CHAR*)facName, "ACR") == 0 ||    \
+              strcasecmp((const CHAR*)facName, "SP")  == 0 ||    \
+              strcasecmp((const CHAR*)facName, "OR")  == 0)
+
+#endif
 
 CmsRetId gcAT(const AtCmdInputContext *pAtCmdReq);
 CmsRetId gcATE(const AtCmdInputContext *pAtCmdReq);

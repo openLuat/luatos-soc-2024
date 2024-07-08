@@ -61,11 +61,12 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 #define BOOTLOADER_FLASH_LOAD_SIZE              (0x1f000)//128kB, real region size, tool will check when zip TODO:ZIP
 #define BOOTLOADER_FLASH_LOAD_UNZIP_SIZE        (0x22000)//136KB ,for ld
 
+#define AP_FLASH_LOAD_ADDR              (0x008C8000)
+
 //ap image addr and size
 #ifdef __USER_MAP_CONF_FILE__	//user config ap fota fs kv
 #include __USER_MAP_CONF_FILE__
 #else
-#define AP_FLASH_LOAD_ADDR              (0x008C8000)
 #ifndef AP_FLASH_LOAD_SIZE
 #define AP_FLASH_LOAD_SIZE              (0x600000)//6m
 #endif

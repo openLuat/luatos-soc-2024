@@ -98,18 +98,32 @@ extern "C" {
  *----------------------------------------------------------------------------*/
 
 /**
-  \fn     void ccioInitAtServProvider(CcioDevice_t *chdev, uint8_t isForPpp)
+  \fn     void ccioInitAtServProvider(CcioDevice_t *chdev)
   \brief  init AT service provider
   \return
 */
-void ccioInitAtServProvider(CcioDevice_t *chdev, uint8_t isForPpp);
+void ccioInitAtServProvider(CcioDevice_t *chdev);
 
 /**
-  \fn     void ccioDeinitAtServProvider(CcioEntity_t *chent, uint8_t isForPpp)
+  \fn     void ccioDeinitAtServProvider(CcioEntity_t *chent)
   \brief  deinit AT service provider
   \return
 */
-void ccioDeinitAtServProvider(CcioEntity_t *chent, uint8_t isForPpp);
+void ccioDeinitAtServProvider(CcioEntity_t *chent);
+
+/**
+  \fn     void ccioInitPppServProvider(CcioDevice_t *chdev)
+  \brief  init AT service provider of a ppp port
+  \return
+*/
+void ccioInitPppServProvider(CcioDevice_t *chdev);
+
+/**
+  \fn     void ccioDeinitPppServProvider(CcioEntity_t *chent)
+  \brief  deinit AT service provider of a ppp port
+  \return
+*/
+void ccioDeinitPppServProvider(CcioEntity_t *chent);
 
 /**
   \fn     void ccioInitDiagServProvider(CcioDevice_t *chdev)
@@ -133,32 +147,18 @@ void ccioDeinitDiagServProvider(CcioEntity_t *chent);
 void ccioInitOpaqServProvider(CcioDevice_t *chdev);
 
 /**
-  \fn     void ccioInitAudioServProvider(CcioDevice_t *chdev)
-  \brief  init audio service provider
-  \return
-*/
-void ccioInitAudioServProvider(CcioDevice_t *chdev);
-
-/**
-  \fn     void ccioInitEosServProvider(CcioDevice_t *chdev)
-  \brief  init eth service provider
-  \return
-*/
-void ccioInitEosServProvider(CcioDevice_t *chdev);
-
-/**
-  \fn     void ccioInitMuxServProvider(CcioDevice_t *chdev)
-  \brief  init mux service provider
-  \return
-*/
-void ccioInitMuxServProvider(CcioDevice_t *chdev);
-
-/**
   \fn     void ccioDeinitOpaqServProvider(CcioEntity_t *chent)
   \brief  deinit opaque service provider
   \return
 */
 void ccioDeinitOpaqServProvider(CcioEntity_t *chent);
+
+/**
+  \fn     void ccioInitAudioServProvider(CcioDevice_t *chdev)
+  \brief  init audio service provider
+  \return
+*/
+void ccioInitAudioServProvider(CcioDevice_t *chdev);
 
 /**
   \fn     void ccioDeinitAudioServProvider(CcioEntity_t *chent)
@@ -168,11 +168,25 @@ void ccioDeinitOpaqServProvider(CcioEntity_t *chent);
 void ccioDeinitAudioServProvider(CcioEntity_t *chent);
 
 /**
+  \fn     void ccioInitEosServProvider(CcioDevice_t *chdev)
+  \brief  init eth service provider
+  \return
+*/
+void ccioInitEosServProvider(CcioDevice_t *chdev);
+
+/**
   \fn     void ccioDeinitEosServProvider(CcioEntity_t *chent)
   \brief  deinit eth service provider
   \return
 */
 void ccioDeinitEosServProvider(CcioEntity_t *chent);
+
+/**
+  \fn     void ccioInitMuxServProvider(CcioDevice_t *chdev)
+  \brief  init mux service provider
+  \return
+*/
+void ccioInitMuxServProvider(CcioDevice_t *chdev);
 
 /**
   \fn     void ccioDeinitMuxServProvider(CcioEntity_t *chent)

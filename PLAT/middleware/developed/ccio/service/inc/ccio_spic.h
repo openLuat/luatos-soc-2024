@@ -40,8 +40,6 @@ typedef uint32_t  SpicNotif_t;
 #define SPIC_STATUS_FAIL            0xe0000001
 #define SPIC_STATUS_DATA_ERR        0xe0010002
 #define SPIC_STATUS_UNSUPP_ERR      0xe0000003
-#define SPIC_STATUS_FLOWCTL_ON      0xf0000001
-#define SPIC_STATUS_FLOWCTL_OFF     0xf0000002
 #define SPIC_STATUS_MEDIA_CONN      0xf0000003
 #define SPIC_STATUS_MEDIA_DISCONN   0xf0000004
 typedef uint32_t  SpicStatus_t;

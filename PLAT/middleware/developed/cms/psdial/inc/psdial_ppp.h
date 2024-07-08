@@ -91,7 +91,7 @@ BOOL psDialIsPppChan(UINT16 atHandle);
 CmsRetId psDialPppConnect(UINT16 atHandle, BOOL bCidPresent, UINT8 cid);
 void psDialPppDisconnect(UINT8 atChanId, UINT8 ipv4Cid, UINT8 ipv6Cid);
 void psDialPppHoldOn(UINT8 atChanId);
-void psDialPppHangUp(UINT16 atHandle);
+void psDialPppHangUp(UINT16 atHandle, uint32_t mode);
 void psDialPppLanLinkUp(UINT8 wanLinkupCid, NmIfConfiguration *pIfCfg);
 
 /*

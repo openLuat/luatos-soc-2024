@@ -26,7 +26,7 @@
 /*----------------------------------------------------------------------------*
  *                      GLOBAL VARIABLES                                      *
  *----------------------------------------------------------------------------*/
-const HalCodecTlvDefault_t codecTlvDefaultVal = 
+const AudioParaCfgCodec_t codecTlvDefaultVal = 
 {
     .isDmic         = false,                
     .isExPa         = true,              

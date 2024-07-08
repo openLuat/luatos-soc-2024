@@ -33,9 +33,15 @@ flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 0x00389000          |---------------------------------|
                     |      hib backup 96KB            |
 0x003a1000          |---------------------------------|
+#if defined (FEATURE_FOTA_FS_ENABLE)
+                    |      lfs  272KB                 |
+0x003e5000          |---------------------------------|
+                    |      fota rsvd 48KB             |
+#else
                     |      lfs  48KB                  |
 0x003ad000          |---------------------------------|
                     |      fota 272KB                 |
+#endif
 0x003f1000          |---------------------------------|
                     |      rel data 52KB              |
 0x003fe000          |---------------------------------|
@@ -88,20 +94,21 @@ flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 
 //fs addr and size
 #define FLASH_FS_REGION_START           (0x3a1000)
-#define FLASH_FS_REGION_END             (0x3ad000)
-#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START) // 48KB
+#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START)
+#if defined (FEATURE_FOTA_FS_ENABLE)
+#define FLASH_FS_REGION_END             (0x3e5000)  // 272KB
 
-#ifdef FEATURE_FOTAPAR_ENABLE
 //fota addr and size
-#define FLASH_FOTA_REGION_START         (0x3ad000)
-#define FLASH_FOTA_REGION_LEN           (0x44000)//272KB
-#define FLASH_FOTA_REGION_END           (0x3f1000)
+#define FLASH_FOTA_REGION_START         (0x3e5000)
+#define FLASH_FOTA_REGION_LEN           (0xc000)//48KB
 #else
+#define FLASH_FS_REGION_END             (0x3ad000)  // 48KB
+
 //fota addr and size
 #define FLASH_FOTA_REGION_START         (0x3ad000)
 #define FLASH_FOTA_REGION_LEN           (0x44000)//272KB
-#define FLASH_FOTA_REGION_END           (0x3f1000)
 #endif
+#define FLASH_FOTA_REGION_END           (0x3f1000)
 
 //ap reliable addr and size
 #define NVRAM_FACTORY_PHYSICAL_BASE     (0x15000)
@@ -156,7 +163,7 @@ flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 
 #ifdef FEATURE_EXCEPTION_FLASH_DUMP_ENABLE
 /*
- *	BaseAddress is FLASH_EXCEP_DUMP_ADDR and the dump space is FLASH_EXCEP_DUMP_SIZE.  
+ *	BaseAddress is FLASH_EXCEP_DUMP_ADDR and the dump space is FLASH_EXCEP_DUMP_SIZE.
  *	offset 0                   offset 0x1000	          offset 0x3000
  *	|--------------------------|--------------------------|--------------------------|
  *	| 1K PLAT + 1K PHY + 2K PS |         8K UNILOG        |         4K CUST          |

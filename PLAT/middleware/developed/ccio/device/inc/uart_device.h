@@ -64,7 +64,8 @@ typedef struct
     uint32_t           isDftAtPort :1;  /**< default uartIdx for AT or not */
     uint32_t           rbufFlags   :4;  /**< which rbuf will be used? refer to 'CcioRbufUsage_e' */
     uint32_t           custFlags   :4;  /**< flags for customers' private purpose */
-    uint32_t           rsvdBits    :23;
+    uint32_t           custExtras  :16; /**< extra info for customers' private purpose */
+    uint32_t           rsvdBits    :7;
 }UartDevConf_t;
 
 
@@ -91,14 +92,15 @@ CcioDevice_t* uartDevCreate(uint32_t uartIdx, UartDevConf_t *uartConf);
 int32_t uartDevDestroy(uint32_t uartIdx);
 
 /**
- * @brief uartDevTransform(uint32_t uartIdx, CsioDevType_e newType)
+ * @brief uartDevTransform(uint32_t uartIdx, CsioDevType_e newType, uint32_t extras)
  * @details transform a uart device into a new type
  *
  * @param uartIdx   The index of uart port
  * @param newType   The new stype of the uart device
+ * @param extras    The extra info for new device
  * @return NULL failure; !NULL the transformed uart device.
  */
-CcioDevice_t* uartDevTransform(uint32_t uartIdx, CsioDevType_e newType);
+CcioDevice_t* uartDevTransform(uint32_t uartIdx, CsioDevType_e newType, uint32_t extras);
 
 #ifdef __cplusplus
 }

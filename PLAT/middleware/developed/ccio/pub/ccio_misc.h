@@ -215,6 +215,23 @@ extern "C" {
 /*----------------------------------------------------------------------------*
  *                   DATA TYPE DEFINITION                                     *
  *----------------------------------------------------------------------------*/
+/* singly linked list */
+typedef struct CcioSlistNode
+{
+    struct CcioSlistNode  *next;
+}CcioSlistNode_t;
+
+typedef CcioSlistNode_t CcioSlist_t;
+
+/* dual linked list */
+typedef struct CcioDlistNode
+{
+    struct CcioDlistNode  *prev;
+    struct CcioDlistNode  *next;
+}CcioDlistNode_t;
+
+typedef CcioDlistNode_t CcioDlist_t;
+
 
 typedef UlPduBlock UlPduBlock_t;
 typedef DlPduBlock DlPduBlock_t;
@@ -284,6 +301,27 @@ typedef struct
 /*----------------------------------------------------------------------------*
  *                    GLOBAL FUNCTIONS DECLEARATION                           *
  *----------------------------------------------------------------------------*/
+int32_t  ccioSlistAppend(CcioSlist_t **list, CcioSlist_t *nodes);
+int32_t  ccioSlistRemove(CcioSlist_t **list, CcioSlistNode_t *node);
+int32_t  ccioSlistTraverse(CcioSlist_t *list, int32_t (*func)(void *node));
+
+/**
+ * @brief ccioGetOnePktFromUlList(UlPduBlock_t  *list,
+                                  UlPduBlock_t **pktHead,
+                                  UlPduBlock_t **pktTail,
+                                  uint16_t      *pktLen)
+ * @details get the first complete pkt from an ulpdu list
+ *
+ * @param list     The orignal list
+ * @param pktHead  The head of the packet got from the list
+ * @param pktTail  The tail of the packet got from the list
+ * @param pktLen   The length of the packet got from the list
+ * @return the remaining list.
+ */
+UlPduBlock_t* ccioGetOnePktFromUlList(UlPduBlock_t  *list,
+                                      UlPduBlock_t **pktHead,
+                                      UlPduBlock_t **pktTail,
+                                      uint16_t      *pktLen);
 
 
 #ifdef __cplusplus

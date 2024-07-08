@@ -30,28 +30,80 @@
 /**
  * follow member under: "Icm" - start
 */
-    /* e.g.: "ImsOLte":true                 value type: bool, whether IMS is enabled over LTE */
-    #define ICFG_JSON_IMSOLTE_KEY_BOOL      "ImsOLte"
-    /* e.g.: "ImsOIp":true                  value type: bool, whether IMS is over IP, only used for test */
-    #define ICFG_JSON_IMSOIP_KEY_BOOL       "ImsOIp"
-    /* e.g.: "IpPcscf":"10.15.100.10"       value type: string, pcscf ip addr, only if "ImsOIp" is set TRUE */
-    #define ICFG_JSON_IP_PCSCF_KEY_STR      "IpPcscf"
-    /* e.g.: "ImsApn":"ims"                 value type: string                  */
-    #define ICFG_JSON_IMSAPN_KEY_STR        "ImsApn"
-    /* e.g.: "IpType":2                     value type: number, enum: ImsIpType     */
-    #define ICFG_JSON_IPTYPE_KEY_UINT8      "IpType"
-    /* e.g.: "AutoReg":true                 value type: bool                    */
-    #define ICFG_JSON_AUTOREG_KEY_BOOL      "AutoReg"
-    /* e.g.: "QuickReReg":true                 value type: bool                    */
-    #define ICFG_JSON_QUICKREREG_KEY_BOOL      "QuickReReg"
-    /* e.g.: "CallWaiting":true                 value type: bool                    */
-    #define ICFG_JSON_CALLWAITING_KEY_BOOL      "CallWaiting"
+    /* e.g.: "ImsOLte":true                       value type: bool, whether IMS is enabled over LTE */
+    #define ICFG_JSON_IMSOLTE_KEY_BOOL            "ImsOLte"
+    /* e.g.: "ImsOIp":true                        value type: bool, whether IMS is over IP, only used for test */
+    #define ICFG_JSON_IMSOIP_KEY_BOOL             "ImsOIp"
+    /* e.g.: "IpPcscf":"10.15.100.10"             value type: string, pcscf ip addr, only if "ImsOIp" is set TRUE */
+    #define ICFG_JSON_IP_PCSCF_KEY_STR            "IpPcscf"
+    /* e.g.: "ImsApn":"ims"                       value type: string */
+    #define ICFG_JSON_IMSAPN_KEY_STR              "ImsApn"
+    /* e.g.: "IpType":2                           value type: number, enum: ImsIpType */
+    #define ICFG_JSON_IPTYPE_KEY_UINT8            "IpType"
+    /* e.g.: "AutoReg":true                       value type: bool */
+    #define ICFG_JSON_AUTOREG_KEY_BOOL            "AutoReg"
+    /* e.g.: "QuickReReg":true                    value type: bool */
+    #define ICFG_JSON_QUICKREREG_KEY_BOOL         "QuickReReg"
+    /* e.g.: "CallWaiting":true                   value type: bool */
+    #define ICFG_JSON_CALLWAITING_KEY_BOOL        "CallWaiting"
+
+    /* e.g.: "SsAutoQry":false                    value type: bool */
+    #define ICFG_JSON_SS_AUTO_QRY_KEY_BOOL        "SsAutoQry"
+    /* e.g.: "SsColpUtQry":false                  value type: bool */
+    #define ICFG_JSON_SS_COLP_QRY_KEY_BOOL        "SsColpQry"
+    /* e.g.: "SsColrUtQry":false                  value type: bool */
+    #define ICFG_JSON_SS_COLR_QRY_KEY_BOOL        "SsColrQry"
+    /* e.g.: "SsClipUtQry":false                  value type: bool */
+    #define ICFG_JSON_SS_CLIP_QRY_KEY_BOOL        "SsClipQry"
+    /* e.g.: "SsClirUtQry":false                  value type: bool */
+    #define ICFG_JSON_SS_CLIR_QRY_KEY_BOOL        "SsClirQry"
+    /* e.g.: "SsAuthType":0                       value type: number, enum: ICfgSsAuthType*/
+    #define ICFG_JSON_SS_AUTH_TYPE_KEY_UINT8      "SsAuthType"
+    /* e.g.: "SsIpPreferType":0                   value type: number, enum: ICfgSsIpPreferType*/
+    #define ICFG_JSON_SS_IP_PREFER_TYPE_KEY_UINT8 "SsIpPreferType"
+    /* e.g.: "SsXcapRootUri":""                   value type: string */
+    #define ICFG_JSON_SS_XCAP_ROOT_URI_KEY_STR    "SsXcapRootUri"
+    /* e.g.: "SsBsfRootUri":""                    value type: string */
+    #define ICFG_JSON_SS_BSF_ROOT_URI_KEY_STR     "SsBsfRootUri"
+    /* e.g.: "SsXcapLclPort":80                   value type: number */
+    #define ICFG_JSON_SS_XCAP_LCL_PORT_KEY_UINT16 "SsXcapLclPort"
+    /* e.g.: "SsBsfLclPort":8080                  value type: number */
+    #define ICFG_JSON_SS_BSF_LCL_PORT_KEY_UINT16  "SsBsfLclPort"
+
+    /* e.g.: "SsDigestName":""                   value type: string */
+    #define ICFG_JSON_SS_DIGEST_NAME_KEY_STR    "SsDigestName"
+    /* e.g.: "SsDigestPwd":""                    value type: string */
+    #define ICFG_JSON_SS_DIGEST_PWD_KEY_STR     "SsDigestPwd"
 /**
  * member under: "Icm" - end
 */
+
+
 /**
  * ICM config struct
 */
+
+typedef struct _EPAT_ImsSupSrvCfg_Tag
+{
+    UINT32      simServsAutoQuery :1;      /*simservs auto query switch*/
+    UINT32      colpUtEnable:1;            /*COIP, choice via UT or UE local policy*/
+    UINT32      colrUtEnable:1;            /*COIR, choice via UT or UE local policy*/
+    UINT32      clipUtEnable:1;            /*ClIP, choice via UT or UE local policy*/
+    UINT32      clirUtEnable:1;            /*ClIR, choice via UT or UE local policy*/
+    UINT32      utAuthType: 2;             /*0:GBA-ME; 1,GBA-DIGEST;2,GBA-UICC;3,HTTP-DIGEST*/
+    UINT32      ipPerferType :1;           /*0:V4 Prefer; 1: V6 perfer*/
+    UINT32      resv: 24;
+
+    CHAR        xcapRootUri[IMS_XCAP_URI_MAX_LEN];
+    CHAR        bsfRootUri[IMS_BSF_URI_MAX_LEN];
+    CHAR        digestName[IMS_USER_NAME_MAX_LEN];
+    CHAR        digestPwd[IMS_DIGEST_PWD_MAX_LEN];
+
+    UINT16      xcapPort;
+    UINT16      bsfPort;
+
+}ImsSupSrvCfg;     /* already 136 bytes */
+
 typedef struct _EPAT_ImsIcmCfg_Tag
 {
     UINT32      imsOLte         : 1;    /*whether IMS over LTE is enable*/
@@ -61,33 +113,17 @@ typedef struct _EPAT_ImsIcmCfg_Tag
     UINT32      ipType          : 3;    /*ImsIpType*/
     UINT32      quickReReg      : 1;
     UINT32      callWaiting     : 1;    /* whether call waiting is enable */
-    UINT32                      :19;
+    UINT32      regRetryTime    : 16;   /*whether need to configure register retry according Operator*/
+    UINT32                      : 3;
 
     UINT8       ipPcscf[IMS_IP_MAX_STR_LEN];    /*whether using IP string? cost to much memory - TBD*/
     CHAR        imsApn[IMS_APN_MAX_STR_LEN];
+
+#ifdef FEATURE_IMS_UT_ENABLE
+    ImsSupSrvCfg supSrvCfg;
+#endif
+
 }ImsIcmCfg;     /* already 144 bytes */
-
-
-/**
- * ICM config struct
-*/
-typedef struct _EPAT_ImsSupSrvCfg_Tag
-{
-    UINT32      imsUtEnable :1;        /*ut switch, influence on all UT*/
-    UINT32      cwTermEnable:1;        /*Call waiting, terminated based*/
-    UINT32      cOipTermEnable:1;      /*COIP, terminated based*/
-    UINT32      cOirTermEnable:1;      /*COIR, terminated based*/
-    UINT32      clipTermEnable:1;      /*ClIP, terminated based*/
-    UINT32      clirTermEnable:1;      /*ClIR, terminated based*/
-    UINT32      resv0: 26;
-
-    CHAR        xcapRootUri[IMS_USER_NAME_MAX_LEN];
-    CHAR        bsfRootUri[IMS_USER_NAME_MAX_LEN];
-
-    UINT16      xcapPort;
-    UINT16      bsfPort;
-
-}ImsSupSrvCfg;     /* already 144 bytes */
 
 /*****************************************************************************
  *  e.g.: "Icm" : {},   - end
@@ -432,6 +468,22 @@ typedef enum
     ICFG_MAX_OPER_ID    = 0xFFFF
 }ICfgOperatorId;
 
+/**
+ * ICM, SS AuthType  0: gba-me, 1: gba-uicc, 2: gba-digest, 3: http-digest
+*/
+typedef enum
+{
+    ICFG_SS_AUTH_GBA_ME      = 0,
+    ICFG_SS_AUTH_GBA_UICC    = 1,
+    ICFG_SS_AUTH_GBA_DIGEST  = 2,
+    ICFG_SS_AUTH_HTTP_DIGEST = 3,
+}ICfgSsIpPreferType;
+
+typedef enum
+{
+    ICFG_SS_IPV4_PREFER      = 0,
+    ICFG_SS_IPV6_PREFER      = 1,
+}ICfgSsAuthType;
 
 /**
  * REG, ServiceInfo, bit0: voice, bit1: sms, 16 bits
@@ -594,6 +646,7 @@ void ImsCfgDefaultUaCallCfg(ImsPlmn hplmn, ImsUaCallCfg *pUaCallCfg);
 void ImsCfgDefaultSipCfg(ImsPlmn hplmn, ImsSipCfg *pSipCfg);
 void ImsCfgDefaultTpCfg(ImsPlmn hplmn, ImsTpCfg *pTpCfg);
 UINT16 ImsCfgDefaultOperId(ImsPlmn plmn);
+void   ImsCfgDefaultSupsrvCfg(ImsPlmn hplmn, ImsSupSrvCfg *pSupsrvCfg);
 
 /**
  * NVM read/write API

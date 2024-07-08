@@ -29,9 +29,6 @@
 /*----------------------------------------------------------------------------*
  *                    MACROS                                                  *
  *----------------------------------------------------------------------------*/
-/* will file system is enabled? */
-//#define FOTA_NVM_FS_ENABLE
-
 
 #define FOTA_EOK          0
 #define FOTA_EUNDEF      -1   /* undefined error */

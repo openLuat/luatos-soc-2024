@@ -113,8 +113,11 @@ typedef enum _EPAT_MidWareCfgParamId_Enum
     MW_CFG_AT_CHAN_6_CONFIG,        /* TLV,  MWNvmCfgAtChanConfig, AT channel 6 */
     MW_CFG_AT_CHAN_7_CONFIG,        /* TLV,  MWNvmCfgAtChanConfig, AT channel 7 */
 
+    MW_CFG_DM_CTCC_PARAM2,           /* TLV, MWNvmCfgDmCtccParam2 */
+    
     // new add id for usr set codec volumn
     MW_CFG_USR_CODEC_VOLUMN,        /* TLV,  MWNvmCfgUsrSetCodecVolumn */
+    MW_CFG_USR_CODEC_VOLUMN_FLG,    /* TLV,  MWNvmCfgUsrSetCodecVolumn */
 
     MW_CFG_PARAM_END,
     /* As need a bitmap to record which CFG is set/configed, here limit the MAX ID to 256, than 8 words bitmap is enough  */
@@ -289,12 +292,22 @@ typedef struct _SIG_EPAT_MW_CFG_DM_CUCC_PARAM
 */
 typedef struct _SIG_EPAT_MW_CFG_DM_CTCC_PARAM
 {
-    UINT8   enableFlag;       /*enableFlag  0:disable register 1: enable register*/
+    UINT8   enableFlag:1;     /*enableFlag  0:disable register 1: enable register*/
+    UINT8   terminaltype:1;   /*terminaltype  0:module terminal 1: smart terminal*/
     UINT8   hasReg;           /*hasReg 0:has not register  1:has regiestered*/
     UINT8   ccid[MID_WARE_DM_SIM_CCID_LEN];  /* ccid */
     UINT8   model[MID_WARE_DM_MODEL_LEN];  /* parameter MODEL set by vendor */
     UINT8   swver[MID_WARE_DM_SWVER_LEN];  /* parameter SWVER set by vendor */
 }MWNvmCfgDmCtccParam;
+
+/*
+ * DM CTCC Pan terminal parameter
+*/
+typedef struct _SIG_EPAT_MW_CFG_DM_CTCC_PARAM_2
+{
+    UINT8   ueType[5];        /*pan terminal type*/
+    UINT8   osVer[27];        /*os version*/
+}MWNvmCfgDmCtccParam2;
 
 /*
  * DM CMCC parameter
@@ -603,9 +616,16 @@ typedef struct MidWareNvmConfig_Tag
     */
     MWNvmCfgDmCmccParam2     dmCmccParam2;        // 12 bytes
     /*
+    * used for ctcc dm pan terminal, paramId: MW_CFG_DM_CTCC_PARAM2
+    */
+    MWNvmCfgDmCtccParam2     dmCtccParam2;        // 32 bytes
+    /*
     * used for usr set codec speaker volumn
     */
+    #ifdef FEATURE_AUDIO_ENABLE//volte
     MWNvmCfgUsrSetCodecVolumn     usrSetCodecVolumn;
+    MWNvmCfgVolumnSetFlag         volumnSetFlag;
+    #endif
 }MidWareNvmConfig;
 
 
@@ -947,6 +967,9 @@ void mwNvmCfgSetAndSaveDmCmccParam(MWNvmCfgDmCmccParam *pDmCmccParam);
 void mwNvmCfgGetDmCmccParam2(MWNvmCfgDmCmccParam2 *pDmCmccParam2);
 void mwNvmCfgSetAndSaveDmCmccParam2(MWNvmCfgDmCmccParam2 *pDmCmccParam2);
 
+void mwNvmCfgGetDmCtccParam2(MWNvmCfgDmCtccParam2 *pDmCtccParam2);
+void mwNvmCfgSetAndSaveDmCtccParam2(MWNvmCfgDmCtccParam2 *pDmCtccParam2);
+
 void mwNvmCfgGetCtwParamConfig(MWNvmCfgCtwParamCfg *pCtwParam);
 void mwNvmCfgSetAndSaveCtwParamConfig(MWNvmCfgCtwParamCfg *pCtwParam);
 void mwNvmCfgGetCtwHttpParam(MWNvmCfgCtwHttpParam *pCtwHttpParam);
@@ -997,7 +1020,9 @@ void mwNvmCfgSetAndSaveUrcSignalTypeParam(UINT16 usSignalType);
 
 //void mwCfgDefaultUsrCodecVolumn(MWNvmCfgUsrSetCodecVolumn *pUsrCodecVolumn);
 void mwNvmCfgGetUsrCodecVolumn(MWNvmCfgUsrSetCodecVolumn *pUsrCodecVolumn);
+void mwNvmCfgGetVolumnSetFlag(MWNvmCfgVolumnSetFlag *pVolumnSetFlag);
 void mwNvmCfgSetAndSaveUsrCodecVolumn(UINT16 usrDigVolumn, UINT16 usrAnaVolumn);
+void mwNvmCfgSetAndSaveUsrCodecVolumnFlag(MWNvmCfgVolumnSetFlag* pVolumnSetFlag);
 
 #endif
 

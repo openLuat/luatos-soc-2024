@@ -31,32 +31,45 @@ extern "C" {
 /*----------------------------------------------------------------------------*
  *                    MACROS                                                  *
  *----------------------------------------------------------------------------*/
-
+#define  IPOS_MULTI_CIDS_ENABLE    0
 
 
 /*----------------------------------------------------------------------------*
  *                   DATA TYPE DEFINITION                                     *
  *----------------------------------------------------------------------------*/
+typedef struct
+{
+    uint16_t bmPdpCid;  /* bitmap of cid */
+    uint8_t  rsvd[2];
+}IposPathConf_t;
 
 
 /*----------------------------------------------------------------------------*
  *                    GLOBAL FUNCTIONS DECLEARATION                           *
  *----------------------------------------------------------------------------*/
 /**
-  \fn     iint32_t iposDataPathInit(void *args)
+  \fn     iint32_t iposDataPathInit(OpaqosEntity_t *iposEnt, IposPathConf_t *pathConf)
   \brief  ipos channel key context initialization
   \return
   \note   invoked in function 'opaqActivateCtx()'
 */
-int32_t iposDataPathInit(void *args);
+int32_t iposDataPathInit(OpaqosEntity_t *iposEnt, IposPathConf_t *pathConf);
 
 /**
-  \fn     int32_t iposDataInput(UlPduBlock_t *ulpdu, OpaqosEntity_t *opaqosEnt)
+  \fn     iint32_t iposDataPathDeinit(OpaqosEntity_t *iposEnt)
+  \brief  ipos channel key context de-initialization
+  \return
+  \note   invoked in function 'opaqDeactivateCtx()'
+*/
+int32_t iposDataPathDeinit(OpaqosEntity_t *iposEnt);
+
+/**
+  \fn     int32_t iposDataInput(UlPduBlock_t *ulpdu, OpaqosEntity_t *iposEnt)
   \brief  to further handle ipos data via opaq channel
   \return
   \note   invoked in function 'opaqDataInput()'
 */
-int32_t iposDataInput(UlPduBlock_t *ulpdu, OpaqosEntity_t *opaqosEnt);
+int32_t iposDataInput(UlPduBlock_t *ulpdu, OpaqosEntity_t *iposEnt);
 
 /**
   \fn     int32_t iposDataOutput(uint8_t pdpCid, DlPduBlock_t *dlpdu)

@@ -11,7 +11,7 @@
 //#include "mw_common.h"
 //#include "cmisms.h"
 #include "audioCfg.h"
-#include "hal_codec.h"
+//#include "hal_codec.h"
 
 /*
  * Differences between these MW config/AON files:
@@ -54,20 +54,32 @@
 
 #define MID_WARE_NVM_AUDIO_CUR_VER       0x0
 
-#define MID_WARE_NVM_AUDIO_REC_MAX_SIZE  10
 
-//#define NVM_AUDIO_Test  10
+typedef enum
+{
+    AUDIO_CFG_MODE_WB            = 0,
+    AUDIO_CFG_MODE_NB            = 1,
+    AUDIO_CFG_MODE_VOIP          = 2,
+    AUDIO_CFG_MODE_MAX           = 3,
+}AudioParaCfgModeType_e;
 
-#define EC_ADCFG_SPEECH_EQ_BIQUARD_NUMB                   10
-#define EC_ADCFG_SPEECH_TX_NUMB                           8
-#define EC_ADCFG_SPEECH_RX_NUMB                           8
+typedef enum
+{
+    AUDIO_CFG_DEVICE_HAND_SET             = 0,
+    AUDIO_CFG_DEVICE_HEAD_SET_3_POLE      = 1,
+    AUDIO_CFG_DEVICE_HEAD_SET_4_POLE      = 2,
+    AUDIO_CFG_DEVICE_HAND_FREE            = 3,
+    AUDIO_CFG_DEVICE_MAX                  = 4,
+}AudioParaCfgDeviceType_e;
 
-#define EC_ADCFG_TLV_LEN_MAX                              32
+#define EC_ADCFG_SPEECH_TX_NUMB                           (AUDIO_CFG_MODE_MAX*AUDIO_CFG_DEVICE_MAX)
+#define EC_ADCFG_SPEECH_RX_NUMB                           (AUDIO_CFG_MODE_MAX*AUDIO_CFG_DEVICE_MAX)
 
 #define EC_ADCFG_TLV_VALUE_CONVERT(value)       ((((value)>>8)&0xff)|(((value)<<8)&0xff00)) 
-
+#define EC_ADCFG_TLV_LEN_MAX                              32
 
 #define EC_ADCFG_SPEECH_ANS_EQ_BAND_NUMB                  32
+#define EC_ADCFG_SPEECH_EQ_BIQUARD_NUMB                   10
 
 /******************************************************************************
  *****************************************************************************
@@ -107,8 +119,8 @@ typedef struct _EPAT_AudioParaCfgCodec_Tag
     UINT16  isDmic;                
     UINT16  isExPa;              
     INT16   exPaGain;
-    INT16   txDigGain;   // bit15: flag; 
-    INT16   txAnaGain;   // bit15: flag; 
+    INT16   txDigGain;   
+    INT16   txAnaGain;    
     
     INT16   rxDigGain0;
     INT16   rxAnaGain0;
@@ -118,13 +130,6 @@ typedef struct _EPAT_AudioParaCfgCodec_Tag
     INT16   rxAnaGain100;
 }AudioParaCfgCodec_t;
 
-typedef enum
-{
-    HAND_SET             = 0,
-    HEAD_SET_3_4_POLE    = 1,
-    HEAD_SET             = 2,
-    HANDS_OFF            = 3
-}AudioParaCfgDeviceType_e;
 
 
 typedef struct AudioParaCfgCodecDev_Tag
@@ -306,9 +311,6 @@ typedef struct MWNvmAudioCfgStore_Tag
 
 #pragma pack()
 
-
-
-
 #define MID_WARE_NVM_AUDIO_CFG_HEADER_FLAG      0xECADECAD
 
 #define MID_WARE_NVM_AUDIO_CFG_INIT_FLAG            0xECAD0101
@@ -324,7 +326,7 @@ typedef struct MWNvmAudioCfgStore_Tag
 #define NVM_AUDIO_CFG_TLV_LEN_MAX          (255)
 #define NVM_AUDIO_CFG_TLV_LEN_MIN          3
 
-#define NVM_AUDIO_CFG_CODEC_DEVICE_NUMB_MAX     4
+#define NVM_AUDIO_CFG_CODEC_NUMB_MAX       (AUDIO_CFG_MODE_MAX*AUDIO_CFG_DEVICE_MAX)
 
 #define NVM_AUDIO_CFG_TX_RX_NUMB_MAX            8
 #define NVM_AUDIO_CFG_TX_RX_MODULE_SHIFT        16
@@ -418,15 +420,6 @@ typedef struct MWNvmAudioCfgStore_Tag
 #define EC_ADCFG_LOG_CTRL_RX_AFTER_CCIO_VAL_DEF                    0
 
 #define AUDIO_CFG_TLV_TYPE_SHIFT                   8
-typedef enum AtcAudioDeviceMapping_Tag
-{
-//  
-    AUDIO_CFG_DEVICE_HANDSET        = 0,
-    AUDIO_CFG_DEVICE_HANDSET_POLE,
-    AUDIO_CFG_DEVICE_EARPHONE,
-    AUDIO_CFG_DEVICE_HANDOFF,
-    AUDIO_CFG_DEVICE_MAX,
-}AtcAudioDeviceMap_e;
 
 typedef enum _EPAT_AtcAudioTypeMapping_Tag
 {
@@ -448,8 +441,8 @@ typedef enum _EPAT_AtcAudioTypeMapping_Tag
     AUDIO_CFG_TLV_CODEC_TXANAGAIN       = 0x100204,
     AUDIO_CFG_TLV_CODEC_RXDIGGAIN0      = 0x100205,
     AUDIO_CFG_TLV_CODEC_RXANAGAIN0      = 0x100206,
-    AUDIO_CFG_TLV_CODEC_RXDIGUSRSET     = 0x100207,
-    AUDIO_CFG_TLV_CODEC_RXANAUSRSET     = 0x100208,
+    AUDIO_CFG_TLV_CODEC_RXDIGGAIN50     = 0x100207,
+    AUDIO_CFG_TLV_CODEC_RXANAGAIN50     = 0x100208,
     AUDIO_CFG_TLV_CODEC_RXDIGGAIN100    = 0x100209,
     AUDIO_CFG_TLV_CODEC_RXANAGAIN100    = 0x10020A,
     
@@ -748,7 +741,7 @@ typedef struct MWNvmAudioCfgTlvStore_Tag
     EcAudioCfgTlvCodec_t       audioCfgTlvCodec2;
     EcAudioCfgTlvCodec_t       audioCfgTlvCodec3;
     */
-    EcAudioCfgTlvCodec_t       audioCfgTlvCodec[NVM_AUDIO_CFG_CODEC_DEVICE_NUMB_MAX];
+    EcAudioCfgTlvCodec_t       audioCfgTlvCodec[NVM_AUDIO_CFG_CODEC_NUMB_MAX];
 
     /*
     EcAudioCfgTlvSphTx_t       audioCfgTlvSphTx0;  //mode==0, direct==0 device==0 
@@ -832,12 +825,12 @@ UINT32 mwNvmAudioCfgLogControlGet(/*AudioParaCfgCommon_t *pMwNvmAudioCfgCommon, 
 BOOL mwNvmAudioCfgLogControlSet(/*AudioParaCfgCommon_t *pMwNvmAudioCfgCommon, */AudioParaCfgLogControl_t *pMwNvmAudioCfgLogCtrl, ecAudioCfgTlvStore *pMwNvmAudioCfg);
 
 /**
-  \fn           Bool mwNvmGetAudioCfgForCP(AudioConfig_t *readAudioCfgForCp)
+  \fn           Bool mwNvmGetAudioCfgForCP(AudioConfig_t *readAudioCfgForCp, UINT8 device, UINT8 direct, UINT8 mode)
   \brief 
   \ useage:
   \ audioCfg = malloc(sizeof(audioCfg));
   \
-  \ ret = mwNvmGetAudioCfgForCP(audioCfg);
+  \ ret = mwNvmGetAudioCfgForCP(audioCfg, device, direct, mode);
   \
   \ if(ret == SUCCESS)
   \ AcVoiceCodecConfigReq.pAudioPara = audioCfg
@@ -856,7 +849,7 @@ BOOL mwNvmAudioCfgLogControlSet(/*AudioParaCfgCommon_t *pMwNvmAudioCfgCommon, */
   \param[out]   audioCfgPtr
   \returns      BOOL.
 */
-BOOL mwNvmGetAudioCfgForCP(AudioConfig_t *readAudioCfgForCp);
+BOOL mwNvmGetAudioCfgForCP(AudioConfig_t *readAudioCfgForCp, UINT8 device, UINT8 direct, UINT8 mode);
 
 #endif /* __MW_NVM_AUDIO_H__ */
 

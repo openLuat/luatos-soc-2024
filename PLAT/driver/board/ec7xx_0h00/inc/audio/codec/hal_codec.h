@@ -35,6 +35,8 @@
 #endif
 #include "slpman.h"
 #include "exception_process.h"
+#include "mw_nvm_audio.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -105,6 +107,17 @@ typedef struct _USR_SET_CODEC_VOLUMN
     UINT16  rxDigUsrSet; // bit15: flag; bit14~bit8: 1level;   bit7~bit0: 2level
     UINT16  rxAnaUsrSet; // bit15: flag; bit14~bit8: 1level;   bit7~bit0: 2level
 }MWNvmCfgUsrSetCodecVolumn;
+
+/*
+ * indicate usr whether set volumn in nv
+*/
+typedef struct _VOLUMN_SET_FLAG
+{
+    UINT8   rxDigUsrSetFlag;
+    UINT8   rxAnaUsrSetFlag;
+    UINT8   txDigGainFlag;
+    UINT8   txAnaGainFlag;
+}MWNvmCfgVolumnSetFlag;
 
 
 typedef struct
