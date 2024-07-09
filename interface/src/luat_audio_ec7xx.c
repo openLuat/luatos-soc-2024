@@ -832,8 +832,10 @@ void luat_audio_inter_amr_init(uint8_t is_wb, uint8_t quality)
     	free(eng->audioCfg);
     }
     eng->audioCfg = malloc(sizeof(AudioConfig_t));
-    if (eng->audioCfg && mwNvmGetAudioCfgForCP((AudioConfig_t *)eng->audioCfg, 0, 0, 0))
+    if (eng->audioCfg )
     {
+    	mwNvmGetAudioCfgForCP((AudioConfig_t *)eng->audioCfg, 0, 0, 0);
+    	mwNvmGetAudioCfgForCP((AudioConfig_t *)eng->audioCfg, 0, 0, 1);
     	codecCfg.pAudioPara = eng->audioCfg;
     }
     halVoiceCodecConfigReq(&codecCfg);
