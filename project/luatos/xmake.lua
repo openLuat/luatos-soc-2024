@@ -18,15 +18,23 @@ target(project_name,function()
     
     on_config(function(target)
         assert (chip_target == "ec718u" or chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718e" or chip_target == "ec716e" ,"luatos only support ec718p/ec718pv/ec718e/ec716e")
-        -- toolchains = target:tool("cc"):match('.+\\bin')
-        -- local parameter = {"-E","-P"}
-        -- for _, define_flasg in pairs(target:get("defines")) do
-        --     table.insert(parameter,"-D" .. define_flasg)
-        -- end
-        -- print(parameter)
-        -- os.execv(toolchains .. "/arm-none-eabi-gcc",table.join(parameter, {"-o",SDK_PATH .. "/project/luatos/inc/luat_conf_bsp.txt","-"}),{stdin = SDK_PATH .. "/project/luatos/inc/luat_conf_bsp.h"})
-        
-        local conf_data = io.readfile("./inc/luat_conf_bsp.h")
+        local project_dir = target:values("project_dir")
+        local toolchains = target:tool("cc"):match('.+\\bin') or target:tool("cc"):match('.+/bin')
+
+        local out_path = project_dir .. "/out/"
+		if not os.exists(out_path) then
+			os.mkdir(project_dir .. "/out/")
+			os.mkdir(out_path)
+		end
+
+        local parameter = {"-E","-P","-dM"}
+        for _, define_flasg in pairs(target:get("defines")) do
+            table.insert(parameter,"-D" .. define_flasg)
+        end
+        -- print("parameter",parameter)
+        os.execv(toolchains .. "/arm-none-eabi-gcc",table.join(parameter, {"-o",out_path .. "/luat_conf_bsp.txt","-"}),{stdin = project_dir .."/inc/luat_conf_bsp.h"})
+
+        local conf_data = io.readfile(out_path .. "/luat_conf_bsp.txt")
         local ap_load_add
         if chip_target == "ec718p" and has_config("denoise_force") or chip_target == "ec718pv" then ap_load_add = "0x000Ba000" -- ec718pv AP_FLASH_LOAD_ADDR
         elseif chip_target == "ec718p" or chip_target == "ec718e" or chip_target == "ec716e" then ap_load_add = "0x0007e000"  -- ec718p AP_FLASH_LOAD_ADDR
@@ -36,12 +44,8 @@ target(project_name,function()
         if chip_target == "ec718u" then FLASH_FOTA_REGION_START = 0x6C8000 -- ec718u FLASH_FOTA_REGION_START
         end
         -- print("FLASH_FOTA_REGION_START",FLASH_FOTA_REGION_START)
-        local LUAT_SCRIPT_SIZE = tonumber(conf_data:match("\r#define LUAT_SCRIPT_SIZE (%d+)") or conf_data:match("\n#define LUAT_SCRIPT_SIZE (%d+)"))
-        local LUAT_SCRIPT_OTA_SIZE = tonumber(conf_data:match("\r#define LUAT_SCRIPT_OTA_SIZE (%d+)") or conf_data:match("\n#define LUAT_SCRIPT_OTA_SIZE (%d+)"))
-        if chip_target ~= "ec718u" then
-            LUAT_SCRIPT_SIZE = tonumber(conf_data:match("#else\r\n#define LUAT_SCRIPT_SIZE (%d+)") or conf_data:match("#else\n#define LUAT_SCRIPT_SIZE (%d+)"))
-            LUAT_SCRIPT_OTA_SIZE = tonumber(conf_data:match("\r\n#define LUAT_SCRIPT_OTA_SIZE (%d+)\r\n#endif") or conf_data:match("\n#define LUAT_SCRIPT_OTA_SIZE (%d+)\n#endif"))
-        end
+        local LUAT_SCRIPT_SIZE = tonumber(conf_data:match("#define LUAT_SCRIPT_SIZE (%d+)"))
+        local LUAT_SCRIPT_OTA_SIZE = tonumber(conf_data:match("#define LUAT_SCRIPT_OTA_SIZE (%d+)"))
         -- print(string.format("script zone %d ota %d", LUAT_SCRIPT_SIZE, LUAT_SCRIPT_OTA_SIZE))
         if chip_target == "ec718pv" and LUAT_SCRIPT_SIZE > 128 and LUAT_SCRIPT_OTA_SIZE > 0 then
             LUAT_SCRIPT_SIZE = 128
@@ -60,14 +64,14 @@ target(project_name,function()
         target:add("defines","AP_FLASH_LOAD_SIZE=0x"..script_addr.."-"..ap_load_add,{public = true})
         target:add("defines","AP_PKGIMG_LIMIT_SIZE=0x"..script_addr.."-"..ap_load_add,{public = true})
         target:add("linkgroups","tts_res", {whole = true,public = true})
-        local LUAT_USE_TTS_8K = conf_data:find("\r#define LUAT_USE_TTS_8K") or conf_data:find("\n#define LUAT_USE_TTS_8K")
+        local LUAT_USE_TTS_8K = conf_data:find("#define LUAT_USE_TTS_8K")
         if LUAT_USE_TTS_8K then
             target:add("linkgroups","aisound50_8K", {whole = true,public = true})
         else 
             target:add("linkgroups","aisound50_16K", {whole = true,public = true})
         end
 		target:add("linkgroups","image_decoder_0", {whole = true,public = true})
-        local LUAT_USE_TLS_DISABLE = conf_data:find("\r#define LUAT_USE_TLS_DISABLE") or conf_data:find("\n#define LUAT_USE_TLS_DISABLE")
+        local LUAT_USE_TLS_DISABLE = conf_data:find("#define LUAT_USE_TLS_DISABLE")
         if not LUAT_USE_TLS_DISABLE then
             -- mbedtls
             target:add("defines", "LUAT_USE_TLS",{public = true})
