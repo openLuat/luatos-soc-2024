@@ -54,7 +54,7 @@ jobs:
         csdk_chip:
           - ec718u
           - ec718p
-          - ec716s
+        #   - ec716s
           - ec716e
     steps:
       - name: 克隆 LuatOS 代码库
