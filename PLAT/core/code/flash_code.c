@@ -1,6 +1,7 @@
 #include "ec7xx.h"
 #include "stdint.h"
 #include "stdbool.h"
+#include "string.h"
 #include "mem_map.h"
 
 typedef struct
@@ -100,3 +101,14 @@ const HalCodecTlvDefault_t codecTlvDefaultVal =
     .rxDigGain100   = 0xff,
     .rxAnaGain100   = 0xff,
 };
+
+void soc_get_flash_dump(uint8_t *buf)
+{
+	memcpy(buf, (void *)(FLASH_EXCEP_DUMP_ADDR + AP_FLASH_XIP_ADDR), FLASH_EXCEP_DUMP_SIZE);
+}
+extern uint8_t FLASH_eraseSafe(uint32_t SectorAddress, uint32_t Size);;
+void soc_flash_dump_clear(void)
+{
+	FLASH_eraseSafe(FLASH_EXCEP_DUMP_ADDR, FLASH_EXCEP_DUMP_SIZE);
+}
+
