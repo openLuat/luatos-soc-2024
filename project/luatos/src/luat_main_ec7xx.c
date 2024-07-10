@@ -114,20 +114,13 @@ void luat_lvgl_tick_sleep(uint8_t OnOff)
 
 extern int soc_get_model_name(char *model, uint8_t is_full);
 
-static void self_info(uint16_t param_size, void* p_param)
+static void self_info(void)
 {
 	char temp[40] = {0};
 	char imei[22] = {0};
 	luat_mobile_get_imei(0, imei, 22);
-	if (soc_get_model_name(temp, 1))
-	{
-		DBG("model maybe %s imei %s", temp, imei);
-	}
-	else
-	{
-		DBG("model %s imei %s", temp, imei);
-	}
-
+	soc_get_model_name(temp, 1);
+	DBG("model %s imei %s", temp, imei);
 }
 
 static void luatos_task(void *param)
@@ -140,7 +133,7 @@ static void luatos_task(void *param)
         ResetLockupCfg(false, false);
 	luat_heap_init();
     ShareInfoWakeupCP4Version();
-	cmsNonBlockApiCall(self_info, 0, NULL);
+	self_info();
 #ifdef LUAT_USE_MEDIA
 	luat_audio_global_init();
 #endif
