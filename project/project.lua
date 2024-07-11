@@ -344,7 +344,7 @@ target(project_name..".elf",function()
         end
         size_file:close()
 
-        os.exec(csdk_root .. (is_plat("windows") and "/PLAT/tools/fcelf.exe " or "/PLAT/tools/fcelf ").."-C -bin ".."$(buildir)/"..project_name.."/"..project_name.."_unZip.bin".. " -cfg ".. csdk_root .. "/PLAT/device/target/board/ec7xx_0h00/ap/gcc/sectionInfo_"..(chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6)..".json".. " -map ".."$(buildir)/"..project_name.."/"..project_name.. "_debug.map".." -out ".."$(buildir)/"..project_name.."/" .. project_name .. ".bin")
+        os.exec(csdk_root .. (is_plat("windows") and "/PLAT/tools/fcelf.exe " or "/PLAT/tools/fcelf ").."-C -bin ".."$(buildir)/"..project_name.."/"..project_name.."_unZip.bin".. " -cfg ".. csdk_root .. "/PLAT/device/target/board/ec7xx_0h00/ap/gcc/sectionInfo_"..(chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6)..".json".. " -map ".."$(buildir)/"..project_name.."/"..project_name.. "_$(mode).map".." -out ".."$(buildir)/"..project_name.."/" .. project_name .. ".bin")
 
         os.cp("$(buildir)/"..project_name.."/*.bin", out_path)
 		os.cp("$(buildir)/"..project_name.."/*.map", out_path)
