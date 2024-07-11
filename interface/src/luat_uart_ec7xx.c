@@ -188,10 +188,8 @@ int luat_uart_setup(luat_uart_t* uart) {
         return 0;
     }
     char model[40] = {0};
-#ifdef __LUATOS__
-    Uart_SetDebug(uart->id, 1);
-	Uart_SetErrorDropData(uart->id, 1);
-#endif
+    Uart_SetDebug(uart->id, (uart->debug_enable == LUAT_UART_DEBUG_ENABLE)?1:0);
+    Uart_SetErrorDropData(uart->id, (uart->error_drop == LUAT_UART_RX_ERROR_DROP_DATA)?1:0);
     if(luat_mcu_iomux_is_default(LUAT_MCU_PERIPHERAL_UART, uart->id))
     {
 
