@@ -124,11 +124,7 @@
 #define TCPIP_MAX_IP_PKG_DUMP_LEN   2000
 #else
 /*define dump log IP packet max size*/
-#ifdef __USER_CODE__
-#define TCPIP_MAX_IP_PKG_DUMP_LEN   1508
-#else
 #define TCPIP_MAX_IP_PKG_DUMP_LEN   150
-#endif
 #endif
 
 /*define dump log ETHER packet max size*/

@@ -1,8 +1,8 @@
 DbVersion
-621771182,100
+1659334625,100
 <end>
 BuildInfo
-The current data file was built by the Application Ver. 2.2.81.216, Thu Jul 11 11:29:43 2024
+The current data file was built by the Application Ver. 2.2.81.216, Fri Jul 12 11:28:32 2024
 <end>
 EnumVals
 0,0,0,0,PHY_ONLINE,PHY_ICS_MODULE,PhyIcsMeasMainEntrance_1,P_ERROR,swLogPrintf("Incorrect ICS stage ( %d ) for new euArfcn arranged for ICS MEAS ");
@@ -4197,11 +4197,9 @@ a474a8d79ace4b1b8a125abd9d4ea1db47d9eb22503d8804c1a9a66903479a3cb3c713aacd369141
 303104,620828928,0,0,PLAT_AP,TCPIP_DHCPD,DhcpdStop_2,P_INFO,swLogPrintf("dhcp server stop success netif %c%u ");
 303104,620832767,0,0,PLAT_AP,TCPIP_DHCPD,DhcpdGetLeaseAddr_1,P_ERROR,swLogPrintf("DHCPdGetLeaseAddr netif point is invalid ");
 305152,624953343,0,0,PLAT_AP,TCPIP_PKG_DUMP,tcpip_ps_ul,P_VALUE,swLogDumpPolling("PS UL : ");
-305152,624955391,0,0,PLAT_AP,TCPIP_PKG_DUMP,tcpip_ppp_ul,P_VALUE,swLogDump("PPP UL : ");
-305152,624957439,0,0,PLAT_AP,TCPIP_PKG_DUMP,tcpip_rndis_ul,P_VALUE,swLogDump("RNDIS UL : ");
-305152,624959487,0,0,PLAT_AP,TCPIP_PKG_DUMP,tcpip_ps_dl,P_VALUE,swLogDumpPolling("PS DL : ");
-305152,624961535,0,0,PLAT_AP,TCPIP_PKG_DUMP,tcpip_ppp_dl,P_VALUE,swLogDump("PPP DL : ");
-305152,624963583,0,0,PLAT_AP,TCPIP_PKG_DUMP,tcpip_rndis_dl,P_VALUE,swLogDump("RNDIS DL : ");
+305152,624955391,0,0,PLAT_AP,TCPIP_PKG_DUMP,tcpip_rndis_ul,P_VALUE,swLogDump("RNDIS UL : ");
+305152,624957439,0,0,PLAT_AP,TCPIP_PKG_DUMP,tcpip_ps_dl,P_VALUE,swLogDumpPolling("PS DL : ");
+305152,624959487,0,0,PLAT_AP,TCPIP_PKG_DUMP,tcpip_rndis_dl,P_VALUE,swLogDump("RNDIS DL : ");
 306176,627050495,0,0,PLAT_AP,ROHC,PsifCreateRohcCallback_dis_w_1,P_WARNING,swLogPrintf("PSIF ROHC , ROHC not enable , can ' t create ROHC channel ");
 306176,627052543,0,0,PLAT_AP,ROHC,PsifResetRohcCallback_dis_w_1,P_WARNING,swLogPrintf("PSIF ROHC , ROHC not enable , can ' t reset ROHC channel ");
 306176,627054591,0,0,PLAT_AP,ROHC,PsifCompressRohcCallback_dis_w_1,P_WARNING,swLogPrintf("PSIF ROHC , ROHC not enable , can ' t comp ");
@@ -8702,5 +8700,5 @@ MW_INFO_PHY_EDRX_PARAM,midWareNvmInfoPhyEdrxParam
 plat_config,plat_config_fs_t
 <end>
 OptionalSegment
-optional_sk_01,4D75437DF0E5332901C0177A124BD28E9C16D39020796566B7AD8BDF84E9C3EC
+optional_sk_01,B4B7A62014C7BBDB366E2932CECA9A6BDA6D23194A5AF3A6DA5022556D6187AC
 <end>
