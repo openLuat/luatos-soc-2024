@@ -287,7 +287,7 @@
 #define LUAT_USE_LVGL_JPG 1 // 启用JPG解码支持
 #define LUAT_USE_LVGL_PNG 1 // 启用PNG解码支持
 #define LUAT_USE_LVGL_BMP 1 // 启用BMP解码支持
-#define LV_FONT_OPPOSANS_M_14
+#define LV_FONT_OPPOSANS_M_12
 #endif
 #endif
 
