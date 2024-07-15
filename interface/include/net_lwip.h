@@ -21,7 +21,7 @@ void net_lwip_set_link_state(uint8_t adapter_index, uint8_t updown);
 int net_lwip_set_static_ip(ip_addr_t *ip, ip_addr_t *submask, ip_addr_t *gateway, ip_addr_t *ipv6, void *user_data);
 
 void net_lwip_set_rx_fast_ack(uint8_t adapter_index, uint8_t onoff);
-ip_addr_t *net_lwip_get_ip6(void);
+ip_addr_t *net_lwip_get_ip6(uint8_t adapter_index);
 //设置TCP接收窗口大小，影响接收速度，tcp_mss_num越大越快，不能大于32，不能小于6
 void net_lwip_set_tcp_rx_cache(uint8_t adapter_index, uint16_t tcp_mss_num);
 
