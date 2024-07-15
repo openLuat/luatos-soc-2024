@@ -257,4 +257,5 @@ void soc_aon_gpio_save_state_enable(uint8_t on_off);
 int soc_aon_gpio_save_state(uint32_t gpio_sn, uint32_t state);
 void soc_task_record_on_off(uint8_t on_off);
 uint16_t soc_task_record_get(TaskRunTimeRecord_t *record, uint16_t max_cnt);
+void *soc_get_clat_netif(void);
 #endif /* CORE_INCLUDE_SOC_SERVICE_H_ */
