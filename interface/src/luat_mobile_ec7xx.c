@@ -311,6 +311,11 @@ void luat_mobile_set_default_pdn_ipv6(uint8_t onoff)
 	s_default_pdn_ip_type = onoff?3:1;
 }
 
+void luat_mobile_set_default_pdn_only_ipv6(uint8_t onoff)
+{
+	s_default_pdn_ip_type = onoff?2:1;
+}
+
 uint8_t luat_mobile_get_default_pdn_ipv6(void)
 {
 	return (s_default_pdn_ip_type == 2 || s_default_pdn_ip_type == 3)?1:0;
