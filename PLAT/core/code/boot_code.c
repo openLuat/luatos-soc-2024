@@ -872,15 +872,3 @@ PLAT_BL_UNCOMP_FLASH_TEXT void decompressRamCodeFromBin(int ramCodeType)
 #endif
 }
 #endif
-
-#if defined CHIP_EC716
-__attribute__((weak)) PLAT_BL_CIRAM_FLASH_TEXT uint8_t GetCustSwaSimoDig(void)
-{
-	//0-7 valid cust cfg swa simo dig val
-    //other val, invalid, default update swa simo dig by fuse simo dig
-	uint8_t val = 0x7;
-
-    return val;
-}
-
-#endif
