@@ -47,6 +47,20 @@ void luat_gpio_set_default_cfg(luat_gpio_cfg_t* gpio)
 	memset(gpio, 0, sizeof(luat_gpio_cfg_t));
 }
 
+
+typedef struct
+{
+	uint8_t pin;
+	uint8_t alt;
+}luat_gpio_alt_table_t;
+
+static luat_gpio_alt_table_t gpio_alt[GPIO_ALT_MAX] = {
+	{HAL_GPIO_16, 4},
+	{HAL_GPIO_17, 4},
+	{HAL_GPIO_18, 0},
+	{HAL_GPIO_19, 0},
+};
+
 int luat_gpio_open(luat_gpio_cfg_t* gpio)
 {
 
@@ -172,21 +186,18 @@ int luat_gpio_open(luat_gpio_cfg_t* gpio)
     }
 
     GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(gpio->pin, gpio->alt_fun), gpio->alt_fun, 0, 0);
+
+	for (uint8_t i = 0; i < GPIO_ALT_MAX; i++)
+	{
+		if (gpio->pin == gpio_alt[i].pin)
+		{
+			gpio_alt[i].alt = gpio->alt_fun;
+			break;
+		}
+	}
     return 0;
 }
 
-typedef struct
-{
-	uint8_t pin;
-	uint8_t alt;
-}luat_gpio_alt_table_t;
-
-static luat_gpio_alt_table_t gpio_alt[GPIO_ALT_MAX] = {
-	{HAL_GPIO_16, 4},
-	{HAL_GPIO_17, 4},
-	{HAL_GPIO_18, 0},
-	{HAL_GPIO_19, 0},
-};
 
 __USER_FUNC_IN_RAM__ uint8_t luat_gpio_get_alt(uint8_t GPIO) {return gpio_alt[GPIO - HAL_GPIO_16].alt;}
 
