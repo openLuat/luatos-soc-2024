@@ -186,7 +186,7 @@ int luat_gpio_open(luat_gpio_cfg_t* gpio)
     }
 
     GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(gpio->pin, gpio->alt_fun), gpio->alt_fun, 0, 0);
-
+#ifndef __LUATOS__
 	for (uint8_t i = 0; i < GPIO_ALT_MAX; i++)
 	{
 		if (gpio->pin == gpio_alt[i].pin)
@@ -195,6 +195,7 @@ int luat_gpio_open(luat_gpio_cfg_t* gpio)
 			break;
 		}
 	}
+#endif
     return 0;
 }
 
