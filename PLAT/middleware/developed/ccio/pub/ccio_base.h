@@ -359,7 +359,8 @@ typedef struct
 typedef struct
 {
     uint8_t    lanType;  /* refer to 'CcioLanMediaType_e' */
-    uint8_t    rsvd[3];
+    uint8_t    isForce;  /* is the lan forced to be down or not? */
+    uint8_t    rsvd[2];
 }CcioLanLinkDown_t;
 
 typedef struct

@@ -88,7 +88,7 @@ void udp_error(struct udp_pcb *pcb, udp_process_error_fn errf, void *err_arg);
 
 int udp_send_ul_state_ind(u32_t bitmap[8], int socket_id, int status);
 
-int udp_send_tcp_close_complete_ind(int32_t socket_id);
+int udp_send_tcp_close_complete_ind(int32_t socket_id, ip_addr_t *localAddr, u16_t localPort, ip_addr_t *remoteAddr, u16_t remotePort);
 
 #endif
 

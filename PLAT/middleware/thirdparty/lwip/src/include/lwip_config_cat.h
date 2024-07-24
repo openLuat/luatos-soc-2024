@@ -173,7 +173,11 @@
 #else
 #define LWIP_ENABLE_PPP_RNDIS_LAN   0
 #endif
-
+#ifdef __USER_CODE__
+#define LWIP_XLAT_ENABLE 0
+#else
+#define LWIP_XLAT_ENABLE 0
+#endif
 #define LWIP_LAN_NET_CHANNEL_NUM          2
 
 #define LWIP_LAN_RNDIS_PRIVATE_IP_DNS_RELAY 1

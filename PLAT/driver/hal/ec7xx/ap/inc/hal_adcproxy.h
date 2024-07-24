@@ -34,14 +34,18 @@ extern "C" {
  *----------------------------------------------------------------------------*/
 /* to use default efuse data, set to 1 if no data in efuse */
 #define USE_DEFAULT_EFUSE_VALUE         1
-
-
-/*----------------------------------------------------------------------------*
- *                   DATA TYPE DEFINITION                                     *
- *----------------------------------------------------------------------------*/
 #define ADC_PROXY_VBAT          0
 #define ADC_PROXY_INTTEMP       1
 #define ADC_PROXY_EXTTEMP       2
+
+
+/*----------------------------------------------------------------------------*
+ *                    DATA TYPE DEFINITION                                    *
+ *----------------------------------------------------------------------------*/
+typedef void(* adcProxyInterTempIndicator_t)(int16_t value);
+typedef void(* adcProxyVbatIndicator_t)(int16_t value);
+
+
 
 /*----------------------------------------------------------------------------*
  *                    GLOBAL FUNCTIONS DECLEARATION                           *
@@ -76,6 +80,12 @@ void cpADCDeInit(void);
 * @note
 */
 int32_t adcProxyConvertRawCodeToTemperature(uint32_t input);
+/**
+* @brief adcProxyGetResultInd
+* @details register a indicator to adc proxy module when adc value return. The indicators are called in interrupt section
+* @note
+*/
+void adcProxyRegisterResultInd(adcProxyInterTempIndicator_t temperatureInd, adcProxyVbatIndicator_t voltageInd);
 
 
 #ifdef __cplusplus

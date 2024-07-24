@@ -256,7 +256,8 @@ typedef struct EnetEntity
     uint16_t isWanAvlb  :1;
     uint16_t isLanUp    :1;
     uint16_t notifAgain :1;
-    uint16_t rsvdBits   :13;
+    uint16_t isLanSusp  :1; /* lan device is suspended or not? */
+    uint16_t rsvdBits   :12;
 
     /* TODO: statistic, via monitor */
 }EnetEntity_t;

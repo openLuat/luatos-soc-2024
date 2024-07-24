@@ -67,11 +67,7 @@ flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 
 #define AP_FLASH_LOAD_ADDR              (0x0087e000)
 
-#ifdef FEATURE_EXCEPTION_FLASH_DUMP_ENABLE
-#define AP_FLASH_LOAD_SIZE              (0x30b000 - FLASH_EXCEP_DUMP_SIZE)//3116KB - 8KB
-#else
 #define AP_FLASH_LOAD_SIZE              (0x30b000)//3116KB
-#endif
 #define AP_FLASH_LOAD_UNZIP_SIZE        (0x319000)//3172KB ,for ld
 
 //hib bakcup addr and size

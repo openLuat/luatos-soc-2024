@@ -27,7 +27,6 @@
 ******************************************************************************/
 
 
-
 /******************************************************************************
  ******************************************************************************
  * External global variable
@@ -71,6 +70,7 @@ BOOL psDialImsMemoryIsPsram(void);
 void psDialGetImsMedSigQueueMem(UINT16 sigQSize, void **pSigQMem);
 
 void psDialGetImsMedDtmfQueueMem(UINT16 dtmfQSize, void **pDtmfQMem);
+
 
 #endif
 

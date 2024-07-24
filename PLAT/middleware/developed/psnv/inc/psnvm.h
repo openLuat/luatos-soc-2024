@@ -161,6 +161,21 @@ typedef struct _NVM_EPAT_cesmpdpauthconfig
     CesmPdpAuthDefinition   pdpAuth[PS_PDP_CID_NUM];  /* index by CID, size: 140*16 = 2240 */
 }CesmNvmPdpAuthConfig;      /* Whole NVM should limited in 4KB */
 
+/******************************************************************************
+ * CEMM EHPLMNLIST NVM
+******************************************************************************/
+#define CUR_CEMM_EHPLMN_LIST_NVM_VER    0x00
+
+typedef struct _EPAT_CemmEhplmnListGroup_Tag
+{
+    Plmn                ehplmnList[CEMM_EHPLMN_LIST_ITEM_MAX_NUM];
+}CemmEhplmnListGroup;
+
+/* NVM ID: PS_CEMM_EHPLMNLIST_NVM, filename: cemmehplmnlist.nvm */
+typedef struct _NVM_EPAT_CemmNvmEhplmnList
+{
+    CemmEhplmnListGroup ehplmnGroup[CEMM_EHPLMN_LIST_GROUP_MAX_NUM];
+}CemmNvmEhplmnList;      /* Whole NVM should limited in 4KB */
 
 
 /******************************************************************************

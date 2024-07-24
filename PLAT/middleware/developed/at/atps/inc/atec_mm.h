@@ -239,6 +239,16 @@ typedef enum AtcECPTWEDRXSValue_Enum
 #define ATC_ECPLMNINTERVAL_INTERVAL_VAL_MAX         65535
 #define ATC_ECPLMNINTERVAL_INTERVAL_VAL_DEFAULT     30      /*interval, default: 30 sec*/
 
+/*AT+ECEHPLMNLIST*/
+#define ATC_ECEHPLMNLIST_MODE_VAL_MIN           0
+#define ATC_ECEHPLMNLIST_MODE_VAL_MAX           2
+#define ATC_ECEHPLMNLIST_MODE_VAL_DEFAULT       0
+#define ATC_ECEHPLMNLIST_GROUP_VAL_MIN          0
+#define ATC_ECEHPLMNLIST_GROUP_VAL_MAX          3
+#define ATC_ECEHPLMNLIST_GROUP_VAL_DEFAULT      0
+#define ATC_ECEHPLMNLIST_PLMNLIST_STR_DEFAULT   NULL
+#define ATC_ECEHPLMNLIST_PLMNLIST_STR_MAX_LEN   100
+
 CmsRetId  mmCREG(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  mmCOPS(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  mmCSQ(const AtCmdInputContext *pAtCmdReq);
@@ -263,6 +273,7 @@ CmsRetId  mmGetPlmnNumericStr(UINT8 plmnFormat, UINT8 *plmnName, UINT8 *plmnNume
 CmsRetId  mmECPLMNINTERVAL(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  mmECCONNREL(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  mmECMMER(const AtCmdInputContext *pAtCmdReq);
+CmsRetId  mmECEHPLMNLIST(const AtCmdInputContext *pAtCmdReq);
 
 #endif
 

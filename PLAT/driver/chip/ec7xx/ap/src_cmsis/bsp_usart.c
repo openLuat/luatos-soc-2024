@@ -719,6 +719,10 @@ int32_t USART_Initialize(ARM_USART_SignalEvent_t cb_event, USART_RESOURCES *usar
     PadConfig_t config;
     PAD_getDefaultConfig(&config);
 
+#if defined CHIP_EC716
+    config.schmittTriggerEnable = 1;
+#endif
+
     config.mux = usart->pins.pin_tx->funcNum;
     PAD_setPinConfig(usart->pins.pin_tx->pinNum, &config);
 
@@ -922,7 +926,7 @@ int32_t USART_PowerControl(ARM_POWER_STATE state,USART_RESOURCES *usart)
             // Configure FIFO Control register
             val = EIGEN_VAL2FLD(USART_FCR0_TXFIFO_TH, usart->tx_fifo_trig_lvl) | \
                   EIGEN_VAL2FLD(USART_FCR0_RXFIFO_TH, usart->rx_fifo_trig_lvl - 1) | \
-                  EIGEN_VAL2FLD(USART_FCR0_RXFIFO_TO_BIT_NUM, 16);
+                  EIGEN_VAL2FLD(USART_FCR0_RXFIFO_TO_BIT_NUM, 16 + 10);
 
             usart->reg->FCR0 = val;
 
@@ -1355,7 +1359,7 @@ int32_t USART_Control(uint32_t control, uint32_t arg, USART_RESOURCES *usart)
     usart->reg->LCR = lcr;
 
     // don't check stopbits, tx use frac div
-#if 1
+#if 0
     usart->reg->HCR = USART_HCR_DMA_EOR_MODE_Msk | \
                       USART_HCR_TX_USE_DIV_FRAC_Msk | \
                       EIGEN_VAL2FLD(USART_HCR_AUTO_CG, 0xFF);

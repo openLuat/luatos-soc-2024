@@ -107,6 +107,7 @@ typedef enum _EPAT_MidWareCfgParamId_Enum
     MW_CFG_NET_HSOT_INFO_PARAM,     /* TLV, MWNvmCfgNetHostInfoParam */
     
     MW_CFG_DM_CMCC_PARAM2,           /* TLV, MWNvmCfgDmCmccParam2 */
+    MW_CFG_NET_CLAT_PARAM,  /* TLV, MWNvmCfgNetXlatParam */
 
     // new extended at channnels
     MW_CFG_AT_CHAN_5_CONFIG,        /* TLV,  MWNvmCfgAtChanConfig, AT channel 5 */
@@ -234,6 +235,22 @@ typedef struct _SIG_EPAT_MW_CFG_NET_HOST_INFO_PARAM
     UINT8   localDns1[MID_WARE_IPV4_ADDR_LEN];
     UINT8   localDns2[MID_WARE_IPV4_ADDR_LEN];
 }MWNvmCfgNetHostInfoParam;     //16 bytes
+
+/*
+ * net param CLAT info config
+ * paramId: MW_CFG_NET_CLAT_PARAM
+*/
+typedef struct _SIG_EPAT_MW_CFG_NET_CLAT_PARAM
+{
+    BOOL    bEnable; /*whether enable xlat feature*/
+    UINT8   bindIpv6Cid; //the ipv6 cid bind with
+    UINT8   ipv6PrefixLen; //the trans ipv6 prefix len
+    UINT8   rsvd;
+    UINT8   ipv6Preix[MID_WARE_IPV6_ADDR_LEN]; //the trans ipv6 prefix info
+    UINT8   ipv4Local[MID_WARE_IPV4_ADDR_LEN]; //ue local private ipv4 address
+    UINT8   ipv4Dns1[MID_WARE_IPV4_ADDR_LEN]; //ipv4 dns server 1 for clat dns resolve
+    UINT8   ipv4Dns2[MID_WARE_IPV4_ADDR_LEN]; //ipv4 dns server 2 for clat dns resolve
+}MWNvmCfgNetXlatParam;     //16 bytes
 
 /*
  * AT socket config parameter
@@ -626,6 +643,12 @@ typedef struct MidWareNvmConfig_Tag
     MWNvmCfgUsrSetCodecVolumn     usrSetCodecVolumn;
     MWNvmCfgVolumnSetFlag         volumnSetFlag;
     #endif
+
+    /*
+    * used for CLAT feature,ParamId: MW_CFG_NET_CLAT_PARAM:
+    */
+    MWNvmCfgNetXlatParam      clatParamCfg;
+
 }MidWareNvmConfig;
 
 
@@ -1002,6 +1025,20 @@ void mwNvmCfgSetAndSaveNetParamConfig(MWNvmCfgNetParam *pNetParamCfg);
 void mwNvmCfgGetNetParamConfig(MWNvmCfgNetParam *pNetParamCfg);
 void mwNvmCfgGetNetParamHostInfoConfig(MWNvmCfgNetHostInfoParam *pNetParamHostInfoCfg);
 void mwNvmCfgSetAndSaveNetParamHostInfoConfig(MWNvmCfgNetHostInfoParam *pNetParamHostInfoCfg);
+
+/**
+  \fn           void mwNvmCfgGetNetClatConfig(MWNvmCfgNetXlatParam *pNetClatCfg)
+  \brief        Get/Read net clat config info
+  \param[out]   pDnsCfg   value
+*/
+void mwNvmCfgGetNetClatConfig(MWNvmCfgNetXlatParam *pNetClatCfg);
+
+/**
+  \fn           void mwNvmCfgSetAndSaveNetClatConfig(MWNvmCfgNetHostInfoParam *pNetParamHostInfoCfg)
+  \brief        Set/save clat config
+  \param[in]    pDnsCfg   value
+*/
+void mwNvmCfgSetAndSaveNetClatConfig(MWNvmCfgNetXlatParam *pNetClatCfg);
 
 void mwNvmCfgSetAndSaveAtPendUrcParam(UINT8 chanId, UINT8 atPendUrcEnableFlag);
 UINT8 mwNvmCfgGetAtPendUrcParam(UINT8 chanId);

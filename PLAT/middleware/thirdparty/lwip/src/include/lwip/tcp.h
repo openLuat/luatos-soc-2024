@@ -491,7 +491,7 @@ u8_t IsAnyActiveTcpConn(void);
 u8_t is_any_tcp_pcb_pending_ul_data(void);
 void tcp_netif_enter_oos_state(const ip_addr_t * address);
 void tcp_netif_exit_oos_state(const ip_addr_t * address);
-void tcp_report_close_complete_event(struct tcp_pcb *pcb);
+void tcp_report_close_complete_event(struct tcp_pcb *pcb, u16_t local_port);
 #endif
 
 #if PS_ENABLE_TCPIP_HIB_SLEEP2_MODE

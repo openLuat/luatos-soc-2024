@@ -44,6 +44,8 @@ BOOL OperatorStringToNumericPlmn(const UINT8 *pPlmnStr, CmiNumericPlmn *pOutPlmn
 CmsRetId mmSetOosPlmnInterval(UINT32 atHandle, CmiMmSetOosPlmnIntervalReq *pSetOosPlmnIntervalReq);
 CmsRetId mmGetOosPlmnInterval(UINT32 atHandle);
 CmsRetId mmGetECMMER(UINT32 atHandle);
+CmsRetId mmSetEhplmnList(UINT32 atHandle, UINT8 mode, UINT8 groupId, CHAR *plmnList);
+CmsRetId mmGetEhplmnList(UINT32 atHandle, UINT8 groupId);
 
 
 #endif

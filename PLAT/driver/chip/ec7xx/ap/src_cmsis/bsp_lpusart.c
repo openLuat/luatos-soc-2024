@@ -499,6 +499,10 @@ int32_t LPUSART_Initialize(ARM_USART_SignalEvent_t cb_event, LPUSART_RESOURCES *
     PadConfig_t config;
     PAD_getDefaultConfig(&config);
 
+#if defined CHIP_EC716
+    config.schmittTriggerEnable = 1;
+#endif
+
     config.mux = lpusart->pins.pin_tx->funcNum;
     PAD_setPinConfig(lpusart->pins.pin_tx->pinNum, &config);
 
@@ -668,7 +672,7 @@ int32_t LPUSART_PowerControl(ARM_POWER_STATE state,LPUSART_RESOURCES *lpusart)
             // Configure FIFO Control register
             val = EIGEN_VAL2FLD(USART_FCR0_TXFIFO_TH, LPUSART_TX_TRIG_LVL) | \
                   EIGEN_VAL2FLD(USART_FCR0_RXFIFO_TH, LPUSART_RX_TRIG_LVL - 1) | \
-                  EIGEN_VAL2FLD(USART_FCR0_RXFIFO_TO_BIT_NUM, 16);
+                  EIGEN_VAL2FLD(USART_FCR0_RXFIFO_TO_BIT_NUM, 16 + 10);
 
             lpusart->core_regs->FCR0 = val;
 
@@ -722,7 +726,7 @@ int32_t LPUSART_PowerControl(ARM_POWER_STATE state,LPUSART_RESOURCES *lpusart)
             // Configure FIFO Control register
             val = EIGEN_VAL2FLD(USART_FCR0_TXFIFO_TH, LPUSART_TX_TRIG_LVL) | \
                   EIGEN_VAL2FLD(USART_FCR0_RXFIFO_TH, LPUSART_RX_TRIG_LVL - 1) | \
-                  EIGEN_VAL2FLD(USART_FCR0_RXFIFO_TO_BIT_NUM, 16);
+                  EIGEN_VAL2FLD(USART_FCR0_RXFIFO_TO_BIT_NUM, 16 + 10);
 
             lpusart->core_regs->FCR0 = val;
 
@@ -1209,7 +1213,7 @@ int32_t LPUSART_Control(uint32_t control, uint32_t arg, LPUSART_RESOURCES *lpusa
     lpusart->core_regs->LCR = lcr | USART_LCR_RX_TO_BIT_NUM_Msk;
 #endif
     // don't check stopbits, tx use frac div
-#if 1
+#if 0
     lpusart->core_regs->HCR = USART_HCR_DMA_EOR_MODE_Msk | \
                               USART_HCR_TX_USE_DIV_FRAC_Msk | \
                               EIGEN_VAL2FLD(USART_HCR_AUTO_CG, 0xFF);
@@ -1589,7 +1593,7 @@ void LPUSART_DmaRxEvent(uint32_t event, LPUSART_RESOURCES *lpusart)
 
             info->xfer.rx_cnt = dmaCurrentTargetAddress - (uint32_t)info->xfer.rx_buf;
 
-#if USART_DEBUG
+#if LPUSART_DRIVER_DEBUG
             ECPLAT_PRINTF(UNILOG_PLA_DRIVER, LPUSART_DmaRxEvent_0, P_INFO, "lpuart dma rx timeout, fsr:%x, rx_cnt:%d", lpusart->core_regs->FSR, info->xfer.rx_cnt);
 #endif
 
@@ -1610,7 +1614,7 @@ void LPUSART_DmaRxEvent(uint32_t event, LPUSART_RESOURCES *lpusart)
 
         case DMA_EVENT_END:
 
-#if USART_DEBUG
+#if LPUSART_DRIVER_DEBUG
             ECPLAT_PRINTF(UNILOG_PLA_DRIVER, LPUSART_DmaRxEvent_1, P_INFO, "lpuart dma rx end, fsr:%x", lpusart->core_regs->FSR);
 #endif
             //Disable all recv interrupt

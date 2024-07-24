@@ -119,9 +119,7 @@ typedef struct _EPAT_ImsIcmCfg_Tag
     UINT8       ipPcscf[IMS_IP_MAX_STR_LEN];    /*whether using IP string? cost to much memory - TBD*/
     CHAR        imsApn[IMS_APN_MAX_STR_LEN];
 
-#ifdef FEATURE_IMS_UT_ENABLE
     ImsSupSrvCfg supSrvCfg;
-#endif
 
 }ImsIcmCfg;     /* already 144 bytes */
 
@@ -646,7 +644,7 @@ void ImsCfgDefaultUaCallCfg(ImsPlmn hplmn, ImsUaCallCfg *pUaCallCfg);
 void ImsCfgDefaultSipCfg(ImsPlmn hplmn, ImsSipCfg *pSipCfg);
 void ImsCfgDefaultTpCfg(ImsPlmn hplmn, ImsTpCfg *pTpCfg);
 UINT16 ImsCfgDefaultOperId(ImsPlmn plmn);
-void   ImsCfgDefaultSupsrvCfg(ImsPlmn hplmn, ImsSupSrvCfg *pSupsrvCfg);
+void   ImsCfgDefaultSupsrvCfg(void *hplmn,void *pSupsrvCfg);
 
 /**
  * NVM read/write API
