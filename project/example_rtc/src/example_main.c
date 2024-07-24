@@ -52,7 +52,7 @@ static void task_test_rtc(void *param)
     {
         luat_rtos_task_sleep(1000);
         luat_rtc_get(&tblock);
-        LUAT_DEBUG_PRINT("%04d/%02d/%02d/ %02d:%02d:%02d %02d", tblock.tm_year+1900, tblock.tm_mon+1, tblock.tm_mday, tblock.tm_hour, tblock.tm_min,tblock.tm_sec,tblock.tm_wday);
+        LUAT_DEBUG_PRINT("%04d/%02d/%02d/ %02d:%02d:%02d %02d %d", tblock.tm_year+1900, tblock.tm_mon+1, tblock.tm_mday, tblock.tm_hour, tblock.tm_min,tblock.tm_sec,tblock.tm_wday, luat_rtc_timezone(NULL));
 
     }
     

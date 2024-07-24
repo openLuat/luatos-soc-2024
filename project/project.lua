@@ -195,6 +195,7 @@ target("csdk",function()
                 csdk_root.."/PLAT/driver/chip/ec7xx/ap/src/swdio.c",
                 csdk_root.."/PLAT/driver/chip/ec7xx/ap/src/i2s.c",
                 csdk_root.."/PLAT/driver/hal/ec7xx/ap/src/hal_charge.c",
+				csdk_root.."/PLAT/driver/hal/ec7xx/ap/src/hal_powBackOff.c",
                 csdk_root.."/PLAT/driver/hal/ec7xx/ap/src/hal_i2s.c",
                 csdk_root.."/PLAT/driver/hal/ec7xx/ap/src/hal_i2c.c",
                 csdk_root.."/PLAT/driver/hal/ec7xx/ap/src/hal_pwrkey.c")

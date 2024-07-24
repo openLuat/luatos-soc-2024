@@ -98,5 +98,13 @@ int luat_rtc_timezone(int* timezone) {
         g_s_local_tz = *timezone;
         luat_rtc_set(&tblock);
     }
+    else
+    {
+    	if (mwAonBeNitzUtcTimeSync())
+    	{
+    		utc_timer_value_t *utc = OsaSystemTimeReadRamUtc();
+    		g_s_local_tz = utc->timeZone;
+    	}
+    }
     return g_s_local_tz;
 }
