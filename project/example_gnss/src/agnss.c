@@ -487,7 +487,7 @@ static void ephemeris_get_task(void *param)
                         is_error = 1;
                         eph_download_end = 1;
                     }
-                    DBG("status %d total %u", status, http->total_len);
+                    DBG("status %d");
 
                     break;
                 case EPH_HTTP_GET_DATA:
