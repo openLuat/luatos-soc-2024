@@ -132,7 +132,7 @@ static void luat_test_http_get_async_task(void *param)
 		case TEST_HTTP_GET_HEAD_DONE:
 			// 在这里处理http响应头
 			done_len = 0;
-			LUAT_DEBUG_PRINT("status %d total %u", luat_http_client_get_status_code(http), http->total_len);
+			LUAT_DEBUG_PRINT("status %d", luat_http_client_get_status_code(http));
 			break;
 		case TEST_HTTP_GET_DATA:
 			// 在这里处理用户数据
@@ -190,7 +190,7 @@ static int luat_test_http_get_sync(char *url, char*headBuf, uint32_t headBufLen,
 			break;
 		case TEST_HTTP_GET_HEAD_DONE:
 			done_len = 0;
-			LUAT_DEBUG_PRINT("status %d total %u", luat_http_client_get_status_code(http), http->total_len);
+			LUAT_DEBUG_PRINT("status %d", luat_http_client_get_status_code(http));
 			break;
 		case TEST_HTTP_GET_DATA:
 			// 在这里处理body数据
@@ -297,7 +297,7 @@ static void luat_test_http_post_task(void *param)
 		case TEST_HTTP_GET_HEAD_DONE:
 			// 在这里处理http响应头
 			done_len = 0;
-			LUAT_DEBUG_PRINT("status %d total %u", luat_http_client_get_status_code(http), http->total_len);
+			LUAT_DEBUG_PRINT("status %d", luat_http_client_get_status_code(http));
 			break;
 		case TEST_HTTP_GET_DATA:
 			// 在这里处理用户数据
