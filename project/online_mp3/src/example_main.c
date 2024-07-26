@@ -390,7 +390,7 @@ static void online_mp3_download(void *param)
 			switch(event.id)
 			{
 			case MP3_HTTP_GET_HEAD_DONE:
-				LUAT_DEBUG_PRINT("status %d total %u", luat_http_client_get_status_code(http_client), http_client->total_len);
+				LUAT_DEBUG_PRINT("status %d ", luat_http_client_get_status_code(http_client));
 				break;
 			case MP3_HTTP_GET_DATA:
 				break;
@@ -454,7 +454,7 @@ static void online_mp3_download(void *param)
 			{
 
 			case MP3_HTTP_GET_HEAD_DONE:
-				LUAT_DEBUG_PRINT("status %d total %u", luat_http_client_get_status_code(http_client), http_client->total_len);
+				LUAT_DEBUG_PRINT("status %d", luat_http_client_get_status_code(http_client));
 				if (luat_http_client_get_status_code(http_client) != 206)
 				{
 					mp3c.is_downloading = 0;
