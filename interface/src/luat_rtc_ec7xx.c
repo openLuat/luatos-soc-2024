@@ -26,6 +26,7 @@
 #include "osasys.h"
 #include "luat_debug.h"
 #include "mw_aon_info.h"
+extern int soc_check_time(uint16_t year, uint8_t mon, uint8_t day, uint8_t h, uint8_t m, uint8_t s, uint8_t force);
 static int8_t g_s_local_tz = 32;
 int luat_rtc_set(struct tm *tblock){
     uint32_t Timer1 = (((tblock->tm_year+1900)<<16)&0xfff0000) | (((tblock->tm_mon+1)<<8)&0xff00) | ((tblock->tm_mday)&0xff);
@@ -34,7 +35,9 @@ int luat_rtc_set(struct tm *tblock){
     if (ret == 0){
         mwAonSetUtcTimeSyncFlag(1);
         mwAonSetNitzUtcTimeSyncFlag(1);
+        soc_check_time(tblock->tm_year+1900, tblock->tm_mon+1, tblock->tm_mday, tblock->tm_hour, tblock->tm_min, tblock->tm_sec, 1);
     }
+
     return 0;
 }
 
@@ -74,6 +77,7 @@ void luat_rtc_set_tamp32(uint32_t tamp) {
     {
         mwAonSetUtcTimeSyncFlag(1);  //set to 1 when NITZ triggered
         mwAonSetNitzUtcTimeSyncFlag(1);
+        soc_check_time(Date.Year, Date.Mon, Date.Day, Time.Hour, Time.Min, Time.Sec, 1);
     }
 }
 #ifdef __LUATOS__

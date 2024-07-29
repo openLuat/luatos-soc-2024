@@ -164,7 +164,15 @@ static void mobile_event_cb(LUAT_MOBILE_EVENT_E event, uint8_t index, uint8_t st
 		}
 		break;
 	case LUAT_MOBILE_EVENT_TIME_SYNC:
-		LUAT_DEBUG_PRINT("通过移动网络同步了UTC时间");
+		if (!status)
+		{
+			LUAT_DEBUG_PRINT("通过移动网络同步了UTC时间");
+		}
+		else
+		{
+			LUAT_DEBUG_PRINT("移动网络同步UTC时间出错");
+		}
+
 		break;
 	case LUAT_MOBILE_EVENT_CSCON:
 		LUAT_DEBUG_PRINT("RRC状态 %d", status);
