@@ -764,11 +764,13 @@ int luat_mobile_sms_event_register_handler(luat_mobile_sms_event_callback_t call
 
 /* ------------------------------------------------- mobile status end ------------------------------------------------ */
 
+extern void net_lwip_check_switch(uint8_t onoff);
 extern void soc_mobile_set_rrc_release_time(uint8_t s);
 void luat_mobile_set_rrc_auto_release_time(uint8_t s)
 {
 	if (1 == s) s = 2;
 	soc_mobile_set_rrc_release_time(s);
+	//net_lwip_check_switch(s);
 }
 
 extern void soc_mobile_release_rrc_pause(uint8_t onoff);
