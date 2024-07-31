@@ -43,8 +43,11 @@ function description_csdk()
         else 
             add_defines("DHCPD_ENABLE_DEFINE=1")
         end
-
-        add_includedirs(csdk_root.."/PLAT/tools/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(lib_ps_plat=="mid"and"-mid"or""))
+        if chip_target=="ec718u" and target:values("lib_ps_plat")=="oc" then
+            add_includedirs(csdk_root.."/PLAT/tools/"..(chip_target)..("-oc"))
+        else
+            add_includedirs(csdk_root.."/PLAT/tools/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(lib_ps_plat=="mid"and"-mid"or""))
+        end
 
     end
 
@@ -247,8 +250,13 @@ target(project_name..".elf",function()
     if chip_target and lib_ps_plat then
         add_linkdirs(csdk_root.."/PLAT/prebuild/PS/lib/gcc/"..(chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6).."/"..lib_ps_plat)
         add_linkdirs(csdk_root.."/PLAT/prebuild/PLAT/lib/gcc/"..(chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6).."/"..lib_ps_plat)
-        add_linkdirs(csdk_root.."/PLAT/libs/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(lib_ps_plat=="mid"and"-mid"or""))
-        if chip_target=="ec718pv" or chip_target=="ec718u" then
+        
+        if chip_target=="ec718u" and target:values("lib_ps_plat")=="oc" then
+            add_linkdirs(csdk_root.."/PLAT/libs/"..(chip_target)..("-oc"))
+        else
+            add_linkdirs(csdk_root.."/PLAT/libs/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(lib_ps_plat=="mid"and"-mid"or""))
+        end
+        if chip_target=="ec718u" and has_config("denoise_force") or chip_target=="ec718pv" then
             add_linkgroups("imsnv","ims","imsxml", {whole = true})
         end
     end
@@ -350,7 +358,12 @@ target(project_name..".elf",function()
         os.cp("$(buildir)/"..project_name.."/*.bin", out_path)
 		os.cp("$(buildir)/"..project_name.."/*.map", out_path)
 		os.cp("$(buildir)/"..project_name.."/*.elf", out_path)
-		os.cp(csdk_root .. "/PLAT/tools/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(target:values("lib_ps_plat")=="mid"and"-mid"or"").."/comdb.txt", out_path)
+		
+        if chip_target=="ec718u" and target:values("lib_ps_plat")=="oc" then
+            os.cp(csdk_root .. "/PLAT/tools/"..(chip_target)..("-oc").."/comdb.txt", out_path)
+        else
+            os.cp(csdk_root .. "/PLAT/tools/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(target:values("lib_ps_plat")=="mid"and"-mid"or"").."/comdb.txt", out_path)
+        end
         os.cp("$(buildir)/"..project_name.."/" .. project_name .. ".bin", "$(buildir)/"..project_name.."/ap.bin")
         ---------------------------------------------------------
         -------------- 这部分尚不能跨平台 -------------------------

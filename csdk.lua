@@ -109,11 +109,11 @@ function description_common()
         lib_ps_plat = "full"
         lib_fw = "oc"
         if has_config("lspd_mode") then
-            if chip_target == "ec718pv" or chip_target == "ec718u" then
+            if chip_target == "ec718pv" then
                 lib_fw = "audio"
                 lib_ps_plat = "ims"
                 add_defines("FEATURE_AMR_CP_ENABLE","FEATURE_VEM_CP_ENABLE")
-            elseif chip_target == "ec718p" and has_config("denoise_force") then
+            elseif chip_target == "ec718p" and has_config("denoise_force") or chip_target == "ec718u" then
                 lib_fw = "audio"
                 add_defines("FEATURE_AMR_CP_ENABLE","FEATURE_VEM_CP_ENABLE")
                 lib_ps_plat = "oc"
