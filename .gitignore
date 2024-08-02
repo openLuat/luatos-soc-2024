@@ -31,3 +31,4 @@ libdriver_private_drv.a
 /PLAT/prebuild/*
 /bootloader/*.c
 !metas.json
+/lib/libtgt_app_service_716e.a
