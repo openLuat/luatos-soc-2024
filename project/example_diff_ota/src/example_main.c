@@ -47,12 +47,13 @@
 #include "luat_mem.h"
 
 //#define OTA_BY_HTTP		//OTA文件通过自定义HTTP服务器下载
-//#define OTA_BY_IOT		//OTA文件通过合宙IOT服务器下载
- #define OTA_BY_USB			//OTA文件通过USB虚拟串口下载，打开串口工具时需要勾选DTR或者RTS，否则模块发不出同步码
+#define OTA_BY_IOT		//OTA文件通过合宙IOT服务器下载
+//#define OTA_BY_USB			//OTA文件通过USB虚拟串口下载，打开串口工具时需要勾选DTR或者RTS，否则模块发不出同步码
 #define UART_ID LUAT_VUART_ID_0
 luat_rtos_task_handle g_s_task_handle;
 luat_rtos_task_handle g_s_version_print_task_handle;
 #define PROJECT_VERSION  "1.0.1"                  					//使用合宙iot升级的话此字段必须存在，并且强制固定格式为x.x.x, x可以为任意的数字
+#define PROJECT_NAME "example_diff_ota"
 #ifdef OTA_BY_USB
 enum
 {
@@ -120,14 +121,14 @@ static void luat_ymodem_cb(uint8_t *data, uint32_t data_len)
         所以需要对firmware字段做一点小小的操作，将PROJECT_VERSION加入字段中来区分基础版本不同的差分包
 
         添加字段前的fireware字段
-                从1.0.0升级到3.0.0生成的firmware字段为TEST_FOTA_CSDK_EC7XX
-                从2.0.0升级到3.0.0生成的firmware字段为TEST_FOTA_CSDK_EC7XX
+                从1.0.0升级到3.0.0生成的firmware字段为PROJECT_NAME_LuatOS_CSDK_EC7XX
+                从2.0.0升级到3.0.0生成的firmware字段为PROJECT_NAME_LuatOS_CSDK_EC7XX
 
         添加字段后的fireware字段
-                从1.0.0升级到3.0.0生成的firmware字段为1.0.0_TEST_FOTA_CSDK_EC7XX
-                从2.0.0升级到3.0.0生成的firmware字段为2.0.0_TEST_FOTA_CSDK_EC7XX
+                从1.0.0升级到3.0.0生成的firmware字段为1.0.0_PROJECT_NAME_LuatOS_CSDK_EC7XX
+                从2.0.0升级到3.0.0生成的firmware字段为2.0.0_PROJECT_NAME_LuatOS_CSDK_EC7XX
 
-        这样操作后，当两个升级包放上去，1.0.0就算被放进了2.0.0_TEST_FOTA_CSDK_EC7XX的升级列表里，也会因为自身上报的字段和所在升级列表的固件名称不一致而被服务器拒绝升级
+        这样操作后，当两个升级包放上去，1.0.0就算被放进了2.0.0_PROJECT_NAME_LuatOS_CSDK_EC7XX的升级列表里，也会因为自身上报的字段和所在升级列表的固件名称不一致而被服务器拒绝升级
 */
 
 
@@ -137,15 +138,14 @@ static void luat_ymodem_cb(uint8_t *data, uint32_t data_len)
     这种方式可以在合宙iot平台统计升级成功的设备数量，但是需要用户自身对设备和升级包做版本管理     用合宙iot平台升级时，不推荐使用此种升级方式
 
     PROJECT_VERSION:用于区分不同软件版本
-
     假设：
         现在有两批模块在运行不同的基础版本，一个版本号为1.0.0，另一个版本号为2.0.0
         现在这两个版本都需要升级到3.0.0，则需要做两个差分包，一个是从1.0.0升级到3.0.0，另一个是从2.0.0升级到3.0.0
 
         合宙IOT通过firmware来区分不同版本固件，只要请求时firmware相同，版本号比设备运行的要高，就会下发升级文件
         
-        从1.0.0升级到3.0.0生成的firmware字段为TEST_FOTA_CSDK_EC7XX
-        从2.0.0升级到3.0.0生成的firmware字段为TEST_FOTA_CSDK_EC7XX
+        从1.0.0升级到3.0.0生成的firmware字段为PROJECT_NAME_LuatOS_CSDK_EC7XX
+        从2.0.0升级到3.0.0生成的firmware字段为PROJECT_NAME_LuatOS_CSDK_EC7XX
 
         如果将运行1.0.0的设备imei放进了2.0.0-3.0.0的升级列表中，因为设备上报的firmware字段相同，服务器也会将2.0.0-3.0.0的差分软件下发给运行1.0.0软件的设备
         所以用户必须自身做好设备版本区分，否则会一直请求错误的差分包，导致流量损耗
@@ -166,7 +166,7 @@ static void luat_ymodem_cb(uint8_t *data, uint32_t data_len)
 
 #define OTA_URL "http://iot.openluat.com"
 #define PROJECT_KEY "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"  	//修改为自己iot上面的PRODUCT_KEY，这里是一个错误的，使用合宙iot升级的话此字段必须存在
-#define PROJECT_NAME "TEST_FOTA"                  					//使用合宙iot升级的话此字段必须存在，可以任意修改，但和升级包的必须一致
+                					//使用合宙iot升级的话此字段必须存在，可以任意修改，但和升级包的必须一致
 
 #endif
 
@@ -316,7 +316,7 @@ static void luat_test_task(void *param)
 	char imei[16] = {0};
 	luat_mobile_get_imei(0, imei, 15);
 	// 第一种升级方式
-	snprintf(remote_domain, 200, "%s/api/site/firmware_upgrade?project_key=%s&imei=%s&device_key=&firmware_name=%s_%s_%s_%s&version=%s", OTA_URL, PROJECT_KEY, imei, PROJECT_VERSION, PROJECT_NAME, soc_get_sdk_type(), "EC7XX", PROJECT_VERSION);
+	snprintf(remote_domain, 200, "%s/api/site/firmware_upgrade?project_key=%s&imei=%s&device_key=&firmware_name=%s_%s_LuatOS_%s_%s&version=%s", OTA_URL, PROJECT_KEY, imei, PROJECT_VERSION, PROJECT_NAME, soc_get_sdk_type(), "EC7XX", PROJECT_VERSION);
 
 	// 第二种升级方式
  	// snprintf(remote_domain, 200, "%s/api/site/firmware_upgrade?project_key=%s&imei=%s&device_key=&firmware_name=%s_%s_%s&version=%s", OTA_URL, PROJECT_KEY, imei, PROJECT_NAME, soc_get_sdk_type(), "EC7XX", PROJECT_VERSION);
