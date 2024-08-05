@@ -1,38 +1,42 @@
 {
   "version": "1.0",
-  "update_time": "2024-07-31 14:55:16.922265",
+  "update_time": "2024-08-05 19:41:00.149179",
   "libs": {
     "ec718u": {
-      "sha1": "ce755bef7d318498423f65ac5e53d535110950d2",
-      "size": 7272183
+      "sha1": "f023a3aab62ded6d5afa5d157274f64293d62d8e",
+      "size": 7271153
+    },
+    "ec718u-oc": {
+      "sha1": "91ad5d38e811016a5f71abacc6b3317a05c4716b",
+      "size": 7274598
     },
     "ec718p": {
-      "sha1": "5533705c2c96b309ffdc1e1b25a8686734466817",
-      "size": 7151255
+      "sha1": "27a73a3bdea49c30bf13a4f1174a3ff2c47ab57c",
+      "size": 7161058
     },
     "ec718pv": {
-      "sha1": "4a32991a6789a0b40942539545f64190a800647a",
-      "size": 7289040
+      "sha1": "662266d0850a6b90ca94d1bfb9fa17d1c377c563",
+      "size": 7294782
     },
     "ec718s": {
-      "sha1": "2f4fd8bcf92ff6e70e288c7c71c9a72be83d5705",
-      "size": 13385437
+      "sha1": "a072c2d948789b274f4323122949cac6f92f21fd",
+      "size": 13396607
     },
     "ec716s": {
-      "sha1": "446d94b5b7e18daf37752befebdb7ba0da3c059f",
-      "size": 13419415
+      "sha1": "21043ca4e45aca2d8993502b5cb4064a85d60005",
+      "size": 13418360
     },
     "ec716e": {
-      "sha1": "d2e01d99bb8d4085e778ee689dfbd501de710ac6",
-      "size": 7091584
+      "sha1": "0300c1d18607d8ff674775f66826161105c31145",
+      "size": 7092458
     },
     "ec718s-mid": {
-      "sha1": "26c58d618e7536f7afd0b7dbc96f8c182846bb85",
-      "size": 13171130
+      "sha1": "a95aca033369f3fdcb965a9dc76b9c650c577ed1",
+      "size": 13163637
     },
     "ec716s-mid": {
-      "sha1": "b413fd77b9cc8aa6c33685a7e5cc85be12cb1477",
-      "size": 13194452
+      "sha1": "a475275921f96b7e597ac20e0a6f6a022b49d07f",
+      "size": 13209448
     }
   }
 }

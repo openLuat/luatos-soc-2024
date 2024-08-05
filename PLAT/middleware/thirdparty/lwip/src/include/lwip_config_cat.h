@@ -174,7 +174,7 @@
 #define LWIP_ENABLE_PPP_RNDIS_LAN   0
 #endif
 #ifdef __USER_CODE__
-#define LWIP_XLAT_ENABLE 0
+#define LWIP_XLAT_ENABLE 1
 #else
 #define LWIP_XLAT_ENABLE 0
 #endif
