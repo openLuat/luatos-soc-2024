@@ -28,17 +28,9 @@
 
 static void luatos_mobile_event_callback(LUAT_MOBILE_EVENT_E event, uint8_t index, uint8_t status)
 {
-	if (LUAT_MOBILE_EVENT_NETIF == event)
+	if (LUAT_MOBILE_EVENT_USB_ETH_ON == event)
 	{
-		if (LUAT_MOBILE_NETIF_LINK_ON == status)
-		{
-			LUAT_DEBUG_PRINT("luatos_mobile_event_callback  link ...");
-			// luat_socket_check_ready(index, NULL);
-		}
-        else if(LUAT_MOBILE_NETIF_LINK_OFF == status || LUAT_MOBILE_NETIF_LINK_OOS == status)
-        {
-            LUAT_DEBUG_PRINT("luatos_mobile_event_callback  error ...");
-        }
+		LUAT_DEBUG_PRINT("USB网卡激活完成！！！");
 	}
 }
 
