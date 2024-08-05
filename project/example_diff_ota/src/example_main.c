@@ -336,7 +336,7 @@ static void luat_test_task(void *param)
 		{
 		case OTA_HTTP_GET_HEAD_DONE:
 			done_len = 0;
-			LUAT_DEBUG_PRINT("status %d total %u", luat_http_client_get_status_code(http), http->total_len);
+			LUAT_DEBUG_PRINT("status %d total %u", luat_http_client_get_status_code(http), http->context_len);
 			break;
 		case OTA_HTTP_GET_DATA:
 			done_len += event.param2;
