@@ -349,7 +349,7 @@ static void luatos_mobile_event_callback(LUAT_MOBILE_EVENT_E event, uint8_t inde
         if (LUAT_MOBILE_NETIF_LINK_ON == status)
         {
             g_s_network_status = 1;
-            luat_socket_check_ready(index, NULL);
+            // luat_socket_check_ready(index, NULL);
         }
         else
         {
