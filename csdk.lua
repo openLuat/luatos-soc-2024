@@ -309,7 +309,7 @@ function description_common()
         if chip_target=="ec718u" and target:values("lib_ps_plat")=="oc" then
             libs_plat = "ec718u-oc"
         end
-        print("libs_plat:",libs_plat)
+        -- print("libs_plat:",libs_plat)
         local libs_plat_dir = csdk_root.."/PLAT/libs/"..libs_plat
         import("core.base.json")
         local metas_table = json.loadfile(csdk_root.."/PLAT/libs/metas.json")
