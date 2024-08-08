@@ -109,7 +109,7 @@ function description_common()
         lib_ps_plat = "full"
         lib_fw = "oc"
         if has_config("lspd_mode") then
-            if chip_target == "ec718pv" then
+            if chip_target == "ec718u" and has_config("denoise_force") or chip_target == "ec718pv" then
                 lib_fw = "audio"
                 lib_ps_plat = "ims"
                 add_defines("FEATURE_AMR_CP_ENABLE","FEATURE_VEM_CP_ENABLE")
@@ -306,7 +306,10 @@ function description_common()
         assert(os.isdir(target:values("luatos_root")),"luatos_root:"..target:values("luatos_root").." not exist")
         local plat_url = "http://cdndownload.openluat.com/xmake/libs/%s/%s.7z"
         local libs_plat = (chip_target=="ec718e"and"ec718p"or chip_target)..(target:values("lib_ps_plat")=="mid"and"-mid"or"")
-        -- print("libs_plat:",libs_plat)
+        if chip_target=="ec718u" and target:values("lib_ps_plat")=="oc" then
+            libs_plat = "ec718u-oc"
+        end
+        print("libs_plat:",libs_plat)
         local libs_plat_dir = csdk_root.."/PLAT/libs/"..libs_plat
         import("core.base.json")
         local metas_table = json.loadfile(csdk_root.."/PLAT/libs/metas.json")
