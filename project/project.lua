@@ -43,7 +43,7 @@ function description_csdk()
         else 
             add_defines("DHCPD_ENABLE_DEFINE=1")
         end
-        if chip_target=="ec718u" and target:values("lib_ps_plat")=="oc" then
+        if chip_target=="ec718u" and lib_ps_plat == "oc" then
             add_includedirs(csdk_root.."/PLAT/tools/"..(chip_target)..("-oc"))
         else
             add_includedirs(csdk_root.."/PLAT/tools/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(lib_ps_plat=="mid"and"-mid"or""))
@@ -251,7 +251,7 @@ target(project_name..".elf",function()
         add_linkdirs(csdk_root.."/PLAT/prebuild/PS/lib/gcc/"..(chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6).."/"..lib_ps_plat)
         add_linkdirs(csdk_root.."/PLAT/prebuild/PLAT/lib/gcc/"..(chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6).."/"..lib_ps_plat)
         
-        if chip_target=="ec718u" and target:values("lib_ps_plat")=="oc" then
+        if chip_target=="ec718u" and lib_ps_plat=="oc" then
             add_linkdirs(csdk_root.."/PLAT/libs/"..(chip_target)..("-oc"))
         else
             add_linkdirs(csdk_root.."/PLAT/libs/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(lib_ps_plat=="mid"and"-mid"or""))
