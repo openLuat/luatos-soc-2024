@@ -114,7 +114,6 @@ function description_common()
                 lib_ps_plat = "oc"
                 add_defines("FEATURE_AMR_CP_ENABLE","FEATURE_VEM_CP_ENABLE")
             elseif chip_target == "ec718u" then
-                lib_fw = "audio"
                 lib_ps_plat = "oc"
             elseif chip_target == "ec716e" then
                 lib_fw = "ram"
@@ -131,7 +130,7 @@ function description_common()
                 lib_ps_plat = "ims"
                 add_defines("FEATURE_AMR_CP_ENABLE","FEATURE_VEM_CP_ENABLE")
             elseif chip_target == "ec718u" then
-                lib_fw = "audio"
+                -- lib_fw = "audio"
                 lib_ps_plat = "ims"
             elseif chip_target == "ec718p" or chip_target == "ec718e" then
                 lib_ps_plat = "full"
