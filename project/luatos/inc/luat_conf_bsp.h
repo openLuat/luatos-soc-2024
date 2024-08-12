@@ -412,7 +412,7 @@
 // MCU引脚复用
 #define LUAT_MCU_IOMUX_CTRL 1
 
-#if defined TYPE_EC718P && defined (FEATURE_IMS_ENABLE) || defined (TYPE_EC718U)
+#if (defined TYPE_EC718P && defined (FEATURE_IMS_ENABLE)) || (defined (TYPE_EC718U) && defined (FEATURE_IMS_ENABLE) )
 #define LUAT_USE_VOLTE
 
 #ifndef LUAT_USE_MEDIA
