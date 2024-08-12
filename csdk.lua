@@ -109,13 +109,12 @@ function description_common()
         lib_ps_plat = "full"
         lib_fw = "oc"
         if has_config("lspd_mode") then
-            if chip_target == "ec718u" and has_config("denoise_force") or chip_target == "ec718pv" then
+            if (chip_target == "ec718p" or chip_target == "ec718u" and has_config("denoise_force")) or chip_target == "ec718pv" then
                 lib_fw = "audio"
-                lib_ps_plat = "ims"
+                lib_ps_plat = "oc"
                 add_defines("FEATURE_AMR_CP_ENABLE","FEATURE_VEM_CP_ENABLE")
-            elseif chip_target == "ec718p" and has_config("denoise_force") or chip_target == "ec718u" then
+            elseif chip_target == "ec718u" then
                 lib_fw = "audio"
-                add_defines("FEATURE_AMR_CP_ENABLE","FEATURE_VEM_CP_ENABLE")
                 lib_ps_plat = "oc"
             elseif chip_target == "ec716e" then
                 lib_fw = "ram"
@@ -124,15 +123,18 @@ function description_common()
                 lib_ps_plat = "oc"
             end
         else 
-            if chip_target == "ec718p" or chip_target == "ec718e" then
-                lib_ps_plat = "full"
-            elseif chip_target == "ec718pv" or chip_target == "ec718u" then
+            if chip_target == "ec718p" or chip_target == "ec718e" and has_config("denoise_force") then
+                lib_fw = "audio"
+                add_defines("FEATURE_AMR_CP_ENABLE","FEATURE_VEM_CP_ENABLE")
+            elseif chip_target == "ec718u" and has_config("denoise_force") or chip_target == "ec718pv" then
                 lib_fw = "audio"
                 lib_ps_plat = "ims"
                 add_defines("FEATURE_AMR_CP_ENABLE","FEATURE_VEM_CP_ENABLE")
-            elseif chip_target == "ec718p" or chip_target == "ec718e" and has_config("denoise_force") then
+            elseif chip_target == "ec718u" then
                 lib_fw = "audio"
-                add_defines("FEATURE_AMR_CP_ENABLE","FEATURE_VEM_CP_ENABLE")
+                lib_ps_plat = "ims"
+            elseif chip_target == "ec718p" or chip_target == "ec718e" then
+                lib_ps_plat = "full"
             elseif chip_target == "ec716e" then
                 lib_fw = "ram"
                 lib_ps_plat = "ram"
@@ -293,6 +295,8 @@ function description_common()
             cprint(format("${cyan}chip_target : ${red}%s",chip_target))
             cprint(format("${cyan}lspd_mode : ${red}%s",get_config("lspd_mode")))
             cprint(format("${cyan}denoise_force : ${red}%s",get_config("denoise_force")))
+            cprint(format("${cyan}lib_ps_plat : ${red}%s",target:values("lib_ps_plat")))
+            cprint(format("${cyan}lib_fw : ${red}%s",target:values("lib_fw")))
 
             local project_dir = target:values("project_dir")
             if project_dir:find("@") or project_dir:find("%%")  or project_dir:find("~") or project_dir:find(" ") then
@@ -306,8 +310,8 @@ function description_common()
         assert(os.isdir(target:values("luatos_root")),"luatos_root:"..target:values("luatos_root").." not exist")
         local plat_url = "http://cdndownload.openluat.com/xmake/libs/%s/%s.7z"
         local libs_plat = (chip_target=="ec718e"and"ec718p"or chip_target)..(target:values("lib_ps_plat")=="mid"and"-mid"or"")
-        if chip_target=="ec718u" and target:values("lib_ps_plat")=="oc" then
-            libs_plat = "ec718u-oc"
+        if chip_target=="ec718u" and target:values("lib_ps_plat")=="ims" then
+            libs_plat = "ec718u-ims"
         end
         -- print("libs_plat:",libs_plat)
         local libs_plat_dir = csdk_root.."/PLAT/libs/"..libs_plat
