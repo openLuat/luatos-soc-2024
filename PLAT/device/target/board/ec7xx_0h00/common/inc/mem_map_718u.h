@@ -2,6 +2,7 @@
 #ifndef MEM_MAP_718U_H
 #define MEM_MAP_718U_H
 
+/* 8MB flash + 2MB psram*/
 
 /*
 flash layout, toatl 8MB
@@ -19,15 +20,28 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 0x00023000          |---------------------------------|
                     |      rel data(factory)20KB      |
 0x00028000          |---------------------------------|
+
+#if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
                     |      cp img 640KB               |
 0x000C8000          |---------------------------------|
                     |      app img 6468KB             |
+#else
+                    |      cp img 400KB               |
+0x0008C000          |---------------------------------|
+                    |      app img 6708KB             |
+#endif
 0x00719000          |---------------------------------|
                     |      hib backup 96KB            |
 0x00731000          |---------------------------------|
+#if defined (FEATURE_FOTA_FS_ENABLE)
+                    |      lfs  720KB                 |
+0x007e5000          |---------------------------------|
+                    |      fota rsvd 48KB             |
+#else
                     |      lfs  256KB                 |
 0x00771000          |---------------------------------|
                     |      fota 512KB                 |
+#endif
 0x007f1000          |---------------------------------|
                     |      rel data 52KB              |
 0x007fe000          |---------------------------------|
@@ -60,7 +74,7 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 #define BOOTLOADER_FLASH_LOAD_UNZIP_SIZE        (0x22000)//136KB ,for ld
 
 //ap image addr and size
-
+#if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
 #define AP_FLASH_LOAD_ADDR              (0x008C8000)
 #ifdef FEATURE_EXCEPTION_FLASH_DUMP_ENABLE
 #define AP_FLASH_LOAD_SIZE              (0x651000 - FLASH_EXCEP_DUMP_SIZE)//6468KB - 16KB
@@ -68,7 +82,15 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 #define AP_FLASH_LOAD_SIZE              (0x651000)//6468KB
 #endif
 #define AP_FLASH_LOAD_UNZIP_SIZE        (0x6D6000)//7000KB ,for ld
-
+#else
+#define AP_FLASH_LOAD_ADDR              (0x0088C000)
+#ifdef FEATURE_EXCEPTION_FLASH_DUMP_ENABLE
+#define AP_FLASH_LOAD_SIZE              (0x68D000 - FLASH_EXCEP_DUMP_SIZE)//6708KB - 16KB
+#else
+#define AP_FLASH_LOAD_SIZE              (0x68D000)//6708KB
+#endif
+#define AP_FLASH_LOAD_UNZIP_SIZE        (0x6D6000)//7000KB ,for ld
+#endif
 
 //hib bakcup addr and size
 #define FLASH_HIB_BACKUP_EXIST          (1)
@@ -80,15 +102,21 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 
 //fs addr and size
 #define FLASH_FS_REGION_START           (0x731000)
-#define FLASH_FS_REGION_END             (0x771000)
-#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START) // 256KB
+#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START)
+#if defined (FEATURE_FOTA_FS_ENABLE)
+#define FLASH_FS_REGION_END             (0x7e5000)  // 720KB
 
-#ifdef FEATURE_FOTAPAR_ENABLE
+//fota addr and size
+#define FLASH_FOTA_REGION_START         (0x7e5000)
+#define FLASH_FOTA_REGION_LEN           (0xc000)//48KB
+#else
+#define FLASH_FS_REGION_END             (0x771000)
+
 //fota addr and size
 #define FLASH_FOTA_REGION_START         (0x771000)
 #define FLASH_FOTA_REGION_LEN           (0x80000)//512KB
-#define FLASH_FOTA_REGION_END           (0x7f1000)
 #endif
+#define FLASH_FOTA_REGION_END           (0x7f1000)
 
 //ap reliable addr and size
 #define NVRAM_FACTORY_PHYSICAL_BASE     (0x23000)
@@ -107,9 +135,15 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 
 //cp img
 #define CP_FLASH_LOAD_ADDR              (0x00828000)
+#if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
+//cp img
 #define CP_FLASH_LOAD_SIZE              (0xA0000)//640KB,real region size, tool will check when zip
 #define CP_FLASH_LOAD_UNZIP_SIZE        (0xC8000)//800KB, for ld
-
+#else
+//cp img
+#define CP_FLASH_LOAD_SIZE              (0x64000)//400KB,real region size, tool will check when zip
+#define CP_FLASH_LOAD_UNZIP_SIZE        (0x80000)//512KB, for ld
+#endif
 
 
 //cp reliable addr and size, cp nvm write by ap
@@ -125,15 +159,19 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 //#define BL_IMG_MERGE_ADDR               (0x00003000)
 
 // Flash Dump Macros
-#define FLASH_EXCEP_DUMP_ADDR            (AP_FLASH_LOAD_ADDR+AP_FLASH_LOAD_SIZE-AP_FLASH_XIP_ADDR)
+#define FLASH_EXCEP_DUMP_ADDR            (FLASH_FOTA_REGION_END - FLASH_EXCEP_DUMP_SIZE)
 #define FLASH_EXCEP_DUMP_SIZE            0x4000
 #define FLASH_EXCEP_DUMP_SECTOR_NUM      0x4
 #define FLASH_EXCEP_KEY_INFO_ADDR        0x0
 #define FLASH_EXCEP_KEY_INFO_LEN         0x0
 
+#if ((FLASH_EXCEP_DUMP_ADDR)>=(FLASH_FOTA_REGION_START)) && ((FLASH_EXCEP_DUMP_ADDR)<(FLASH_FOTA_REGION_END-0xB000))
+#error "Vaild excep dump area in FOTA region is [FLASH_FOTA_REGION_END-0xB000,FLASH_FOTA_REGION_END]."
+#endif
+
 #ifdef FEATURE_EXCEPTION_FLASH_DUMP_ENABLE
 /*
- *	BaseAddress is FLASH_EXCEP_DUMP_ADDR and the dump space is FLASH_EXCEP_DUMP_SIZE.  
+ *	BaseAddress is FLASH_EXCEP_DUMP_ADDR and the dump space is FLASH_EXCEP_DUMP_SIZE.
  *	offset 0                   offset 0x1000	          offset 0x3000
  *	|--------------------------|--------------------------|--------------------------|
  *	| 1K PLAT + 1K PHY + 2K PS |         8K UNILOG        |         4K CUST          |
@@ -222,10 +260,19 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 
 
 
+#if defined (FEATURE_AMR_CP_ENABLE) && defined (FEATURE_VEM_CP_ENABLE)
 #define MSMB_APMEM_END_ADDR             (0x004F1000)        // 0x004F1000
 #define MSMB_CPMEM_START_ADDR           (0x004F1000)
 #define MSMB_CPDATA_START_ADDR          (0x0051D800)
-
+#elif defined (FEATURE_AMR_CP_ENABLE)
+#define MSMB_APMEM_END_ADDR             (0x00500000)
+#define MSMB_CPMEM_START_ADDR           (0x00500000)
+#define MSMB_CPDATA_START_ADDR          (0x00525800)
+#else
+#define MSMB_APMEM_END_ADDR             (0x00500000)
+#define MSMB_CPMEM_START_ADDR           (0x00500000)
+#define MSMB_CPDATA_START_ADDR          (0x00527000)
+#endif
 
 #define MSMB_CPMEM_LENGTH               (MSMB_END_ADDR-MSMB_CPMEM_START_ADDR)
 #define XP_SHAREINFO_BASE_ADDR          (0x0053E000)
@@ -273,6 +320,7 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 #define PSRAM_TOTAL_LENGTH              (PSRAM_END_ADDR-PSRAM_START_ADDR)
 
 #ifdef OPEN_CPU_MODE
+#if FEATURE_IMS_ENABLE
 #ifdef FEATURE_IMS_USE_PSRAM_ENABLE
 #define min_heap_size_threshold 0x57800//ims heap(250KB) will also use heap
 #else
@@ -283,12 +331,30 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 #else
 #define up_buf_start 0x4b3000  // should be 4 byte align
 #endif
+#else /* non-ims */
+#define min_heap_size_threshold 0x19000
+#if defined (FEATURE_AMR_CP_ENABLE) && defined (FEATURE_VEM_CP_ENABLE)
+#if FEATURE_SUPPORT_APP_PCM_MEM_POOL//hal app mem pool 640*3+8align to 2K
+#define up_buf_start 0x4b2800  // should be 4 byte align
+#else
+#define up_buf_start 0x4b3000  // should be 4 byte align
+#endif
+#else
+#define up_buf_start 0x4c3200  // should be 4 byte align
+#endif
+#endif
 
 #define UP_BUF_MAX_SIZE 0x3CA00//only upbuf size, need another 512B for other buf also in this region
 #if (PSRAM_EXIST==1)
 #define heap_boundary_psram 0x08200000
 #endif
-
+#else
+#define min_heap_size_threshold 0x20000
+#define up_buf_start 0x498F00  // should be 4 byte align
+#define UP_BUF_MAX_SIZE 0x66D00//only upbuf size, need another 512B for other buf also in this region
+#if (PSRAM_EXIST==1)
+#define heap_boundary_psram 0x08200000
+#endif
 #endif
 
 

@@ -634,17 +634,20 @@ static int32_t fotaNvmPrepareDfu(FotaDefPrepareDfu_t *preDfu)
 static int32_t fotaNvmClosingDfu(FotaDefClosingDfu_t *clsDfu)
 {
 #if (FOTA_NVM_BACKUP_MUX_SIZE != 0)
-    NVRAM_RESTORE_FROM_FAC();
-
-    if(!NVRAM_CHECK_FAC_VALID())
+    if(!NVRAM_CHECK_VALID())
     {
-        /* for ver-beta debug */
-        fotaDoExtension(FOTA_DEF_WDT_STOP, NULL);
-        while(1)
+        NVRAM_RESTORE_FROM_FAC();
+
+        if(!NVRAM_CHECK_FAC_VALID())
         {
-            FotaDefUsDelay_t  delay = {1000000};
-            fotaDoExtension(FOTA_DEF_US_DELAY, (void*)&delay);
-            ECPLAT_PRINTF(UNILOG_FOTA, FOTA_NVM_CLS_DFU_1, P_WARNING, "cls DFU: restore nv fail!\n");
+            /* for ver-beta debug */
+            fotaDoExtension(FOTA_DEF_WDT_STOP, NULL);
+            while(1)
+            {
+                FotaDefUsDelay_t  delay = {1000000};
+                fotaDoExtension(FOTA_DEF_US_DELAY, (void*)&delay);
+                ECPLAT_PRINTF(UNILOG_FOTA, FOTA_NVM_CLS_DFU_1, P_WARNING, "cls DFU: restore nv fail!\n");
+            }
         }
     }
 #endif

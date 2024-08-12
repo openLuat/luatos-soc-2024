@@ -52,9 +52,12 @@
 #define FOTA_EPERM       -19  /* scenario not permitted */
 #define FOTA_ECHKSUM     -20  /* checksum calc fail*/
 #define FOTA_EDCONV      -21  /* data convertion fail*/
+#define FOTA_EVERIFY     -22  /* verify signature fail*/
 
 
 #define FOTA_TICK_RATE_MS         (1)
+
+#define FOTA_SIGNED_ECDSA_LEN     64
 
 #define FOTA_SHA256_HASH_LEN      32
 
@@ -130,6 +133,7 @@ typedef uint32_t FotaNvmZoneId_bm;
 typedef enum
 {
     FOTA_CA_SHA256SUM = 0,
+    FOTA_CA_SHA224SUM,
 
     FOTA_CA_ALGO_MAXNUM
 }FotaChksumAlgo_e;
@@ -169,7 +173,8 @@ typedef enum
     FOTA_DEF_ADJ_ZONE_SIZE,
     FOTA_DEF_SET_XOBJ_ZONE,
     FOTA_DEF_CHK_HLS_STATE,
-    FOTA_DEF_CHK_BOOT_STATE
+    FOTA_DEF_CHK_BOOT_STATE,
+    FOTA_DEF_CHK_BOOT_HDSEC
 }FotaDoExtensionFlags_e;
 
 /* FOTA_DEF_US_DELAY */
@@ -318,6 +323,16 @@ typedef struct
     uint8_t  isSigned; /* 0/1: security boot or not? */
     uint8_t  rsvd[3];
 }FotaDefChkBootState_t;
+
+/* FOTA_DEF_CHK_BOOT_HDSEC */
+typedef struct
+{
+    uint8_t  fwAttr;  /* FotaFwAttr_e */
+    uint8_t  shaAlgo; /* FotaChksumAlgo_e */
+    uint8_t  rsvd[2];
+    uint8_t  hash[FOTA_SHA256_HASH_LEN];
+    uint8_t  ecdsa[FOTA_SIGNED_ECDSA_LEN];
+}FotaDefChkBootHdSec_t;
 
 /*
  * definition of 'pmagic': ec-delta/diff-fw

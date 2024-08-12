@@ -37,7 +37,7 @@
 #define IP4_INPUT_ADPT_PROCESS_UN_REACHABLE 2
 #define CMI_PS_INVALID_CID          0xFF
 extern struct netif *netif_find_by_ip4_clat_cid(u8_t cid);
-#if 0
+#ifdef LUAT_USE_SDK_XLAT
 __attribute__((weak)) void psDialClatInit(void)
 {
 	NetMgrClatCfg clatCfg = {0};

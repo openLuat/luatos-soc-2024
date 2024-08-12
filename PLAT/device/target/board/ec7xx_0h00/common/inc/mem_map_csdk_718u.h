@@ -60,16 +60,27 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 #define BOOTLOADER_FLASH_LOAD_ADDR              (0x00803000)
 #define BOOTLOADER_FLASH_LOAD_SIZE              (0x1f000)//128kB, real region size, tool will check when zip TODO:ZIP
 #define BOOTLOADER_FLASH_LOAD_UNZIP_SIZE        (0x22000)//136KB ,for ld
-
+#if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
 #define AP_FLASH_LOAD_ADDR              (0x008C8000)
-
+#else
+#define AP_FLASH_LOAD_ADDR              (0x0088C000)
+#endif
 //ap image addr and size
 #ifdef __USER_MAP_CONF_FILE__	//user config ap fota fs kv
 #include __USER_MAP_CONF_FILE__
 #else
+#if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
 #ifndef AP_FLASH_LOAD_SIZE
-#define AP_FLASH_LOAD_SIZE              (0x600000)//6m
+#define AP_FLASH_LOAD_SIZE              (0x600000)
 #endif
+#else
+#ifndef AP_FLASH_LOAD_SIZE
+#define AP_FLASH_LOAD_SIZE              (0x63C000)
+#endif
+#endif
+
+
+
 #ifndef FULL_OTA_SAVE_ADDR
 #define FULL_OTA_SAVE_ADDR              (0x0)
 #endif
@@ -120,8 +131,15 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 
 //cp img
 #define CP_FLASH_LOAD_ADDR              (0x00828000)
+#if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
+//cp img
 #define CP_FLASH_LOAD_SIZE              (0xA0000)//640KB,real region size, tool will check when zip
 #define CP_FLASH_LOAD_UNZIP_SIZE        (0xC8000)//800KB, for ld
+#else
+//cp img
+#define CP_FLASH_LOAD_SIZE              (0x64000)//400KB,real region size, tool will check when zip
+#define CP_FLASH_LOAD_UNZIP_SIZE        (0x80000)//512KB, for ld
+#endif
 
 
 
@@ -240,9 +258,19 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 
 
 
+#if defined (FEATURE_AMR_CP_ENABLE) && defined (FEATURE_VEM_CP_ENABLE)
 #define MSMB_APMEM_END_ADDR             (0x004F1000)        // 0x004F1000
 #define MSMB_CPMEM_START_ADDR           (0x004F1000)
 #define MSMB_CPDATA_START_ADDR          (0x0051D800)
+#elif defined (FEATURE_AMR_CP_ENABLE)
+#define MSMB_APMEM_END_ADDR             (0x00500000)
+#define MSMB_CPMEM_START_ADDR           (0x00500000)
+#define MSMB_CPDATA_START_ADDR          (0x00525800)
+#else
+#define MSMB_APMEM_END_ADDR             (0x00500000)
+#define MSMB_CPMEM_START_ADDR           (0x00500000)
+#define MSMB_CPDATA_START_ADDR          (0x00527000)
+#endif
 
 
 #define MSMB_CPMEM_LENGTH               (MSMB_END_ADDR-MSMB_CPMEM_START_ADDR)
@@ -291,6 +319,7 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 #define PSRAM_TOTAL_LENGTH              (PSRAM_END_ADDR-PSRAM_START_ADDR)
 
 #ifdef OPEN_CPU_MODE
+#if FEATURE_IMS_ENABLE
 #ifdef FEATURE_IMS_USE_PSRAM_ENABLE
 #define min_heap_size_threshold 0x30000//ims heap(150KB) will also use heap
 #else
@@ -301,15 +330,31 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 #else
 #define up_buf_start 0x4b3000  // should be 4 byte align
 #endif
+#else /* non-ims */
+#define min_heap_size_threshold 0x19000
+#if defined (FEATURE_AMR_CP_ENABLE) && defined (FEATURE_VEM_CP_ENABLE)
+#if FEATURE_SUPPORT_APP_PCM_MEM_POOL//hal app mem pool 640*3+8align to 2K
+#define up_buf_start 0x4b2800  // should be 4 byte align
+#else
+#define up_buf_start 0x4b3000  // should be 4 byte align
+#endif
+#else
+#define up_buf_start 0x4c3200  // should be 4 byte align
+#endif
+#endif
 
 #define UP_BUF_MAX_SIZE 0x3CA00//only upbuf size, need another 512B for other buf also in this region
 #if (PSRAM_EXIST==1)
 #define heap_boundary_psram 0x08200000
 #endif
-
+#else
+#define min_heap_size_threshold 0x20000
+#define up_buf_start 0x498F00  // should be 4 byte align
+#define UP_BUF_MAX_SIZE 0x66D00//only upbuf size, need another 512B for other buf also in this region
+#if (PSRAM_EXIST==1)
+#define heap_boundary_psram 0x08200000
 #endif
-
-
+#endif
 
 // TODO: need re-design excption dump
 

@@ -442,7 +442,8 @@ struct netif {
 //the ipv6 source address select priority
   u8_t ip6_src_router_priority;
 
-#if LWIP_XLAT_ENABLE
+//#if LWIP_XLAT_ENABLE /*Closed source part enabeles XLAT by default*/
+#if 1
   u8_t clat_ipv4_cid;
 #endif
 
@@ -525,7 +526,8 @@ struct netif *netif_find_by_ip4_cid(u8_t cid);
 struct netif *netif_find_by_ip6_cid(u8_t cid);
 struct netif *netif_find_by_ded_cid(u8_t ded_cid);
 
-#if LWIP_XLAT_ENABLE
+//#if LWIP_XLAT_ENABLE /*Closed source part enabeles XLAT by default*/
+#if 1
 
 struct netif *
 netif_find_by_ip4_clat_cid(u8_t cid);
