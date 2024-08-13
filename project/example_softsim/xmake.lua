@@ -16,10 +16,5 @@ target(project_name,function()
     add_includedirs("./inc",{public = true})
     add_files("./src/*.c",{public = true})
     add_linkdirs(csdk_root.."/lib",csdk_root.."/PLAT/core/lib",{public = true})
-	chip_target = get_config("chip_target")
-	if chip_target == "ec716s" then
-		add_linkgroups("tgt_app_service_lto", {whole = true,public = true})
-	else
-		add_linkgroups("tgt_app_service_716e", {whole = true,public = true})
-	end
+	add_linkgroups("tgt_app_service", {whole = true,public = true})
 end)

@@ -1145,3 +1145,9 @@ int luat_mobile_sim_detect_onoff(uint8_t on_off)
 	}
 	return 0;
 }
+extern void tgt_app_service_init(void);
+LUAT_WEAK void tgt_app_service_init(void) {;}
+void luat_mobile_softsim_init_default(void)
+{
+	tgt_app_service_init();
+}
