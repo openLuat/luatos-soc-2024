@@ -17,7 +17,7 @@ target(project_name,function()
     add_linkgroups("mp3", {whole = true,public = true})
     
     on_config(function(target)
-        assert (chip_target == "ec718u" or chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718e" or chip_target == "ec716e" ,"luatos only support ec718p/ec718pv/ec718e/ec716e")
+        assert (chip_target == "ec718u" or chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718e" or chip_target == "ec716e" ,"luatos only support ec718u/ec718p/ec718pv/ec718e/ec716e")
         local project_dir = target:values("project_dir")
         local toolchains = target:tool("cc"):match('.+\\bin') or target:tool("cc"):match('.+/bin')
 
@@ -207,7 +207,7 @@ target(project_name,function()
     add_includedirs(luatos_root.."/components/multimedia/amr_decode/oscl",{public = true})
     add_includedirs(luatos_root.."/components/multimedia/amr_decode/amr_nb/enc/src",{public = true})
     add_files(luatos_root.."/components/multimedia/**.c")
-	if chip_target == "ec718p" and has_config("denoise_force") or chip_target == "ec718pv" or chip_target == "ec718u" then
+	if (chip_target == "ec718p" and has_config("denoise_force")) or (chip_target == "ec718u" and has_config("denoise_force")) or chip_target == "ec718pv" then
 		remove_files(luatos_root .. "/components/multimedia/amr_decode/**.c")
 	end
     -- network
@@ -307,4 +307,9 @@ target(project_name,function()
     add_includedirs("./inc",{public = true})
     add_files("./src/*.c",{public = true})
 
+	if os.isfile(csdk_root.."/lib/libtgt_app_service.a") and chip_target == "ec718u" then
+		add_defines("LUAT_USE_RNDIS_NAT_MODE",{public = true})
+		--加入代码和头文件
+		add_linkgroups("tgt_app_service", {whole = true,public = true})
+	end
 end)

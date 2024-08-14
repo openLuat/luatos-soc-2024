@@ -130,7 +130,6 @@
 /*define dump log ETHER packet max size*/
 #define TCPIP_MAX_ETH_PKG_DUMP_LEN   100
 
-
 /*define whether check socket domain when socket sendto pkg*/
 #define SOCKET_CHECK_DOMAIN_TYPE_STRICT 1
 

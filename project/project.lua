@@ -14,7 +14,7 @@ function description_csdk()
             --add_defines("FEATURE_EXCEPTION_FLASH_DUMP_ENABLE")
         end
 
-        if chip_target == "ec718pv" or chip_target == "ec718u" then
+        if chip_target == "ec718u" and lib_ps_plat == "ims" or chip_target == "ec718pv" then
             add_defines("FEATURE_IMS_ENABLE",
                         "FEATURE_IMS_CC_ENABLE",
                         "FEATURE_IMS_SMS_ENABLE",

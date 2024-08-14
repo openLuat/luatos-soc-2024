@@ -400,6 +400,7 @@ void *luat_create_rtos_timer(void *cb, void *param, void *task_handle)
 }
 int luat_start_rtos_timer(void *timer, uint32_t ms, uint8_t is_repeat)
 {
+	if (!timer) return -1;
 	luat_rtos_user_timer_t *htimer = (luat_rtos_user_timer_t *)timer;
 	BaseType_t pxHigherPriorityTaskWoken;
     if (osIsInISRContext())
@@ -427,6 +428,7 @@ int luat_start_rtos_timer(void *timer, uint32_t ms, uint8_t is_repeat)
 
 void luat_stop_rtos_timer(void *timer)
 {
+	if (!timer) return;
 	luat_rtos_user_timer_t *htimer = (luat_rtos_user_timer_t *)timer;
 
 	if (osIsInISRContext())
@@ -448,6 +450,7 @@ void luat_stop_rtos_timer(void *timer)
 
 void luat_release_rtos_timer(void *timer)
 {
+	if (!timer) return;
 	luat_rtos_user_timer_t *htimer = (luat_rtos_user_timer_t *)timer;
 	xTimerDelete(htimer->timer, LUAT_WAIT_FOREVER);
 	free(htimer);
