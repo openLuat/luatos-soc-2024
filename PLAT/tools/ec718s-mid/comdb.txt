@@ -1,8 +1,8 @@
 DbVersion
-366509690,100
+412707829,100
 <end>
 BuildInfo
-The current data file was built by the Application Ver. 2.2.81.216, Tue Aug 13 17:58:36 2024
+The current data file was built by the Application Ver. 2.2.81.216, Fri Aug 16 16:26:01 2024
 <end>
 EnumVals
 0,0,0,0,PHY_ONLINE,PHY_ICS_MODULE,PhyIcsMeasMainEntrance_1,P_ERROR,swLogPrintf("Incorrect ICS stage ( %d ) for new euArfcn arranged for ICS MEAS ");
@@ -8151,31 +8151,34 @@ cad1be53b20f0e4f5f0414b716064f649301ebd57728e8ed01247c322efd39542c6ceb96884ef4ad
 786432,1610614783,0,0,CUSTOMER,LUATOS,airm2m_service_20,P_SIG,swLogPrintf("rrc no check ");
 786432,1610616831,0,0,CUSTOMER,LUATOS,rndis_2,P_SIG,swLogPrintf("set auth for rndis ");
 786432,1610618879,0,0,CUSTOMER,LUATOS,rndis_10,P_SIG,swLogPrintf("rndis active stop ");
-786432,1610619392,0,0,CUSTOMER,LUATOS,airm2m_service_1,P_SIG,swLogPrintf("cnf %d , %d , %d ");
-786432,1610622975,0,0,CUSTOMER,LUATOS,rndis_5,P_SIG,swLogPrintf("rndis is nat ");
-786432,1610625023,0,0,CUSTOMER,LUATOS,rndis_1,P_SIG,swLogPrintf("set apn point for rndis ");
-786432,1610627071,0,0,CUSTOMER,LUATOS,rndis_3,P_SIG,swLogPrintf("active cid for rndis ");
-786432,1610627584,0,0,CUSTOMER,LUATOS,airm2m_service_2,P_SIG,swLogPrintf("ind %d , %d , %d ");
-786432,1610629120,0,0,CUSTOMER,LUATOS,rndis_4,P_SIG,swLogPrintf("rndis link state %d ");
-786432,1610631169,0,0,CUSTOMER,LUATOS,airm2m_service_5,P_SIG,swLogPrintf("nst result %s ");
-786432,1610633216,0,0,CUSTOMER,LUATOS,airm2m_service_6,P_ERROR,swLogPrintf("param len %d ");
-786432,1610635265,0,0,CUSTOMER,LUATOS,airm2m_service_7,P_SIG,swLogPrintf("find %s ");
-786432,1610639359,0,0,CUSTOMER,LUATOS,airm2m_service_8,P_ERROR,swLogPrintf("find at , but no end ");
-786432,1610639360,0,0,CUSTOMER,LUATOS,airm2m_service_9,P_SIG,swLogPrintf("tick error -%u ");
-786432,1610641408,0,0,CUSTOMER,LUATOS,airm2m_service_10,P_SIG,swLogPrintf("task run record start %u ");
-786432,1610643457,0,0,CUSTOMER,LUATOS,debug,P_ERROR,swLogPrintf("%s ");
-786432,1610645760,0,0,CUSTOMER,LUATOS,uart_rx_2,P_INFO,swLogPrintf("uart%d , rx buffer len %d ");
-786432,1610648320,0,0,CUSTOMER,LUATOS,uart_rx_1,P_INFO,swLogPrintf("uart%d , rx%dbyte , buffer %dbyte , %dbyte ");
-786432,1610649600,0,0,CUSTOMER,LUATOS,uart_tx_1,P_INFO,swLogPrintf("uart%d , tx true done ");
-786432,1610651648,0,0,CUSTOMER,LUATOS,uart_tx_2,P_INFO,swLogPrintf("uart%d , tx wait true done ");
-786432,1610654208,0,0,CUSTOMER,LUATOS,uart_tx_3,P_INFO,swLogPrintf("uart%d , start 0x%x %u ");
-786432,1610656000,0,0,CUSTOMER,LUATOS,uart_tx_4,P_INFO,swLogPrintf("uart%d , 0x%x done ");
-786432,1610658048,0,0,CUSTOMER,LUATOS,uart_err_1,P_INFO,swLogPrintf("uart%d , ISR %x ");
-786432,1610659840,0,0,CUSTOMER,LUATOS,uart_tx_5,P_INFO,swLogPrintf("uart%d , tx true done ");
-786432,1610662144,0,0,CUSTOMER,LUATOS,uart_tx_6,P_INFO,swLogPrintf("uart%d , tx done but state %d ");
-786432,1610664192,0,0,CUSTOMER,LUATOS,uart_rx_11,P_INFO,swLogPrintf("uart%d , buffer len %u ");
-786432,1610665984,0,0,CUSTOMER,LUATOS,USB_DIRECT_OUTPUT,P_ERROR,swLogPrintf("dlpdu ( %d bytes ) failure! ");
-786432,1610670079,0,0,CUSTOMER,LUATOS,udp_abort_1,P_ERROR,swLogPrintf("this is luatos udp , no need abort ");
+786432,1610619648,0,0,CUSTOMER,LUATOS,airm2m_service_12,P_SIG,swLogPrintf("cell error too fast , %u , %u , %d , %d ");
+786432,1610622975,0,0,CUSTOMER,LUATOS,airm2m_service_13,P_SIG,swLogPrintf("cell error too many times , bar 2 hour ");
+786432,1610623488,0,0,CUSTOMER,LUATOS,airm2m_service_1,P_SIG,swLogPrintf("cnf %d , %d , %d ");
+786432,1610625792,0,0,CUSTOMER,LUATOS,airm2m_service_11,P_SIG,swLogPrintf("new cell %u , %u , %d , %d ");
+786432,1610629119,0,0,CUSTOMER,LUATOS,rndis_5,P_SIG,swLogPrintf("rndis is nat ");
+786432,1610631167,0,0,CUSTOMER,LUATOS,rndis_1,P_SIG,swLogPrintf("set apn point for rndis ");
+786432,1610633215,0,0,CUSTOMER,LUATOS,rndis_3,P_SIG,swLogPrintf("active cid for rndis ");
+786432,1610633728,0,0,CUSTOMER,LUATOS,airm2m_service_2,P_SIG,swLogPrintf("ind %d , %d , %d ");
+786432,1610635264,0,0,CUSTOMER,LUATOS,rndis_4,P_SIG,swLogPrintf("rndis link state %d ");
+786432,1610637313,0,0,CUSTOMER,LUATOS,airm2m_service_5,P_SIG,swLogPrintf("nst result %s ");
+786432,1610639360,0,0,CUSTOMER,LUATOS,airm2m_service_6,P_ERROR,swLogPrintf("param len %d ");
+786432,1610641409,0,0,CUSTOMER,LUATOS,airm2m_service_7,P_SIG,swLogPrintf("find %s ");
+786432,1610645503,0,0,CUSTOMER,LUATOS,airm2m_service_8,P_ERROR,swLogPrintf("find at , but no end ");
+786432,1610645504,0,0,CUSTOMER,LUATOS,airm2m_service_9,P_SIG,swLogPrintf("tick error -%u ");
+786432,1610647552,0,0,CUSTOMER,LUATOS,airm2m_service_10,P_SIG,swLogPrintf("task run record start %u ");
+786432,1610649601,0,0,CUSTOMER,LUATOS,debug,P_ERROR,swLogPrintf("%s ");
+786432,1610651904,0,0,CUSTOMER,LUATOS,uart_rx_2,P_INFO,swLogPrintf("uart%d , rx buffer len %d ");
+786432,1610654464,0,0,CUSTOMER,LUATOS,uart_rx_1,P_INFO,swLogPrintf("uart%d , rx%dbyte , buffer %dbyte , %dbyte ");
+786432,1610655744,0,0,CUSTOMER,LUATOS,uart_tx_1,P_INFO,swLogPrintf("uart%d , tx true done ");
+786432,1610657792,0,0,CUSTOMER,LUATOS,uart_tx_2,P_INFO,swLogPrintf("uart%d , tx wait true done ");
+786432,1610660352,0,0,CUSTOMER,LUATOS,uart_tx_3,P_INFO,swLogPrintf("uart%d , start 0x%x %u ");
+786432,1610662144,0,0,CUSTOMER,LUATOS,uart_tx_4,P_INFO,swLogPrintf("uart%d , 0x%x done ");
+786432,1610664192,0,0,CUSTOMER,LUATOS,uart_err_1,P_INFO,swLogPrintf("uart%d , ISR %x ");
+786432,1610665984,0,0,CUSTOMER,LUATOS,uart_tx_5,P_INFO,swLogPrintf("uart%d , tx true done ");
+786432,1610668288,0,0,CUSTOMER,LUATOS,uart_tx_6,P_INFO,swLogPrintf("uart%d , tx done but state %d ");
+786432,1610670336,0,0,CUSTOMER,LUATOS,uart_rx_11,P_INFO,swLogPrintf("uart%d , buffer len %u ");
+786432,1610672128,0,0,CUSTOMER,LUATOS,USB_DIRECT_OUTPUT,P_ERROR,swLogPrintf("dlpdu ( %d bytes ) failure! ");
+786432,1610676223,0,0,CUSTOMER,LUATOS,udp_abort_1,P_ERROR,swLogPrintf("this is luatos udp , no need abort ");
 <end>
 Structs
 f774c3c409e93081529f28ef51e6b571c0e8c6d9d2dda2b11371b95df4827c4998852834fc250f9ba9260833ceb344037e19add6473d2b7a4af0ffba1ac1a4260d919d08204b91a990c96a3ba8081a64e94c21c7684ee2cedca8edf1ace90c41111d8e81ae169c2c3123eb0aec9913bc59031220ffb62ddd3ec36d32e74f24d861978e7b811cca402b19aab717d6c3c9bbcfb59995dd4b07ef2d8aa0726997ad3ce42a5d7d9e9ddf689cd2e832155ca10a2ee6cfcd0a1b2a76809560f849291bbc26912261fe082350e14d8a4784a2c380bcbb32fef9ce9f199e3e01d56e9904e7c3a07497edf69fe300a95c00b1bb2d
@@ -8446,5 +8449,5 @@ MW_INFO_PHY_EDRX_PARAM,midWareNvmInfoPhyEdrxParam
 plat_config,plat_config_fs_t
 <end>
 OptionalSegment
-optional_sk_01,92C7F2150BAE6BFC11F837DFA6ECEE914113C950ED81F3088D7BCFEDAF569A9B
+optional_sk_01,8A3AF95DA9642BF0020245032467519A9005E2AB51558FDF5DCE094DFFDBE37D
 <end>
