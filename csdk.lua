@@ -129,13 +129,10 @@ function description_common()
             if (chip_target == "ec718p" and has_config("denoise_force")) or (chip_target == "ec718e" and has_config("denoise_force")) then
                 lib_fw = "audio"
                 add_defines("FEATURE_AMR_CP_ENABLE","FEATURE_VEM_CP_ENABLE")
-            elseif chip_target == "ec718u" and has_config("denoise_force") or chip_target == "ec718pv" then
+            elseif chip_target == "ec718u" or chip_target == "ec718pv" then
                 lib_fw = "audio"
                 lib_ps_plat = "ims"
                 add_defines("FEATURE_AMR_CP_ENABLE","FEATURE_VEM_CP_ENABLE")
-            elseif chip_target == "ec718u" then
-                -- lib_fw = "audio"
-                lib_ps_plat = "ims"
             elseif chip_target == "ec718p" or chip_target == "ec718e" then
                 lib_ps_plat = "full"
             elseif chip_target == "ec716e" then
