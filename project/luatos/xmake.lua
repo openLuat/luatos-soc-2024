@@ -207,7 +207,7 @@ target(project_name,function()
     add_includedirs(luatos_root.."/components/multimedia/amr_decode/oscl",{public = true})
     add_includedirs(luatos_root.."/components/multimedia/amr_decode/amr_nb/enc/src",{public = true})
     add_files(luatos_root.."/components/multimedia/**.c")
-	if (chip_target == "ec718p" and has_config("denoise_force")) or (chip_target == "ec718u" and has_config("denoise_force")) or chip_target == "ec718pv" then
+	if (chip_target == "ec718p" and has_config("denoise_force")) or (chip_target == "ec718u" and not has_config("lspd_mode")) or (chip_target == "ec718u" and has_config("lspd_mode") and has_config("denoise_force")) or chip_target == "ec718pv" then
 		remove_files(luatos_root .. "/components/multimedia/amr_decode/**.c")
 	end
     -- network
