@@ -218,6 +218,7 @@
 #else
 #define LWIP_IPSEC_ENABLE 0
 #endif
+#define LWIP_NETIF_LOAD_INFO_ENABLE 0
 
 #endif  //end of ENABLE_PSIF
 
@@ -899,12 +900,12 @@
 #endif
 
 /**
- * IP_REASS_MAXAGE: Maximum time (in multiples of IP_TMR_INTERVAL - so seconds, normally)
+ * IP_REASS_MAXAGE: Maximum time (in multiples of IP_TMR_INTERVAL - so ms, normally)
  * a fragmented IP packet waits for all fragments to arrive. If not all fragments arrived
  * in this time, the whole packet is discarded.
  */
 #if !defined IP_REASS_MAXAGE || defined __DOXYGEN__
-#define IP_REASS_MAXAGE                 3
+#define IP_REASS_MAXAGE                 1000 //ms
 #endif
 
 /**

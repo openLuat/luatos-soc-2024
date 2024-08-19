@@ -265,3 +265,16 @@ void halVoiceEngProcRetWrapper(UINT16 msgId, void *pIpcRet)
 }
 
 
+
+/**
+  \fn        txPwrIndCustHandler(int8_t txPwr, uint8_t level)
+  \brief     indication to customer for tx power change, customer add specific process
+             in this API.
+  \param[in] txPwr: current tx power @ -45--23 dbm
+             level: 1 means above high threshold 
+                    0 means below low threshold
+  \note      this API is called in EC internal task, should not add time cost operation!!
+             suggest to send msg to customer defined task to do the real process logic.
+ */
+__WEAK void txPwrIndCustHandler(int8_t txPwr, uint8_t level){};
+

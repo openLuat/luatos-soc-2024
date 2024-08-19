@@ -131,6 +131,8 @@ typedef enum lwip_netif_type
     LWIP_NETIF_TYPE_WAN_IMS,    /* Not support now */
     LWIP_NETIF_TYPE_WAN_OTHER,
 
+    LWIP_NETIF_TYPE_LOOPBACK = 0x0E,
+
     LWIP_NETIF_TYPE_MAX = 0x0F
 }lwip_netif_type_t;
 
@@ -470,7 +472,7 @@ typedef enum netif_ip6_prefix_source_tag
 
 typedef struct netif_ip6_prefix_info_tag
 {
-    u32_t prefix[2];
+    ip6_addr_t prefix;
     u8_t state; //netif_ip6_prefix_state_tag
     u8_t source; //netif_ip6_prefix_source_tag
     u8_t cid;
@@ -481,6 +483,44 @@ typedef struct netif_ip6_prefix_info_tag
 }netif_ip6_prefix_info;
 
 #endif
+
+  /*
+  *UPLOAD && DOWNLOAD
+  */
+  typedef struct NetifLoad_Tag
+  {
+      BOOL bActive; //whether active
+      UINT8 rsvd0;
+      UINT16 rsvd1;
+      UINT32 NetFastPathUlPpp; //ppp lan fastpath to wan
+      UINT32 NetFastPathUlEth; //eth lan fastpath to wan
+      UINT32 NetLwipTotalUl; //lwip input process(include local output and forward from lan)
+      UINT32 NetLwipForwardUlPpp;//forward from ppp lan
+      UINT32 NetLwipForwardUlEth;//forward from eth lan
+      UINT32 NetFastPathDlPpp; //wan fastpath to ppp lan
+      UINT32 NetFastPathDlEth; //wan fastpath to eth lan
+      UINT32 NetLwipTotalDl; //lwip input process(include local input and forward to lan)
+      UINT32 NetLwipForwardDlPpp;//forward to ppp lan
+      UINT32 NetLwipForwardDlEth;//forward to eth lan
+  }NetifLoad;
+
+  /*
+*NETIF LOAD type
+*/
+typedef enum NetifLoadType_Tag
+{
+    NETIF_UPLOAD_FASTPATH_PPP = 1, //ppp lan fastpath to wan
+    NETIF_UPLOAD_FASTPATH_ETH, //eth lan fastpath to wan
+    NETIF_UPLOAD_LWIP_TOTAL,  //lwip output process(include local output and forward from lan)
+    NETIF_UPLOAD_LWIP_FORWARD_PPP, //forward from ppp lan
+    NETIF_UPLOAD_LWIP_FORWARD_ETH, //forward from eth lan
+    NETIF_DOWNLOAD_FASTPATH_PPP, //wan fastpath to ppp lan
+    NETIF_DOWNLOAD_FASTPATH_ETH, //wan fastpath to eth lan
+    NETIF_DOWNLOAD_LWIP_TOTAL, //lwip input process(include local input and forward to lan)
+    NETIF_DOWNLOAD_LWIP_FORWARD_PPP, //forward to ppp lan
+    NETIF_DOWNLOAD_LWIP_FORWARD_ETH, //forward to eth lan
+}NetifLoadType;
+
 
 #if LWIP_CHECKSUM_CTRL_PER_NETIF
 #define NETIF_SET_CHECKSUM_CTRL(netif, chksumflags) do { \
@@ -661,6 +701,15 @@ void netif_create_ip6_linklocal_address(struct netif *netif, u8_t from_mac_48bit
 void netif_create_ip6_linklocal_address_by_identifier(struct netif *netif, u32_t identifier1, u32_t identifier2);
 err_t netif_add_ip6_address(struct netif *netif, const ip6_addr_t *ip6addr, s8_t *chosen_idx);
 #define netif_set_ip6_autoconfig_enabled(netif, action) do { if(netif) { (netif)->ip6_autoconfig_enabled = (action); }}while(0)
+/*
+ * Change an IPv6 prefix of a network interface (the prefix length is 64 bits)
+ *
+ * @param netif the network interface to change
+ * @param addr_idx index of the IPv6 address
+ * @param i0 word0 of the new IPv6 prefix
+ * @param i1 word1 of the new IPv6 prefix
+ */
+void netif_ip6_addr_set_prefix(struct netif *netif, s8_t addr_idx, u32_t i0, u32_t i1);
 #endif /* LWIP_IPV6 */
 
 #if ENABLE_PSIF
@@ -698,11 +747,17 @@ u8_t netif_get_timer_active_state(struct netif* netif, u8_t type);
 #endif
 
 #if PS_ENABLE_TCPIP_HIB_SLEEP2_MODE
-void netif_add_ip6_prefix_info(u32_t prefix[2], u8_t state, u8_t source, u32_t life_time, u32_t active_time, u8_t cid, u8_t prefix_len);
+void netif_add_ip6_prefix_info(const ip6_addr_t *ip6Info, u8_t state, u8_t source, u32_t life_time, u32_t active_time, u8_t cid, u8_t prefix_len);
 void netif_remove_ip6_prefix_info(u8_t cid);
 struct netif_ip6_prefix_info_tag *netif_find_ip6_prefix_info(u8_t cid);
 struct netif_ip6_prefix_info_tag *netif_get_ip6_prefix_info_list(void);
 #endif
+
+void NetifIncreaseLoad(UINT8 cid, NetifLoadType type, UINT16 size);
+void NetifCreateLoad(UINT8 cid);
+void NetifDestroyLoad(UINT8 cid);
+UINT32 NetifGetLoad(UINT32 cid, NetifLoadType type);
+
 
 
 #if LWIP_NETIF_HWADDRHINT

@@ -76,19 +76,13 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 //ap image addr and size
 #if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
 #define AP_FLASH_LOAD_ADDR              (0x008C8000)
-#ifdef FEATURE_EXCEPTION_FLASH_DUMP_ENABLE
-#define AP_FLASH_LOAD_SIZE              (0x651000 - FLASH_EXCEP_DUMP_SIZE)//6468KB - 16KB
-#else
+
 #define AP_FLASH_LOAD_SIZE              (0x651000)//6468KB
-#endif
 #define AP_FLASH_LOAD_UNZIP_SIZE        (0x6D6000)//7000KB ,for ld
 #else
 #define AP_FLASH_LOAD_ADDR              (0x0088C000)
-#ifdef FEATURE_EXCEPTION_FLASH_DUMP_ENABLE
-#define AP_FLASH_LOAD_SIZE              (0x68D000 - FLASH_EXCEP_DUMP_SIZE)//6708KB - 16KB
-#else
+
 #define AP_FLASH_LOAD_SIZE              (0x68D000)//6708KB
-#endif
 #define AP_FLASH_LOAD_UNZIP_SIZE        (0x6D6000)//7000KB ,for ld
 #endif
 

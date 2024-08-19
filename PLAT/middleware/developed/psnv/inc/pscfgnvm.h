@@ -147,9 +147,14 @@ typedef enum _EPAT_PsConfigParamId_Enum
     CERRC_CFG_MEAS_ADJUST_SETTING,                  /* TLV, CerrcCcmMeasAdjustConfig, AT+ECMEASCFG */
     CERRC_CFG_CFUN_CLEAR_BARCELL,                   /* TV,  BOOL cfunClrBarCell */
     CERRC_CFG_ENABLE_LOGGED_MDT,                    /* TV,  BOOL enableLoggedMDT */
+    CERRC_CFG_TX_POWER_THRESHOLD_RPT,               /* TLV, CerrcTxPowerThresholdRptCfg */
 
     CCM_CFG_SMALL_UL_TBS_OPT,                       /* TV,  BOOL smallUlTbsOpt */
     CERRC_CFG_L2_EXT_SN_CAPA_BITMAP,                /* TV,  UINT8,L2 extended SN capability definition,via bitmap. */
+
+    CEMM_CFG_T3402_OPT,                             /* TV,  BOOL T3402Opt */
+
+
     /*
      * !!!!  PARAM ID !!!!
      * 1> Only allowed

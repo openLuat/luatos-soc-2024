@@ -642,14 +642,9 @@ typedef CmiSimImsAuthCnf    EcSimAuthRspParams;
 /******************************************************************************
  *Current Tx Power setting struct
 ******************************************************************************/
-#define TXPOWER_MAX_POWER_VAL_MIN           -45
-#define TXPOWER_MAX_POWER_VAL_MAX           23
-
-#define TXPOWER_MIN_POWER_VAL_MIN           -45
-#define TXPOWER_MIN_POWER_VAL_MAX           23
-
-#define TXPOWER_FIXED_POWER_VAL_MIN         -45
-#define TXPOWER_FIXED_POWER_VAL_MAX         23
+#define TX_POWER_VAL_MIN                    -45
+#define TX_POWER_VAL_MAX                    23
+#define TX_POWER_VAL_INVALID                127     //clear TX power report threshold
 
 typedef CmiDevSetTxPowerReq   TxPowerSettingReq;
 

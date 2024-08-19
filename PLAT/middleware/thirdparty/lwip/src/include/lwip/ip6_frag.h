@@ -88,8 +88,9 @@ struct ip6_reassdata {
   u32_t identification;
   u16_t datagram_len;
   u8_t nexth;
-  u8_t timer;
-  u32_t active_time; //seconds
+  u8_t rsvd;
+  u32_t timer;
+  u32_t active_time; //ms
 };
 
 #define ip6_reass_init() /* Compatibility define */

@@ -103,6 +103,7 @@ typedef enum _SIG_EPAT_cmsSigId_Enum
     SIG_CMS_CP_BTOFFSET_UPD_REQ,    // C2A_BT_OFFSET_UPT_REQ
     SIG_CMS_CP_PLL_STATE_IND,   // C2A_CP_PLL_STATE_IND
     SIG_CMS_FLASH_DIV_CHG_REQ,      // C2A_FLASH_DIV_CHG_REQ
+    SIG_CMS_TX_PWR_RPT,             // C2A_COMM_TEST_REQ
     SIG_CMS_APMU_COMM_TEST_REQ,     // C2A_COMM_TEST_REQ
     // End of CMS signal received from CP
 

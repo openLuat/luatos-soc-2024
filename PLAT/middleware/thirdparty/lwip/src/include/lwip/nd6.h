@@ -99,6 +99,7 @@ u8_t nd6_find_netif_neighbor_link_local_cache_entry(struct netif* netif,  ip6_ad
 u8_t nd6_get_prefix_entry_info(ip6_addr_t *prefix, struct netif *netif, u8_t *prefix_len, u32_t *prefix_valid_time, u32_t *prefix_active_time);
 
 
+err_t nd6_send_rs(struct netif *netif);
 
 
 #if LWIP_ND6_TCP_REACHABILITY_HINTS

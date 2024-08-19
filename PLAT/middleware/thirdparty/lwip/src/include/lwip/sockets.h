@@ -174,13 +174,14 @@ typedef enum sockimsdatatype
 {
     SOCK_DATA_IMS_DATA_TYPE_MIN     = 0,
     SOCK_DATA_IMS_NONE              = SOCK_DATA_IMS_DATA_TYPE_MIN, /*the ul sock data without ims related data*/
-    SOCK_DATA_IMS_CALL              = 1,    /* The ul sock data with ims voice signaling or RTP data
+    SOCK_DATA_IMS_CALL_SIGNALING    = 1,    /* The ul sock data with ims voice signaling
                                              * it will triger RRC establishment cause "origaling MMTEL voice" if need;
                                             */
-    SOCK_DATA_IMS_SMS               = 2,    /* The ul sock data with ims SMS signaling data
+    SOCK_DATA_IMS_CALL_VOICE        = 2,    /* The ul sock data with ims voice RTP data, it will triger RRC establishment cause "origaling MMTEL voice" if need;*/
+    SOCK_DATA_IMS_SMS               = 3,    /* The ul sock data with ims SMS signaling data
                                              * It will triger RRC establishment cause "origaling SMSoIP" if need
                                             */
-    SOCK_DATA_IMS_OTHERS            = 3,    /* The ul sock data with ims other data(such as rtcp, ims REGISTER related)
+    SOCK_DATA_IMS_OTHERS            = 4,    /* The ul sock data with ims other data(such as rtcp, ims REGISTER related)
                                             */
     SOCK_DATA_IMS_DATA_TYPE_MAX     = SOCK_DATA_IMS_OTHERS,
 }sockimsdatatype_t;

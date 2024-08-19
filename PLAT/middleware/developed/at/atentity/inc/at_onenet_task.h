@@ -93,6 +93,7 @@ typedef enum
     MSG_ONENET_OPEN,
     MSG_ONENET_CLOSE, 
     MSG_ONENET_UPDATE, 
+    MSG_ONENET_DELETE, 
 }ONENET_MSG_CMD;
 
 enum ONENET_TASK_STATUS
@@ -112,6 +113,7 @@ typedef enum applOnenetPrimId_Enum
     APPL_ONENET_NOTIFY_CNF,
     APPL_ONENET_CLOSE_CNF,
     APPL_ONENET_UPDATE_CNF,
+    APPL_ONENET_DELETE_CNF,
     APPL_ONENET_IND,
     APPL_ONENET_PRIM_ID_END = 0xFF
 }applOnenetPrimId;
@@ -136,7 +138,8 @@ typedef enum
 {
     SYSTEM_FREE,
     SYSTEM_BUSY,
-    SYSTEM_FREE_ONE
+    SYSTEM_FREE_ONE,
+    SYSTEM_BUSY_ONE,
 }onenet_sleep_status_e;
 
 //AT HANDLE
@@ -283,7 +286,6 @@ typedef struct {
     BOOL isPsk;
     UINT8 identify[ONENET_PSKID_LEN];
     UINT8 secret[ONENET_PSK_LEN];
-    UINT32 closeHandle;
     BOOL bPSKPortConfilict;
     BOOL bEngineInit;
 } onenetContext;
@@ -337,6 +339,7 @@ CmsRetId onenet_client_close(UINT32 reqHandle, UINT32 id);
 CmsRetId onenet_client_update(UINT32 reqHandle, UINT32 id, INT32 lifetime, UINT8 oflag, UINT8 raiflag);
 CmsRetId onenet_client_notify(UINT32 reqHandle, UINT32 id, void* cmd);
 CmsRetId onenet_client_update(UINT32 reqHandle, UINT32 id, INT32 lifetime, UINT8 oflag, UINT8 raiflag);
+CmsRetId onenet_client_delete(UINT32 reqHandle, UINT32 id);
 INT32 onenet_athandle_create(void);
 //AT HANDLE
 
@@ -355,7 +358,6 @@ void onenetWaitEngineInit(void);
 UINT32 onenetHexToBin(UINT8 *dest, UINT8 *source, UINT32 max_dest_len);
 void onenetDeleteInstance(onenetContext *onenet);
 
-INT32 onenetDelete(UINT32 onenetId);
 INT32 onenetAddObj(UINT32 onenet_id, UINT32 objectid, UINT32 instancecount, UINT8 *instancebitmap, UINT32 attributecount, UINT32 actioncount);
 INT32 onenetDelObj(UINT32 onenet_id, UINT32 objectid);
 BOOL onenetResult2Coapret(UINT32 cmdid, onenet_at_result_t result, cis_coapret_t *coapret);

@@ -64,11 +64,9 @@ struct ip_reassdata {
   struct ip_hdr iphdr;
   u16_t datagram_len;
   u8_t flags;
-#if LWIP_TIMER_ON_DEMOND
+  u8_t rsvd;
   u32_t timer;
-#else
-  u8_t timer;
-#endif
+  u32_t active_time; //ms
 };
 
 void ip_reass_init(void);
