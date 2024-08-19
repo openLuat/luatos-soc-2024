@@ -68,8 +68,14 @@ target("ap_bootloader.elf",function()
     local chip_target = nil
     if has_config("chip_target") then chip_target = get_config("chip_target") end
     if chip_target and lib_ps_plat then
+
+        if chip_target=="ec718u" and lib_ps_plat=="ims" then
+            add_linkdirs(csdk_root.."/PLAT/libs/ec718u-ims/bootloader")
+        else
+            add_linkdirs(csdk_root.."/PLAT/libs/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(lib_ps_plat=="mid"and"-mid"or"").."/bootloader")
+        end
         add_linkdirs(csdk_root.."/PLAT/prebuild/PLAT/lib/gcc/"..(chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6).."/"..lib_ps_plat)
-        add_linkdirs(csdk_root.."/PLAT/libs/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(lib_ps_plat=="mid"and"-mid"or"").."/bootloader")
+        
     end
 
     add_linkdirs(csdk_root.."/lib/")
