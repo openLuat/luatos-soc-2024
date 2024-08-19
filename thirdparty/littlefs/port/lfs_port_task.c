@@ -940,7 +940,7 @@ int LFS_fileOpen(lfs_file_t *file, const char *path, int flags)
 
     ret = LFS_waitForCompletion(LFS_REQUEST_FILE_OPEN, file, (uint32_t)path, flags);
 
-    if(ret == LFS_ERR_ISDIR)
+    if((ret == LFS_ERR_ISDIR) || ((flags & LFS_O_CREAT) && (ret == LFS_ERR_NOENT)))
     {
         //ECOMM_TRACE(UNILOG_LFS, LFS_fileOpen, P_ERROR, 1, "LFS_FileOpen, ret: %d", ret);
         lfs_assert(false);
@@ -1116,7 +1116,7 @@ int LFS_fileOpenUnsafe(lfs_file_t *file, const char *path, int flags)
 {
     int ret = lfs_file_open(&lfs, file, path, flags);
 
-    if(ret == LFS_ERR_ISDIR)
+    if((ret == LFS_ERR_ISDIR) || ((flags & LFS_O_CREAT) && (ret == LFS_ERR_NOENT)))
     {
         //ECOMM_TRACE(UNILOG_LFS, LFS_fileOpenUnsafe, P_ERROR, 1, "LFS_fileOpenUnsafe, ret: %d", ret);
         lfs_assert(false);
