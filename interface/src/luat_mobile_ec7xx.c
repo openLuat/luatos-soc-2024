@@ -905,6 +905,24 @@ static void luat_mobile_sim_write_mode(UINT16 paramSize, void *pParam) {
 	psCamCmiReq(CMS_REQ_HANDLER, CAM_SIM, CMI_SIM_SET_SIM_WRITE_COUNTER_REQ, sizeof(CmiSimSetSimWriteCounterReq), &req2);
 }
 
+#ifdef __LUATOS__
+#ifndef LUAT_USE_RNDIS
+static uint8_t luat_rndis_mode = 0;
+uint8_t soc_rndis_is_enable(void)
+{
+	return luat_rndis_mode & 0x01;
+}
+uint8_t soc_rndis_is_nat(void)
+{
+	return (luat_rndis_mode & 0x02)>>1;
+}
+uint8_t soc_user_usb_eth_mode(void)
+{
+	return (luat_rndis_mode & 0x04)>>2;
+}
+#endif
+#endif
+
 int luat_mobile_config(uint8_t item, uint32_t value)
 {
 	EcCfgSetParamsReq req = {0};
@@ -953,6 +971,13 @@ int luat_mobile_config(uint8_t item, uint32_t value)
 	case MOBILE_CONF_RESET_TO_FACTORY:
 		PsCfgResetAllUeConfig();
 		return 0;
+#ifdef __LUATOS__
+#ifndef LUAT_USE_RNDIS
+	case MOBILE_CONF_USB_ETHERNET:
+		luat_rndis_mode = value;
+		break;
+#endif
+#endif
 	default:
 		return -1;
 	}

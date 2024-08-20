@@ -308,7 +308,6 @@ target(project_name,function()
     add_files("./src/*.c",{public = true})
 
 	if os.isfile(csdk_root.."/lib/libtgt_app_service.a") and chip_target == "ec718u" and has_config("lspd_mode") then
-		add_defines("LUAT_USE_RNDIS_NAT_MODE",{public = true})
 		--加入代码和头文件
 		add_linkgroups("tgt_app_service", {whole = true,public = true})
 	end
