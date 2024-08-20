@@ -313,9 +313,9 @@
 #endif
 
 #if defined TYPE_EC718U && defined (FEATURE_IMS_ENABLE)
-#if LUAT_HEAP_SIZE > (190*1024)
+#if LUAT_HEAP_SIZE > (160*1024)
 #undef LUAT_HEAP_SIZE
-#define LUAT_HEAP_SIZE (190*1024)
+#define LUAT_HEAP_SIZE (160*1024)
 #endif
 #endif
 
