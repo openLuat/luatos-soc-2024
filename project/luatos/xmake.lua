@@ -310,5 +310,6 @@ target(project_name,function()
 	if os.isfile(csdk_root.."/lib/libtgt_app_service.a") and chip_target == "ec718u" and has_config("lspd_mode") then
 		--加入代码和头文件
 		add_linkgroups("tgt_app_service", {whole = true,public = true})
+		add_defines("LUAT_USE_VSIM",{public = true})
 	end
 end)

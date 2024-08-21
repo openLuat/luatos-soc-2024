@@ -333,6 +333,10 @@
 #endif
 #endif
 
+#if defined TYPE_EC718U && defined LUAT_USE_VSIM
+#undef LUAT_HEAP_SIZE
+#define LUAT_HEAP_SIZE (200*1024)
+#endif
 //-----------------------------
 
 // 将UART0切换到用户模式, 默认是UNILOG模式
