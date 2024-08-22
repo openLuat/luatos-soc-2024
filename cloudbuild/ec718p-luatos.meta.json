@@ -475,7 +475,7 @@
                     },
                     {
                         "name": "little_flash",
-                        "content": "spi flash驱动库 目前支持nand flash",
+                        "content": "spi flash驱动库 支持norflash+nand flash",
                         "rsize": 11968,
                         "fsize": 299388,
                         "dft": false
