@@ -766,6 +766,7 @@ int luat_mobile_sms_event_register_handler(luat_mobile_sms_event_callback_t call
 
 extern void net_lwip_check_switch(uint8_t onoff);
 extern void soc_mobile_set_rrc_release_time(uint8_t s);
+extern void soc_mobile_set_rrc_release_idle_min_time(uint32_t s);
 void luat_mobile_set_rrc_auto_release_time(uint8_t s)
 {
 	if (1 == s) s = 2;
@@ -773,6 +774,17 @@ void luat_mobile_set_rrc_auto_release_time(uint8_t s)
 	//net_lwip_check_switch(s);
 }
 
+void luat_mobile_set_auto_rrc(uint8_t s1, uint32_t s2)
+{
+	soc_mobile_set_rrc_release_time(s1);
+	soc_mobile_set_rrc_release_idle_min_time(s2);
+}
+
+void luat_mobile_set_auto_rrc_default(void)
+{
+	soc_mobile_set_rrc_release_time(4);
+	soc_mobile_set_rrc_release_idle_min_time(55);
+}
 extern void soc_mobile_release_rrc_pause(uint8_t onoff);
 void luat_mobile_rrc_auto_release_pause(uint8_t onoff)
 {
