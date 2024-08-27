@@ -179,7 +179,7 @@ function description_common()
                 "-fdata-sections",
                 "-fno-isolate-erroneous-paths-dereference",
                 "-freorder-blocks-algorithm=stc",
-                "-Wno-format",
+                "-Wformat",
                 {force=true})
 
     add_cxflags("-Werror=maybe-uninitialized", {force=true})
