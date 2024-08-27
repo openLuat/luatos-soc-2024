@@ -9,7 +9,7 @@
   {"Comment": "However, other fields can be redefined to whatever you want, including the name of this config file!"}
  ],
  "CompanyName": "EiGENCOMM",
- "ProductName": "EC718P",
+ "ProductName": "EC716E",
  "FotaCoreVer": "2.5",
  "FotaCapability": {
    "capacity": 0,
@@ -26,7 +26,7 @@
  },
  "HuluSuite": {
    "ver": 1,
-   "enable": 0,
+   "enable": 1,
    "adjust": 1,
    "wkspSize": 450560
  },
