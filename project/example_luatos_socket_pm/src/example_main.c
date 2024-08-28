@@ -114,7 +114,7 @@ static void luat_test_task(void *param)
                         }
                         else if (is_timeout)
                         {
-                            sprintf((char*)tx_data, "heart beat cnt %u", cnt);
+                            sprintf((char*)tx_data, "heart beat cnt %lu", cnt);
                             result = network_tx(g_s_network_ctrl, (const uint8_t*)heart_beat, sizeof(heart_beat) - 1, 0, NULL, 0, &tx_len, 15000);
                             cnt++;
                         }

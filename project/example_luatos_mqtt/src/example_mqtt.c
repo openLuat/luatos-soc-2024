@@ -324,7 +324,7 @@ static void mqtt_task(void *param)
 	}
 	while(1){
 		if (luat_mqtt_state_get(mymqtt) == MQTT_STATE_READY){
-			sprintf(mqtt_send_payload, "{\"ticks\":%u}", luat_mcu_ticks());
+			sprintf(mqtt_send_payload, "{\"ticks\":%lu}", luat_mcu_ticks());
 			ret = mqtt_publish_with_qos(&(mymqtt->broker), mqtt_pub_topic, mqtt_send_payload, strlen(mqtt_send_payload), 1, MQTT_DEMO_PUB_QOS, &message_id);
 			LUAT_DEBUG_PRINT("uplink topic %s data %s msgid %d ret %d", mqtt_pub_topic, mqtt_send_payload, message_id, ret);
 			ret = mqtt_publish_with_qos(&(mymqtt->broker), mqtt_pub_topic, big_data, 32 * 1024, 1, MQTT_DEMO_PUB_QOS, &message_id);

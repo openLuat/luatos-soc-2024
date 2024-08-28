@@ -113,7 +113,7 @@ static void luat_test_task(void *param)
 						}
 						else if (is_timeout)
 						{
-							// sprintf((char*)tx_data, "test %u cnt", cnt);
+							// sprintf((char*)tx_data, "test %lu cnt", cnt);
 							// result = network_tx(g_s_network_ctrl, tx_data, strlen((char*)tx_data), 0, NULL, 0, &tx_len, 15000);
 							// cnt++;
 							// if (!(cnt % 10))
