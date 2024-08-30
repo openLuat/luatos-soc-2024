@@ -479,8 +479,9 @@ int luat_uart_rx_start_notify_enable(int uart_id, uint8_t is_enable)
     return -1;
 }
 
-#if 0
+
 #ifdef __LUATOS__
+#ifdef LUAT_USE_SOFT_UART
 #include "bsp.h"
 #include "timer.h"
 #include "slpman.h"
@@ -488,7 +489,7 @@ int luat_uart_rx_start_notify_enable(int uart_id, uint8_t is_enable)
 #include "c_common.h"
 #endif
 #define EIGEN_TIMER(n)             ((TIMER_TypeDef *) (AP_TIMER0_BASE_ADDR + 0x1000*n))
-static CommonFun_t irq_cb[2];
+static CommonFun_t irq_cb[4];
 static __CORE_FUNC_IN_RAM__ void luat_uart_soft_hwtimer0_callback(void)
 {
 	__IO uint32_t SR = EIGEN_TIMER(0)->TSR;
@@ -496,16 +497,35 @@ static __CORE_FUNC_IN_RAM__ void luat_uart_soft_hwtimer0_callback(void)
 	irq_cb[0]();
 }
 
+static __CORE_FUNC_IN_RAM__ void luat_uart_soft_hwtimer1_callback(void)
+{
+	__IO uint32_t SR = EIGEN_TIMER(1)->TSR;
+	EIGEN_TIMER(1)->TSR = SR;
+	irq_cb[1]();
+}
+
 static __CORE_FUNC_IN_RAM__ void luat_uart_soft_hwtimer2_callback(void)
 {
 	__IO uint32_t SR = EIGEN_TIMER(2)->TSR;
 	EIGEN_TIMER(2)->TSR = SR;
-	irq_cb[1]();
+	irq_cb[2]();
+}
+
+static __CORE_FUNC_IN_RAM__ void luat_uart_soft_hwtimer4_callback(void)
+{
+	__IO uint32_t SR = EIGEN_TIMER(4)->TSR;
+	EIGEN_TIMER(4)->TSR = SR;
+	irq_cb[3]();
 }
 
 int luat_uart_soft_setup_hwtimer_callback(int hwtimer_id, CommonFun_t callback)
 {
     TimerConfig_t timerConfig;
+    if (!callback)
+    {
+    	TIMER_deInit(hwtimer_id);
+    	return 0;
+    }
 	switch(hwtimer_id)
 	{
 	case 0:
@@ -515,19 +535,18 @@ int luat_uart_soft_setup_hwtimer_callback(int hwtimer_id, CommonFun_t callback)
 			CLOCK_setClockDiv(FCLK_TIMER0, 1);
 		    XIC_SetVector(PXIC0_TIMER0_IRQn, luat_uart_soft_hwtimer0_callback);
 		    XIC_EnableIRQ(PXIC0_TIMER0_IRQn);
-		    TIMER_getDefaultConfig(&timerConfig);
-		    timerConfig.reloadOption = TIMER_RELOAD_ON_MATCH0;
-		    TIMER_init(0, &timerConfig);
-		    TIMER_interruptConfig(0, TIMER_MATCH0_SELECT, TIMER_INTERRUPT_LEVEL);
-		    TIMER_interruptConfig(0, TIMER_MATCH1_SELECT, TIMER_INTERRUPT_DISABLE);
-		    TIMER_interruptConfig(0, TIMER_MATCH2_SELECT, TIMER_INTERRUPT_DISABLE);
-		}
-		else
-		{
-			TIMER_deInit(0);
 		}
 		irq_cb[0] = callback;
-
+		break;
+	case 1:
+		if (callback)
+		{
+			CLOCK_setClockSrc(FCLK_TIMER1, FCLK_TIMER1_SEL_26M);
+			CLOCK_setClockDiv(FCLK_TIMER1, 1);
+		    XIC_SetVector(PXIC0_TIMER1_IRQn, luat_uart_soft_hwtimer1_callback);
+		    XIC_EnableIRQ(PXIC0_TIMER1_IRQn);
+		}
+		irq_cb[1] = callback;
 		break;
 	case 2:
 		if (callback)
@@ -536,22 +555,29 @@ int luat_uart_soft_setup_hwtimer_callback(int hwtimer_id, CommonFun_t callback)
 			CLOCK_setClockDiv(FCLK_TIMER2, 1);
 		    XIC_SetVector(PXIC0_TIMER2_IRQn, luat_uart_soft_hwtimer2_callback);
 		    XIC_EnableIRQ(PXIC0_TIMER2_IRQn);
-		    TIMER_getDefaultConfig(&timerConfig);
-		    timerConfig.reloadOption = TIMER_RELOAD_ON_MATCH0;
-		    TIMER_init(2, &timerConfig);
-		    TIMER_interruptConfig(2, TIMER_MATCH0_SELECT, TIMER_INTERRUPT_LEVEL);
-		    TIMER_interruptConfig(2, TIMER_MATCH1_SELECT, TIMER_INTERRUPT_DISABLE);
-		    TIMER_interruptConfig(2, TIMER_MATCH2_SELECT, TIMER_INTERRUPT_DISABLE);
 		}
-		else
+		irq_cb[2] = callback;
+		break;
+	case 4:
+		if (callback)
 		{
-			TIMER_deInit(2);
+			CLOCK_setClockSrc(FCLK_TIMER4, FCLK_TIMER4_SEL_26M);
+			CLOCK_setClockDiv(FCLK_TIMER4, 1);
+		    XIC_SetVector(PXIC0_TIMER4_IRQn, luat_uart_soft_hwtimer4_callback);
+		    XIC_EnableIRQ(PXIC0_TIMER4_IRQn);
 		}
-		irq_cb[1] = callback;
+		irq_cb[3] = callback;
 		break;
 	default:
 		return -1;
 	}
+
+    TIMER_getDefaultConfig(&timerConfig);
+    timerConfig.reloadOption = TIMER_RELOAD_ON_MATCH0;
+    TIMER_init(hwtimer_id, &timerConfig);
+    TIMER_interruptConfig(hwtimer_id, TIMER_MATCH0_SELECT, TIMER_INTERRUPT_LEVEL);
+    TIMER_interruptConfig(hwtimer_id, TIMER_MATCH1_SELECT, TIMER_INTERRUPT_DISABLE);
+    TIMER_interruptConfig(hwtimer_id, TIMER_MATCH2_SELECT, TIMER_INTERRUPT_DISABLE);
 	return 0;
 }
 void __CORE_FUNC_IN_RAM__ luat_uart_soft_gpio_fast_output(int pin, uint8_t value)
@@ -595,3 +621,4 @@ void __CORE_FUNC_IN_RAM__ luat_uart_soft_sleep_enable(uint8_t is_enable)
 }
 #endif
 #endif
+

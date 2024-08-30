@@ -190,7 +190,16 @@
                         "content": "串口",
                         "rsize": 3520,
                         "fsize": 290940,
-                        "dft": true
+                        "dft": true,
+                        "children": [
+                            {
+                                "name": "soft_uart",
+                                "content": "软串口支持,波特率9600或以下,任意2个GPIO,仅支持一个通道",
+                                "rsize": 2432,
+                                "fsize": 288852,
+                                "dft": true
+                            }
+                        ]
                     },
                     {
                         "name": "i2c",

@@ -32,7 +32,7 @@
 // #define LUAT_USE_RNDIS 1
 // #define LUAT_USE_ULWIP 1
 // #define LUAT_USE_NAPT 1
-
+#define LUAT_USE_SOFT_UART 1
 //----------------------------
 // 常用工具库, 按需启用, cjson和pack是强烈推荐启用的
 #define LUAT_USE_CRYPTO  1
@@ -445,11 +445,6 @@
 // #endif // LUAT_USE_TTS_ONCHIP
 
 #endif // LUAT_USE_TTS
-
-// 当前不支持软件UART, 自动禁用之
-#ifdef LUAT_USE_SOFT_UART
-#undef LUAT_USE_SOFT_UART
-#endif
 
 // #ifdef LUAT_USE_TTS_ONCHIP
 // #undef LUAT_SCRIPT_SIZE
