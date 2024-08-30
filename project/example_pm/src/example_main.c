@@ -67,13 +67,13 @@ static void task1(void *args)
         luat_mobile_set_flymode(0, 1);
         luat_pm_dtimer_start(0, 20000);
         luat_pm_power_ctrl(LUAT_PM_POWER_USB, 0);	//插着USB的时候需要关闭USB电源
-        #ifdef TYPE_EC718P
+        #if (defined TYPE_EC718P) || (defined TYPE_EC718E) || (defined TYPE_EC716E) || (defined TYPE_EC718U)
         luat_pm_force(LUAT_PM_SLEEP_MODE_STANDBY);
         #else
         luat_pm_force(LUAT_PM_SLEEP_MODE_DEEP);
         //luat_pm_force(LUAT_PM_SLEEP_MODE_STANDBY);	//718S和716S开启最低功耗休眠需要额外占用OTA 96Kflash空间
         #endif
-#ifdef TYPE_EC718P
+#if (defined TYPE_EC718P) || (defined TYPE_EC718E) || (defined TYPE_EC718U)
         //780EP模块WAKEPAD设置成下面的上下拉配置，在全IO开发板上功耗相对较低，如果是其他板子，需要看具体情况配置
         gpio_cfg.pin = HAL_WAKEUP_4;
         gpio_cfg.mode = LUAT_GPIO_INPUT;
