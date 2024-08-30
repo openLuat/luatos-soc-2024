@@ -928,7 +928,7 @@ uint8_t soc_rndis_is_enable(void)
 }
 uint8_t soc_rndis_is_nat(void)
 {
-	return (luat_rndis_mode & 0x02)>>1;
+	return 1;
 }
 uint8_t soc_user_usb_eth_mode(void)
 {
