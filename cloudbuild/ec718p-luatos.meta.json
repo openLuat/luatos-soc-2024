@@ -618,6 +618,27 @@
                         "dft": false
                     },
                     {
+                        "name": "LUAT_UART0_LOG_BR_12M",
+                        "content": "UART0输出log的波特率为12M",
+                        "rsize": 0,
+                        "fsize": 1024,
+                        "dft": false
+                    },
+                    {
+                        "name": "LUAT_HEAP_SIZE_200K",
+                        "content": "Lua内存设置到200k字节, 2023.7.10之前默认200k, 之后默认256k,本选项只为兼容老的配置.不影响FOTA",
+                        "rsize": 0,
+                        "fsize": 1024,
+                        "dft": false
+                    },
+                    {
+                        "name": "LUAT_HEAP_SIZE_300K",
+                        "content": "Lua内存设置到300k字节, 这个模式下不能使用音频的库,且需要限制TLS连接的数量在2个以内",
+                        "rsize": 0,
+                        "fsize": 1024,
+                        "dft": false
+                    },
+                    {
                         "name": "LUAT_USE_PSRAM_AS_LUAHEAP",
                         "content": "(测试阶段)使用PSRAM作为lua内存,1.25m字节. 勾选后,这个固件就不能使用休眠功能,连轻休眠都不支持,不支持任何低功耗模式,运行速度也下降",
                         "rsize": 1024,
