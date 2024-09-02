@@ -49,6 +49,45 @@ static void task1(void *args)
 {
 	luat_debug_set_fault_mode( LUAT_DEBUG_FAULT_HANG_RESET);
 	luat_gpio_cfg_t gpio_cfg = {0};
+#if (defined TYPE_EC718P) || (defined TYPE_EC718E) || (defined TYPE_EC718U)
+	//780EP模块WAKEPAD设置成下面的上下拉配置，在全IO开发板上功耗相对较低，如果是其他板子，需要看具体情况配置
+	gpio_cfg.pin = HAL_WAKEUP_4;
+	gpio_cfg.mode = LUAT_GPIO_INPUT;
+	gpio_cfg.pull = LUAT_GPIO_PULLUP;
+	luat_gpio_open(&gpio_cfg);
+
+	gpio_cfg.pin = HAL_WAKEUP_0;
+	gpio_cfg.mode = LUAT_GPIO_INPUT;
+	gpio_cfg.pull = LUAT_GPIO_PULLUP;
+	luat_gpio_open(&gpio_cfg);
+
+	gpio_cfg.pin = HAL_WAKEUP_3;
+	gpio_cfg.mode = LUAT_GPIO_INPUT;
+	gpio_cfg.pull = LUAT_GPIO_PULLUP;
+	luat_gpio_open(&gpio_cfg);
+
+	gpio_cfg.pin = HAL_WAKEUP_2;
+	gpio_cfg.mode = LUAT_GPIO_INPUT;
+	gpio_cfg.pull = LUAT_GPIO_PULLDOWN;
+	luat_gpio_open(&gpio_cfg);
+
+	gpio_cfg.pin = HAL_WAKEUP_1;
+	gpio_cfg.mode = LUAT_GPIO_INPUT;
+	gpio_cfg.pull = LUAT_GPIO_PULLDOWN;
+	luat_gpio_open(&gpio_cfg);
+
+	gpio_cfg.pin = HAL_WAKEUP_5;
+	gpio_cfg.mode = LUAT_GPIO_INPUT;
+	gpio_cfg.pull = LUAT_GPIO_PULLDOWN;
+	luat_gpio_open(&gpio_cfg);
+	luat_gpio_close(HAL_WAKEUP_CHARGE);
+#endif
+    luat_gpio_close(HAL_WAKEUP_PWRKEY);	//如果powerkey接地了，还需要再关闭powerkey上拉功能
+#ifdef CHIP_EC716
+    luat_gpio_close(HAL_GPIO_16);
+#else
+    luat_gpio_close(HAL_GPIO_23);
+#endif
     while(1)
     {
         int lastState, rtcOrPad;
@@ -59,59 +98,21 @@ static void task1(void *args)
         }
 
         luat_pm_request(LUAT_PM_SLEEP_MODE_NONE);
-        luat_rtos_task_sleep(10000);
+        luat_rtos_task_sleep(20000);
         luat_pm_request(LUAT_PM_SLEEP_MODE_IDLE);
-        luat_rtos_task_sleep(10000);
+        luat_rtos_task_sleep(20000);
+        luat_pm_power_ctrl(LUAT_PM_POWER_USB, 0);	//插着USB的时候需要关闭USB电源
         luat_pm_request(LUAT_PM_SLEEP_MODE_LIGHT);
-        luat_rtos_task_sleep(10000);
+        luat_rtos_task_sleep(20000);
         luat_mobile_set_flymode(0, 1);
         luat_pm_dtimer_start(0, 20000);
-        luat_pm_power_ctrl(LUAT_PM_POWER_USB, 0);	//插着USB的时候需要关闭USB电源
         #if (defined TYPE_EC718P) || (defined TYPE_EC718E) || (defined TYPE_EC716E) || (defined TYPE_EC718U)
         luat_pm_force(LUAT_PM_SLEEP_MODE_STANDBY);
         #else
         luat_pm_force(LUAT_PM_SLEEP_MODE_DEEP);
         //luat_pm_force(LUAT_PM_SLEEP_MODE_STANDBY);	//718S和716S开启最低功耗休眠需要额外占用OTA 96Kflash空间
         #endif
-#if (defined TYPE_EC718P) || (defined TYPE_EC718E) || (defined TYPE_EC718U)
-        //780EP模块WAKEPAD设置成下面的上下拉配置，在全IO开发板上功耗相对较低，如果是其他板子，需要看具体情况配置
-        gpio_cfg.pin = HAL_WAKEUP_4;
-        gpio_cfg.mode = LUAT_GPIO_INPUT;
-        gpio_cfg.pull = LUAT_GPIO_PULLUP;
-        luat_gpio_open(&gpio_cfg);
 
-        gpio_cfg.pin = HAL_WAKEUP_0;
-        gpio_cfg.mode = LUAT_GPIO_INPUT;
-        gpio_cfg.pull = LUAT_GPIO_PULLUP;
-        luat_gpio_open(&gpio_cfg);
-
-        gpio_cfg.pin = HAL_WAKEUP_3;
-        gpio_cfg.mode = LUAT_GPIO_INPUT;
-        gpio_cfg.pull = LUAT_GPIO_PULLUP;
-        luat_gpio_open(&gpio_cfg);
-
-        gpio_cfg.pin = HAL_WAKEUP_2;
-        gpio_cfg.mode = LUAT_GPIO_INPUT;
-        gpio_cfg.pull = LUAT_GPIO_PULLDOWN;
-        luat_gpio_open(&gpio_cfg);
-
-        gpio_cfg.pin = HAL_WAKEUP_1;
-        gpio_cfg.mode = LUAT_GPIO_INPUT;
-        gpio_cfg.pull = LUAT_GPIO_PULLDOWN;
-        luat_gpio_open(&gpio_cfg);
-
-        gpio_cfg.pin = HAL_WAKEUP_5;
-        gpio_cfg.mode = LUAT_GPIO_INPUT;
-        gpio_cfg.pull = LUAT_GPIO_PULLDOWN;
-        luat_gpio_open(&gpio_cfg);
-        luat_gpio_close(HAL_WAKEUP_CHARGE);
-#endif
-        luat_gpio_close(HAL_WAKEUP_PWRKEY);	//如果powerkey接地了，还需要再关闭powerkey上拉功能
-#ifdef CHIP_EC716
-        luat_gpio_close(HAL_GPIO_16);	//关闭能省0.5uA
-#else
-        luat_gpio_close(HAL_GPIO_23);	//关闭能省0.5uA
-#endif
         luat_rtos_task_sleep(30000);
     }
 }
