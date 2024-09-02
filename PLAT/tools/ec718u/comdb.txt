@@ -1,8 +1,8 @@
 DbVersion
-444152321,100
+1744662081,100
 <end>
 BuildInfo
-The current data file was built by the Application Ver. 2.2.81.216, Thu Aug 29 21:13:14 2024
+The current data file was built by the Application Ver. 2.2.81.216, Mon Sep  2 08:38:23 2024
 <end>
 EnumVals
 0,0,0,0,PHY_ONLINE,PHY_ICS_MODULE,PhyIcsMeasMainEntrance_0,P_INFO,swLogPrintf("ICS MEAS of euArfcn %d will be started ");
@@ -9756,5 +9756,5 @@ MW_INFO_PHY_EDRX_PARAM,midWareNvmInfoPhyEdrxParam
 plat_config,plat_config_fs_t
 <end>
 OptionalSegment
-optional_sk_01,7C185D3B6512CDB874A5DF4E660FD602B71A394519EAF53C6CABE008DD69382A
+optional_sk_01,191D2E948B91377B6E491BE9F2286643C6170E466E48C6DFE094AAEED0D04DB8
 <end>
