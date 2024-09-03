@@ -257,13 +257,6 @@
                         "fsize": 289364,
                         "dft": true
                     },
-					{
-                        "name": "camera",
-                        "content": "摄像头(预览/拍照/扫码)",
-                        "rsize": 5528,
-                        "fsize": 131070,
-                        "dft": true
-                    },
                     {
                         "name": "pm",
                         "content": "电源功耗管理,休眠模式控制,定时唤醒",
@@ -286,20 +279,6 @@
                                 "dft": false
                             }
                         ]
-                    },
-                    {
-                        "name": "otp",
-                        "content": "一次性写入存储,一旦加锁就无法修改无法擦除,把Flash全清了也改不了",
-                        "rsize": 632,
-                        "fsize": 288052,
-                        "dft": false
-                    },
-                    {
-                        "name": "wlan",
-                        "content": "wlan扫描功能.仅支持扫描，不支持wifi通信!!",
-                        "rsize": 10240,
-                        "fsize": 288052,
-                        "dft": false
                     },
                     {
                         "name": "sms",
@@ -356,13 +335,6 @@
                     {
                         "name": "ftp",
                         "content": "FTP客户端",
-                        "rsize": 6008,
-                        "fsize": 274360,
-                        "dft": false
-                    },
-                    {
-                        "name": "w5500",
-                        "content": "以太网支持库,支持W5500",
                         "rsize": 6008,
                         "fsize": 274360,
                         "dft": false
@@ -469,6 +441,57 @@
                         "dft": false
                     },
                     {
+                        "name": "iconv",
+                        "content": "编码转换GB2312/UTF8/UNICODE",
+                        "rsize": 40008,
+                        "fsize": 274360,
+                        "dft": false
+                    },
+                    {
+                        "name": "sensor",
+                        "content": "传感器(例如ds18b20/ws2812)",
+                        "rsize": 2248,
+                        "fsize": 289668,
+                        "dft": false
+                    }
+                ],
+                "fsize": 287420,
+                "dft": false
+            },            {
+                "icon": "zmdi-puzzle-piece",
+                "name": "@XYZ",
+                "content": "非主推的库",
+                "rsize": 0,
+                "children": [
+                    {
+                        "name": "camera",
+                        "content": "摄像头(预览/拍照/扫码)",
+                        "rsize": 5528,
+                        "fsize": 131070,
+                        "dft": true
+                    },
+                    {
+                        "name": "otp",
+                        "content": "一次性写入存储,一旦加锁就无法修改无法擦除,把Flash全清了也改不了",
+                        "rsize": 632,
+                        "fsize": 288052,
+                        "dft": false
+                    },
+                    {
+                        "name": "wlan",
+                        "content": "wlan扫描功能.仅支持扫描，不支持wifi通信!!",
+                        "rsize": 10240,
+                        "fsize": 288052,
+                        "dft": false
+                    },
+                    {
+                        "name": "w5500",
+                        "content": "以太网支持库,支持W5500",
+                        "rsize": 6008,
+                        "fsize": 274360,
+                        "dft": false
+                    },
+                    {
                         "name": "fastlz",
                         "content": "另一种LZ压缩和解压库,压缩的内存需求比miniz小",
                         "rsize": 12768,
@@ -561,20 +584,6 @@
                         "dft": false
                     },
                     {
-                        "name": "iconv",
-                        "content": "编码转换GB2312/UTF8/UNICODE",
-                        "rsize": 40008,
-                        "fsize": 274360,
-                        "dft": false
-                    },
-                    {
-                        "name": "sensor",
-                        "content": "传感器(例如ds18b20/ws2812)",
-                        "rsize": 2248,
-                        "fsize": 289668,
-                        "dft": false
-                    },
-                    {
                         "name": "statem",
                         "content": "状态机,可输出GPIO序列",
                         "rsize": 1480,
@@ -602,9 +611,7 @@
                         "fsize": 274360,
                         "dft": false
                     }
-                ],
-                "fsize": 287420,
-                "dft": false
+                ]
             },
             {
                 "icon": "zmdi-puzzle-piece",
@@ -1243,8 +1250,7 @@
                         "rsize": 10832,
                         "fsize": 298252,
                         "dft": false
-                    },
-
+                    }
                 ]
             }
         ]
