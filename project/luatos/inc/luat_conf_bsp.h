@@ -276,15 +276,25 @@
 #endif
 
 #if defined TYPE_EC718U
-
+#ifndef LUAT_USE_FATFS_CHINESE
+#define LUAT_USE_FATFS_CHINESE
+#endif
 #ifndef LUAT_USE_TTS
 #define LUAT_USE_TTS
 #endif
 #ifndef LUAT_USE_TTS_ONCHIP
 #define LUAT_USE_TTS_ONCHIP
 #endif
+#ifndef USE_U8G2_OPPOSANSM12_CHINESE
+#define USE_U8G2_OPPOSANSM12_CHINESE
 #endif
-
+#ifndef LUAT_USE_LVGL
+#define LUAT_USE_LVGL
+#define LUAT_USE_LVGL_JPG 1 // 启用JPG解码支持
+#define LUAT_USE_LVGL_PNG 1 // 启用PNG解码支持
+#define LUAT_USE_LVGL_BMP 1 // 启用BMP解码支持
+#define LV_FONT_OPPOSANS_M_12
+#endif
 #endif
 
 //-------------------------------------------------------------------------------
