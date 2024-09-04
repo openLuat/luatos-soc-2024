@@ -32,6 +32,7 @@ target(project_name,function()
             table.insert(parameter,"-D" .. define_flasg)
         end
         -- print("parameter",parameter)
+        table.insert(parameter,"-I" .. project_dir .."/inc/")
         os.execv(toolchains .. "/arm-none-eabi-gcc",table.join(parameter, {"-o",out_path .. "/luat_conf_bsp.txt","-"}),{stdin = project_dir .."/inc/luat_conf_bsp.h"})
 
         local conf_data = io.readfile(out_path .. "/luat_conf_bsp.txt")
