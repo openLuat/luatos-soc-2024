@@ -235,13 +235,6 @@
 #define LUAT_SCRIPT_OTA_SIZE 192
 #endif
 
-// 适合tts_onchip的极限操作, 无需外置SPI FLASH也支持TTS.
-// 一定要看 LUAT_USE_TTS_ONCHIP的说明
-// #define LUAT_SCRIPT_SIZE 64
-// #define LUAT_SCRIPT_OTA_SIZE 48
-// #define LUAT_SCRIPT_SIZE 32
-// #define LUAT_SCRIPT_OTA_SIZE 24
-
 #endif
 
 // 供本地快速编译Air780EPV时,自动禁用的库, 云编译时会自动删除掉
@@ -295,6 +288,8 @@
 #define LUAT_USE_LVGL_BMP 1 // 启用BMP解码支持
 #define LV_FONT_OPPOSANS_M_12
 #endif
+#endif
+
 #endif
 
 //-------------------------------------------------------------------------------
