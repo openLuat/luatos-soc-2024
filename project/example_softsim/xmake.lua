@@ -12,6 +12,12 @@ target(project_name,function()
     set_warnings("error")
 	--rndis
 	add_defines("LUAT_USE_RNDIS","LUAT_USE_RNDIS_NAT_MODE",{public = true})
+		--http
+	add_includedirs(luatos_root.."/components/network/libhttp", {public = true})
+    add_includedirs(luatos_root.."/components/network/http_parser", {public = true})
+    add_files(luatos_root.."/components/network/libhttp/*.c")
+    remove_files(luatos_root.."/components/network/libhttp/luat_lib_http.c")
+    add_files(luatos_root.."/components/network/http_parser/*.c")
     --加入代码和头文件
     add_includedirs("./inc",{public = true})
     add_files("./src/*.c",{public = true})
