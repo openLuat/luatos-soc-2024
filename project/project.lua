@@ -333,6 +333,7 @@ target(project_name..".elf",function()
         -- print("mem_parameter",mem_parameter)
 
         if project_name == 'luatos' then
+            table.insert(mem_parameter,"-I" .. csdk_root .."/project/luatos/inc/")
             os.execv(toolchains .. "/arm-none-eabi-gcc",table.join(mem_parameter, {"-o",out_path .. "/luat_conf_bsp.txt","-"}),{stdin = csdk_root .."/project/luatos/inc/luat_conf_bsp.h"})
         end
 
