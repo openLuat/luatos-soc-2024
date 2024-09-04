@@ -28,6 +28,7 @@
 #include "task.h"
 
 #include "luat_base.h"
+#include "soc_service.h"
 #ifdef __LUATOS__
 #include "luat_malloc.h"
 #include "luat_msgbus.h"
@@ -531,7 +532,11 @@ static adc_ctrl_t adc_ctrl[6] = {
 #endif
 		{NULL, 0, LUAT_ADC_AIO_RANGE_4_0, ADC_CHANNEL_AIO1, ADC_AIO_RESDIV_RATIO_8OVER32, 32, 8},
 		{NULL, 0, LUAT_ADC_AIO_RANGE_4_0, ADC_CHANNEL_AIO2, ADC_AIO_RESDIV_RATIO_8OVER32, 32, 8},
-		{NULL, 0, LUAT_ADC_VBAT_RANGE_5_3_RATIO, ADC_CHANNEL_VBAT, ADC_VBAT_RESDIV_RATIO_3OVER32, 32,3},
+#ifdef CHIP_EC716
+		{NULL, 0, LUAT_ADC_VBAT_RANGE_2_6_RATIO, ADC_CHANNEL_VBAT, ADC_VBAT_RESDIV_RATIO_6OVER32, 32,6},
+#else
+		{NULL, 0, LUAT_ADC_VBAT_RANGE_2_0_RATIO, ADC_CHANNEL_VBAT, ADC_VBAT_RESDIV_RATIO_8OVER32, 32,8},
+#endif
 		{NULL, 0, LUAT_ADC_VBAT_RANGE_5_3_RATIO, ADC_CHANNEL_THERMAL, ADC_VBAT_RESDIV_RATIO_3OVER32, 32,3},
 };
 
@@ -798,5 +803,136 @@ int luat_adc_ctrl(int id, LUAT_ADC_CTRL_CMD_E cmd, luat_adc_ctrl_param_t param)
 
     return 0;
 }
+
+int luat_adc_open_and_disable_lowpower(int id)
+{
+	if (luat_adc_open(id, NULL)) return -1;
+    if (LUAT_ADC_CH_CPU == id || ADC_CH_CPU_OLD == id)
+    {
+    	id = 5;
+    }
+    else if (LUAT_ADC_CH_VBAT == id || ADC_CH_VBAT_OLD == id)
+    {
+    	id = 4;
+    }
+	soc_sys_force_wakeup_on_off(SOC_SYS_CTRL_ADC + id,1);
+    uint32_t adcReadyTimeout = 30; // at most 30ms
+    while((slpManCheckADCReady() == false) && adcReadyTimeout)
+    {
+    	luat_rtos_task_sleep(1);
+        adcReadyTimeout--;
+    }
+    if (!adcReadyTimeout)
+    {
+    	DBG("adc ready timeout error!!!");
+    }
+
+    AdcConfig_t adcConfig;
+    ADC_getDefaultConfig(&adcConfig);
+    adcConfig.channelConfig.aioResDiv = adc_ctrl[id].resdiv;
+    adcConfig.channelConfig.vbatResDiv = adc_ctrl[id].resdiv;
+    adcCallback_t callback = NULL;
+    switch (id)
+    {
+    case 0:
+    	callback = adc0_cb;
+        break;
+    case 1:
+    	callback = adc1_cb;
+        break;
+    case 2:
+    	callback = adc2_cb;
+        break;
+    case 3:
+    	callback = adc3_cb;
+        break;
+    case 4:
+    	callback = adc_vbat_cb;
+        break;
+    case 5:
+    	callback = adc_temp_cb;
+        break;
+    default:
+    	soc_sys_force_wakeup_on_off(SOC_SYS_CTRL_ADC + id, 0);
+        return -1;
+    }
+    if (ADC_channelInit(adc_ctrl[id].aio, ADC_USER_APP, &adcConfig, callback))
+    {
+    	soc_sys_force_wakeup_on_off(SOC_SYS_CTRL_ADC + id, 0);
+        return -1;
+    }
+    return 0;
+}
+
+int luat_adc_read_fast(int id, int* val, int* val2) {
+    if (!adc_exist(id))
+        return -1;
+
+    if (LUAT_ADC_CH_CPU == id || ADC_CH_CPU_OLD == id)
+    {
+    	id = 5;
+    }
+    else if (LUAT_ADC_CH_VBAT == id || ADC_CH_VBAT_OLD == id)
+    {
+    	id = 4;
+    }
+    adc_ctrl[id].result = 0;
+    ADC_startConversion(adc_ctrl[id].aio, ADC_USER_APP);
+    int ret = luat_rtos_semaphore_take(adc_ctrl[id].wait_finish, 5);
+    if (!ret)
+    {
+    	*val = adc_ctrl[id].result;
+    	if (id < 4)
+    	{
+#ifdef __LUATOS__
+    		*val2 = HAL_ADC_CalibrateRawCode(adc_ctrl[id].result) * (uint32_t)adc_ctrl[id].p1 / (uint32_t)adc_ctrl[id].p2 / 1000;
+#else
+    		*val2 = HAL_ADC_CalibrateRawCode(adc_ctrl[id].result) * (uint32_t)adc_ctrl[id].p1 / (uint32_t)adc_ctrl[id].p2 ;
+#endif
+            if (*val == 0)
+            {
+            	*val2 = 0;
+            }
+    	}
+    	else if (id == 4)
+    	{
+    		*val2 = HAL_ADC_CalibrateRawCode(adc_ctrl[id].result) * (uint32_t)adc_ctrl[id].p1 / (uint32_t)adc_ctrl[id].p2 / 1000;
+    	}
+    	else
+    	{
+#ifdef __LUATOS__
+    		*val2 = (int)HAL_ADC_ConvertThermalRawCodeToTemperature(adc_ctrl[id].result) * 1000;
+#else
+    		*val2 = (int)HAL_ADC_ConvertThermalRawCodeToTemperature(adc_ctrl[id].result);
+#endif
+    	}
+    	return 0;
+    }
+    else
+    {
+    	DBG("adc%d get timeout!", id);
+    	return -1;
+    }
+    return -1;
+}
+
+int luat_adc_close_and_enable_lowpower(int id) {
+    if (!adc_exist(id))
+        return -1;
+    if (LUAT_ADC_CH_CPU == id || ADC_CH_CPU_OLD == id)
+    {
+    	id = 5;
+    }
+    else if (LUAT_ADC_CH_VBAT == id || ADC_CH_VBAT_OLD == id)
+    {
+    	id = 4;
+    }
+    luat_rtos_semaphore_delete(adc_ctrl[id].wait_finish);
+    adc_ctrl[id].wait_finish = NULL;
+    ADC_channelDeInit(adc_ctrl[id].aio, ADC_USER_APP);
+    soc_sys_force_wakeup_on_off(SOC_SYS_CTRL_ADC + id, 0);
+    return 0;
+}
+
 
 #endif

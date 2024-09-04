@@ -27,7 +27,7 @@
 luat_rtos_task_handle adc_task_handle;
 
 //#define ADC_SLEEP_TEST
-
+//#define ADC_SLEEP_TEST2
 static void task_test_adc(void *param)
 {
     int val, val2;
@@ -64,12 +64,60 @@ static void task_test_adc(void *param)
     // LUAT_ADC_CH_VBAT被芯片内部用来检测VBAT电压，仅支持软件上open、read和close操作，用户不能做其他用途使用；
 
     //如果使用的模组内部芯片为716S，请使用外部分压方式   
-#if defined TYPE_EC716S
+#if defined CHIP_EC716
     luat_adc_ctrl_param_t ctrl_param;
     ctrl_param.range = LUAT_ADC_AIO_RANGE_1_2;
     luat_adc_ctrl(0, LUAT_ADC_SET_GLOBAL_RANGE, ctrl_param);
     luat_adc_ctrl(1, LUAT_ADC_SET_GLOBAL_RANGE, ctrl_param);
 #endif
+#ifdef ADC_SLEEP_TEST2
+
+
+    luat_pm_power_ctrl(LUAT_PM_POWER_USB, 0);
+    luat_pm_force(LUAT_PM_SLEEP_MODE_LIGHT);
+
+    while (1)
+    {
+        luat_rtos_task_sleep(5000);
+        luat_adc_open_and_disable_lowpower(0);
+        luat_adc_open_and_disable_lowpower(1);
+        luat_adc_open_and_disable_lowpower(2);
+        luat_adc_open_and_disable_lowpower(3);
+        luat_adc_open_and_disable_lowpower(LUAT_ADC_CH_CPU);
+        luat_adc_open_and_disable_lowpower(LUAT_ADC_CH_VBAT);
+        luat_adc_read_fast(0 , &val, &val2);
+        LUAT_DEBUG_PRINT("adc0: adc %d, vol %duv",val, val2);
+        luat_adc_read_fast(1 , &val, &val2);
+        LUAT_DEBUG_PRINT("adc1: adc %d, vol %duv",val, val2);
+        luat_adc_read_fast(2 , &val, &val2);
+        LUAT_DEBUG_PRINT("adc2: adc %d, vol %duv",val, val2);
+        luat_adc_read_fast(3 , &val, &val2);
+        LUAT_DEBUG_PRINT("adc3: adc %d, vol %duv",val, val2);
+        luat_adc_read_fast(LUAT_ADC_CH_CPU, &val, &val2);
+        LUAT_DEBUG_PRINT("temp: adc %d, %d",val, val2);
+        luat_adc_read_fast(LUAT_ADC_CH_VBAT, &val, &val2);
+        LUAT_DEBUG_PRINT("vbat: adc %d, %dmv",val, val2);
+        luat_adc_read_fast(0 , &val, &val2);
+        LUAT_DEBUG_PRINT("adc0: adc %d, vol %duv",val, val2);
+        luat_adc_read_fast(1 , &val, &val2);
+        LUAT_DEBUG_PRINT("adc1: adc %d, vol %duv",val, val2);
+        luat_adc_read_fast(2 , &val, &val2);
+        LUAT_DEBUG_PRINT("adc2: adc %d, vol %duv",val, val2);
+        luat_adc_read_fast(3 , &val, &val2);
+        LUAT_DEBUG_PRINT("adc3: adc %d, vol %duv",val, val2);
+        luat_adc_read_fast(LUAT_ADC_CH_CPU, &val, &val2);
+        LUAT_DEBUG_PRINT("temp: adc %d, %d",val, val2);
+        luat_adc_read_fast(LUAT_ADC_CH_VBAT, &val, &val2);
+        LUAT_DEBUG_PRINT("vbat: adc %d, %dmv",val, val2);
+        luat_adc_close_and_enable_lowpower(0);
+        luat_adc_close_and_enable_lowpower(1);
+        luat_adc_close_and_enable_lowpower(2);
+        luat_adc_close_and_enable_lowpower(3);
+        luat_adc_close_and_enable_lowpower(LUAT_ADC_CH_CPU);
+        luat_adc_close_and_enable_lowpower(LUAT_ADC_CH_VBAT);
+
+    }
+#else
     luat_adc_open(0 , NULL);
     luat_adc_open(1 , NULL);
     luat_adc_open(2 , NULL);
@@ -96,8 +144,9 @@ static void task_test_adc(void *param)
         luat_adc_read(LUAT_ADC_CH_VBAT, &val, &val2);
         LUAT_DEBUG_PRINT("vbat: adc 原始值 %d, 电压 %d 毫伏",val, val2);
     }
-    
+#endif
 }
+
 
 static void task_demo_adc(void)
 {
