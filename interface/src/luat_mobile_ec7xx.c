@@ -992,6 +992,10 @@ int luat_mobile_config(uint8_t item, uint32_t value)
 		break;
 #endif
 #endif
+	case MOBILE_CONF_DISABLE_NCELL_MEAS:
+		req.disableNCellMeasPresent = 1;
+		req.disableNCellMeas = value;
+		break;
 	default:
 		return -1;
 	}
