@@ -282,3 +282,25 @@
 #define LV_FONT_OPPOSANS_M_12
 #endif
 #endif
+
+
+// 后面的这些是为了生成API文档的, 不用管
+#if 0
+#define LUAT_USE_NETWORK 1
+// LUAT_USE_TLS 通过xmake判断打开
+// #define LUAT_USE_TLS 1
+#define LUAT_USE_LWIP 1
+#define LUAT_USE_DNS 1
+#define LUAT_USE_ERR_DUMP 1
+#define LUAT_USE_DHCP  1
+#define LUAT_USE_ERRDUMP 1
+#define LUAT_USE_FOTA 1
+#define LUAT_USE_MOBILE 1
+#define LUAT_USE_SNTP 1
+#define LUAT_USE_WLAN_SCANONLY 1
+//目前没用到的宏，但是得写在这里
+#define LUAT_USE_I2S
+#define LUAT_SUPPORT_AMR  1
+#define LUAT_USE_HMETA 1
+
+#endif
