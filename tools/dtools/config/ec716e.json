@@ -14,7 +14,7 @@
  "FotaCapability": {
    "capacity": 0,
    "diffMode": 1,
-   "hasPkgHlc": 0,
+   "hasPkgHlc": 1,
    "metaPseg": 32,
    "bkupMemSize": 98304,
    "deltaMemSize": 233472,
@@ -60,6 +60,11 @@
    "size": 0
   },
   {
+   "attr": "APP2",
+   "addr": 0,
+   "size": 0
+  },
+  {
    "attr": "SYSH",
    "addr": 8392704,
    "size": 4096
@@ -90,6 +95,18 @@
   }
  ],
  "CustFeature": {
+   "BootSecurity":{
+     "enable": 1,
+     "shaMode": 224,
+     "sysImgs": "AP,CP",
+     "standalone": [
+      {
+       "enable": 0,
+       "imgs": "APP",
+       "imgh": "APP2"
+      }
+     ]
+   },
    "ResizeMem": [
     {
      "enable": 0,
@@ -110,6 +127,9 @@
  },
  "MiscSetting": {
    "pollRx": 30,
-   "patMemSel": 0
+   "patMemSel": 0,
+   "filter": {
+     "prefix": "XPKGD,PKGFLX,EF"
+    }
  } 
 }

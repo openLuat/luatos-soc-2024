@@ -32,3 +32,5 @@ libdriver_private_drv.a
 /bootloader/*.c
 !metas.json
 /lib/*.a
+
+project/example_rust/target/

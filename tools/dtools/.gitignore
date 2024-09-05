@@ -1,0 +1,8 @@
+*.soc
+*.bin
+*.binpkg
+*.diff
+*.log
+*.par
+soctmp/
+tmp/

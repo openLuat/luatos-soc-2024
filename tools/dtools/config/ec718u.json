@@ -9,15 +9,15 @@
   {"Comment": "However, other fields can be redefined to whatever you want, including the name of this config file!"}
  ],
  "CompanyName": "EiGENCOMM",
- "ProductName": "EC716S",
+ "ProductName": "EC718U",
  "FotaCoreVer": "2.5",
  "FotaCapability": {
    "capacity": 0,
    "diffMode": 1,
-   "hasPkgHlc": 0,
+   "hasPkgHlc": 1,
    "metaPseg": 32,
    "bkupMemSize": 98304,
-   "deltaMemSize": 217088,
+   "deltaMemSize": 479232,
    "avlbRamSize": 204800,
    "zipAlgorithm": {
      "zipMeth": 0,
@@ -26,7 +26,7 @@
  },
  "HuluSuite": {
    "ver": 1,
-   "enable": 0,
+   "enable": 1,
    "adjust": 1,
    "wkspSize": 450560
  },
@@ -46,13 +46,13 @@
   },
   {
    "attr": "AP",
-   "addr": 8855552,
-   "size": 1261568
+   "addr": 8904704,
+   "size": 6868992
   },
   {
    "attr": "CP",
-   "addr": 8495104,
-   "size": 360448
+   "addr": 8552448,
+   "size": 409600
   },
   {
    "attr": "APP",
@@ -81,12 +81,12 @@
   {
    "name": "AP",
    "base": 8388608,
-   "size": 2097152
+   "size": 8388608
   },
   {
    "name": "CP",
    "base": 8388608,
-   "size": 2097152
+   "size": 8388608
   },
   {
    "name": "EF",
@@ -111,12 +111,12 @@
     {
      "enable": 0,
      "attr": "AP",
-     "size": 1261568
+     "size": 6868992
     },
     {
      "enable": 0,
      "attr": "CP",
-     "size": 360448
+     "size": 409600
     },
     {
      "enable": 0,

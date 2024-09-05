@@ -9,19 +9,19 @@
   {"Comment": "However, other fields can be redefined to whatever you want, including the name of this config file!"}
  ],
  "CompanyName": "EiGENCOMM",
- "ProductName": "EC716S",
- "FotaCoreVer": "2.5",
+ "ProductName": "EC618",
+ "FotaCoreVer": "1.2",
  "FotaCapability": {
    "capacity": 0,
-   "diffMode": 1,
+   "diffMode": 0,
    "hasPkgHlc": 0,
    "metaPseg": 32,
-   "bkupMemSize": 98304,
-   "deltaMemSize": 217088,
+   "bkupMemSize": 32768,
+   "deltaMemSize": 491520,
    "avlbRamSize": 204800,
    "zipAlgorithm": {
-     "zipMeth": 0,
-     "bzipMode": 0
+     "zipMeth": 1,
+     "bzipMode": 1
    }
  },
  "HuluSuite": {
@@ -35,7 +35,7 @@
    "ate": 0,
    "ver": 1,
    "name": "",
-   "pmss": 1024,
+   "pmss": 256,
    "dmwt": 300
  },
  "SysImageMem": [
@@ -46,13 +46,13 @@
   },
   {
    "attr": "AP",
-   "addr": 8855552,
-   "size": 1261568
+   "addr": 8536064,
+   "size": 2621440
   },
   {
    "attr": "CP",
-   "addr": 8495104,
-   "size": 360448
+   "addr": 142606336,
+   "size": 524288
   },
   {
    "attr": "APP",
@@ -60,33 +60,28 @@
    "size": 0
   },
   {
-   "attr": "APP2",
-   "addr": 0,
-   "size": 0
-  },
-  {
    "attr": "SYSH",
-   "addr": 8392704,
-   "size": 4096
+   "addr": 8396800,
+   "size": 8192
   }
  ],
  "ExtenOtaMem": [
   {
    "attr": "EF",
    "addr": 2147483648,
-   "size": 10240
+   "size": 1048576
   }
  ],
  "StorageDevice": [
   {
    "name": "AP",
    "base": 8388608,
-   "size": 2097152
+   "size": 4194304
   },
   {
    "name": "CP",
-   "base": 8388608,
-   "size": 2097152
+   "base": 142606336,
+   "size": 1048576
   },
   {
    "name": "EF",
@@ -94,40 +89,9 @@
    "size": 8388608
   }
  ],
- "CustFeature": {
-   "BootSecurity":{
-     "enable": 1,
-     "shaMode": 224,
-     "sysImgs": "AP,CP",
-     "standalone": [
-      {
-       "enable": 0,
-       "imgs": "APP",
-       "imgh": "APP2"
-      }
-     ]
-   },
-   "ResizeMem": [
-    {
-     "enable": 0,
-     "attr": "AP",
-     "size": 1261568
-    },
-    {
-     "enable": 0,
-     "attr": "CP",
-     "size": 360448
-    },
-    {
-     "enable": 0,
-     "attr": "APP",
-     "size": 0
-    }
-   ]
- },
  "MiscSetting": {
    "pollRx": 30,
-   "patMemSel": 0,
+   "patMemSel": 1,
    "filter": {
      "prefix": "XPKGD,PKGFLX,EF"
     }
