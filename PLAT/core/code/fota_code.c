@@ -796,9 +796,9 @@ static int32_t fotaNvmCheckBaseImage(FotaDefChkBaseImage_t *chkImage)
         return FOTA_EPARSZ;
     }
 
-    ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_IMAGE_2, P_INFO, "image: *.par pcap(%d)\n", parh.pcap);
+    ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_IMAGE_2, P_INFO, "image: *.par pcap(%d)\n", parh.fotaCap);
 
-    offset = sizeof(CustFotaParHdr_t) + (parh.pcap ? FOTA_PAR_RETEN_SIZE_16M : FOTA_PAR_RETEN_SIZE_4M);
+    offset = sizeof(CustFotaParHdr_t) + (parh.fotaCap ? FOTA_PAR_RETEN_SIZE_16M : FOTA_PAR_RETEN_SIZE_4M);
     for(; offset + sizeof(CustFotaPkgHdr_t) < parh.parLen; offset += pkgh.pkgLen)
     {
         fotaNvmRead(FOTA_NVM_ZONE_DELTA, offset, (uint8_t*)&pkgh, sizeof(CustFotaPkgHdr_t));
@@ -856,10 +856,10 @@ PLAT_BL_CIRAM_FLASH_TEXT int32_t fotaNvmInit(void)
 #ifdef FEATURE_BOOTLOADER_PROJECT_ENABLE
     const char *mode = "rd";
     LFS_init();
-    fotaNvmClearRemap(0, fotaNvmGetRemapSize(0));
 #else
     const char *mode = "rw+";
     fotaNvmFsRemove(FOTA_DELTA_PAR_NAME);
+    fotaNvmClearRemap(0, fotaNvmGetRemapSize(0));
 #endif
 
     fotaNvmSetZone(FOTA_NVM_ZONE_DELTA, fotaNvmFsOpen(FOTA_DELTA_PAR_NAME, mode), FOTA_DELTA_PAR_MAXSIZE, 0, 0);

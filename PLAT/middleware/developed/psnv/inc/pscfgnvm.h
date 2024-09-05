@@ -153,7 +153,7 @@ typedef enum _EPAT_PsConfigParamId_Enum
     CERRC_CFG_L2_EXT_SN_CAPA_BITMAP,                /* TV,  UINT8,L2 extended SN capability definition,via bitmap. */
 
     CEMM_CFG_T3402_OPT,                             /* TV,  BOOL T3402Opt */
-
+    CEMM_CFG_ANTIDETECT,                            /* TV,  BOOL */
 
     /*
      * !!!!  PARAM ID !!!!

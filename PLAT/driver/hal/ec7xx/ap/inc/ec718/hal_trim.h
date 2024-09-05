@@ -204,6 +204,21 @@ uint8_t trimGetFtDevVer( void );
  */
 uint8_t trimGetPGMVer(void);
 
+/**
+  \fn        uint8_t trimGetDieX(void)
+  \brief     get ATE DieX
+  \note
+ */
+uint8_t trimGetDieX(void);
+
+/**
+  \fn        uint8_t trimGetDieY(void)
+  \brief     get ATE DieY
+  \note
+ */
+uint8_t trimGetDieY(void);
+
+
 
 /**
   \fn        trimLdoAIOVadjSetGolbalVar( void )
@@ -223,6 +238,26 @@ void trimLdoAIOVadjSetGolbalVar( void );
   \note       if return 0xff: means invalid value(aonio fuse part not burned)
  */
 uint8_t trimGetLdoAonIoVadj( void );
+
+/**
+  \fn        trimVadjVbatSenseSetGolbalVar( void )
+  \brief     read the vbat sense vdj trim from fuse to golbal var
+  \param[in] N/A
+  \note      this golbal var will be used in both paging and app img, and should be set when POR/SLEEP2/HIB case
+             no need for SLEEP1.
+             need call in bsp.c as variable in hal_trim.c reinit when enter full image
+ */
+void trimVadjVbatSenseSetGolbalVar( void );
+
+/**
+  \fn        trimGetVadjVbatSense( void )
+  \brief     used by vadj vbat sense API to get the trim code
+  \param[in] N/A
+  \param[out] retrun the  golbal var which stored the trim val
+  \note       if return 0xff: means invalid value(aonio fuse part not burned)
+ */
+uint8_t trimGetVadjVbatSense( void );
+
 
 
 

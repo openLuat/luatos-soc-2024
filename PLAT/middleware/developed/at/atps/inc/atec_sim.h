@@ -17,6 +17,9 @@
 #ifndef _ATEC_SIM_H
 #define _ATEC_SIM_H
 
+//#define FEATURE_PS_STK_RAW_CMD_ENABLE
+
+
 /* AT+CRSM */
 #define ATC_CRSM_0_CMD_VAL_MIN                   0
 #define ATC_CRSM_0_CMD_VAL_MAX                   255
@@ -165,6 +168,42 @@
 #define ATC_CPLS_0_LIST_VAL_MAX                   2
 #define ATC_CPLS_0_LIST_VAL_DEFAULT               0
 
+/* AT+ECSTKCFG */
+#define ATC_ECSTKCFG_0_VAL_MIN                   0
+#define ATC_ECSTKCFG_0_VAL_MAX                   1
+#define ATC_ECSTKCFG_0_VAL_DEFAULT               0
+#define ATC_ECSTKCFG_1_VAL_MIN                   0
+#define ATC_ECSTKCFG_1_VAL_MAX                   1
+#define ATC_ECSTKCFG_1_VAL_DEFAULT               0
+#define ATC_ECSTKCFG_2_VAL_MIN                   1
+#define ATC_ECSTKCFG_2_VAL_MAX                   65535
+#define ATC_ECSTKCFG_2_VAL_DEFAULT               1
+
+/* AT+ECSTKGI */
+#define ATC_ECSTKGI_0_VAL_MIN                   32
+#define ATC_ECSTKGI_0_VAL_MAX                   53
+#define ATC_ECSTKGI_0_VAL_DEFAULT               32
+
+/* AT+ECSTKRSP */
+#define ATC_ECSTKRSP_0_VAL_MIN                   32
+#define ATC_ECSTKRSP_0_VAL_MAX                   254
+#define ATC_ECSTKRSP_0_VAL_DEFAULT               0
+#define ATC_ECSTKRSP_1_VAL_MIN                   0
+#define ATC_ECSTKRSP_1_VAL_MAX                   19
+#define ATC_ECSTKRSP_1_VAL_DEFAULT               0
+#define ATC_ECSTKRSP_2_DEC_VAL_MIN                   0
+#define ATC_ECSTKRSP_2_DEC_VAL_MAX                   254
+#define ATC_ECSTKRSP_2_DEC_VAL_DEFAULT               0
+#define ATC_ECSTKRSP_2_STR_MAX_LEN                500
+#define ATC_ECSTKRSP_2_STR_DEFAULT                NULL
+
+/* AT+ECSTKSTATE */
+#define ATC_ECSTKSTATE_AUTO_RESP_STATE  0
+#define ATC_ECSTKSTATE_TERMINAL_RESP_STATE  1
+#define ATC_ECSTKSTATE_WAITING_STATE  2
+
+#define ATC_SIM_STK_NO_RSP_TIMER_ID                 1
+
 
 CmsRetId  simCPIN(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  simCPWD(const AtCmdInputContext *pAtCmdReq);
@@ -186,6 +225,10 @@ CmsRetId  simECSIMCFG(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  simECSIMRM(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  simCPOL(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  simCPLS(const AtCmdInputContext *pAtCmdReq);
+CmsRetId  simECSTKGI(const AtCmdInputContext *pAtCmdReq);
+CmsRetId  simECSTKRSP(const AtCmdInputContext *pAtCmdReq);
+CmsRetId  simECSTKSTATE(const AtCmdInputContext *pAtCmdReq);
+CmsRetId  simECSTKCFG(const AtCmdInputContext *pAtCmdReq);
 
 
 #endif

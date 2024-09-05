@@ -88,7 +88,8 @@ typedef struct PsDialContext_Tag
     UINT32      actingCidCgevReason : 4;/* CmiPsPdnTypeReason, 1> psdail need it decide whether need to init another PDP, 2> netif also need it */
     UINT32      psConnStatus    : 1;    /* 0 - RRC IDLE, 1- RRC connected */
     UINT32      bTriggerConnRel : 1;    /* whether trigger rrc conn rel */
-    UINT32      rsvd1 : 10;
+    UINT32      bRemap          : 1;    /* Whether this bearer is remapped */
+    UINT32      rsvd1 : 9;
 
     CmiSimImsiStr   ueImsi;     //20 bytes
 }PsDialContext;     //24 bytes

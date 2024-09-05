@@ -23,6 +23,7 @@ CmsRetId devSetPowerState(UINT32 atHandle, UINT8 powerState);
 CmsRetId devGetExtCfg(UINT32 atHandle);
 CmsRetId devSetExtCfg(UINT32 atHandle, CmiDevSetExtCfgReq *pSetExtCfgReq);
 CmsRetId devRmFPLMN(UINT32 atHandle, INT32 type);
+CmsRetId devGetBlockPLMNList(UINT32 atHandle);
 #ifdef CMS_ENABLE_CAT_LPP_FEATURE
 CmsRetId devGetCMOLRCapa(UINT32 atHandle);
 CmsRetId devGetCMOLR(UINT32 atHandle);

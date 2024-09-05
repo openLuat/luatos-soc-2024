@@ -157,12 +157,6 @@ typedef int32_t (*chdevExecFunc)(uint32_t flags, void *args);
  */
 typedef int32_t (*chdevStatusCallback)(uint32_t flags, void *args);
 
-/*-This function is called by ccio message
- * to pass the final operations for every type.
- * @param args: NULL.
- */
-typedef int32_t (*msgAllDoneCallback)(void* args);
-
 
 typedef struct CcioDevice
 {

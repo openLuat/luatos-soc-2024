@@ -79,6 +79,7 @@ typedef struct
 
 typedef void (*camCbEvent_fn) (uint32_t event); ///< Camera callback event.
 typedef void (*camIrq_fn)(void); 					///< Camera irq
+typedef void (*camErrCb)(uint32_t stats);
 
 
 /**
@@ -161,6 +162,9 @@ void camSetMemAddr(uint32_t dataAddr);
 void cspiStartIntEnable(cspiIntEnable_e intEnable);
 void cspiEndIntEnable(cspiIntEnable_e endIntEnable);
 uint32_t camGetCspiInt(cspiInstance_e instance);
+void cspi2LspiEnable(uint8_t enable);
+void camRegisterErrStatsCb(camErrCb errCb);
+void camCheckErrStats();
 
 
 /** \} */

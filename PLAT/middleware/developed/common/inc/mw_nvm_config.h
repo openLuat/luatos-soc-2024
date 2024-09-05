@@ -9,7 +9,7 @@
  ****************************************************************************/
 #include "osacfgnvm.h"
 #include "mw_common.h"
-#include "hal_codec.h"
+#include "codecDrv.h"
 
 /*
  * Differences between these MW config/AON files:
@@ -120,6 +120,8 @@ typedef enum _EPAT_MidWareCfgParamId_Enum
     MW_CFG_USR_CODEC_VOLUMN,        /* TLV,  MWNvmCfgUsrSetCodecVolumn */
     MW_CFG_USR_CODEC_VOLUMN_FLG,    /* TLV,  MWNvmCfgUsrSetCodecVolumn */
 
+    MW_CFG_SIM_STK_PARAM,           /* TLV,  MWNvmCfgSimStkParam */
+
     MW_CFG_PARAM_END,
     /* As need a bitmap to record which CFG is set/configed, here limit the MAX ID to 256, than 8 words bitmap is enough  */
     MW_CFG_PARAM_MAX    =   MW_CFG_PARAM_BASE + 0x100   //1280
@@ -223,6 +225,18 @@ typedef struct _SIG_EPAT_MW_CFG_NET_PARAM
                             */
     UINT8   localHostAddr[MID_WARE_IPV4_ADDR_LEN];  /* if "bNatEnable" set to TRUE, RNDIS/ECM host using this V4 ADDR: 192.168.x.x */
 }MWNvmCfgNetParam;     //8 bytes
+
+/*
+ * SIM STK param config
+ * paramId: MW_CFG_SIM_STK_PARAM
+*/
+typedef struct _SIG_EPAT_MW_CFG_SIM_STK_PARAM
+{
+    UINT32          bStkEnable : 1; /*indicated whether STK func enable or disable */
+    UINT32          characterSet : 1;/* character set, 0-GSM character set; 1-UCS2 character set */
+    UINT32          resvd : 14;
+    UINT32          responseTimeout : 16;
+}MWNvmCfgSimStkParam;     //4 bytes
 
 /*
  * net param host info config
@@ -649,6 +663,11 @@ typedef struct MidWareNvmConfig_Tag
     */
     MWNvmCfgNetXlatParam      clatParamCfg;
 
+    /*
+    * used for SIM STK CFG, ParamId: MW_CFG_SIM_STK_PARAM
+    */
+    MWNvmCfgSimStkParam         simStkParamCfg;
+
 }MidWareNvmConfig;
 
 
@@ -1023,6 +1042,8 @@ void mwNvmCfgSetAndSaveNetParamConfig(MWNvmCfgNetParam *pNetParamCfg);
   \param[out]   pDnsCfg   value
 */
 void mwNvmCfgGetNetParamConfig(MWNvmCfgNetParam *pNetParamCfg);
+void mwNvmCfgSetAndSaveSimStkParamConfig(MWNvmCfgSimStkParam *pSimStkParamCfg);
+void mwNvmCfgGetSimStkParamConfig(MWNvmCfgSimStkParam *pSimStkParamCfg);
 void mwNvmCfgGetNetParamHostInfoConfig(MWNvmCfgNetHostInfoParam *pNetParamHostInfoCfg);
 void mwNvmCfgSetAndSaveNetParamHostInfoConfig(MWNvmCfgNetHostInfoParam *pNetParamHostInfoCfg);
 

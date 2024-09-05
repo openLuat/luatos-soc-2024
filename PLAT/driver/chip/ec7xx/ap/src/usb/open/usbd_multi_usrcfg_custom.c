@@ -248,7 +248,7 @@ const uint8_t epout_remap_custom_tbl[EP_REMAP_CUSTOM_CNT] = {
 //    VCOM_CCINST_CASE_SEL start
 #if (VCOM_CCINST_CASE_SEL==VCOM_CCINST_ORG_CASE)
 
-#if ((defined MID_FEATURE_MODE) || (defined MORE_RAM_ENABLE))
+#if ((defined MID_FEATURE_MODE) || (defined FEATURE_MOREROM_ENABLE))
     static multidev_custom_info_st t_multidev_custom_info = {
         .elem_cnt = 2,
         .elem_arr[0]  =
@@ -266,6 +266,59 @@ const uint8_t epout_remap_custom_tbl[EP_REMAP_CUSTOM_CNT] = {
             ccinst_setting_vcom_subtp0_inhrnt,
         },
     };
+#elif (defined FEATURE_MORERAM_ENABLE)
+
+#ifdef TYPE_EC716E
+    static multidev_custom_info_st t_multidev_custom_info = {
+        .elem_cnt = 4,
+        .elem_arr[0]  =
+        {
+            (const uint8_t*)"rndis",
+            multidev_tp_rndis,
+            ccinst_setting_mainttp_none,
+            ccinst_setting_subtp_none,
+        },
+        .elem_arr[1]  =
+        {
+            (const uint8_t*)"ecm",
+            multidev_tp_ecm,
+            ccinst_setting_mainttp_none,
+            ccinst_setting_subtp_none,
+        },
+        .elem_arr[2]  =
+        {
+            (const uint8_t*)"vcom0",
+            multidev_tp_vcom_at,
+            ccinst_setting_cdc_vcom_maintp,
+            ccinst_setting_vcom_subtp0_inhrnt,
+        },
+        .elem_arr[3]  =
+        {
+            (const uint8_t*)"vcom1",
+            multidev_tp_vcom_log,
+            ccinst_setting_cdc_vcom_maintp,
+            ccinst_setting_vcom_subtp0_inhrnt,
+        },
+    };
+#else
+    static multidev_custom_info_st t_multidev_custom_info = {
+        .elem_cnt = 2,
+        .elem_arr[0]  =
+        {
+            (const uint8_t*)"vcom0",
+            multidev_tp_vcom_at,
+            ccinst_setting_cdc_vcom_maintp,
+            ccinst_setting_vcom_subtp0_inhrnt,
+        },
+        .elem_arr[1]  =
+        {
+            (const uint8_t*)"vcom1",
+            multidev_tp_vcom_log,
+            ccinst_setting_cdc_vcom_maintp,
+            ccinst_setting_vcom_subtp0_inhrnt,
+        },
+    };
+#endif
 
 #else
     static multidev_custom_info_st t_multidev_custom_info = {
@@ -547,7 +600,7 @@ static multidev_custom_info_st t_multidev_custom_info = {
     },
     .elem_arr[5]  =
     {
-        (const uint8_t*)"vcom3",
+        (const uint8_t*)"raw",
         multidev_tp_vcom_com,
         ccinst_setting_cdc_vcom_maintp,
         ccinst_setting_vcom_subtp0_inhrnt,

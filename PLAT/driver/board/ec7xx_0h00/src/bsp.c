@@ -44,8 +44,11 @@ BSP_BSS_SECTION static uint8_t OSState = 0;     // OSState = 0 os not start, OSS
 BSP_BSS_SECTION static uint32_t gUartBaudrate[3]; // a copy for uart baud rate
 #endif
 extern void trimAdcSetGolbalVar(void);
-#if defined CHIP_EC718
+#if defined CHIP_EC718 || defined CHIP_EC716
 extern void trimLdoAIOVadjSetGolbalVar(void);
+#endif
+#if defined CHIP_EC718
+extern void trimVadjVbatSenseSetGolbalVar(void);
 #endif
 extern void GPR_RmiErrCfg(bool en);
 extern uint32_t GPR_RmiErrAddrGet(void);
@@ -393,10 +396,14 @@ void BSP_CommonInit(void)
 
     trimAdcSetGolbalVar();
     
-    #if defined CHIP_EC718
+    #if defined CHIP_EC718 || defined CHIP_EC716
     trimLdoAIOVadjSetGolbalVar();
     #endif
-    
+
+	#if defined CHIP_EC718
+	trimVadjVbatSenseSetGolbalVar();
+	#endif
+	
     apmuInit();
 
     //interrupt config

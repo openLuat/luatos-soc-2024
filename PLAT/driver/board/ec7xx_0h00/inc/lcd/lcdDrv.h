@@ -10,66 +10,49 @@ extern "C" {
 #include "lspi.h"
 #include "disFormat.h"
 
-#define SUPPORT_LCD_NUM             (3)
-#define INSTALL_LCD_NUM             (1)
 #define LCD_COLOR565(r, g, b)       (((r & 0xF8) << 8) | ((g & 0xFC) << 3) | ((b & 0xF8) >> 3))
 
-#define RED                     (0x001f)//(0xf800)
+#define RED                     (0x001f)
 #define GREEN                   (0x07e0)
-#define BLUE                    (0xf800)//(0x001f)
+#define BLUE                    (0xf800)
 #define WHITE                   (0xffff)
 #define BLACK                   (0x0000)
 #define YELLOW                  (0xffe0)
 #define PURPLE                  (0x8010)
 #define GOLDEN                  (0xFEA0)
 
-typedef void (*lspiCbEvent_fn) (void);            ///< lspi callback event.
+#define SPI_3W_I                (0)
+#define SPI_3W_II               (1)
+#define SPI_4W_I                (2)
+#define SPI_4W_II               (3)
+#define MSPI_4W_II              (4)
+#define INTERFACE_8080          (5)
+
+
+#define LCD_RST_LOW    do {GPIO_pinWrite(LSPI_RST_GPIO_INSTANCE, 1 << LSPI_RST_GPIO_PIN, 0);}while(0)
+#define LCD_RST_HIGH   do {GPIO_pinWrite(LSPI_RST_GPIO_INSTANCE, 1 << LSPI_RST_GPIO_PIN, 1 << LSPI_RST_GPIO_PIN);}while(0)
 
 
 typedef struct
 {
-    uint32_t        pinInstance : 8;
-    uint32_t        pinNum      : 8;
-    uint32_t        padAddr     : 8;
-    uint32_t        func        : 8;
-}lcdPinInfo_t;
+    uint8_t cmd;
+    uint8_t len;
+    uint8_t data[32];
+}initLine_t;
 
-typedef struct
-{
-    lcdPinInfo_t    cs;
-    lcdPinInfo_t    ds;
-    lcdPinInfo_t    rst;
-    lcdPinInfo_t    clk;
-    lcdPinInfo_t    mosi;
-    lcdPinInfo_t    miso;
-}spiPin_t;
-
-
-typedef struct
-{
-    uint16_t        id;
-    uint32_t        width;
-    uint32_t        height;
-}lcdDrvPra_t;
-
-typedef enum _lcdBusType_e
-{
-    BUS_LSPI,
-    BUS_SPI,
-    BUS_I2C,        ///< OLED will use
-}lcdBusType_e;
-
-typedef struct
-{
-    char            *name;          ///< lcd's name used to configure its id, then use id to find its info, including driver function
-    uint16_t        id;             ///< every lcd's id should be different, no matter lcd's type is the same or not
-}lcdObj_t;
 
 typedef enum
 {
     stopPreview     = 0,     
     startPreview    = 1,
 }camPreviewStartStop_e;
+
+typedef enum
+{
+    cbForCam        = 0,     
+    cbForFill       = 1,
+}uspCbRole_e;
+
 
 typedef enum 
 {
@@ -128,56 +111,71 @@ typedef enum
     DIS_SWAP_XY  = 0x80, /**< Swap XY axis */
 } DisDirection_e;
 
-typedef struct _lcdDev_t lcdDev_t;
+typedef struct _lcdDrvFunc_t lcdDrvFunc_t;
+typedef void (*lspiErrCb)(uint32_t stats);
 
-typedef struct 
+typedef struct _lcdDrvFunc_t
 {
-    uint16_t id;
+    uint32_t    id;
+    uint16_t    width;
+    uint16_t    height;
+    uint32_t    freq;
+    uint8_t     bpp;    
+    initLine_t  *initRegTbl;
+    uint32_t    initRegTblLen;
+    uint8_t     dir; // vertical: 0;     horizontal: 1;  
 
-    int (*init)(lcdDev_t *lcd, void* cb);
-    int (*drawPoint)(lcdDev_t* lcd, uint16_t x, uint16_t y, uint32_t dataWrite);
-    int (*fill)(lcdDev_t* lcd, uint16_t sx, uint16_t ex, uint16_t sy, uint16_t ey, uint8_t *buf, uint32_t dmaTrunkLength);
-    int (*dump)(lcdDev_t* lcd, uint16_t sx, uint16_t ex, uint32_t *buf, uint32_t Length);
-    int (*prepareDisplay)(lcdDev_t* lcd, uint16_t sx, uint16_t ex, uint16_t sy, uint16_t ey);
-    int (*onoff)(lcdDev_t* lcd, uint8_t sta);
-    void (*backLight)(lcdDev_t* lcd, uint8_t sta);   
-    void (*startStop)(lcdDev_t* lcd, bool startOrStop);
-    void (*clear)(lcdDev_t* lcd, uint8_t* buf, uint16_t lcdHeight, uint16_t lcdWidth, uint32_t dmaTrunkLength);
-    void (*startStopPreview)(lcdDev_t* lcd, camPreviewStartStop_e previewStartStop);
-    uint16_t (*check)(lcdDev_t *lcd);
-    int (*direction)(lcdDev_t *lcd,DisDirection_e dir);
-    int (*close)(lcdDev_t *lcd);
-    //void (*startRamWrite)(lcdDev_t* lcd);
-    //void (*addrSet)(lcdDev_t *lcd, uint16_t sx, uint16_t sy, uint16_t ex, uint16_t ey);
+    int         (*init)                 (lcdDrvFunc_t *lcd, void* uspCb, void* dmaCb, uint32_t freq, uint8_t bpp);
+    void        (*drawPoint)            (lcdDrvFunc_t *lcd, uint16_t x, uint16_t y, uint32_t dataWrite);
+    uint32_t    (*setWindow)            (lcdDrvFunc_t *lcd, uint16_t sx, uint16_t ex, uint16_t sy, uint16_t ey);
+    int         (*fill)                 (lcdDrvFunc_t *lcd, uint32_t fillLen, uint8_t *buf);
+    void        (*backLight)            (lcdDrvFunc_t *lcd, uint8_t  level);   
+    void        (*startStop)            (lcdDrvFunc_t *lcd, bool startOrStop);
+    void        (*startStopPreview)     (lcdDrvFunc_t *lcd, camPreviewStartStop_e previewStartStop);
+    void        (*uspIrq4CamCb)         (lcdDrvFunc_t *lcd);
+    void        (*uspIrq4FillCb)        (lcdDrvFunc_t *lcd);
+    void        (*registerUspIrqCb)     (lcdDrvFunc_t *lcd, uspCbRole_e who);
+    void        (*unregisterUspIrqCb)   (lcdDrvFunc_t *lcd, uspCbRole_e who);
+    int         (*direction)            (lcdDrvFunc_t *lcd, DisDirection_e dir);
+    int         (*close)                (lcdDrvFunc_t *lcd);
 }lcdDrvFunc_t;
 
-typedef struct _lcdDev_t
-{
-    int             handle;         ///< lcd descriptor, every opened lcd will return a handle. So need lcd init first, then open it
+#if (LCD_ST7789_ENABLE == 1)
+#include "lcdDev_7789.h"
+extern lcdDrvFunc_t st7789Drv;
+#elif (LCD_SH8601_ENABLE == 1)
+#include "lcdDev_8601.h"
+extern lcdDrvFunc_t sh8601Drv;
+#elif (LCD_ST7571_ENABLE == 1)
+#include "lcdDev_7571.h"
+extern lcdDrvFunc_t st7571Drv;
+#elif (LCD_ST7567_ENABLE == 1)
+#include "lcdDev_7567.h"
+extern lcdDrvFunc_t st7567Drv;
+#elif (LCD_ST77903_ENABLE == 1)
+#include "lcdDev_77903.h"
+extern lcdDrvFunc_t st77903Drv;
+#elif (LCD_GC9307_ENABLE == 1)
+#include "lcdDev_9307.h"
+extern lcdDrvFunc_t gc9307Drv;
+#elif (LCD_AXS15231_ENABLE == 1)
+#include "lcdDev_15231.h"
+extern lcdDrvFunc_t axs15231Drv;
+#endif
 
-    lcdObj_t        *obj;           ///< lcd info    
-    lcdDrvPra_t     *pra;           ///< lcd parameters
-    lcdDrvFunc_t    *drv;           ///< lcd driver functions
 
-    // the parameters that the driver needs
-    uint8_t         dir;            ///< vertical: 0;     horizontal: 1;  
-    uint16_t        width;          ///< lcd width
-    uint16_t        height;         ///< lcd height
-
-    void            *pri;           ///< private parameters that 1-bit screen or oled will use
-}lcdDev_t;
-
-int lcdInit(void* spi_cb);
-lcdDev_t *lcdOpen(char* name);
-int lcdClose(lcdDev_t *pdev);
-uint16_t lcdCheck(lcdDev_t *pdev);
-int lcdDirection(lcdDev_t *pdev,DisDirection_e dir);
-void lcdClear(lcdDev_t* lcd, uint8_t* buf, uint16_t lcdHeight, uint16_t lcdWidth, uint32_t dmaTrunkLength);
-int lcdFill(lcdDev_t* lcd, uint16_t sx, uint16_t sy, uint16_t ex, uint16_t ey, uint8_t* buf, uint32_t dmaTrunkLength);
-int lcdDump(lcdDev_t* lcd, uint16_t sx, uint16_t sy, uint32_t* buf, uint32_t Length);
-int lcdDrawPoint(lcdDev_t* lcd, uint16_t x, uint16_t y, uint32_t dataWrite);
-void camPreview(lcdDev_t *pdev, camPreviewStartStop_e previewStartStop);
-void lcdBackLight(lcdDev_t* lcd, uint8_t level);
+void            lcdRegInit(uint32_t id);
+lcdDrvFunc_t*   lcdOpen(uint32_t id, void* uspCb, void* dmaCb);
+int             lcdClose(lcdDrvFunc_t *pdrv);
+int             lcdDirection(lcdDrvFunc_t *pdrv, DisDirection_e dir);
+int             lcdFill(lcdDrvFunc_t *pdrv, uint32_t fillLen, uint8_t* buf);
+void            lcdDrawPoint(lcdDrvFunc_t *pdrv, uint16_t x, uint16_t y, uint32_t dataWrite);
+void            camPreview(lcdDrvFunc_t *pdrv, camPreviewStartStop_e previewStartStop);
+void            lcdBackLight(lcdDrvFunc_t *pdrv, uint8_t level);
+uint32_t        lcdSetWindow(lcdDrvFunc_t *pdrv, uint16_t sx, uint16_t sy, uint16_t ex, uint16_t ey);
+void            lspiRstAndClearFifo();
+void            lspiRegisterErrStatsCb(lspiErrCb errCb);
+void            lspiCheckErrStats();
 #ifdef __cplusplus
 }
 #endif

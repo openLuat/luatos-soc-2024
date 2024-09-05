@@ -21,6 +21,7 @@ extern I2sSlotCtrl_t        i2sSlotCtrl;
 extern I2sBclkFsCtrl_t      i2sBclkFsCtrl;
 extern I2sCtrl_t            i2sCtrl;
 extern I2sDmaCtrl_t         i2sDmaCtrl;
+extern I2sIntCtrl_t         i2sIntCtrl;
 static I2sMode_e            i2sMode;
 
 // [cmd][curState]
@@ -44,11 +45,7 @@ void halI2sInit(i2sCbFunc_fn txCb, i2sCbFunc_fn rxCb)
     i2sDrv = &CREATE_SYMBOL(i2sDrvInterface, 1); // Choose i2s1
 #endif
 
-    int32_t ret = i2sDrv->init(txCb, rxCb);
-#ifdef FEATURE_OS_ENABLE
-    ECPLAT_PRINTF(UNILOG_PLA_DRIVER, halI2sInit_0, P_DEBUG, "i2sInit:%d", ret);
-#endif
-
+    i2sDrv->init(txCb, rxCb);
     i2sDrv->powerCtrl(I2S_POWER_FULL);
 }
 
@@ -282,6 +279,84 @@ void halI2sConfig(I2sParamCtrl_t paramCtrl)
     i2sDrv->ctrl(I2S_CTRL_INT_CTRL , 0);
 	i2sDrv->ctrl(I2S_CTRL_DMA_CTRL , 0);
 }
+
+void ctrlErrStatsBit(uint32_t errStats, bool enableErrInt)
+{
+    uint8_t bitIndex = 0;
+
+    while (errStats >> bitIndex != 0)
+    {
+        if ((errStats >> bitIndex & 1) == 1)
+        {
+            switch (bitIndex)
+            {
+                case 0:
+                {
+                    enableErrInt ? (i2sIntCtrl.txUnderRunIntEn = 1) : (i2sIntCtrl.txUnderRunIntEn = 0);
+                    break;
+                }
+
+                case 1:
+                {
+                    enableErrInt ? (i2sIntCtrl.txDmaErrIntEn = 1) : (i2sIntCtrl.txDmaErrIntEn = 0);
+                    break;
+                }
+
+                case 3:
+                {
+                    enableErrInt ? (i2sIntCtrl.rxOverFlowIntEn = 1) : (i2sIntCtrl.rxOverFlowIntEn = 0);
+                    break;
+                }
+
+                case 4:
+                {
+                    enableErrInt ? (i2sIntCtrl.rxDmaErrIntEn = 1) : (i2sIntCtrl.rxDmaErrIntEn = 0);
+                    break;
+                }
+
+                case 5:
+                {
+                    enableErrInt ? (i2sIntCtrl.rxDatIntEn = 1) : (i2sIntCtrl.rxDatIntEn = 0);
+                    break;
+                }
+
+                case 6:
+                {
+                    enableErrInt ? (i2sIntCtrl.rxTimeOutIntEn = 1) : (i2sIntCtrl.rxTimeOutIntEn = 0);
+                    break;
+                }
+
+                case 7:
+                {
+                    enableErrInt ? (i2sIntCtrl.fsErrIntEn = 1) : (i2sIntCtrl.fsErrIntEn = 0);
+                    break;
+                }
+
+                default:
+                break;
+            }
+
+            bitIndex++;
+        }
+    }
+
+    i2sDrv->ctrl(I2S_CTRL_INT_CTRL , 0);
+}
+
+void halI2sRegisterUspCb(i2sUspFunc_fn cb)
+{
+    if (cb != NULL)
+    {
+        #if (RTE_I2S0 == 1)
+        XIC_SetVector(PXIC0_USP0_IRQn, cb);
+        XIC_EnableIRQ(PXIC0_USP0_IRQn);
+        #else 
+        XIC_SetVector(PXIC0_USP1_IRQn, cb);
+        XIC_EnableIRQ(PXIC0_USP1_IRQn);
+        #endif            
+    }
+}
+
 
 void halI2sTransfer(I2sPlayRecord_e playRecord, uint8_t* memAddr, uint32_t trunkNum)
 {

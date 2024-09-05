@@ -80,6 +80,11 @@
 #define HEAP_START_ADDR                 (APVIEW_CSMB_HEAP_START)
 #define HEAP_END_ADDR                   (APVIEW_CSMB_HEAP_END)
 #define HEAP_TOTAL_LENGTH               (HEAP_END_ADDR-HEAP_START_ADDR)
+#define HEAP_PROTECT_SIZE               (0x3FF0)
+
+#if ((HEAP_TOTAL_LENGTH)>(HEAP_PROTECT_SIZE))
+#error "Can't expand the size of heap, with the risk of overwriting other Sram!"
+#endif
 
 #endif
 

@@ -366,6 +366,10 @@ struct netif {
 #endif /* LWIP_CHECKSUM_CTRL_PER_NETIF*/
   /** maximum transfer unit (in bytes) */
   u16_t mtu;
+#if LWIP_IPV6 && LWIP_ND6_ALLOW_RA_UPDATES
+    /** maximum transfer unit (in bytes), updated by RA */
+  u16_t mtu6;
+#endif /* LWIP_IPV6 && LWIP_ND6_ALLOW_RA_UPDATES */
   /** number of bytes used in hwaddr */
   u8_t hwaddr_len;
   /** link level hardware address of this interface */
@@ -710,6 +714,13 @@ err_t netif_add_ip6_address(struct netif *netif, const ip6_addr_t *ip6addr, s8_t
  * @param i1 word1 of the new IPv6 prefix
  */
 void netif_ip6_addr_set_prefix(struct netif *netif, s8_t addr_idx, u32_t i0, u32_t i1);
+
+#if LWIP_ND6_ALLOW_RA_UPDATES
+#define netif_mtu6(netif) ((netif)->mtu6)
+#else /* LWIP_ND6_ALLOW_RA_UPDATES */
+#define netif_mtu6(netif) ((netif)->mtu)
+#endif /* LWIP_ND6_ALLOW_RA_UPDATES */
+
 #endif /* LWIP_IPV6 */
 
 #if ENABLE_PSIF

@@ -300,6 +300,10 @@
 #define ATC_ECCFG_1_T3402_OPT_VAL_MAX     (1)
 #define ATC_ECCFG_1_T3402_OPT_VAL_DEF     (1)
 
+//AT+ECCFG="AntiDetect"
+#define ATC_ECCFG_1_ANTIDETECT_VAL_MIN      (0)
+#define ATC_ECCFG_1_ANTIDETECT_VAL_MAX      (1)
+#define ATC_ECCFG_1_ANTIDETECT_VAL_DEFAULT  (0)
 
 #define ATEC_ECCFG_GET_RSP_STR_LEN           512
 
@@ -509,6 +513,7 @@ CmsRetId  devECCGSNLOCK(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  devECCFG(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  devECMEASCFG(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  devECRMFPLMN(const AtCmdInputContext *pAtCmdReq);
+CmsRetId  devECBLOCKPLMNLIST(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  devCMAR(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  devCMOLR(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  devCMTLR(const AtCmdInputContext *pAtCmdReq);

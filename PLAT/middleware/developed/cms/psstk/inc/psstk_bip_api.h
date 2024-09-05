@@ -41,6 +41,7 @@ void psStkBipProcCmiCnf(const SignalBuf *cnfSignalPtr);
 */
 BOOL psStkBipProcSimBipSig(const SignalBuf *pSig);
 
+void psStkBipProcApplInd(CmsApplInd *pAppInd);
 
 
 #endif

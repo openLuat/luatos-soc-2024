@@ -26,7 +26,7 @@ CmsRetId imsReadUsageSetting(UINT16 atHandler);
 /******************************************************************************
  * SYNC API
 ******************************************************************************/
-ImiRcCode imsGetECIMSREGSync(UINT8 *pImsRegState);
+ImiRcCode imsGetECIMSREGSync(UINT8 *pImsRegState, CHAR *pAssoUri);
 
 ImiRcCode imsGetCIREGSync(UINT8 *pImsRegState,UINT32 *regExtInfo);
 

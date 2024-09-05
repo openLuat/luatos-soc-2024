@@ -21,8 +21,9 @@
  *                    INCLUDES                                                *
  *----------------------------------------------------------------------------*/
 #include "ccio_misc.h"
+#ifndef CHIP_EC618
 #include "mw_nvm_audio.h"
-
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -326,8 +327,8 @@ int32_t audioMsgApp2Ccio(uint8_t state);
   \param[in]      AudioParaCfgDeviceType_e  mode;
   \returns     void
 */
+#ifndef CHIP_EC618
 void audioSetCurrentMode(AudioParaCfgDeviceType_e mode);
-
 /**
   \fn          audioGetCurrentMode
   \brief      Get current device mode.
@@ -335,6 +336,7 @@ void audioSetCurrentMode(AudioParaCfgDeviceType_e mode);
   \returns     AudioParaCfgDeviceType_e
 */
 AudioParaCfgDeviceType_e audioGetCurrentMode();
+#endif
 
 /**
   \fn          audioSetCurrentDirection

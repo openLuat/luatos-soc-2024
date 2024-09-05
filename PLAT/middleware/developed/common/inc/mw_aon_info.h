@@ -133,6 +133,13 @@ typedef struct MWAonNetParamCfg_Tag
     UINT8       localDns2[MID_WARE_IPV4_ADDR_LEN];
 }MWAonNetParamCfg;  // 24 bytes
 
+typedef struct MWAonSimStkParamCfg_Tag
+{
+    UINT32          bStkEnable : 1; /*indicated whether STK func enable or disable */
+    UINT32          characterSet : 1;/* character set, 0-GSM character set; 1-UCS2 character set */
+    UINT32          resvd : 14;
+    UINT32          responseTimeout : 16;
+}MWAonSimStkParamCfg;     //4 bytes
 
 /*
  * ppp link state
@@ -215,6 +222,11 @@ typedef struct MidWareAonInfo_Tag
     * mw aon urc cache param cfg
     */
     MWAonUrcCacheParamCfg   mwUrcCacheParamCfgAonInfo;
+
+    /*
+    * mw SIM STK cfg param
+    */
+    MWAonSimStkParamCfg        mwSimStkParamCfgAonInfo;
 
 }MidWareAonInfo;
 
@@ -417,6 +429,8 @@ UINT8 mwAonGetUrcCacheParamCfg(UINT8 chanId);
 
 void mwAonSetUrcCacheParamCfgAndSave(UINT8 chanId, UINT8 urcCacheEnableFlag);
 
+void mwAonSetSimStkParamCfgAndSave(MWAonSimStkParamCfg *pMwAonSimStkParamCfg);
+void mwAonGetSimStkParamCfg(MWAonSimStkParamCfg *pMwAonSimStkParamCfg);
 
 #endif
 

@@ -21,6 +21,7 @@
  *                    INCLUDES                                                *
  *----------------------------------------------------------------------------*/
 
+#include "mem_map.h"
 #include "fota_pub.h"
 
 #ifdef __cplusplus

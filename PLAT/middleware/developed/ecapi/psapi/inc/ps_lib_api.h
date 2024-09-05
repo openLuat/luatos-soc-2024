@@ -1218,10 +1218,12 @@ CmsRetId appSetECIMSREGSync(UINT8 regAct);
   \fn          appGetECIMSREGSync
   \brief       Send get ims register state req to PS/ims
   \param[in]   UINT8 *pImsRegState, IMI_REG_IMS_DEREG(0)/IMI_REG_IMS_REG(1)
+  \param[in]   UINT8 telNumBufSize, telephone number buffer size, if the size is smaller than tele number, the remian will be disacrd
+  \param[out]  CHAR *pTelNumStr, the pointer to telephone number got from URI
   \returns     CmsRetId
   \NOTE:       this api can set as the same as AT+ECIMSREG?
 */
-CmsRetId appGetECIMSREGSync(UINT8 *pImsRegState);
+CmsRetId appGetECIMSREGSync(UINT8 *pImsRegState, UINT8 telNumBufSize, CHAR *pTelNumStr);
 /**
   \fn          appGetCIREGSync
   \brief       Get IMS register info

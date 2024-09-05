@@ -231,6 +231,7 @@ typedef enum CmsOsaTimerSubModId_enum
     CMS_TIMER_PS_LPP_SUB_MOD_ID = 1,
     CMS_TIMER_APP_PS_BLOCK_REQ_SUB_MOD_ID = 2,
     CMS_TIMER_SMS_SUB_MOD_ID = 3,
+    CMS_TIMER_SIM_SUB_MOD_ID = 4,
     //...
 
 

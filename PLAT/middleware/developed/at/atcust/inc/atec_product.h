@@ -86,6 +86,8 @@ CmsRetId pdECPRODMODE(const AtCmdInputContext *pAtCmdReq);
 CmsRetId pdECATE(const AtCmdInputContext *pAtCmdReq);
 CmsRetId pdECGMDATA(const AtCmdInputContext *pAtCmdReq);
 CmsRetId pdECVERSION(const AtCmdInputContext *pAtCmdReq);
+CmsRetId pdECCHIPVER(const AtCmdInputContext *pAtCmdReq);
+CmsRetId pdECDIEXYREAD(const AtCmdInputContext *pAtCmdReq);
 
 #endif
 

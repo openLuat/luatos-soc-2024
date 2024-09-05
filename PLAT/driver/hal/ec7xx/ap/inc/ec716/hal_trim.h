@@ -132,6 +132,26 @@ AdcEfuseCalCode_t* trimAdcGetCalCode       ( void );
 AdcEfuseT0Code_t* trimAdcGetT0Code(        void );
 
 
+
+/**
+  \fn        trimLdoAIOVadjSetGolbalVar( void )
+  \brief     read the ldoaonio avdj trim from fuse to golbal var
+  \param[in] N/A
+  \note      this golbal var will be used in both paging and app img, and should be set when POR/SLEEP2/HIB case
+             no need for SLEEP1.
+             need call in bsp.c as variable in hal_trim.c reinit when enter full image
+ */
+void trimLdoAIOVadjSetGolbalVar( void );
+
+/**
+  \fn        trimGetLdoAonIoVadj( void )
+  \brief     used by AONLOD API to get the trim code
+  \param[in] N/A
+  \param[out] retrun the  golbal var which stored the trim val
+  \note       if return 0xff: means invalid value(aonio fuse part not burned)
+ */
+uint8_t trimGetLdoAonIoVadj( void );
+
 #ifdef __cplusplus
 }
 #endif

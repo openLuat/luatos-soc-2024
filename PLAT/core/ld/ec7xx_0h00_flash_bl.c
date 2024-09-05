@@ -148,8 +148,10 @@ SECTIONS
   _decompress_buf_end = MSMB_DECOMPR_MEM_END_ADDR;
  
 #if HEAP_EXIST
-  _heap_memory_start = APVIEW_CSMB_HEAP_START;
-  _heap_memory_end = APVIEW_CSMB_HEAP_END;
+  _heap_memory_start = HEAP_START_ADDR;
+  _heap_memory_end = HEAP_END_ADDR;
+  __heap_memory_size = _heap_memory_end - _heap_memory_start;
+  ASSERT(__heap_memory_size<=HEAP_PROTECT_SIZE,"Can't expand the size of heap, with the risk of overwriting other Sram!")
 #endif
 }
 

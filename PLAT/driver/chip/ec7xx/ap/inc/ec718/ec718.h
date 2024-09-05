@@ -980,8 +980,15 @@ typedef struct {
     __IO uint32_t RFIFO;                          /**< Rx Buffer Register,                  offset: 0x1c */
     __IO uint32_t TFIFO;                          /**< Tx Buffer Register,                  offset: 0x20 */
     __IO uint32_t I2SCTL;                         /**< I2S Control Register,                offset: 0x24 */
+#if defined CHIP_EC718
          uint32_t RESERVED_1[46];
     __IO uint32_t I2SBUSSEL;                      /**< i2s bus select                       offset: 0xe0 */
+#else    
+         uint32_t RESERVED_1[47];
+    __IO uint32_t I2SBUSSEL;                      /**< i2s bus select                       offset: 0xe4 */
+         uint32_t RESERVED_2[3];
+    __IO uint32_t USPVERSION;                     /**< usp version                          offset: 0xf4 */
+#endif    
 } I2S_TypeDef;
 
 /** @name DFMT - I2S_DFMT register */
@@ -1198,6 +1205,74 @@ typedef struct {
 #define I2S_TFIFO_DAT_Msk                        (0xFFFFFFFFUL << I2S_TFIFO_DAT_Pos)
 /** @} */
 
+/** @name STATS - I2S/CSPI/LSPI status register */
+/** @{ */
+#if defined CHIP_EC718
+
+#define ICL_STATS_TX_UNDERRUN_RUN_Pos           (0)
+#define ICL_STATS_TX_UNDERRUN_RUN_Msk           (0x1UL << ICL_STATS_TX_UNDERRUN_RUN_Pos)
+
+#define ICL_STATS_TX_DMA_ERR_Pos                (1)
+#define ICL_STATS_TX_DMA_ERR_Msk                (0x1UL << ICL_STATS_TX_DMA_ERR_Pos)
+
+#define ICL_STATS_TX_DAT_RDY_Pos                (2)
+#define ICL_STATS_TX_DAT_RDY_Msk                (0x1UL << ICL_STATS_TX_DAT_RDY_Pos)
+
+#define ICL_STATS_RX_OVERFLOW_Pos               (3)
+#define ICL_STATS_RX_OVERFLOW_Msk               (0x1UL << ICL_STATS_RX_OVERFLOW_Pos)
+
+#define ICL_STATS_RX_DMA_ERR_Pos                (4)
+#define ICL_STATS_RX_DMA_ERR_Msk                (0x1UL << ICL_STATS_RX_DMA_ERR_Pos)
+
+#define ICL_STATS_RX_DAT_RDY_Pos                (5)
+#define ICL_STATS_RX_DAT_RDY_Msk                (0x1UL << ICL_STATS_RX_DAT_RDY_Pos)
+
+#define ICL_STATS_RX_FIFO_TIMEOUT_Pos           (6)
+#define ICL_STATS_RX_FIFO_TIMEOUT_Msk           (0x1UL << ICL_STATS_RX_FIFO_TIMEOUT_Pos)
+
+#define ICL_STATS_FS_ERR_Pos                    (7)
+#define ICL_STATS_FS_ERR_Msk                    (0xFUL << ICL_STATS_FS_ERR_Pos)
+
+#define ICL_STATS_FRAME_START_Pos               (11)
+#define ICL_STATS_FRAME_START_Msk               (0x1UL << ICL_STATS_FRAME_START_Pos)
+
+#define ICL_STATS_FRAME_END_Pos                 (12)
+#define ICL_STATS_FRAME_END_Msk                 (0x1UL << ICL_STATS_FRAME_END_Pos)
+
+#define ICL_STATS_TX_FIFO_LEVEL_Pos             (13)
+#define ICL_STATS_TX_FIFO_LEVEL_Msk             (0x3FUL << ICL_STATS_TX_FIFO_LEVEL_Pos)
+
+#define ICL_STATS_RX_FIFO_LEVEL_Pos             (19)
+#define ICL_STATS_RX_FIFO_LEVEL_Msk             (0x3FUL << ICL_STATS_RX_FIFO_LEVEL_Pos)
+
+#define ICL_STATS_CSPI_BUS_TIMEOUT_Pos          (25)
+#define ICL_STATS_CSPI_BUS_TIMEOUT_Msk          (0x1UL << ICL_STATS_CSPI_BUS_TIMEOUT_Pos)
+
+#define ICL_STATS_LSPI_RAM_WR_BREAK_Pos         (26)
+#define ICL_STATS_LSPI_RAM_WR_BREAK_Msk         (0x1UL << ICL_STATS_LSPI_RAM_WR_BREAK_Pos)
+
+#define ICL_STATS_LSPI_RAM_WR_FRAME_START_Pos   (27)
+#define ICL_STATS_LSPI_RAM_WR_FRAME_START_Msk   (0x1UL << ICL_STATS_LSPI_RAM_WR_FRAME_START_Pos)
+
+#define ICL_STATS_LSPI_RAM_WR_FRAME_END_Pos     (28)
+#define ICL_STATS_LSPI_RAM_WR_FRAME_END_Msk     (0x1UL << ICL_STATS_LSPI_RAM_WR_FRAME_END_Pos)
+
+#define ICL_STATS_CSPI_OTSU_END_Pos             (29)
+#define ICL_STATS_CSPI_OTSU_END_Msk             (0x1UL << ICL_STATS_CSPI_OTSU_END_Pos)
+
+#define ICL_STATS_LSPI_CMD_END_Pos              (30)
+#define ICL_STATS_LSPI_CMD_END_Msk              (0x1UL << ICL_STATS_LSPI_CMD_END_Pos)
+
+#define ICL_STATS_LSPI_RAM_WR_END_Pos           (31)
+#define ICL_STATS_LSPI_RAM_WR_END_Msk           (0x1UL << ICL_STATS_LSPI_RAM_WR_END_Pos)
+
+
+#elif defined CHIP_EC719
+
+#endif
+/** @} */
+
+
 /** @name I2SCTL - I2S_CTL register */
 /** @{ */
 #define I2S_CTL_MODE_Pos                         (0)
@@ -1250,6 +1325,7 @@ typedef struct {
     __IO uint32_t CSPIPROCLSPI;                   /**< Cspi frame proc lspi                 offset: 0x50 */
     __IO uint32_t CSPIQUARTILE;                   /**< Cspi OTSU quartile                   offset: 0x54 */
     __IO uint32_t CSPIYADJ;                       /**< Cspi y Adjustment                    offset: 0x58 */
+#if defined CHIP_EC718
     __IO uint32_t RSVD2;
     __IO uint32_t RSVD3[18];                      /**< For lspi                                          */
     __IO uint32_t RSVD4[10];                      /**< Reserved                                          */
@@ -1258,6 +1334,17 @@ typedef struct {
     __IO uint32_t I2SBUSSEL;                      /**< Cspi bus select                      offset: 0xe0 */
     __IO uint32_t RSVD5[3];                       /**< Reserved                                          */
     __IO uint32_t HISTOBUFCTRL;                   /**< Histogram buf ctrl                   offset: 0xf0 */
+#else
+    __IO uint32_t CSPIDDRCTRL;                    /**< Cspi DDR ctrl                        offset: 0x5c */
+    __IO uint32_t RSVD3[18];                      /**< For lspi                                          */
+    __IO uint32_t RSVD4[12];                      /**< Reserved                                          */
+    __IO uint32_t CSPIDLYCTRL;                    /**< Cspi delay ctrl                      offset: 0xD8 */
+    __IO uint32_t RSVD6[2];                       /**< Reserved                                          */
+    __IO uint32_t I2SBUSSEL;                      /**< Cspi bus select                      offset: 0xe4 */
+    __IO uint32_t RSVD5[2];                       /**< Reserved                                          */
+    __IO uint32_t HISTOBUFCTRL;                   /**< Histogram buf ctrl                   offset: 0xf0 */
+    __IO uint32_t USBVERSION;                     /**< Usp version                          offset: 0xf4 */
+#endif
 } CSPI_TypeDef;
 
 /** @name DFMT - CSPI_DFMT register */
@@ -1409,51 +1496,7 @@ typedef struct {
 #define CSPI_TIMEOUT_CYCLE_RX_TIMEOUT_CYCLE_Msk   (0xFFFFFFUL << CSPI_TIMEOUT_CYCLE_RX_TIMEOUT_CYCLE_Pos)
 /** @} */
 
-/** @name STATS_CTRL -CSPI_STATS_CTRL register */
-/** @{ */
-#define CSPI_STATS_CTRL_TX_UNDERRUN_RUN_Pos       (0)
-#define CSPI_STATS_CTRL_TX_UNDERRUN_RUN_Msk       (0x1UL << CSPI_STATS_CTRL_TX_UNDERRUN_RUN_Pos)
 
-#define CSPI_STATS_CTRL_TX_DMA_ERR_Pos            (1)
-#define CSPI_STATS_CTRL_TX_DMA_ERR_Msk            (0x1UL << CSPI_STATS_CTRL_TX_DMA_ERR_Pos)
-
-#define CSPI_STATS_CTRL_TX_DAT_RDY_Pos            (2)
-#define CSPI_STATS_CTRL_TX_DAT_RDY_Msk            (0x1UL << CSPI_STATS_CTRL_TX_DAT_RDY_Pos)
-
-#define CSPI_STATS_CTRL_RX_OVERFLOW_Pos           (3)
-#define CSPI_STATS_CTRL_RX_OVERFLOW_Msk           (0x1UL << CSPI_STATS_CTRL_RX_OVERFLOW_Pos)
-
-#define CSPI_STATS_CTRL_RX_DMA_ERR_Pos            (4)
-#define CSPI_STATS_CTRL_RX_DMA_ERR_Msk            (0x1UL << CSPI_STATS_CTRL_RX_DMA_ERR_Pos)
-
-#define CSPI_STATS_CTRL_RX_DAT_RDY_Pos            (5)
-#define CSPI_STATS_CTRL_RX_DAT_RDY_Msk            (0x1UL << CSPI_STATS_CTRL_RX_DAT_RDY_Pos)
-
-#define CSPI_STATS_CTRL_RX_FIFO_TIMEOUT_Pos       (6)
-#define CSPI_STATS_CTRL_RX_FIFO_TIMEOUT_Msk       (0x1UL << CSPI_STATS_CTRL_RX_FIFO_TIMEOUT_Pos)
-
-#define CSPI_STATS_CTRL_FS_ERR_Pos                (7)
-#define CSPI_STATS_CTRL_FS_ERR_Msk                (0xFUL << CSPI_STATS_CTRL_FS_ERR_Pos)
-
-#define CSPI_STATS_CTRL_FRAME_START_Pos           (11)
-#define CSPI_STATS_CTRL_FRAME_START_Msk           (0x1UL << CSPI_STATS_CTRL_FRAME_START_Pos)
-
-#define CSPI_STATS_CTRL_FRAME_END_Pos             (12)
-#define CSPI_STATS_CTRL_FRAME_END_Msk             (0x1UL << CSPI_STATS_CTRL_FRAME_END_Pos)
-
-#define CSPI_STATS_CTRL_TX_FIFO_LEVEL_Pos         (13)
-#define CSPI_STATS_CTRL_TX_FIFO_LEVEL_Msk         (0x3FUL << CSPI_STATS_CTRL_TX_FIFO_LEVEL_Pos)
-
-#define CSPI_STATS_CTRL_RX_FIFO_LEVEL_Pos         (19)
-#define CSPI_STATS_CTRL_RX_FIFO_LEVEL_Msk         (0x3FUL << CSPI_STATS_CTRL_RX_FIFO_LEVEL_Pos)
-
-#define CSPI_STATS_CTRL_CSPI_BUS_TIMEOUT_Pos      (25)
-#define CSPI_STATS_CTRL_CSPI_BUS_TIMEOUT_Msk      (0x1UL << CSPI_STATS_CTRL_CSPI_BUS_TIMEOUT_Pos)
-
-#define CSPI_STATS_CTRL_OTSU_END_Pos              (29)
-#define CSPI_STATS_CTRL_OTSU_END_Msk              (0x1UL << CSPI_STATS_CTRL_OTSU_END_Pos)
-
-/** @} */
 
 
 /** @name RFIFO - CSPI_RFIFO register */
@@ -1657,6 +1700,11 @@ typedef struct {
 */
 
 
+/**
+  * @brief LSPI register layout typedef
+  *
+  */
+#if defined CHIP_EC718
 /**
   * @brief LSPI register layout typedef
   *
@@ -1996,7 +2044,369 @@ typedef struct {
 
 #define LSPI_YUV2RGB_INFO1_YUV2RGB_C4_Pos           (20)
 #define LSPI_YUV2RGB_INFO1_YUV2RGB_C4_Msk           (0x3FFUL << LSPI_YUV2RGB_INFO1_YUV2RGB_C4_Pos)
+
+#else  // chip 719
+typedef struct {
+    __IO uint32_t DFMT;
+    __IO uint32_t RSVD1[2];
+    __IO uint32_t DMACTL;
+    __IO uint32_t INTCTL;                         /**< Interrupt Control Register,          offset: 0x10 */
+    __IO uint32_t RSVD2;
+    __IO uint32_t STAS;                           /**< Status Register,                     offset: 0x18 */
+    __IO uint32_t RFIFO;                          /**< RFIFO,                               offset: 0x1C */
+    __IO uint32_t TFIFO;                          /**< TFIFO,                               offset: 0x20 */
+    __IO uint32_t RSVD7;
+    __IO uint32_t CSPICTL;
+    __IO uint32_t RSVD4[13];
+    __IO uint32_t LSPI_CTRL;                      /**< LSPI control                         offset: 0x60 */
+    __IO uint32_t LSPI_CCTRL;                     /**< LSPI command control                 offset: 0x64 */
+    __IO uint32_t LSPI_CADDR;                     /**< LSPI command addr                    offset: 0x68 */
+    __IO uint32_t LSPI_STAT;                      /**< LSPI status                          offset: 0x6c */
+    __IO uint32_t LSPI_RAMWLEN;                   /**< LSPI ram write len                   offset: 0x70 */
+    __IO uint32_t LSPFINFO;                       /**< LSPI frame info                      offset: 0x74 */
+    __IO uint32_t LSPTINFO0;                      /**< LSPI tailor info0                    offset: 0x78 */
+    __IO uint32_t LSPTINFO;                       /**< LSPI tailor info                     offset: 0x7c */
+    __IO uint32_t LSPSINFO;                       /**< LSPI scale info                      offset: 0x80 */
+    __IO uint32_t LSPIQUARTCTRL;                  /**< LSPI quartile ctrl                   offset: 0x84 */
+    __IO uint32_t LSPIQUARTUSE;                   /**< LSPI quartile inuse                  offset: 0x88 */
+    __IO uint32_t LSPIYADJ;                       /**< LSPI Y adj                           offset: 0x8c */
+    __IO uint32_t LSPIYADJUSE;                    /**< LSPI Y adj inuse                     offset: 0x90 */
+    __IO uint32_t LSPIGPCMD0;                     /**< LSPI gray page cmd0                  offset: 0x94 */
+    __IO uint32_t LSPIGPCMD1;                     /**< LSPI gray page cmd1                  offset: 0x98 */
+    __IO uint32_t LSPFINFO0;                      /**< LSPI frame info out                  offset: 0x9c */
+    __IO uint32_t YUV2RGBINFO0;                   /**< YUV to RGB info0                     offset: 0xa0 */
+    __IO uint32_t YUV2RGBINFO1;                   /**< YUV to RGB info1                     offset: 0xa4 */
+    __IO uint32_t DEBUG;                          /**< lspi debug                           offset: 0xa8 */
+    __IO uint32_t MSPI_CTRL;                      /**< lspi mspi ctrl                       offset: 0xac */
+    __IO uint32_t VSYNC_CTRL;                     /**< lspi vsync ctrl                      offset: 0xb0 */
+    __IO uint32_t LSPI8080CTRL;                   /**< lspi 8080 ctrl                       offset: 0xb4 */
+    __IO uint32_t LSPICMDPREPARA0;                /**< lspi pre cmd param0                       offset: 0xb8 */
+    __IO uint32_t LSPICMDPREPARA1;                /**< lspi pre cmd param1                      offset: 0xbc */
+    __IO uint32_t LSPICMDPREPARA2;                /**< lspi pre cmd param2                      offset: 0xc0 */
+    __IO uint32_t LSPICMDPREPARA3;                /**< lspi pre cmd param3                      offset: 0xc4 */
+    __IO uint32_t LSPICMDPOSTPARA0;               /**< lspi post cmd param0                      offset: 0xc8 */
+    __IO uint32_t LSPICMDPOSTPARA1;               /**< lspi post cmd param1                      offset: 0xcc */
+    __IO uint32_t LSPICMDPOSTPARA2;               /**< lspi post cmd param2                      offset: 0xd0 */
+    __IO uint32_t LSPICMDPOSTPARA3;               /**< lspi post cmd param3                      offset: 0xd4 */
+    __IO uint32_t RSVD5;                          /**< Reserved                                          */
+    __IO uint32_t LSPITEPARA0;                    /**< lspi te param0                                offset: 0xdc */
+    __IO uint32_t LSPITEPARA1;                    /**< lspi te param1                                offset: 0xe0 */
+    __IO uint32_t I2SBUSSEL;                      /**< LSPI bus select                      offset: 0xe4 */
+    __IO uint32_t RSVD6[3];                       /**< Reserved                                          */
+    __IO uint32_t USPVERSION;                     /**< USP version                         offset: 0xf4                 */
+} LSPI_TypeDef;
+
+/** @name DFMT - CSPI_DFMT register */
+/** @{ */
+#define LSPI_DFMT_SLAVE_MODE_EN_Pos               (0)
+#define LSPI_DFMT_SLAVE_MODE_EN_Msk               (0x1UL << LSPI_DFMT_SLAVE_MODE_EN_Pos)
+
+#define LSPI_DFMT_SLOT_SIZE_Pos                   (1)
+#define LSPI_DFMT_SLOT_SIZE_Msk                   (0x1FUL << LSPI_DFMT_SLOT_SIZE_Pos)
+
+#define LSPI_DFMT_WORD_SIZE_Pos                   (6)
+#define LSPI_DFMT_WORD_SIZE_Msk                   (0x1FUL << LSPI_DFMT_WORD_SIZE_Pos)
+
+#define LSPI_DFMT_ALIGN_MODE_Pos                  (11)
+#define LSPI_DFMT_ALIGN_MODE_Msk                  (0x1UL << LSPI_DFMT_ALIGN_MODE_Pos)
+
+#define LSPI_DFMT_ENDIAN_MODE_Pos                 (12)
+#define LSPI_DFMT_ENDIAN_MODE_Msk                 (0x1UL << LSPI_DFMT_ENDIAN_MODE_Pos)
+
+#define LSPI_DFMT_DATA_DLY_Pos                    (13)
+#define LSPI_DFMT_DATA_DLY_Msk                    (0x3UL << LSPI_DFMT_DATA_DLY_Pos)
+
+#define LSPI_DFMT_TX_PAD_Pos                      (15)
+#define LSPI_DFMT_TX_PAD_Msk                      (0x3UL << LSPI_DFMT_TX_PAD_Pos)
+
+#define LSPI_DFMT_RX_SIGN_EXT_Pos                 (17)
+#define LSPI_DFMT_RX_SIGN_EXT_Msk                 (0x1UL << LSPI_DFMT_RX_SIGN_EXT_Pos)
+
+#define LSPI_DFMT_TX_PACK_Pos                     (18)
+#define LSPI_DFMT_TX_PACK_Msk                     (0x3UL << LSPI_DFMT_TX_PACK_Pos)
+
+#define LSPI_DFMT_RX_PACK_Pos                     (20)
+#define LSPI_DFMT_RX_PACK_Msk                     (0x3UL << LSPI_DFMT_RX_PACK_Pos)
+
+#define LSPI_DFMT_TX_FIFO_ENDIAN_MODE_Pos         (22)
+#define LSPI_DFMT_TX_FIFO_ENDIAN_MODE_Msk         (0x1UL << LSPI_DFMT_TX_FIFO_ENDIAN_MODE_Pos)
+
+#define LSPI_DFMT_RX_FIFO_ENDIAN_MODE_Pos         (23)
+#define LSPI_DFMT_RX_FIFO_ENDIAN_MODE_Msk         (0x1UL << LSPI_DFMT_RX_FIFO_ENDIAN_MODE_Pos)
+
+#define LSPI_DFMT_EOR_MODE_Pos                    (24)
+#define LSPI_DFMT_EOR_MODE_Msk                    (0x1UL << LSPI_DFMT_EOR_MODE_Pos)
+
+/** @} */
+
+
+/** @name INT_CTRL - CSPI_INT_CTRL register */
+/** @{ */
+#define LSPI_RAM_WR_BREAK_INT_EN_Pos                (11)
+#define LSPI_RAM_WR_BREAK_INT_EN_Msk                (0x1UL << LSPI_RAM_WR_BREAK_INT_EN_Pos)
+
+#define LSPI_RAM_WR_FRAME_START_EN_Pos              (12)
+#define LSPI_RAM_WR_FRAME_START_EN_Msk              (0x1UL << LSPI_RAM_WR_FRAME_START_EN_Pos)
+
+#define LSPI_RAM_WR_FRAME_END_EN_Pos                (13)
+#define LSPI_RAM_WR_FRAME_END_EN_Msk                (0x1UL << LSPI_RAM_WR_FRAME_END_EN_Pos)
+
+#define LSPI_COMMAND_END_EN_Pos                     (14)
+#define LSPI_COMMAND_END_EN_Msk                     (0x1UL << LSPI_COMMAND_END_EN_Pos)
+
+#define LSPI_RAM_WR_END_EN_Pos                      (16)
+#define LSPI_RAM_WR_END_EN_Msk                      (0x1UL << LSPI_RAM_WR_END_EN_Pos)
+
+/** @} */
+
+  /** @name STATS_CTRL -CSPI_STATS_CTRL register */
+  /** @{ */
+
+#define LSPI_STATS_RAM_WR_BREAK_Pos                 (26)
+#define LSPI_STATS_RAM_WR_BREAK_Msk                 (0x1UL << LSPI_STATS_RAM_WR_BREAK_Pos)
+
+#define LSPI_STATS_RAM_WR_FRAME_START_Pos           (27)
+#define LSPI_STATS_RAM_WR_FRAME_START_Msk           (0x1UL << LSPI_STATS_RAM_WR_FRAME_START_Pos)
+
+#define LSPI_STATS_RAM_WR_FRAME_END_Pos             (28)
+#define LSPI_STATS_RAM_WR_FRAME_END_Msk             (0x1UL << LSPI_STATS_RAM_WR_FRAME_END_Pos)
+
+#define LSPI_STATS_COMMAND_END_Pos                  (30)
+#define LSPI_STATS_COMMAND_END_Msk                  (0x1UL << LSPI_STATS_COMMAND_END_Pos)
+
+#define LSPI_STATS_RAM_WR_END_Pos                   (31)
+#define LSPI_STATS_RAM_WR_END_Msk                   (0x1UL << LSPI_STATS_RAM_WR_END_Pos)
+
   /** @} */
+
+  /** @name CTRL - LSPI_CTRL register */
+  /** @{ */
+#define LSPI_CTRL_ENABLE_Pos                        (0)
+#define LSPI_CTRL_ENABLE_Msk                        (0x1UL << LSPI_CTRL_ENABLE_Pos)
+
+#define LSPI_CTRL_2DATA_LANE_Pos                    (1)
+#define LSPI_CTRL_2DATA_LANE_Msk                    (0x1UL << LSPI_CTRL_2DATA_LANE_Pos)
+
+#define LSPI_CTRL_4LINE_Pos                         (2)
+#define LSPI_CTRL_4LINE_Msk                         (0x1UL << LSPI_CTRL_4LINE_Pos)
+
+#define LSPI_CTRL_DAT_SRC_Pos                       (3)
+#define LSPI_CTRL_DAT_SRC_Msk                       (0x1UL << LSPI_CTRL_DAT_SRC_Pos)
+
+#define LSPI_CTRL_COLOR_MODE_IN_Pos                 (4)
+#define LSPI_CTRL_COLOR_MODE_IN_Msk                 (0x3UL << LSPI_CTRL_COLOR_MODE_IN_Pos)
+
+#define LSPI_CTRL_COLOR_MODE_OUT_Pos                (6)
+#define LSPI_CTRL_COLOR_MODE_OUT_Msk                (0x7UL << LSPI_CTRL_COLOR_MODE_OUT_Pos)
+
+#define LSPI_CTRL_Y_ADJ_EN_Pos                      (9)
+#define LSPI_CTRL_Y_ADJ_EN_Msk                      (0x1UL << LSPI_CTRL_Y_ADJ_EN_Pos)
+
+#define LSPI_CTRL_Y_ADJ_SEL_Pos                     (10)
+#define LSPI_CTRL_Y_ADJ_SEL_Msk                     (0x1UL << LSPI_CTRL_Y_ADJ_SEL_Pos)
+
+#define LSPI_CTRL_Y_ADJ_BOUND_Pos                   (11)
+#define LSPI_CTRL_Y_ADJ_BOUND_Msk                   (0x1FFFFUL << LSPI_CTRL_Y_ADJ_BOUND_Pos)
+
+#define LSPI_CTRL_DC_DUMMY_Pos                      (28)
+#define LSPI_CTRL_DC_DUMMY_Msk                      (0x1UL << LSPI_CTRL_DC_DUMMY_Pos)
+
+#define LSPI_CTRL_BUS_TYPE_Pos                      (29)
+#define LSPI_CTRL_BUS_TYPE_Msk                      (0x1UL << LSPI_CTRL_BUS_TYPE_Pos)
+  /** @} */
+
+  /** @name COMMAND_CTRL - LSPI_COMMAND_CTRL register */
+  /** @{ */
+#define LSPI_COMMAND_CTRL_WR_RDN_Pos                (0)
+#define LSPI_COMMAND_CTRL_WR_RDN_Msk                (0x1UL << LSPI_COMMAND_CTRL_WR_RDN_Pos)
+
+#define LSPI_COMMAND_CTRL_RAM_WR_Pos                (1)
+#define LSPI_COMMAND_CTRL_RAM_WR_Msk                (0x1UL << LSPI_COMMAND_CTRL_RAM_WR_Pos)
+
+#define LSPI_COMMAND_CTRL_RDAT_DUMMY_CYCLE_Pos      (2)
+#define LSPI_COMMAND_CTRL_RDAT_DUMMY_CYCLE_Msk      (0x3FUL << LSPI_COMMAND_CTRL_RDAT_DUMMY_CYCLE_Pos)
+
+#define LSPI_COMMAND_CTRL_DATA_LEN_Pos              (8)
+#define LSPI_COMMAND_CTRL_DATA_LEN_Msk              (0x3FFFFUL << LSPI_COMMAND_CTRL_DATA_LEN_Pos)
+
+#define LSPI_COMMAND_CTRL_INIT_Pos                  (26)
+#define LSPI_COMMAND_CTRL_INIT_Msk                  (0x1UL << LSPI_COMMAND_CTRL_INIT_Pos)
+  /** @} */
+
+  /** @name COMMAND_ADDR - LSPI_COMMAND_ADDR register */
+  /** @{ */
+#define LSPI_COMMAND_ADDR_ADDR_Pos                  (0)
+#define LSPI_COMMAND_ADDR_ADDR_Msk                  (0xFFUL << LSPI_COMMAND_ADDR_ADDR_Pos)
+  /** @} */
+
+  /** @name STATS - LSPI_STATS register */
+  /** @{ */
+#define LSPI_STATS_IDLE_Pos                         (0)
+#define LSPI_STATS_IDLE_Msk                         (0x1UL << LSPI_STATS_IDLE_Pos)
+
+#define LSPI_STATS_TX_FIFO_LEVEL_Pos                (8)
+#define LSPI_STATS_TX_FIFO_LEVEL_Msk                (0x3FUL << LSPI_STATS_TX_FIFO_LEVEL_Pos)
+
+#define LSPI_STATS_RX_FIFO_LEVEL_Pos                (16)
+#define LSPI_STATS_RX_FIFO_LEVEL_Msk                (0x3FUL << LSPI_STATS_RX_FIFO_LEVEL_Pos)
+
+
+  /** @} */
+
+  /** @name RAMWR_LEN - LSPI_RAMWR_LEN register */
+  /** @{ */
+#define LSPI_RAMWR_LEN_RAM_WR_LEN_Pos               (0)
+#define LSPI_RAMWR_LEN_RAM_WR_LEN_Msk               (0x3FFFFUL << LSPI_RAMWR_LEN_RAM_WR_LEN_Pos)
+  /** @} */
+
+  /** @name FRAME_INFO - LSPI_FRAME_INFO register */
+  /** @{ */
+#define LSPI_FRAME_INFO_FRAME_HEIGHT_Pos            (0)
+#define LSPI_FRAME_INFO_FRAME_HEIGHT_Msk            (0xFFFFUL << LSPI_FRAME_INFO_FRAME_HEIGHT_Pos)
+
+#define LSPI_FRAME_INFO_FRAME_WIDTH_Pos             (16)
+#define LSPI_FRAME_INFO_FRAME_WIDTH_Msk             (0xFFFFUL << LSPI_FRAME_INFO_FRAME_WIDTH_Pos)
+  /** @} */
+
+  /** @name TAILOR_INFO0 - LSPI_TAILOR_INFO0 register */
+  /** @{ */
+#define LSPI_TAILOR_INFO0_TAILOR_BOTTOM_Pos         (0)
+#define LSPI_TAILOR_INFO0_TAILOR_BOTTOM_Msk         (0x3FFUL << LSPI_TAILOR_INFO0_TAILOR_BOTTOM_Pos)
+
+#define LSPI_TAILOR_INFO0_TAILOR_TOP_Pos            (10)
+#define LSPI_TAILOR_INFO0_TAILOR_TOP_Msk            (0x3FFUL << LSPI_TAILOR_INFO0_TAILOR_TOP_Pos)
+  /** @} */
+
+  /** @name TAILOR_INFO - LSPI_TAILOR_INFO register */
+  /** @{ */
+#define LSPI_TAILOR_INFO_TAILOR_LEFT_Pos            (0)
+#define LSPI_TAILOR_INFO_TAILOR_LEFT_Msk            (0x3FFUL << LSPI_TAILOR_INFO_TAILOR_LEFT_Pos)
+
+#define LSPI_TAILOR_INFO_TAILOR_RIGHT_Pos           (10)
+#define LSPI_TAILOR_INFO_TAILOR_RIGHT_Msk           (0x3FFUL << LSPI_TAILOR_INFO_TAILOR_RIGHT_Pos)
+  /** @} */
+
+  /** @name SCALE_INFO - LSPI_SCALE_INFO register */
+  /** @{ */
+#define LSPI_SCALE_INFO_ROW_SCALE_FRAC_Pos          (0)
+#define LSPI_SCALE_INFO_ROW_SCALE_FRAC_Msk          (0x7FUL << LSPI_SCALE_INFO_ROW_SCALE_FRAC_Pos)
+
+#define LSPI_SCALE_INFO_COL_SCALE_FRAC_Pos          (7)
+#define LSPI_SCALE_INFO_COL_SCALE_FRAC_Msk          (0x7FUL << LSPI_SCALE_INFO_COL_SCALE_FRAC_Pos)
+  /** @} */
+
+  /** @name QUARTILE_CTRL - LSPI_QUARTILE_CTRL register */
+  /** @{ */
+#define LSPI_QUARTILE_CTRL_GRAY_CTRL_Pos            (0)
+#define LSPI_QUARTILE_CTRL_GRAY_CTRL_Msk            (0x3UL << LSPI_QUARTILE_CTRL_GRAY_CTRL_Pos)
+
+#define LSPI_QUARTILE_CTRL_QUARTILE_SEL_Pos         (2)
+#define LSPI_QUARTILE_CTRL_QUARTILE_SEL_Msk         (0x1UL << LSPI_QUARTILE_CTRL_QUARTILE_SEL_Pos)
+
+#define LSPI_QUARTILE_CTRL_QUARTILE1_Pos            (3)
+#define LSPI_QUARTILE_CTRL_QUARTILE1_Msk            (0xFFUL << LSPI_QUARTILE_CTRL_QUARTILE1_Pos)
+
+#define LSPI_QUARTILE_CTRL_QUARTILE2_Pos            (11)
+#define LSPI_QUARTILE_CTRL_QUARTILE2_Msk            (0xFFUL << LSPI_QUARTILE_CTRL_QUARTILE2_Pos)
+
+#define LSPI_QUARTILE_CTRL_QUARTILE3_Pos            (19)
+#define LSPI_QUARTILE_CTRL_QUARTILE3_Msk            (0xFFUL << LSPI_QUARTILE_CTRL_QUARTILE3_Pos)
+  /** @} */
+
+  /** @name QUARTILE_INUSE - LSPI_QUARTILE_INUSE register */
+  /** @{ */
+#define LSPI_QUARTILE_INUSE_QUARTILE1_INUSE_Pos     (0)
+#define LSPI_QUARTILE_INUSE_QUARTILE1_INUSE_Msk     (0xFFUL << LSPI_QUARTILE_INUSE_QUARTILE1_INUSE_Pos)
+
+#define LSPI_QUARTILE_INUSE_QUARTILE2_INUSE_Pos     (8)
+#define LSPI_QUARTILE_INUSE_QUARTILE2_INUSE_Msk     (0xFFUL << LSPI_QUARTILE_INUSE_QUARTILE2_INUSE_Pos)
+
+#define LSPI_QUARTILE_INUSE_QUARTILE3_INUSE_Pos     (16)
+#define LSPI_QUARTILE_INUSE_QUARTILE3_INUSE_Msk     (0xFFUL << LSPI_QUARTILE_INUSE_QUARTILE3_INUSE_Pos)
+  /** @} */
+
+  /** @name Y_ADJ - LSPI_Y_ADJ register */
+  /** @{ */
+#define LSPI_Y_ADJ_YADJ_Y_MIN_Pos                   (0)
+#define LSPI_Y_ADJ_YADJ_Y_MIN_Msk                   (0xFFUL << LSPI_Y_ADJ_YADJ_Y_MIN_Pos)
+
+#define LSPI_Y_ADJ_YADJ_Y_MAX_Pos                   (8)
+#define LSPI_Y_ADJ_YADJ_Y_MAX_Msk                   (0xFFUL << LSPI_Y_ADJ_YADJ_Y_MAX_Pos)
+
+#define LSPI_Y_ADJ_YADJ_STRECH_Pos                  (16)
+#define LSPI_Y_ADJ_YADJ_STRECH_Msk                  (0xFFUL << LSPI_Y_ADJ_YADJ_STRECH_Pos)
+
+#define LSPI_Y_ADJ_YADJ_STRECH_FWL_Pos              (24)
+#define LSPI_Y_ADJ_YADJ_STRECH_FWL_Msk              (0xFFUL << LSPI_Y_ADJ_YADJ_STRECH_FWL_Pos)
+  /** @} */
+
+  /** @name Y_ADJ_INUSE - LSPI_Y_ADJ_INUSE register */
+  /** @{ */
+#define LSPI_Y_ADJ_INUSE_YADJ_Y_MIN_INUSE_Pos       (0)
+#define LSPI_Y_ADJ_INUSE_YADJ_Y_MIN_INUSE_Msk       (0xFFUL << LSPI_Y_ADJ_INUSE_YADJ_Y_MIN_INUSE_Pos)
+
+#define LSPI_Y_ADJ_INUSE_YADJ_Y_MAX_INUSE_Pos       (8)
+#define LSPI_Y_ADJ_INUSE_YADJ_Y_MAX_INUSE_Msk       (0xFFUL << LSPI_Y_ADJ_INUSE_YADJ_Y_MAX_INUSE_Pos)
+
+#define LSPI_Y_ADJ_INUSE_YADJ_STRECH_INUSE_Pos      (16)
+#define LSPI_Y_ADJ_INUSE_YADJ_STRECH_INUSE_Msk      (0xFFUL << LSPI_Y_ADJ_INUSE_YADJ_STRECH_INUSE_Pos)
+
+#define LSPI_Y_ADJ_INUSE_YADJ_STRECH_FWL_INUSE_Pos  (24)
+#define LSPI_Y_ADJ_INUSE_YADJ_STRECH_FWL_INUSE_Msk  (0xFFUL << LSPI_Y_ADJ_INUSE_YADJ_STRECH_FWL_INUSE_Pos)
+  /** @} */
+
+  /** @name GRAY_PAGE_CMD0 - LSPI_GRAY_PAGE_CMD0 register */
+  /** @{ */
+#define LSPI_GRAY_PAGE_CMD0_PAGE_CMD_Pos            (0)
+#define LSPI_GRAY_PAGE_CMD0_PAGE_CMD_Msk            (0xFFUL << LSPI_GRAY_PAGE_CMD0_PAGE_CMD_Pos)
+
+#define LSPI_GRAY_PAGE_CMD0_PAGE_CMD0_Pos           (8)
+#define LSPI_GRAY_PAGE_CMD0_PAGE_CMD0_Msk           (0xFFFFUL << LSPI_GRAY_PAGE_CMD0_PAGE_CMD0_Pos)
+
+#define LSPI_GRAY_PAGE_CMD0_PAGE_CMD01_BYTE_NUM_Pos (24)
+#define LSPI_GRAY_PAGE_CMD0_PAGE_CMD01_BYTE_NUM_Msk (0xFUL << LSPI_GRAY_PAGE_CMD0_PAGE_CMD01_BYTE_NUM_Pos)
+  /** @} */
+
+  /** @name GRAY_PAGE_CMD1 - LSPI_GRAY_PAGE_CMD1 register */
+  /** @{ */
+#define LSPI_GRAY_PAGE_CMD1_PAGE_CMD1_Pos           (0)
+#define LSPI_GRAY_PAGE_CMD1_PAGE_CMD1_Msk           (0xFFFFFFFFUL << LSPI_GRAY_PAGE_CMD1_PAGE_CMD1_Pos)
+  /** @} */
+
+  /** @name FRAME_INFO_OUT - LSPI_FRAME_INFO_OUT register */
+  /** @{ */
+#define LSPI_FRAME_INFO_OUT_FRAME_HEIGHT_OUT_Pos    (0)
+#define LSPI_FRAME_INFO_OUT_FRAME_HEIGHT_OUT_Msk    (0x3FFUL << LSPI_FRAME_INFO_OUT_FRAME_HEIGHT_OUT_Pos)
+
+#define LSPI_FRAME_INFO_OUT_FRAME_WIDTH_OUT_Pos     (10)
+#define LSPI_FRAME_INFO_OUT_FRAME_WIDTH_OUT_Msk     (0x3FFUL << LSPI_FRAME_INFO_OUT_FRAME_WIDTH_OUT_Pos)
+  /** @} */
+
+  /** @name YUV2RGB_INFO0 - LSPI_YUV2RGB_INFO0 register */
+  /** @{ */
+#define LSPI_YUV2RGB_INFO0_YUV2RGB_Y_OFST_Pos       (0)
+#define LSPI_YUV2RGB_INFO0_YUV2RGB_Y_OFST_Msk       (0xFFUL << LSPI_YUV2RGB_INFO0_YUV2RGB_Y_OFST_Pos)
+
+#define LSPI_YUV2RGB_INFO0_YUV2RGB_C0_Pos           (8)
+#define LSPI_YUV2RGB_INFO0_YUV2RGB_C0_Msk           (0x3FFUL << LSPI_YUV2RGB_INFO0_YUV2RGB_C0_Pos)
+
+#define LSPI_YUV2RGB_INFO0_YUV2RGB_C1_Pos           (18)
+#define LSPI_YUV2RGB_INFO0_YUV2RGB_C1_Msk           (0x3FFUL << LSPI_YUV2RGB_INFO0_YUV2RGB_C1_Pos)
+  /** @} */
+
+  /** @name YUV2RGB_INFO1 - LSPI_YUV2RGB_INFO1 register */
+  /** @{ */
+#define LSPI_YUV2RGB_INFO1_YUV2RGB_C2_Pos           (0)
+#define LSPI_YUV2RGB_INFO1_YUV2RGB_C2_Msk           (0x3FFUL << LSPI_YUV2RGB_INFO1_YUV2RGB_C2_Pos)
+
+#define LSPI_YUV2RGB_INFO1_YUV2RGB_C3_Pos           (10)
+#define LSPI_YUV2RGB_INFO1_YUV2RGB_C3_Msk           (0x3FFUL << LSPI_YUV2RGB_INFO1_YUV2RGB_C3_Pos)
+
+#define LSPI_YUV2RGB_INFO1_YUV2RGB_C4_Pos           (20)
+#define LSPI_YUV2RGB_INFO1_YUV2RGB_C4_Msk           (0x3FFUL << LSPI_YUV2RGB_INFO1_YUV2RGB_C4_Pos)
+  /** @} */
+#endif
+  
 
   /** @name BUS_SEL - I2S_BUS_SEL register */
   /** @{ */

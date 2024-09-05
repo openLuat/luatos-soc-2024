@@ -37,6 +37,7 @@
 #define IP4_INPUT_ADPT_PROCESS_UN_REACHABLE 2
 #define CMI_PS_INVALID_CID          0xFF
 extern struct netif *netif_find_by_ip4_clat_cid(u8_t cid);
+//#define LUAT_USE_SDK_XLAT
 #ifdef LUAT_USE_SDK_XLAT
 __attribute__((weak)) void psDialClatInit(void)
 {
@@ -133,44 +134,66 @@ __CORE_FUNC_IN_RAM__ uint8_t ipv4_f4(struct pbuf *p, struct netif *inp, struct n
 
 err_t ipv4_f5(struct pbuf *p, const ip4_addr_t *dest, struct netif *netif)
 {
-	  if(netif_check_netif_type_is_wan(netif) && netif->primary_ipv4_cid == LWIP_PS_INVALID_CID && netif->clat_ipv4_cid != LWIP_PS_INVALID_CID )
-	  {
-	    ECOMM_TRACE(UNILOG_LWIP_CORE_IP, ip4_output_if_opt_src_clat_1, P_VALUE, 0, "ip4_output_if: call clat netif->output(), do clat output");
-	    if(NetifIp4PkgFwdClatWanFromLanProcess(p, netif) == ERR_OK)
-	    {
-	        return ip6_forwardto(p, netif);
+  if(netif_check_netif_type_is_wan(netif) && netif->primary_ipv4_cid == LWIP_PS_INVALID_CID && netif->clat_ipv4_cid != LWIP_PS_INVALID_CID )
+  {
+    struct pbuf *clat_pbuf = NULL;
 
-	    }
-	    else
-	    {   pbuf_free(p);
-	        ECOMM_TRACE(UNILOG_LWIP_CORE_IP, ip4_output_if_opt_src_clat_2, P_WARNING, 0, "ip4_output_if: call clat netif->output(), do clat output fail");
-	        return ERR_RTE;
-	    }
-	  }
-	  else
-	  {
-	    #if IP_FRAG
-	    /* don't fragment if interface has mtu set to 0 [loopif] */
-	    if (netif->mtu && (p->tot_len > netif->mtu)) {
-	        return ip4_frag(p, netif, dest);
-	    }
-	    #endif /* IP_FRAG */
+    ECOMM_TRACE(UNILOG_LWIP_CORE_IP, ip4_output_if_opt_src_clat_1, P_VALUE, 0, "ip4_output_if: call clat netif->output(), do clat output");
 
-	    #if LWIP_ENABLE_UNILOG
-	    ECOMM_TRACE(UNILOG_LWIP_CORE_IP, ip4_output_if_opt_src_6, P_VALUE, 0, "ip4_output_if: call netif->output()");
-	    #else
-	    LWIP_DEBUGF(IP_DEBUG, ("ip4_output_if: call netif->output()\n"));
-	    #endif
+    clat_pbuf = pbuf_alloc(PBUF_CLAT, p->tot_len, PBUF_RAM);
 
-	    #if ENABLE_PSIF
-	    if(p->tickType == UL_PDU_START_TICK) {
-	        p->sysTick = sys_now();
-	        ECOMM_TRACE(UNILOG_LWIP_CORE_IP, ip4_output_if_opt_src_7, P_VALUE, 2, "ip4_output_if: call netif->output(),ticktype %u, systick %u", UL_PDU_START_TICK, p->sysTick);
-	    }
-	    #endif
+    if(clat_pbuf)
+    {
 
-	    return netif->output(netif, p, dest);
-	  }
+        pbuf_copy(clat_pbuf, p);
+
+        if(NetifIp4PkgFwdClatWanFromLanProcess(clat_pbuf, netif) == ERR_OK)
+        {
+            err_t clat_forward;
+
+            clat_forward = ip6_forwardto(clat_pbuf, netif);
+
+            pbuf_free(clat_pbuf);
+
+            return clat_forward;
+        }
+        else
+        {
+            pbuf_free(clat_pbuf);
+            ECOMM_TRACE(UNILOG_LWIP_CORE_IP, ip4_output_if_opt_src_clat_2, P_WARNING, 0, "ip4_output_if: call clat netif->output(), do clat output fail");
+            return ERR_RTE;
+        }
+    }
+    else
+    {
+            ECOMM_TRACE(UNILOG_LWIP_CORE_IP, ip4_output_if_opt_src_clat_3, P_WARNING, 0, "ip4_output_if: call clat netif->output(),allocate clat pbuf fail");
+            return ERR_RTE;
+    }
+  }
+  else
+  {
+    #if IP_FRAG
+    /* don't fragment if interface has mtu set to 0 [loopif] */
+    if (netif->mtu && (p->tot_len > netif->mtu)) {
+        return ip4_frag(p, netif, dest);
+    }
+    #endif /* IP_FRAG */
+
+    #if LWIP_ENABLE_UNILOG
+    ECOMM_TRACE(UNILOG_LWIP_CORE_IP, ip4_output_if_opt_src_6, P_VALUE, 0, "ip4_output_if: call netif->output()");
+    #else
+    LWIP_DEBUGF(IP_DEBUG, ("ip4_output_if: call netif->output()\n"));
+    #endif
+
+    #if ENABLE_PSIF
+    if(p->tickType == UL_PDU_START_TICK) {
+        p->sysTick = sys_now();
+        ECOMM_TRACE(UNILOG_LWIP_CORE_IP, ip4_output_if_opt_src_7, P_VALUE, 2, "ip4_output_if: call netif->output(),ticktype %u, systick %u", UL_PDU_START_TICK, p->sysTick);
+    }
+    #endif
+
+    return netif->output(netif, p, dest);
+  }
 }
 
 err_t ipv6_f1(struct pbuf *p, struct netif *inp, struct ip6_hdr *ip6hdr, uint8_t *is_end)

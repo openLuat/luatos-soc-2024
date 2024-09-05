@@ -19,13 +19,13 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 0x00023000          |---------------------------------|
                     |      rel data(factory)20KB      |
 0x00028000          |---------------------------------|
-                    |      cp img 640KB               |
+                    |      cp img 640KB (400K)        |
 0x000C8000          |---------------------------------|
-                    |      app img 6144KB             |
+                    |      app img 5636KB   (5876K)   |
 0x006C8000          |---------------------------------|
-                    |      fota 600KB                 |
+                    |      fota 1024KB                |
 0x0075E000          |---------------------------------|
-                    |      lfs  428KB                 |
+                    |      lfs  512KB                 |
 0x007C9000          |---------------------------------|
                     |      kv   64KB                  |
 0x007D9000          |---------------------------------|
@@ -71,11 +71,11 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 #else
 #if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
 #ifndef AP_FLASH_LOAD_SIZE
-#define AP_FLASH_LOAD_SIZE              (0x600000)
+#define AP_FLASH_LOAD_SIZE              (0x581000)
 #endif
 #else
 #ifndef AP_FLASH_LOAD_SIZE
-#define AP_FLASH_LOAD_SIZE              (0x63C000)
+#define AP_FLASH_LOAD_SIZE              (0x5BD000)
 #endif
 #endif
 
@@ -88,14 +88,14 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 #define AP_FLASH_LOAD_UNZIP_SIZE        (0x6D6000)//7000KB ,for ld
 
 //fota addr and size
-#define FLASH_FOTA_REGION_START         (0x6C8000)
-#define FLASH_FOTA_REGION_LEN           (0x96000)//600KB
-#define FLASH_FOTA_REGION_END           (0x75E000)
+#define FLASH_FOTA_REGION_START         (0x649000)
+#define FLASH_FOTA_REGION_LEN           (0x100000)//1M
+#define FLASH_FOTA_REGION_END           (0x749000)
 
 //fs addr and size
-#define FLASH_FS_REGION_START           (0x75E000)
+#define FLASH_FS_REGION_START           (0x749000)
 #define FLASH_FS_REGION_END             (0x7C9000)
-#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START) // 428KB
+#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START) // 512KB
 
 #define FLASH_FDB_REGION_START			(0x7C9000)//64KB
 #define FLASH_FDB_REGION_END            (0x7d9000)

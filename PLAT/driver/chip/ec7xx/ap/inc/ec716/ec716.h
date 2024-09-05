@@ -1127,48 +1127,63 @@ typedef struct {
 /** @} */
 
 
+#define ICL_STATS_TX_UNDERRUN_RUN_Pos           (0)
+#define ICL_STATS_TX_UNDERRUN_RUN_Msk           (0x1UL << ICL_STATS_TX_UNDERRUN_RUN_Pos)
 
-/** @name STATS_CTRL - I2S_STATS_CTRL register */
-/** @{ */
-#define I2S_STATS_CTRL_TX_UNDERRUN_RUN_Pos       (0)
-#define I2S_STATS_CTRL_TX_UNDERRUN_RUN_Msk       (0x1UL << I2S_STATS_CTRL_TX_UNDERRUN_RUN_Pos)
+#define ICL_STATS_TX_DMA_ERR_Pos                (1)
+#define ICL_STATS_TX_DMA_ERR_Msk                (0x1UL << ICL_STATS_TX_DMA_ERR_Pos)
 
-#define I2S_STATS_CTRL_TX_DMA_ERR_Pos            (1)
-#define I2S_STATS_CTRL_TX_DMA_ERR_Msk            (0x1UL << I2S_STATS_CTRL_TX_DMA_ERR_Pos)
+#define ICL_STATS_TX_DAT_RDY_Pos                (2)
+#define ICL_STATS_TX_DAT_RDY_Msk                (0x1UL << ICL_STATS_TX_DAT_RDY_Pos)
 
-#define I2S_STATS_CTRL_TX_DAT_RDY_Pos            (2)
-#define I2S_STATS_CTRL_TX_DAT_RDY_Msk            (0x1UL << I2S_STATS_CTRL_TX_DAT_RDY_Pos)
+#define ICL_STATS_RX_OVERFLOW_Pos               (3)
+#define ICL_STATS_RX_OVERFLOW_Msk               (0x1UL << ICL_STATS_RX_OVERFLOW_Pos)
 
-#define I2S_STATS_CTRL_RX_OVERFLOW_Pos           (3)
-#define I2S_STATS_CTRL_RX_OVERFLOW_Msk           (0x1UL << I2S_STATS_CTRL_RX_OVERFLOW_Pos)
+#define ICL_STATS_RX_DMA_ERR_Pos                (4)
+#define ICL_STATS_RX_DMA_ERR_Msk                (0x1UL << ICL_STATS_RX_DMA_ERR_Pos)
 
-#define I2S_STATS_CTRL_RX_DMA_ERR_Pos            (4)
-#define I2S_STATS_CTRL_RX_DMA_ERR_Msk            (0x1UL << I2S_STATS_CTRL_RX_DMA_ERR_Pos)
+#define ICL_STATS_RX_DAT_RDY_Pos                (5)
+#define ICL_STATS_RX_DAT_RDY_Msk                (0x1UL << ICL_STATS_RX_DAT_RDY_Pos)
 
-#define I2S_STATS_CTRL_RX_DAT_RDY_Pos            (5)
-#define I2S_STATS_CTRL_RX_DAT_RDY_Msk            (0x1UL << I2S_STATS_CTRL_RX_DAT_RDY_Pos)
+#define ICL_STATS_RX_FIFO_TIMEOUT_Pos           (6)
+#define ICL_STATS_RX_FIFO_TIMEOUT_Msk           (0x1UL << ICL_STATS_RX_FIFO_TIMEOUT_Pos)
 
-#define I2S_STATS_CTRL_RX_FIFO_TIMEOUT_Pos       (6)
-#define I2S_STATS_CTRL_RX_FIFO_TIMEOUT_Msk       (0x1UL << I2S_STATS_CTRL_RX_FIFO_TIMEOUT_Pos)
+#define ICL_STATS_FS_ERR_Pos                    (7)
+#define ICL_STATS_FS_ERR_Msk                    (0xFUL << ICL_STATS_FS_ERR_Pos)
 
-#define I2S_STATS_CTRL_FS_ERR_Pos                (7)
-#define I2S_STATS_CTRL_FS_ERR_Msk                (0xFUL << I2S_STATS_CTRL_FS_ERR_Pos)
+#define ICL_STATS_FRAME_START_Pos               (11)
+#define ICL_STATS_FRAME_START_Msk               (0x1UL << ICL_STATS_FRAME_START_Pos)
 
-#define I2S_STATS_CTRL_FRAME_START_Pos           (11)
-#define I2S_STATS_CTRL_FRAME_START_Msk           (0x1UL << I2S_STATS_CTRL_FRAME_START_Pos)
+#define ICL_STATS_FRAME_END_Pos                 (12)
+#define ICL_STATS_FRAME_END_Msk                 (0x1UL << ICL_STATS_FRAME_END_Pos)
 
-#define I2S_STATS_CTRL_FRAME_END_Pos             (12)
-#define I2S_STATS_CTRL_FRAME_END_Msk             (0x1UL << I2S_STATS_CTRL_FRAME_END_Pos)
+#define ICL_STATS_TX_FIFO_LEVEL_Pos             (13)
+#define ICL_STATS_TX_FIFO_LEVEL_Msk             (0x3FUL << ICL_STATS_TX_FIFO_LEVEL_Pos)
 
-#define I2S_STATS_CTRL_TX_FIFO_LEVEL_Pos         (13)
-#define I2S_STATS_CTRL_TX_FIFO_LEVEL_Msk         (0x3FUL << I2S_STATS_CTRL_TX_FIFO_LEVEL_Pos)
+#define ICL_STATS_RX_FIFO_LEVEL_Pos             (19)
+#define ICL_STATS_RX_FIFO_LEVEL_Msk             (0x3FUL << ICL_STATS_RX_FIFO_LEVEL_Pos)
 
-#define I2S_STATS_CTRL_RX_FIFO_LEVEL_Pos         (19)
-#define I2S_STATS_CTRL_RX_FIFO_LEVEL_Msk         (0x3FUL << I2S_STATS_CTRL_RX_FIFO_LEVEL_Pos)
+#define ICL_STATS_CSPI_BUS_TIMEOUT_Pos          (25)
+#define ICL_STATS_CSPI_BUS_TIMEOUT_Msk          (0x1UL << ICL_STATS_CSPI_BUS_TIMEOUT_Pos)
 
-#define I2S_STATS_CTRL_CSPI_BUS_TIMEOUT_Pos      (25)
-#define I2S_STATS_CTRL_CSPI_BUS_TIMEOUT_Msk      (0x1UL << I2S_STATS_CTRL_CSPI_BUS_TIMEOUT_Pos)
-/** @} */
+#define ICL_STATS_LSPI_RAM_WR_BREAK_Pos         (26)
+#define ICL_STATS_LSPI_RAM_WR_BREAK_Msk         (0x1UL << ICL_STATS_LSPI_RAM_WR_BREAK_Pos)
+
+#define ICL_STATS_LSPI_RAM_WR_FRAME_START_Pos   (27)
+#define ICL_STATS_LSPI_RAM_WR_FRAME_START_Msk   (0x1UL << ICL_STATS_LSPI_RAM_WR_FRAME_START_Pos)
+
+#define ICL_STATS_LSPI_RAM_WR_FRAME_END_Pos     (28)
+#define ICL_STATS_LSPI_RAM_WR_FRAME_END_Msk     (0x1UL << ICL_STATS_LSPI_RAM_WR_FRAME_END_Pos)
+
+#define ICL_STATS_CSPI_OTSU_END_Pos             (29)
+#define ICL_STATS_CSPI_OTSU_END_Msk             (0x1UL << ICL_STATS_CSPI_OTSU_END_Pos)
+
+#define ICL_STATS_LSPI_CMD_END_Pos              (30)
+#define ICL_STATS_LSPI_CMD_END_Msk              (0x1UL << ICL_STATS_LSPI_CMD_END_Pos)
+
+#define ICL_STATS_LSPI_RAM_WR_END_Pos           (31)
+#define ICL_STATS_LSPI_RAM_WR_END_Msk           (0x1UL << ICL_STATS_LSPI_RAM_WR_END_Pos)
+
 
 
 /** @name RFIFO - I2S_RFIFO register */
@@ -1392,52 +1407,6 @@ typedef struct {
 /** @{ */
 #define CSPI_TIMEOUT_CYCLE_RX_TIMEOUT_CYCLE_Pos   (0)
 #define CSPI_TIMEOUT_CYCLE_RX_TIMEOUT_CYCLE_Msk   (0xFFFFFFUL << CSPI_TIMEOUT_CYCLE_RX_TIMEOUT_CYCLE_Pos)
-/** @} */
-
-/** @name STATS_CTRL -CSPI_STATS_CTRL register */
-/** @{ */
-#define CSPI_STATS_CTRL_TX_UNDERRUN_RUN_Pos       (0)
-#define CSPI_STATS_CTRL_TX_UNDERRUN_RUN_Msk       (0x1UL << CSPI_STATS_CTRL_TX_UNDERRUN_RUN_Pos)
-
-#define CSPI_STATS_CTRL_TX_DMA_ERR_Pos            (1)
-#define CSPI_STATS_CTRL_TX_DMA_ERR_Msk            (0x1UL << CSPI_STATS_CTRL_TX_DMA_ERR_Pos)
-
-#define CSPI_STATS_CTRL_TX_DAT_RDY_Pos            (2)
-#define CSPI_STATS_CTRL_TX_DAT_RDY_Msk            (0x1UL << CSPI_STATS_CTRL_TX_DAT_RDY_Pos)
-
-#define CSPI_STATS_CTRL_RX_OVERFLOW_Pos           (3)
-#define CSPI_STATS_CTRL_RX_OVERFLOW_Msk           (0x1UL << CSPI_STATS_CTRL_RX_OVERFLOW_Pos)
-
-#define CSPI_STATS_CTRL_RX_DMA_ERR_Pos            (4)
-#define CSPI_STATS_CTRL_RX_DMA_ERR_Msk            (0x1UL << CSPI_STATS_CTRL_RX_DMA_ERR_Pos)
-
-#define CSPI_STATS_CTRL_RX_DAT_RDY_Pos            (5)
-#define CSPI_STATS_CTRL_RX_DAT_RDY_Msk            (0x1UL << CSPI_STATS_CTRL_RX_DAT_RDY_Pos)
-
-#define CSPI_STATS_CTRL_RX_FIFO_TIMEOUT_Pos       (6)
-#define CSPI_STATS_CTRL_RX_FIFO_TIMEOUT_Msk       (0x1UL << CSPI_STATS_CTRL_RX_FIFO_TIMEOUT_Pos)
-
-#define CSPI_STATS_CTRL_FS_ERR_Pos                (7)
-#define CSPI_STATS_CTRL_FS_ERR_Msk                (0xFUL << CSPI_STATS_CTRL_FS_ERR_Pos)
-
-#define CSPI_STATS_CTRL_FRAME_START_Pos           (11)
-#define CSPI_STATS_CTRL_FRAME_START_Msk           (0x1UL << CSPI_STATS_CTRL_FRAME_START_Pos)
-
-#define CSPI_STATS_CTRL_FRAME_END_Pos             (12)
-#define CSPI_STATS_CTRL_FRAME_END_Msk             (0x1UL << CSPI_STATS_CTRL_FRAME_END_Pos)
-
-#define CSPI_STATS_CTRL_TX_FIFO_LEVEL_Pos         (13)
-#define CSPI_STATS_CTRL_TX_FIFO_LEVEL_Msk         (0x3FUL << CSPI_STATS_CTRL_TX_FIFO_LEVEL_Pos)
-
-#define CSPI_STATS_CTRL_RX_FIFO_LEVEL_Pos         (19)
-#define CSPI_STATS_CTRL_RX_FIFO_LEVEL_Msk         (0x3FUL << CSPI_STATS_CTRL_RX_FIFO_LEVEL_Pos)
-
-#define CSPI_STATS_CTRL_CSPI_BUS_TIMEOUT_Pos      (25)
-#define CSPI_STATS_CTRL_CSPI_BUS_TIMEOUT_Msk      (0x1UL << CSPI_STATS_CTRL_CSPI_BUS_TIMEOUT_Pos)
-
-#define CSPI_STATS_CTRL_OTSU_END_Pos              (29)
-#define CSPI_STATS_CTRL_OTSU_END_Msk              (0x1UL << CSPI_STATS_CTRL_OTSU_END_Pos)
-
 /** @} */
 
 

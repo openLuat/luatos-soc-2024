@@ -112,8 +112,9 @@ typedef enum
     VOLUMN_DECREASE         = 1,        ///< Volumn decrease
 }I2sVolumnCtrl_e;
 
-typedef void (*i2sCbFunc_fn) (uint32_t event, uint32_t arg);  ///< I2S init callback event.
 
+typedef void (*i2sCbFunc_fn) (uint32_t event, uint32_t arg);  ///< I2S init callback event.
+typedef void (*i2sUspFunc_fn)(void); // I2S callback
 
 /*----------------------------------------------------------------------------*
 *                    GLOBAL FUNCTIONS DECLEARATION                           *
@@ -245,6 +246,10 @@ void halI2sDeInit();
   \return  null.            
 */
 uint32_t halI2sGetTrunkNum();
+
+void halI2sRegisterUspCb(i2sUspFunc_fn cb);
+void ctrlErrStatsBit(uint32_t errStats, bool enableErrInt);
+
 
 
 /** \} */

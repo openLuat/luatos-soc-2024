@@ -100,7 +100,7 @@ typedef enum
 
 typedef enum
 {
-    FOTA_NVM_ZONE_REMAP = 0,  /* remap zone <rsvd for customers>  */
+    FOTA_NVM_ZONE_REMAP = 0,  /* remap zone, enabled when *.par is stored in FS zone */
     FOTA_NVM_ZONE_DELTA,      /* delta zone for downloading & patching */
     FOTA_NVM_ZONE_BKUP,
     FOTA_NVM_ZONE_BLU,        /* bl updater <rsvd> */
@@ -228,7 +228,7 @@ typedef struct
 /* FOTA_DEF_IS_IMAGE_IDENTICAL */
 typedef struct
 {
-    uint32_t  zid;
+    uint32_t  zid;   /* FotaNvmZoneId_e */
     uint32_t  size;
     uint8_t  *hash;
 }FotaDefIsImageIdentical_t;
@@ -297,7 +297,7 @@ typedef struct
 /* FOTA_DEF_ADJ_ZONE_SIZE */
 typedef struct
 {
-    uint32_t  zid;
+    uint32_t  zid;   /* FotaNvmZoneId_e */
     uint32_t  size;
 }FotaDefAdjZoneSize_t;
 
@@ -352,7 +352,7 @@ typedef struct
     uint8_t   rsvd0;
     uint8_t   rsvdBit0:7;
     uint8_t   psigned :1;  /* 0/1: is system signed bin included or not? */
-    uint16_t  pcap    :3;  /* fota capacity(total size of images) in every single patching, 2^pcap(MB) */
+    uint16_t  fotaCap :3;  /* fota capacity(total size of images) in every single patching, 2^pcap(MB) */
     uint16_t  rsvdBit1:13;
     uint16_t  rsvd1;
     uint32_t  parLen;      /* including hdr len */

@@ -1,4 +1,5 @@
 #include "cameraDrv.h"
+#include "hal_i2c.h"
 
 extern cspiDrvInterface_t   cspiDrvInterface0;
 extern cspiDrvInterface_t   cspiDrvInterface1;
@@ -12,12 +13,10 @@ extern cspiCtrl_t           cspiCtrl;
 extern cspiBinaryCtrl_t     cspiBinaryCtrl;
 extern cspiIntCtrl_t        cspiIntCtrl;
 extern cspiDataFmt_t        cspiDataFmt;
-
-extern ARM_DRIVER_I2C Driver_I2C0;
-static ARM_DRIVER_I2C   *i2cDrvInstance = &CREATE_SYMBOL(Driver_I2C, 0);
-
+extern cspiFrameProcLspi_t  cspiFrameProcLspi;
 
 #define EIGEN_CSPI(n)             ((CSPI_TypeDef *) (MP_USP0_BASE_ADDR + 0x1000*n))
+static camErrCb             camErrStatsFunc;
 
 
 #if (CAMERA_ENABLE_SP0A39)
@@ -61,9 +60,9 @@ static ARM_DRIVER_I2C   *i2cDrvInstance = &CREATE_SYMBOL(Driver_I2C, 0);
  #if (BF30A2_1SDR)
     char* regName = "bf30a2_1sdr";
  #endif 
-#elif (CAMERA_ENABLE_GC6153)
- #if (GC6153_1SDR)
-	char* regName = "gc6153_1sdr";
+#elif (CAMERA_ENABLE_GC6133)
+ #if (GC6133_1SDR)
+	char* regName = "gc6133_1sdr";
  #endif  
 #endif
 
@@ -157,14 +156,18 @@ void findRegInfo(char* regName, uint8_t* slaveAddr, uint16_t* regCnt, camI2cCfg_
         *slaveAddr = GC6153_I2C_ADDR;
         *regCnt = gc6153GetRegCnt(regName);
     }
+	else if (strcmp(regName, "gc6133_1sdr") == 0)
+    {
+        extern camI2cCfg_t gc6133_1sdrRegInfo[];
+        *regInfo = gc6133_1sdrRegInfo;
+        *slaveAddr = GC6133_I2C_ADDR;
+        *regCnt = gc6133GetRegCnt(regName);
+    }
 }
 
 void camI2cInit()
 {
-    i2cDrvInstance->Initialize(NULL);
-    i2cDrvInstance->PowerControl(ARM_POWER_FULL);
-    i2cDrvInstance->Control(ARM_I2C_BUS_SPEED, ARM_I2C_BUS_SPEED_STANDARD);
-    i2cDrvInstance->Control(ARM_I2C_BUS_CLEAR, 0);
+    halI2cInit(true);
 
     // Backup some info about this sensor
     findRegInfo(regName, &slaveAddr, &regCnt, &regInfo);
@@ -176,16 +179,21 @@ void camI2cWrite(uint8_t slaveAddr, uint8_t regAddr, uint8_t regData, uint32_t n
 
     tempBuffer[0] = regAddr;
     tempBuffer[1] = regData;
-    i2cDrvInstance->MasterTransmit(slaveAddr, tempBuffer, num, false);
+   
+    uint8_t rxNack = 0;
+    halI2cWrite(slaveAddr, tempBuffer, num, &rxNack, true);
+
+    if (rxNack == 1)
+    {
+        // if fail , write again
+        halI2cWrite(slaveAddr, tempBuffer, num, &rxNack, true);
+    }
 }
 
 uint8_t camI2cRead(uint8_t slaveAddr, uint8_t regAddr)
 {
-    uint8_t a;
-    a = regAddr;
     uint8_t readData;
-    i2cDrvInstance->MasterTransmit(slaveAddr, (uint8_t *)&a, 1, true);   
-    i2cDrvInstance->MasterReceive(slaveAddr, &readData, 1, false);
+    halI2cRead(slaveAddr, regAddr, &readData, true);
     return readData;   
 }
 
@@ -291,6 +299,8 @@ void camInit(void* dataAddr, cspiCbEvent_fn cb)
 	camParamCfg.colScaleRatio		= 0;
 	camParamCfg.scaleBytes		    = 0;
 	camResolution 			= CAM_CHAIN_COUNT;
+	// recv 8w pic into memory
+    camParamCfg.yOnly               = 1;
 
 #elif (CAMERA_ENABLE_GC032A)
  #if (GC032A_2SDR)
@@ -324,48 +334,48 @@ void camInit(void* dataAddr, cspiCbEvent_fn cb)
 	camParamCfg.dummyAllowed   = 1;
 	camResolution 			= CAM_CHAIN_COUNT;
  #endif
+
+    // recv 8w pic into memory
+    camParamCfg.yOnly               = 1;
+    camParamCfg.rowScaleRatio       = 1;
+    camParamCfg.colScaleRatio       = 1;
+    camParamCfg.scaleBytes          = 1;
 #elif (CAMERA_ENABLE_BF30A2)
  #if (BF30A2_1SDR)
  	camParamCfg.wireNum  	= WIRE_1;
  #endif
-	camParamCfg.endianMode  = LSB_MODE;
+	camParamCfg.endianMode  = CAM_LSB_MODE;
 	camParamCfg.rxSeq		= SEQ_0;
 	camParamCfg.cpha		= 0;
 	camParamCfg.cpol		= 0;
 	camParamCfg.yOnly       = 1;
+    camParamCfg.ddrMode     = 0;
+	camParamCfg.wordIdSeq   = 0;
     camParamCfg.rowScaleRatio		= 0;
 	camParamCfg.colScaleRatio		= 0;
 	camParamCfg.scaleBytes		    = 0;
 	camResolution 			= CAM_CHAIN_COUNT;
+    // recv 8w pic into memory
+    camParamCfg.yOnly               = 1;
 #elif (CAMERA_ENABLE_GC6153)
  #if (GC6153_1SDR)
  	camParamCfg.wireNum  	= WIRE_1;
  #endif
-	camParamCfg.endianMode  = LSB_MODE;
+	camParamCfg.endianMode  = CAM_LSB_MODE;
 	camParamCfg.rxSeq		= SEQ_1;
 	camParamCfg.cpha		= 1;
 	camParamCfg.cpol		= 0;
 	camParamCfg.yOnly       = 1;
+	camParamCfg.ddrMode     = 0;
+	camParamCfg.wordIdSeq   = 0;
     camParamCfg.rowScaleRatio       = 0;
     camParamCfg.colScaleRatio       = 0;
     camParamCfg.scaleBytes          = 0;
-	camResolution 			= CAM_CHAIN_COUNT;		
-#endif
+	camResolution 			= CAM_CHAIN_COUNT;	
 
-    if (camResolution == CAM_30W)
-    {
-        camParamCfg.yOnly               = 1;
-        camParamCfg.rowScaleRatio       = 0;
-        camParamCfg.colScaleRatio       = 0;
-        camParamCfg.scaleBytes          = 0;
-    }
-    else // CAM_8W
-    {
-        camParamCfg.yOnly               = 1;
-        camParamCfg.rowScaleRatio       = 1;
-        camParamCfg.colScaleRatio       = 1;
-        camParamCfg.scaleBytes          = 1;
-    }
+	// recv 8w pic into memory
+    camParamCfg.yOnly               = 1;
+#endif
 
     camInterfaceCfg(&camParamCfg);
 
@@ -420,6 +430,12 @@ void cspiEndIntEnable(cspiIntEnable_e endIntEnable)
     cspiDrv->ctrl(CSPI_CTRL_INT_CTRL , 0); // cspi interrupt enable or disable
 }
 
+void cspi2LspiEnable(uint8_t enable)
+{
+    cspiFrameProcLspi.outEnLspi = enable;
+    cspiDrv->ctrl(CSPI_FRAME_PROC_LSPI, 0);
+}
+
 void camFlush()
 {
 	cspiDrv->ctrl(CSPI_CTRL_FLUSH_RX_FIFO , 0); // flush rx fifo
@@ -464,4 +480,34 @@ void camClearIntStats(cspiInstance_e instance, uint32_t mask)
 	EIGEN_CSPI(instance)->STAS = mask;
 }
 
+void camRegisterErrStatsCb(camErrCb errCb)
+{
+    camErrStatsFunc = errCb;
+}
+
+void camCheckErrStats()
+{
+    if (!camErrStatsFunc)
+    {
+        return;
+    }
+
+    // check lspi error status and give cb to user
+    uint32_t status = LSPI2->STAS;
+
+    if ( (status | ICL_STATS_TX_UNDERRUN_RUN_Msk) ||
+         (status | ICL_STATS_TX_DMA_ERR_Msk) ||
+         (status | ICL_STATS_RX_OVERFLOW_Msk) ||
+         (status | ICL_STATS_RX_DMA_ERR_Msk) ||
+         (status | ICL_STATS_RX_FIFO_TIMEOUT_Msk) ||
+         (status | ICL_STATS_FS_ERR_Msk) ||
+         (status | ICL_STATS_CSPI_BUS_TIMEOUT_Msk) ||
+         (status | ICL_STATS_RX_FIFO_TIMEOUT_Msk)
+        ) 
+    {   
+        camErrStatsFunc(status);
+    }        
+
+    return;    
+}
 

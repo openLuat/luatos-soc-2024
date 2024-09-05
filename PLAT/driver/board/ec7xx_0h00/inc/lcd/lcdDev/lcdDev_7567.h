@@ -1,20 +1,12 @@
-#ifndef  LCD_ST7567_H_
-#define  LCD_ST7567_H_
+#ifndef  LCDDEV_7567_H
+#define  LCDDEV_7567_H
 
-#define     LCD_ST7567
-#define     LCD_NAME    "ST7567"
-#define     LCD_BPP     1
 
-#ifndef     LCD_WIDTH_7567
-#define     LCD_WIDTH_7567     128
-#undef      LCD_WIDTH
-#define     LCD_WIDTH      LCD_WIDTH_7567 
-#endif
+#include "lcdDrv.h"
 
-#ifndef     LCD_HEIGHT_7567
-#define     LCD_HEIGHT_7567    64 
-#undef      LCD_HEIGHT
-#define     LCD_HEIGHT     LCD_HEIGHT_7567 
-#endif
+#define HEIGHT_7567             (64)
+#define WIDTH_7567              (128)
+
+
 
 #endif

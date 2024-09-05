@@ -16,7 +16,7 @@
 ******************************************************************************/
 #ifndef __ATEC_AUDIO_H__
 #define __ATEC_AUDIO_H__
-
+#ifdef FEATURE_PLAT_AUDIO_AT_ENABLE
 #include "at_util.h"
 
 #define ATC_ECADCFG_RSP_BUFF_MIN                   250
@@ -263,6 +263,6 @@ CmsRetId ecAudioFixedSrcCfg(const AtCmdInputContext *pAtCmdReq);
 CmsRetId ecAudioSetSpeakerVol(const AtCmdInputContext *pAtCmdReq);
 
 #endif
-
+#endif
 /* END OF FILE */
 

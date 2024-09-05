@@ -685,6 +685,10 @@ typedef struct PsilCbsDcsInfo_Tag
  * API
  *****************************************************************************
 ******************************************************************************/
+CmsRetId smsAsciiToGsmDefaultAlphabet(UINT8 *pAscii, UINT8 asciiLen, UINT8 *pGsm, UINT8 *gsmLen);
+UINT8 smsGsmDefaultAlphabetToAscii(UINT8 *pGsmDefault, UINT8 lengh);
+UINT16 smsEncodeGsm7BitData(UINT8 *pInput, UINT16 inputLength, UINT8 *pOutput, UINT16 outputLength, UINT16 shiftBits);
+UINT16 smsDecodeGsm7BitData(UINT8 *pInput, UINT16 inputLength, UINT8 *pOutput, UINT16 outputLength, UINT16 shiftBits);
 CmsRetId smsQuerySmsService(UINT32 atHandle);
 CmsRetId smsGetSmsService(UINT32 atHandle);
 CmsRetId smsSetSmsService(UINT32 atHandle, const UINT32 service);
