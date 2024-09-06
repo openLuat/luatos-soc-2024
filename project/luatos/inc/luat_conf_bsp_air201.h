@@ -44,6 +44,11 @@
 #define LUAT_SCRIPT_SIZE 512
 #define LUAT_SCRIPT_OTA_SIZE 360
 
+#define LUAT_USE_SFUD 1
+#define LUAT_USE_FATFS 1
+#define LUAT_USE_FATFS_CHINESE 1
+#define LUAT_USE_LITTLE_FLASH 1
+
 // 开启UI库
 #define LUAT_USE_UI    1
 #define LUAT_USE_LCD
