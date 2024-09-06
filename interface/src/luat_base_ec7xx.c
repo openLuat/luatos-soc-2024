@@ -126,12 +126,6 @@ static const luaL_Reg loadedlibs[] = {
 #ifdef LUAT_USE_PACK
   {"pack",    luaopen_pack},              // pack.pack/pack.unpack
 #endif
-#ifdef LUAT_USE_MQTTCORE
-  {"mqttcore",luaopen_mqttcore},          // MQTT 协议封装
-#endif
-#ifdef LUAT_USE_LIBCOAP
-  {"libcoap", luaopen_libcoap},           // 处理COAP消息
-#endif
 #ifdef LUAT_USE_LIBGNSS
   {"libgnss", luaopen_libgnss},           // 处理GNSS定位数据
 #endif
@@ -184,21 +178,9 @@ static const luaL_Reg loadedlibs[] = {
 #ifdef LUAT_USE_FDB
   {"fdb",       luaopen_fdb},
 #endif
-#ifdef LUAT_USE_VMX
-  {"vmx",       luaopen_vmx},
-#endif
-#ifdef LUAT_USE_NES   
-  {"nes", luaopen_nes}, 
-#endif
-#ifdef LUAT_USE_COREMARK
-  {"coremark", luaopen_coremark},
-#endif
 #ifdef LUAT_USE_FONTS
   {"fonts", luaopen_fonts},
 #endif
-//#ifdef LUAT_USE_ZLIB
-//  {"zlib", luaopen_zlib},
-//#endif
 #ifdef LUAT_USE_MLX90640
   {"mlx90640", luaopen_mlx90640},
 #endif
@@ -268,12 +250,6 @@ static const luaL_Reg loadedlibs[] = {
 #endif
 #ifdef LUAT_USE_FASTLZ
   {"fastlz",    luaopen_fastlz},
-#endif
-#ifdef LUAT_USE_ERCOAP
-  {"ercoap", luaopen_ercoap},
-#endif
-#ifdef LUAT_USE_SQLITE3
-  {"sqlite3", luaopen_sqlite3},
 #endif
 #ifdef LUAT_USE_WS2812
   {"ws2812", luaopen_ws2812},

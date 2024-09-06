@@ -243,11 +243,6 @@ target(project_name,function()
     -- libftp
     add_includedirs(luatos_root.."/components/network/libftp", {public = true})
     add_files(luatos_root.."/components/network/libftp/*.c")
-    -- ulwip和natp
-    add_includedirs(luatos_root.."/components/network/adapter_lwip2", {public = true})
-    add_files(luatos_root.."/components/network/adapter_lwip2/**.c")
-    add_includedirs(luatos_root.."/components/network/ulwip/include", {public = true})
-    add_files(luatos_root.."/components/network/ulwip/**.c")
     -- sfd
     add_includedirs(luatos_root.."/components/sfd", {public = true})
     add_files(luatos_root.."/components/sfd/*.c")
@@ -276,18 +271,6 @@ target(project_name,function()
     -- statem
     add_includedirs(luatos_root.."/components/statem", {public = true})
     add_files(luatos_root.."/components/statem/*.c")
-    -- ercoap
-    add_includedirs(luatos_root.."/components/network/ercoap/include",{public = true})
-    add_files(luatos_root.."/components/network/ercoap/src/*.c")
-    add_files(luatos_root.."/components/network/ercoap/binding/*.c")
-    -- sqlite3
-    add_includedirs(luatos_root.."/components/sqlite3/include",{public = true})
-    add_files(luatos_root.."/components/sqlite3/src/*.c")
-    add_files(luatos_root.."/components/sqlite3/binding/*.c")
-    -- ws2812 单独的库
-    add_includedirs(luatos_root.."/components/ws2812/include",{public = true})
-    add_files(luatos_root.."/components/ws2812/src/*.c")
-    add_files(luatos_root.."/components/ws2812/binding/*.c")
     -- xxtea
     add_includedirs(luatos_root.."/components/xxtea/include",{public = true})
     add_files(luatos_root.."/components/xxtea/src/*.c")
