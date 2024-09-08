@@ -610,6 +610,8 @@ static void adc_temp_cb(uint32_t result) {
     luat_rtos_semaphore_release(adc_ctrl[5].wait_finish);
 }
 
+static uint32_t prv_adc_gain;
+static int32_t prv_adc_offset;
 static uint8_t adc_is_init;
 
 int luat_adc_open(int id, void* ptr) {
@@ -618,6 +620,18 @@ int luat_adc_open(int id, void* ptr) {
     if (!adc_is_init){
         trimAdcSetGolbalVar();
         adc_is_init = 1;
+        AdcEfuseCalCode_t * efuseCalcodePtr = trimAdcGetCalCode();
+        // convert to complement code
+        if(efuseCalcodePtr->offset & 0x800)
+        {
+        	prv_adc_offset = ~(efuseCalcodePtr->offset & 0x7FF) + 1;
+        }
+        else
+        {
+        	prv_adc_offset = efuseCalcodePtr->offset;
+        }
+        prv_adc_gain = efuseCalcodePtr->gain;
+        DBG("adc gain %u, offset %d", prv_adc_gain, prv_adc_offset);
     }
 
     size_t i = 0;
@@ -636,7 +650,8 @@ int luat_adc_open(int id, void* ptr) {
         	adc_ctrl[id].resdiv = range_map[i].resdiv;
         	adc_ctrl[id].p1 = range_map[i].p1;
         	adc_ctrl[id].p2 = range_map[i].p2;
-        	DBG("adc%d param %d,%d,%d,%d,%d", id, adc_ctrl[id].aio, adc_ctrl[id].range, adc_ctrl[id].resdiv, adc_ctrl[id].p1, adc_ctrl[id].p2);
+        	uint32_t max = (prv_adc_gain * 1000 + (prv_adc_offset * 125 >> 1)) * range_map[i].p1 / range_map[i].p2;
+        	DBG("adc%d param %d,%d,%d,%d,%d, max read:%umv", id, adc_ctrl[id].aio, adc_ctrl[id].range, adc_ctrl[id].resdiv, adc_ctrl[id].p1, adc_ctrl[id].p2, max);
             if (!adc_ctrl[id].wait_finish) {
             	luat_rtos_semaphore_create(&adc_ctrl[id].wait_finish, 1);
             }
