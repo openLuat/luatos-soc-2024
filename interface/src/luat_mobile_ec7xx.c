@@ -784,7 +784,7 @@ void luat_mobile_set_auto_rrc_default(void)
 {
 	net_lwip_check_switch(1);
 	soc_mobile_set_rrc_release_time(1);
-	soc_mobile_set_rrc_release_idle_min_time(35);
+	soc_mobile_set_rrc_release_idle_min_time(55);
 }
 
 extern void soc_mobile_release_rrc_pause(uint8_t onoff);
