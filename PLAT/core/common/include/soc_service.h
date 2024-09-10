@@ -247,6 +247,7 @@ void soc_mobile_print_cell_info(uint8_t sim_id);
 uint8_t soc_rndis_is_enable(void);
 uint8_t soc_rndis_is_nat(void);
 uint32_t soc_rndis_host_ip(void);
+uint8_t soc_uethernet_is_nat(void);
 void soc_psram_speed_init(void);
 void soc_psram_dma_on_off(uint32_t mask_bit, uint8_t on_off);
 void soc_flash_dma_on_off(uint32_t mask_bit, uint8_t on_off);
