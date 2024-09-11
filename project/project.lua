@@ -415,6 +415,16 @@ target(project_name..".elf",function()
             -- print("FLASH_FOTA_REGION",FLASH_FOTA_REGION_START,FLASH_FOTA_REGION_END,FLASH_FOTA_REGION_LEN)
             local LUAT_SCRIPT_SIZE = tonumber(conf_data:match("#define LUAT_SCRIPT_SIZE (%d+)"))
             local LUAT_SCRIPT_OTA_SIZE = tonumber(conf_data:match("#define LUAT_SCRIPT_OTA_SIZE (%d+)"))
+            local LUAT_MODEL = conf_data:match("#define LUAT_MODEL_(%w+)")
+            if LUAT_MODEL then
+                if LUAT_MODEL == "AIR780EPS" then
+                    LUAT_MODEL = "Air780EPS"
+                elseif LUAT_MODEL == "AIR201" then
+                    LUAT_MODEL = "Air201"
+                else
+                    LUAT_MODEL = nil 
+                end
+            end
             -- print(string.format("script zone %d ota %d", LUAT_SCRIPT_SIZE, LUAT_SCRIPT_OTA_SIZE))
             if chip_target == "ec718pv" and LUAT_SCRIPT_SIZE > 128 then
                 LUAT_SCRIPT_SIZE = 128
@@ -466,7 +476,11 @@ target(project_name..".elf",function()
                 print("pls install p7zip-full in linux/mac.")
                 return
             end
-            os.mv(out_path.."/"..project_name..".7z", out_path.."/LuatOS-SoC_"..LUAT_BSP_VERSION.."_".. chip_target:upper() ..".soc")
+            if LUAT_MODEL then
+                os.mv(out_path.."/"..project_name..".7z", out_path.."/LuatOS-SoC_"..LUAT_BSP_VERSION.."_".. LUAT_MODEL ..".soc")
+            else
+                os.mv(out_path.."/"..project_name..".7z", out_path.."/LuatOS-SoC_"..LUAT_BSP_VERSION.."_".. chip_target:upper() ..".soc")
+            end
             os.rm(out_path.."/pack")
         else 
             json.savefile(out_path.."/pack/info.json", info_table)
