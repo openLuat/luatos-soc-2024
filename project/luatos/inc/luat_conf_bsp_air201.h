@@ -27,6 +27,7 @@
 #define LUAT_USE_LIBGNSS  1
 #define LUAT_USE_FS  1
 #define LUAT_USE_SENSOR  1
+#define LUAT_USE_YHM27XX 1
 
 #define LUAT_USE_FSKV 1
 #define LUAT_USE_I2CTOOLS 1
