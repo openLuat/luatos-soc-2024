@@ -9,10 +9,13 @@
 //------------------------------------------------------
 
 // #define LUAT_MODEL_AIR780EPS 1
+// #define LUAT_MODEL_AIR780EQ 1
 // #define LUAT_MODEL_AIR201 1
 
 #if defined(LUAT_MODEL_AIR780EPS)
 #include "luat_conf_bsp_air780eps.h"
+#elif defined(LUAT_MODEL_AIR780EQ)
+#include "luat_conf_bsp_air780eq.h"
 #elif defined(LUAT_MODEL_AIR201)
 #include "luat_conf_bsp_air201.h"
 #else
