@@ -336,13 +336,17 @@ function description_common()
         if not os.isfile(csdk_root.."/PLAT/prebuild/"..prebuild_sha1..".7z") or prebuild_sha1 ~= hash.sha1(csdk_root.."/PLAT/prebuild/"..prebuild_sha1..".7z") then
             import("net.http")
             if os.isdir(libs_prebuild_dir.."FW") then os.rmdir(libs_prebuild_dir.."FW") os.rmdir(libs_prebuild_dir.."PLAT") os.rmdir(libs_prebuild_dir.."PS") end
+            print("--> 开始下载prebuild的库文件", prebuild_sha1)
             http.download(format(plat_url,"prebuild",prebuild_sha1), csdk_root.."/PLAT/prebuild/"..prebuild_sha1..".7z")
+            print("<-- 下载完成", prebuild_sha1)
         end
         assert(os.isfile(csdk_root.."/PLAT/prebuild/"..prebuild_sha1..".7z"),csdk_root.."/PLAT/prebuild/"..prebuild_sha1..".7z".." not exist , mabe download failed")
         
         if not os.isdir(libs_prebuild_dir.."FW") then
             import("utils.archive")
+            print("--> 开始解压prebuild的库文件", prebuild_sha1)
             archive.extract(csdk_root.."/PLAT/prebuild/"..prebuild_sha1..".7z", libs_prebuild_dir)
+            print("<-- 解压完成", prebuild_sha1)
         end
 
 
