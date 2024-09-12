@@ -1214,3 +1214,19 @@ int luat_mobile_lock_cell(uint32_t op, uint32_t earfcn, uint16_t pci)
 	}
 	return appSetCiotFreqSync(&p);
 }
+
+extern void soc_get_extern_service_cell_info(uint16_t *mcc, uint16_t *mnc, uint32_t *earfcn, uint16_t *pci);
+int luat_mobile_get_extern_service_cell_info(luat_mobile_scell_extern_info_t *info)
+{
+	if (!info) return -1;
+	soc_get_extern_service_cell_info(&info->mcc, &info->mnc, &info->earfcn, &info->pci);
+	if ((info->mnc >> 12) == 0x000f)
+	{
+		info->mnc &= 0x00ff;
+	}
+	else
+	{
+		info->mnc &= 0x0fff;
+	}
+	return 0;
+}
