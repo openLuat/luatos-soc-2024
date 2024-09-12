@@ -40,7 +40,7 @@
 extern void GetSRAMHeapInfo(uint32_t *total, uint32_t *alloc, uint32_t *peak);
 extern void GetPSRAMHeapInfo(uint32_t *total, uint32_t *alloc, uint32_t *peak);
 
-#if defined (LUAT_USE_PSRAM)
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
 static llist_head prv_psram_record_list_head;
 typedef struct
 {
