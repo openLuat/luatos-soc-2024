@@ -40,7 +40,7 @@ static void luat_test_task(void *param)
 		但量产出货一定要设置为出现异常重启！！！！！！！！！1
 	*/
 	luat_debug_set_fault_mode(LUAT_DEBUG_FAULT_HANG_RESET); 
-	net_lwip_set_tcp_rx_cache(NW_ADAPTER_INDEX_LWIP_GPRS, 32); //为了下行测试才需要打开，对于不需要高速流量的应用不要打开
+	//net_lwip_set_tcp_rx_cache(NW_ADAPTER_INDEX_LWIP_GPRS, 32); //为了下行测试才需要打开，对于不需要高速流量的应用不要打开
 	g_s_network_ctrl = network_alloc_ctrl(NW_ADAPTER_INDEX_LWIP_GPRS);
 	network_init_ctrl(g_s_network_ctrl, g_s_task_handle, luat_test_socket_callback, NULL);
 	network_set_base_mode(g_s_network_ctrl, 1, 15000, 1, 300, 5, 9);
