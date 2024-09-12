@@ -470,12 +470,23 @@ target(project_name..".elf",function()
                 print("pls install p7zip-full in linux/mac.")
                 return
             end
+            local socpath = "LuatOS-SoC_"..LUAT_BSP_VERSION.."_".. chip_target:upper() ..".soc"
             if LUAT_MODEL then
-                os.mv(out_path.."/"..project_name..".7z", out_path.."/LuatOS-SoC_"..LUAT_BSP_VERSION.."_".. LUAT_MODEL ..".soc")
-            else
-                os.mv(out_path.."/"..project_name..".7z", out_path.."/LuatOS-SoC_"..LUAT_BSP_VERSION.."_".. chip_target:upper() ..".soc")
+                socpath = "LuatOS-SoC_"..LUAT_BSP_VERSION.."_".. LUAT_MODEL ..".soc"
             end
+            os.mv(out_path.."/"..project_name..".7z", out_path.. "/" .. socpath)
             os.rm(out_path.."/pack")
+
+            -- 打印最终信息
+            print("================================================================")
+            print("LuatOS固件主文件\t", socpath)
+            print("LuatOS固件脚本区大小\t", LUAT_SCRIPT_SIZE .. "K")
+            print("LuatOS固件文件系统大小\t", (tonumber(fs_len, 16) // 1024) .. "K")
+            if LUAT_MODEL then
+                print("LuatOS固件模组类型\t", LUAT_MODEL)
+            end
+            print("LuatOS固件芯片类型\t", chip_target:upper())
+            print("================================================================")
         else 
             json.savefile(out_path.."/pack/info.json", info_table)
             os.cp(out_path.."/"..project_name..".binpkg", out_path.."/pack")
