@@ -481,7 +481,8 @@ target(project_name..".elf",function()
             print("================================================================")
             print("LuatOS固件主文件\t", socpath)
             print("LuatOS固件脚本区大小\t", LUAT_SCRIPT_SIZE .. "K")
-            print("LuatOS固件文件系统大小\t", (tonumber(fs_len, 16) // 1024) .. "K")
+            print("LuatOS固件文件系统大小\t", (FLASH_FS_REGION_SIZE // 1024) .. "K")
+            print("LuatOS固件底层FOTA区\t", (FLASH_FOTA_REGION_LEN // 1024) .. "K")
             if LUAT_MODEL then
                 print("LuatOS固件模组类型\t", LUAT_MODEL)
             end
