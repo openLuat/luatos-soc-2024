@@ -416,14 +416,8 @@ target(project_name..".elf",function()
             local LUAT_SCRIPT_SIZE = tonumber(conf_data:match("#define LUAT_SCRIPT_SIZE (%d+)"))
             local LUAT_SCRIPT_OTA_SIZE = tonumber(conf_data:match("#define LUAT_SCRIPT_OTA_SIZE (%d+)"))
             local LUAT_MODEL = conf_data:match("#define LUAT_MODEL_(%w+)")
-            if LUAT_MODEL then
-                if LUAT_MODEL == "AIR780EPS" then
-                    LUAT_MODEL = "Air780EPS"
-                elseif LUAT_MODEL == "AIR201" then
-                    LUAT_MODEL = "Air201"
-                else
-                    LUAT_MODEL = nil 
-                end
+            if LUAT_MODEL and LUAT_MODEL:sub(1,3) == "AIR" then
+                LUAT_MODEL = "Air" .. LUAT_MODEL:sub(4)
             end
             -- print(string.format("script zone %d ota %d", LUAT_SCRIPT_SIZE, LUAT_SCRIPT_OTA_SIZE))
             if chip_target == "ec718pv" and LUAT_SCRIPT_SIZE > 128 then
