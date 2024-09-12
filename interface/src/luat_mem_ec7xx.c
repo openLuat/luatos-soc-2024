@@ -40,6 +40,7 @@
 extern void GetSRAMHeapInfo(uint32_t *total, uint32_t *alloc, uint32_t *peak);
 extern void GetPSRAMHeapInfo(uint32_t *total, uint32_t *alloc, uint32_t *peak);
 
+#if defined (LUAT_USE_PSRAM)
 static llist_head prv_psram_record_list_head;
 typedef struct
 {
@@ -126,8 +127,8 @@ static void psram_free(void *ptr)
 		soc_sys_force_wakeup_on_off(SOC_SYS_CTRL_PSRAM, 0);
 	}
 	luat_rtos_task_resume_all();
-
 }
+#endif
 
 void* luat_heap_malloc(size_t len) {
     return malloc(len);
