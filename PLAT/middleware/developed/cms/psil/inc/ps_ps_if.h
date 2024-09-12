@@ -82,7 +82,7 @@ CmsRetId psSetRTDCP(UINT32 atHandle, INT32 reporting);
 CmsRetId psGetCurRTDCP(UINT32 atHandle);
 
 //Unused function
-CmsRetId psSetCGAUTH( UINT32 atHandle,CmiPsSetDefineAuthCtxReq *pSetDefinedAuthReq);
+//CmsRetId psSetCGAUTH( UINT32 atHandle,CmiPsSetDefineAuthCtxReq *pSetDefinedAuthReq);
 
 CmsRetId psGetCGAUTH(UINT32 atHandle);
 CmsRetId psSetCIPCA(UINT32 atHandle,INT32 n,INT32 attach);
