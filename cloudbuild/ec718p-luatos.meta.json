@@ -128,18 +128,6 @@
                                 "dft": false
                             }
                         ]
-                    },
-                    {
-                        "icon": "zmdi-puzzle-piece",
-                        "name": "@EC718E",
-                        "content": "(测试阶段)EC718E方案, 兼容Air780EE",
-                        "rsize": 0
-                    },
-                    {
-                        "icon": "zmdi-puzzle-piece",
-                        "name": "@EC716E",
-                        "content": "(测试阶段)EC716E方案, 兼容Air780EQ模组",
-                        "rsize": 0
                     }
                 ]
             },
