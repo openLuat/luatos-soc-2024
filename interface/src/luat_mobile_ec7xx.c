@@ -362,7 +362,10 @@ int luat_mobile_set_apn_auth_info(int sim_id, int cid, uint8_t protocol, uint8_t
 		}
 		req.cmiAuthInfo.authPswdPresent = 1;
 	}
-	return psSetCGAUTH(PS_DIAL_REQ_HANDLER, &req);
+	psCamCmiReq(PS_DIAL_REQ_HANDLER, CAM_PS, CMI_PS_DEFINE_AUTH_CTX_REQ,
+            sizeof(CmiPsSetDefineAuthCtxReq),
+            (void *)&req);
+	return 0;
 }
 
 static void luat_mobile_deactive_apn_ec618(UINT16 paramSize, void *pParam)
