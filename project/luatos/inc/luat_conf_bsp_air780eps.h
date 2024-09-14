@@ -16,6 +16,7 @@
 #define LUAT_USE_RTC 1
 #define LUAT_USE_OTP 1
 #define LUAT_USE_WLAN 1
+#define LUAT_USE_SMS 1
 #define LUAT_USE_HMETA 1
 
 #define LUAT_USE_IOTAUTH 1
@@ -39,10 +40,10 @@
 
 #define LUAT_USE_ICONV 1
 
-#define LUAT_USE_MEDIA    1
-#define LUAT_USE_RECORD     1
-#define LUAT_USE_TTS    1
-#define LUAT_USE_TTS_ONCHIP    1
+// #define LUAT_USE_MEDIA    1
+// #define LUAT_USE_RECORD     1
+// #define LUAT_USE_TTS    1
+// #define LUAT_USE_TTS_ONCHIP    1
 
 #define LUAT_SCRIPT_SIZE 512
 #define LUAT_SCRIPT_OTA_SIZE 360
