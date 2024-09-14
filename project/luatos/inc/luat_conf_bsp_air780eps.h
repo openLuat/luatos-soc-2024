@@ -1,4 +1,9 @@
 
+// #if !defined(TYPE_EC716U)
+// #error("Air780EPS只能是EC718U芯片")
+// #endif
+
+
 #define LUAT_USE_UART 1
 #define LUAT_USE_GPIO 1
 #define LUAT_USE_I2C  1

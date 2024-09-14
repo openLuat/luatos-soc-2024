@@ -1,4 +1,8 @@
 
+// #ifndef TYPE_EC716E
+// #error("Air780EQ只能是EC716E芯片")
+// #endif
+
 #define LUAT_USE_UART 1
 #define LUAT_USE_GPIO 1
 #define LUAT_USE_I2C  1

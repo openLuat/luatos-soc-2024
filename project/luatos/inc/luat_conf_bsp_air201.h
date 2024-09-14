@@ -1,3 +1,6 @@
+// #if !defined(TYPE_EC716U)
+// #error("Air201只能是EC718U芯片")
+// #endif
 
 // Air201 基本上就是 Air780EPS的基础上开启UI库, 但不开LVGL
 
