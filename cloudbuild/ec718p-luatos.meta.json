@@ -132,13 +132,13 @@
                     {
                         "icon": "zmdi-puzzle-piece",
                         "name": "@EC718E",
-                        "content": "EC718E方案, 兼容Air780EE",
+                        "content": "(测试阶段)EC718E方案, 兼容Air780EE",
                         "rsize": 0
                     },
                     {
                         "icon": "zmdi-puzzle-piece",
                         "name": "@EC716E",
-                        "content": "EC716E方案, 兼容Air780EQ模组",
+                        "content": "(测试阶段)EC716E方案, 兼容Air780EQ模组",
                         "rsize": 0
                     }
                 ]
@@ -629,13 +629,6 @@
                     {
                         "name": "LUAT_UART0_LOG_BR_12M",
                         "content": "UART0输出log的波特率为12M",
-                        "rsize": 0,
-                        "fsize": 1024,
-                        "dft": false
-                    },
-                    {
-                        "name": "LUAT_HEAP_SIZE_200K",
-                        "content": "Lua内存设置到200k字节, 2023.7.10之前默认200k, 之后默认256k,本选项只为兼容老的配置.不影响FOTA",
                         "rsize": 0,
                         "fsize": 1024,
                         "dft": false
