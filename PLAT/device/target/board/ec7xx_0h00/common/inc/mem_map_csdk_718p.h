@@ -110,7 +110,7 @@ flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 //hib bakcup addr and size
 #define FLASH_HIB_BACKUP_EXIST          (1)
 #define FLASH_MEM_BACKUP_ADDR           (AP_FLASH_XIP_ADDR+FLASH_MEM_BACKUP_NONXIP_ADDR)
-#define FLASH_MEM_BACKUP_NONXIP_ADDR    (0x389000)
+#define FLASH_MEM_BACKUP_NONXIP_ADDR    (0x3d9000)
 #define FLASH_MEM_BACKUP_SIZE           (0x18000)//96KB
 #define FLASH_MEM_BLOCK_SIZE            (0x6000)
 #define FLASH_MEM_BLOCK_CNT             (0x4)

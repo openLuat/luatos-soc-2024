@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "update_time": "2024-09-12 16:59:54.209526",
+  "update_time": "2024-09-14 11:16:25.546685",
   "libs": {
     "ec718u": {
       "sha1": "77f9dc4da11f59da047af78b45021daf06c5988b",
@@ -11,12 +11,12 @@
       "size": 7306007
     },
     "ec718p": {
-      "sha1": "65e58c630ce12a9f74a612ff4b1fc3f301a5eb71",
-      "size": 7185829
+      "sha1": "17de4742c2bcd217d1030e9b6d1dd965f8c6c778",
+      "size": 7184407
     },
     "ec718pv": {
-      "sha1": "0745dae33d5ea3650ac6db04e9b791e8c79dad6d",
-      "size": 7318005
+      "sha1": "e3ff5e97fffcf229747ed068a58c3ef40f375c32",
+      "size": 7316084
     },
     "ec718s": {
       "sha1": "8dbc3234e039bebc1e2ff0b6b460773c03250864",
@@ -27,8 +27,8 @@
       "size": 13470819
     },
     "ec716e": {
-      "sha1": "6d3255e1c854aeb4ed55d623a9353eab0f9366bc",
-      "size": 7093006
+      "sha1": "22bce85f36cdfb0bed27d9b8086fbf46d4c8f2cc",
+      "size": 7100657
     },
     "ec718s-mid": {
       "sha1": "62b264fb8218ae3bfd3e4be0839f58706aea27ec",
