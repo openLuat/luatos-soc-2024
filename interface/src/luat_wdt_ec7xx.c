@@ -3,7 +3,8 @@
 #include "slpman.h"
 int luat_wdt_init(size_t timeout)
 {
-    if(timeout < 1 || timeout > 60)
+    timeout = (timeout>1000)?timeout/1000:timeout;
+    if(timeout < 20 || timeout > 60)
     {
         return -1;
     }
@@ -23,7 +24,8 @@ int luat_wdt_init(size_t timeout)
 
 int luat_wdt_set_timeout(size_t timeout)
 {
-    if(timeout < 1 || timeout > 60)
+    timeout = (timeout>1000)?timeout/1000:timeout;
+    if(timeout < 20 || timeout > 60)
     {
         return -1;
     }
