@@ -35,7 +35,7 @@
 //extern uint32_t end_ap_data;
 //uint32_t sys_heap_start = &(start_up_buffer);
 //uint32_t sys_heap_end = &(end_ap_data);
-
+#include "luat_rtos.h"
 #include "FreeRTOS.h"
 extern void GetSRAMHeapInfo(uint32_t *total, uint32_t *alloc, uint32_t *peak);
 extern void GetPSRAMHeapInfo(uint32_t *total, uint32_t *alloc, uint32_t *peak);
