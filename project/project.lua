@@ -155,7 +155,6 @@ function description_csdk()
                     luatos_root .. "/components/sms",
                     luatos_root .. "/components/lcd",
                     luatos_root .. "/components/u8g2",
-                    luatos_root .. "/components/cjson",
                     luatos_root .. "/components/multimedia",
                     luatos_root .. "/components/io_queue",
                     csdk_root.."/interface/include")
