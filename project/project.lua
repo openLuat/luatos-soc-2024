@@ -158,6 +158,10 @@ function description_csdk()
                     luatos_root .. "/components/multimedia",
                     luatos_root .. "/components/io_queue",
                     csdk_root.."/interface/include")
+                    
+    if chip_target == "ec718pv" or chip_target == "ec718u" then
+        add_includedirs(luatos_root .. "/components/cjson")
+    end
 end
 description_csdk()
 
