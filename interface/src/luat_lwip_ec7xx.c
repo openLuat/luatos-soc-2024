@@ -1065,33 +1065,19 @@ static void net_lwip_task(void *param)
 		if (need_clat)
 		{
 			//NET_DBG("adapter src is ipv6, dest is ipv4 use clat!!!");
-			netif = soc_get_clat_netif();
-			if (netif)
+			if (1 == need_clat)
 			{
-				if (IP6_ADDR_PREFERRED == (netif->ip6_addr_state[0] & IP6_ADDR_PREFERRED))
-				{
-					local_ip = &netif->ip6_addr[0];
-				}
-				else
-				{
-					local_ip = &netif->ip6_addr[1];
-				}
-				if (1 == need_clat)
-				{
-					clat_temp = p_ip->u_addr.ip4.addr;
-					p_ip->type = IPADDR_TYPE_V6;
-					p_ip->u_addr.ip6.addr[0] = 0x9bff6400;
-					p_ip->u_addr.ip6.addr[1] = 0;
-					p_ip->u_addr.ip6.addr[2] = 0;
-					p_ip->u_addr.ip6.addr[3] = clat_temp;
-				}
-				NET_DBG("src %s", ipaddr_ntoa(local_ip));
-				NET_DBG("dest %s", ipaddr_ntoa(p_ip));
+				clat_temp = p_ip->u_addr.ip4.addr;
+				p_ip->type = IPADDR_TYPE_V6;
+				p_ip->u_addr.ip6.addr[0] = 0x9bff6400;
+				p_ip->u_addr.ip6.addr[1] = 0;
+				p_ip->u_addr.ip6.addr[2] = 0;
+				p_ip->u_addr.ip6.addr[3] = clat_temp;
 			}
-			else
-			{
-				local_ip = &prvlwip.lwip_netif->ip_addr;
-			}
+			local_ip = net_lwip_get_ip6(NW_ADAPTER_INDEX_LWIP_GPRS);
+			NET_DBG("clat src %s", ipaddr_ntoa(local_ip));
+			NET_DBG("clat dest %s", ipaddr_ntoa(p_ip));
+
 		}
 		else if (p_ip->type == IPADDR_TYPE_V4)
 		{
