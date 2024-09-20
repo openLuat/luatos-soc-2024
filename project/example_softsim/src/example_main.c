@@ -29,6 +29,7 @@
 #define NET_LED_PIN	HAL_GPIO_14
 extern void tgt_app_service_init(void);
 extern void tgt_app_service_stop_softsim(void);
+extern void luat_mobile_vsim_user_heartbeat_once(void);
 static void luatos_mobile_event_callback(LUAT_MOBILE_EVENT_E event, uint8_t index, uint8_t status)
 {
 	luat_mobile_scell_extern_info_t scell;
@@ -130,13 +131,14 @@ static void test(void *param)
 	luat_rtos_task_sleep(500);
 	luat_mobile_softsim_onoff(1);
 	luat_mobile_set_flymode(0, 0);
-
+	luat_rtos_task_sleep(30000);
 
 	while(1)
 	{
 
 		luat_meminfo_sys(&total, &used, &max_used);
 		LUAT_DEBUG_PRINT("meminfo %d,%d,%d",total, used, max_used);
+#if 0
 		//系统切换到实体卡
 		luat_mobile_set_flymode(0, 1);
 		luat_rtos_task_sleep(2000);
@@ -155,6 +157,25 @@ static void test(void *param)
 		luat_mobile_softsim_onoff(1);
 		luat_mobile_set_flymode(0, 0);
 		luat_rtos_task_sleep(30000);
+#endif
+		luat_mobile_vsim_user_heartbeat_once();
+		luat_rtos_task_sleep(60000);
+		luat_mobile_vsim_user_heartbeat_once();
+		luat_rtos_task_sleep(90000);
+		luat_mobile_vsim_user_heartbeat_once();
+		luat_rtos_task_sleep(120000);
+		luat_mobile_vsim_user_heartbeat_once();
+		luat_rtos_task_sleep(150000);
+		luat_mobile_vsim_user_heartbeat_once();
+		luat_rtos_task_sleep(180000);
+		luat_mobile_vsim_user_heartbeat_once();
+		luat_rtos_task_sleep(210000);
+		luat_mobile_vsim_user_heartbeat_once();
+		luat_rtos_task_sleep(240000);
+		luat_mobile_vsim_user_heartbeat_once();
+		luat_rtos_task_sleep(270000);
+		luat_mobile_vsim_user_heartbeat_once();
+		luat_rtos_task_sleep(300000);
 	}
 }
 

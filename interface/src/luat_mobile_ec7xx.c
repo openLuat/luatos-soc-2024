@@ -1233,3 +1233,5 @@ int luat_mobile_get_extern_service_cell_info(luat_mobile_scell_extern_info_t *in
 	}
 	return 0;
 }
+
+LUAT_WEAK void luat_mobile_vsim_user_heartbeat_once(void) {;}
