@@ -126,6 +126,19 @@ int luat_gpio_open(luat_gpio_cfg_t* gpio)
 		return 0;
 	}
 
+	#if defined(__LUATOS__) && defined(TYPE_EC716E)
+	else if (gpio->pin < 10) {
+		// Air780EQ不支持普通GPIO，所以屏蔽
+		extern int soc_get_model_name(char *model, uint8_t is_full);
+		char model[16] = {0};
+		soc_get_model_name(model, 0);
+		if (strcmp(model, "Air780EQ") == 0)
+		{
+			return -1;
+		}
+	}
+	#endif
+
 	uint8_t is_pull;
 	uint8_t is_pullup;
 	uint8_t is_input = (LUAT_GPIO_OUTPUT == gpio->mode)?0:1;
