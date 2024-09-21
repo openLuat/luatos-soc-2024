@@ -75,3 +75,12 @@ __attribute__((used)) time_t __wrap_time (time_t *_Time)
   }
   return timeUtc->UTCsecs;
 }
+
+#include "bsp.h"
+uint8_t* __wrap_getBuildInfo(void)
+{
+    return (uint8_t *)(
+		STRING_EOL"-- Board: " CHIP_TYPE " -- "STRING_EOL \
+                         VERSION_INFO STRING_EOL
+	);
+}

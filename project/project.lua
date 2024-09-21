@@ -101,6 +101,8 @@ function description_csdk()
                 "-Wl,--wrap=localtime",
                 "-Wl,--wrap=gmtime",
                 "-Wl,--wrap=time",
+                -- 开启这个配置,使用相同源码重复编译,会得到一样的固件,不随时间变化
+                -- "-Wl,--wrap=getBuildInfo",
                 {force = true})
 
     -- 已经生效的GCC警告信息
