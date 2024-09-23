@@ -127,7 +127,7 @@ int luat_gpio_open(luat_gpio_cfg_t* gpio)
 	}
 
 	#if defined(__LUATOS__) && defined(TYPE_EC716E)
-	else if (gpio->pin < 10) {
+	else if (gpio->pin < 10 || gpio->pin > 16) {
 		// Air780EQ不支持普通GPIO，所以屏蔽
 		extern int soc_get_model_name(char *model, uint8_t is_full);
 		char model[16] = {0};
