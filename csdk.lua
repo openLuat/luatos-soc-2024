@@ -1,5 +1,5 @@
 luatos_root = os.scriptdir().."/../LuatOS"
-LUAT_BSP_VERSION = "V1004"
+LUAT_BSP_VERSION = "2001"
 
 package("gnu_rm")
     set_kind("toolchain")
