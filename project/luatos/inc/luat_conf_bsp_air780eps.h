@@ -37,13 +37,9 @@
 #define LUAT_USE_MINIZ 1
 #define LUAT_USE_FTP 1
 #define LUAT_USE_BIT64 1
-
 #define LUAT_USE_ICONV 1
-
-// #define LUAT_USE_MEDIA    1
-// #define LUAT_USE_RECORD     1
-// #define LUAT_USE_TTS    1
-// #define LUAT_USE_TTS_ONCHIP    1
 
 #define LUAT_SCRIPT_SIZE 512
 #define LUAT_SCRIPT_OTA_SIZE 360
+
+#define LUAT_HEAP_SIZE (300*1024)
