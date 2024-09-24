@@ -21,6 +21,7 @@
 
 #define LUAT_USE_IOTAUTH 1
 #define LUAT_USE_MQTT 1
+#define LUAT_USE_FTP 1
 #define LUAT_USE_WEBSOCKET 1
 #define LUAT_USE_SOFT_UART 1
 
@@ -28,16 +29,19 @@
 #define LUAT_USE_CJSON  1
 #define LUAT_USE_ZBUFF  1
 #define LUAT_USE_PACK  1
-#define LUAT_USE_LIBGNSS  1
 #define LUAT_USE_FS  1
 #define LUAT_USE_SENSOR  1
 
 #define LUAT_USE_FSKV 1
 #define LUAT_USE_I2CTOOLS 1
 #define LUAT_USE_MINIZ 1
-#define LUAT_USE_FTP 1
 #define LUAT_USE_BIT64 1
 #define LUAT_USE_ICONV 1
+
+#define LUAT_USE_PROTOBUF 1
+#define LUAT_USE_RSA      1
+#define LUAT_USE_XXTEA    1
+#define LUAT_USE_GMSSL    1
 
 #define LUAT_SCRIPT_SIZE 512
 #define LUAT_SCRIPT_OTA_SIZE 360
