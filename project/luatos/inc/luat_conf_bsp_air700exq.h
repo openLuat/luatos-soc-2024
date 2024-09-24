@@ -9,13 +9,18 @@
 #define LUAT_USE_RTC 1
 #define LUAT_USE_WLAN 1
 #define LUAT_USE_SMS 1
+#define LUAT_USE_MCU  1
+
+
 #define LUAT_USE_CRYPTO  1
 #define LUAT_USE_CJSON  1
 #define LUAT_USE_ZBUFF  1
 #define LUAT_USE_PACK  1
 #define LUAT_USE_MINIZ 1
+
 #define LUAT_USE_HMETA 1
 #define LUAT_USE_FSKV 1
+
 
 #define LUAT_USE_MQTT 1
 #define LUAT_USE_FTP 1
