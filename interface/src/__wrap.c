@@ -2,10 +2,21 @@
 #include "time.h"
 #include "osasys.h"
 
-void RTC_GetDateTime(Date_UserDataStruct *pDate, Time_UserDataStruct *pTime)
-{
-	Tamp2UTC(time(NULL), pDate, pTime, 0);
-}
+//static void RTC_GetDateTime(Date_UserDataStruct *pDate, Time_UserDataStruct *pTime)
+//{
+//	PV_Union uPV;
+//	utc_timer_value_t *timeUtc = OsaSystemTimeReadRamUtc();
+//	uPV.u32 = timeUtc->UTCtimer1;
+//	pDate->Year = uPV.u16[1];
+//	pDate->Mon = uPV.u8[1];
+//	pDate->Day = uPV.u8[0];
+//	uPV.u32 = timeUtc->UTCtimer2;
+//	pTime->Hour = uPV.u8[3];
+//	pTime->Min = uPV.u8[2];
+//	pTime->Sec = uPV.u8[1];
+//	//DBG("%d,%d,%d,%d,%d,%d",pDate->Year,pDate->Mon,pDate->Day,pTime->Hour,pTime->Min,pTime->Sec);
+//	//Tamp2UTC(timeUtc->UTCsecs, pDate, pTime, 0);
+//}
 
 static struct tm prvTM;
 extern const uint32_t DayTable[2][12];
@@ -13,7 +24,7 @@ __attribute__((used)) struct tm * __wrap_localtime (const time_t *_timer)
 {
 	Time_UserDataStruct Time;
 	Date_UserDataStruct Date;
-	uint64_t Sec;
+	int64_t Sec;
 	utc_timer_value_t *timeUtc = OsaSystemTimeReadRamUtc();
 	if (_timer)
 	{
@@ -22,6 +33,8 @@ __attribute__((used)) struct tm * __wrap_localtime (const time_t *_timer)
 	}
 	else
 	{
+//		RTC_GetDateTime(&Date, &Time);
+//		int64_t tamp = UTC2Tamp(&Date, &Time);
 		Tamp2UTC(timeUtc->UTCsecs + timeUtc->timeZone * 900, &Date, &Time, 0);
 	}
 	prvTM.tm_year = Date.Year - 1900;
@@ -40,7 +53,7 @@ __attribute__((used)) struct tm * __wrap_gmtime (const time_t *_timer)
 {
 	Time_UserDataStruct Time;
 	Date_UserDataStruct Date;
-	uint64_t Sec;
+	int64_t Sec;
 	if (_timer)
 	{
 		Sec = *_timer;
@@ -48,7 +61,10 @@ __attribute__((used)) struct tm * __wrap_gmtime (const time_t *_timer)
 	}
 	else
 	{
-		RTC_GetDateTime(&Date, &Time);
+		utc_timer_value_t *timeUtc = OsaSystemTimeReadRamUtc();
+//		RTC_GetDateTime(&Date, &Time);
+//		int64_t tamp = UTC2Tamp(&Date, &Time);
+		Tamp2UTC(timeUtc->UTCsecs, &Date, &Time, 0);
 	}
 	prvTM.tm_year = Date.Year - 1900;
 	prvTM.tm_mon = Date.Mon - 1;
