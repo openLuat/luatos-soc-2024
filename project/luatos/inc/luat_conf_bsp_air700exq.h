@@ -13,6 +13,7 @@
 #define LUAT_USE_ZBUFF  1
 #define LUAT_USE_PACK  1
 #define LUAT_USE_MINIZ 1
+#define LUAT_USE_HMETA 1
 
 #define LUAT_USE_MQTT 1
 #define LUAT_USE_FTP 1
@@ -21,7 +22,7 @@
 #define LUAT_USE_BIT64 1
 #define LUAT_USE_ICONV 1
 
-#define LUAT_HEAP_SIZE_200K
+#define LUAT_HEAP_SIZE (200*1024)
 
 #define LUAT_SCRIPT_SIZE 256
 #define LUAT_SCRIPT_OTA_SIZE 192
