@@ -1,5 +1,5 @@
 {
     "build" : {
-        "chip_target": ["ec718p", "ec718u"]
+        "chip_target": ["ec718p", "ec718u", "ec716e"]
     }
 }
