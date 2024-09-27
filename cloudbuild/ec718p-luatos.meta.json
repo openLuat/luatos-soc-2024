@@ -157,6 +157,20 @@
                         "rsize": 0,
                         "fsize": 1024,
                         "dft": false
+                    },
+                    {
+                        "name": "@rev_release_v1003",
+                        "content": "选用V1003发行版的代码进行编译, 发布日期 2024.9.2",
+                        "rsize": 0,
+                        "fsize": 1024,
+                        "dft": false
+                    },
+                    {
+                        "name": "@rev_release_v2001",
+                        "content": "选用V2001发行版的代码进行编译, 发布日期 2024.9.24",
+                        "rsize": 0,
+                        "fsize": 1024,
+                        "dft": false
                     }
                 ]
             },

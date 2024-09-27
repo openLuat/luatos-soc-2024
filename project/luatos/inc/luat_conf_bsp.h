@@ -8,9 +8,12 @@
 //custom -->
 //------------------------------------------------------
 
-// #define LUAT_MODEL_AIR780EPS 1
-// #define LUAT_MODEL_AIR780EQ 1
+
+
 // #define LUAT_MODEL_AIR201 1
+// #define LUAT_MODEL_AIR780EPS 1
+// #define LUAT_MODEL_AIR780EP 1
+// #define LUAT_MODEL_AIR780EQ 1
 // #define LUAT_MODEL_AIR700ECQ 1
 // #define LUAT_MODEL_AIR700EAQ 1
 // #define LUAT_MODEL_AIR700EMQ 1
@@ -21,6 +24,8 @@
 #include "luat_conf_bsp_air780eq.h"
 #elif defined(LUAT_MODEL_AIR201)
 #include "luat_conf_bsp_air201.h"
+#elif defined(LUAT_MODEL_AIR780EP)
+#include "luat_conf_bsp_air780ep.h"
 #elif (defined(LUAT_MODEL_AIR700ECQ) || defined(LUAT_MODEL_AIR700EAQ)) || defined(LUAT_MODEL_AIR700EMQ)
 #include "luat_conf_bsp_air700exq.h"
 #else
