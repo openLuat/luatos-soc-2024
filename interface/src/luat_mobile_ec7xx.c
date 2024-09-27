@@ -1235,3 +1235,20 @@ int luat_mobile_get_extern_service_cell_info(luat_mobile_scell_extern_info_t *in
 }
 
 LUAT_WEAK void luat_mobile_vsim_user_heartbeat_once(void) {;}
+
+extern CmiNumericPlmn soc_mobile_get_last_plmn(void);
+uint32_t luat_mobile_get_search_plmn(void)
+{
+	PV_Union upv;
+	CmiNumericPlmn plmn = soc_mobile_get_last_plmn();
+	upv.u16[1] = plmn.mcc;
+	if ((plmn.mncWithAddInfo >> 12) == 0x000f)
+	{
+		upv.u16[0] = plmn.mncWithAddInfo & 0x00ff;
+	}
+	else
+	{
+		upv.u16[0] = plmn.mncWithAddInfo & 0x0fff;
+	}
+	return upv.u32;
+}
