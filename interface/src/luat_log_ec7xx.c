@@ -97,7 +97,34 @@ void luat_log_log(int level, const char* tag, const char* _fmt, ...) {
     if (luat_log_level_cur > level) return;
     va_list args;
     va_start(args, _fmt);
-    soc_vsprintf(0, _fmt, args);
+    char *fmt = malloc(strlen(_fmt) + strlen(tag) + 4);
+    if (fmt)
+    {
+		switch (level)
+		{
+		case LUAT_LOG_DEBUG:
+			sprintf(fmt, "D/%s %s", tag, _fmt);
+			break;
+		case LUAT_LOG_INFO:
+			sprintf(fmt, "I/%s %s", tag, _fmt);
+			break;
+		case LUAT_LOG_WARN:
+			sprintf(fmt, "W/%s %s", tag, _fmt);
+			break;
+		case LUAT_LOG_ERROR:
+			sprintf(fmt, "E/%s %s", tag, _fmt);
+			break;
+		default:
+			sprintf(fmt, "?/%s %s", tag, _fmt);
+			break;
+		}
+		soc_vsprintf(0, fmt, args);
+		free(fmt);
+    }
+    else
+    {
+    	soc_vsprintf(0, _fmt, args);
+    }
     va_end(args);
 }
 
