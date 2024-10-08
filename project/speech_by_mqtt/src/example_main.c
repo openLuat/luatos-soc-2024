@@ -124,33 +124,33 @@ static void log_on(void)
 typedef struct
 {
 	uint16_t amr_save_data_len;
-	uint8_t amr_save_data[64 * PCM_ONE_FRAME_BLOCK_NUM];
+	uint8_t amr_save_data[64 * PCM_ONE_FRAME_BLOCK_NUM];	//1帧数据5个amr block，100ms
 }amr_wb_save_struct;
 typedef struct
 {
-	BSP_FifoStruct downlink_buffer;
-	Buffer_Struct downlink_cache;
+	BSP_FifoStruct downlink_buffer;				//播放缓存fifo，一般存入下行数据，无下行数据时需要存入空白音
+	Buffer_Struct downlink_cache;				//下行数据amr缓冲
 	luat_rtos_task_handle speech_task_handle;
 	luat_rtos_task_handle mqtt_task_handle;
 	luat_rtos_task_handle key_task_handle;
 	luat_rtos_task_handle led_task_handle;
-	luat_rtos_timer_t download_loop_timer;
-	luat_rtos_timer_t download_no_data_timer;
-	volatile uint32_t record_block_cnt;
-	amr_wb_save_struct amr_wb_save_buffer[8];
-	uint8_t audio_enable;
-	uint8_t record_enable;
-	uint8_t play_enable;
-	uint8_t play_no_more_data;
-	uint8_t resync_flag;
-	uint8_t codec_ready;
-	uint8_t codec_exsit;
-	uint8_t mqtt_ready;
-	uint8_t downlink_state;
-	uint8_t amr_wb_save_buffer_point;
-	uint8_t download_data_flag;
-	uint8_t amr_dummy[64];
-	uint8_t amr_dummy_len;
+	luat_rtos_timer_t download_loop_timer;		//下行检查，检查有没有数据delay的情况
+//	luat_rtos_timer_t download_no_data_timer;
+	volatile uint32_t record_block_cnt;			//录音总amr block数据量，用于对端检查amr block完整性
+	amr_wb_save_struct amr_wb_save_buffer[8];	//amr录音上行缓存区，最多缓存8帧数据
+	uint8_t audio_enable;						//允许audio功能使能
+	uint8_t record_enable;						//允许录音
+	uint8_t play_enable;						//允许播放
+	uint8_t play_no_more_data;					//所有下行数据都播放完了
+	uint8_t resync_flag;						//重新同步标志，没有新数据，且下一个数据delay超过200ms就需要重新同步了
+	uint8_t codec_ready;						//es8311准备好了
+	uint8_t codec_exsit;						//es8311存在
+	uint8_t mqtt_ready;							//es8311存在
+	uint8_t downlink_state;						//下行播放状态
+	uint8_t amr_wb_save_buffer_point;			//上行数据在发送前保存地址
+	uint8_t download_data_flag;					//下行是否正在进行，目前没什么用
+	uint8_t amr_dummy[64];						//空白音对应的amr包
+	uint8_t amr_dummy_len;						//空白音对应的amr包长度
 }speech_ctrl_t;
 
 #define MQTT_HOST    	"lbsmqtt.airm2m.com"   				// MQTT服务器的地址和端口号
@@ -180,18 +180,18 @@ static const luat_audio_codec_conf_t luat_audio_codec_es8311 = {
 
 enum
 {
-	EVENT_AMR_RUN_ONCE = 1,
-	EVENT_MQTT_MSG,
-	EVENT_MQTT_DOWNLINK_DATA,
-	EVENT_MQTT_UPLINK_DATA,
-	EVENT_MQTT_CHECK_DOWNLINK,
-	EVENT_MQTT_FORCE_SYNC,
-	EVENT_MQTT_FORCE_STOP,
+	EVENT_AMR_RUN_ONCE = 1,		//amr编解码进行一次，回声消除要求编解码必须是同步进行
+	EVENT_MQTT_MSG,				//MQTT除了上下行数据外其他消息
+	EVENT_MQTT_DOWNLINK_DATA,	//MQTT下行数据，需要解码播放
+	EVENT_MQTT_UPLINK_DATA,		//MQTT上行数据，已经编码过了
+	EVENT_MQTT_CHECK_DOWNLINK,	//对讲过程中定时检查是否有网络卡顿情况
+	EVENT_MQTT_FORCE_SYNC,		//下行数据异常后，重新开始同步数据
+	EVENT_MQTT_FORCE_STOP,		//停止对讲流程
 	EVENT_KEY_PRESS,
-	EVENT_AMR_START_TRUE_PLAY,
-	EVENT_AMR_START,
-	EVENT_AMR_RECORD_STOP,
-	EVENT_AMR_PLAY_STOP,
+	EVENT_AMR_START_TRUE_PLAY,	//audio真正开始播放数据
+	EVENT_AMR_START,			//audio处理流程开始，但是还没有真正开始，需要预先解码
+	EVENT_AMR_RECORD_STOP,		//录音停止
+	EVENT_AMR_PLAY_STOP,		//播放停止
 	EVENT_KEY_PIN_IRQ,
 	EVENT_LED_OFF_LINE,
 	EVENT_LED_ON_LINE,
@@ -200,13 +200,13 @@ enum
 	EVENT_LED_UPLOAD_START,
 	EVENT_LED_UPLOAD_END,
 
-	PACKET_TYPE_BROADCAST_DATA = 0,
-	PACKET_TYPE_BROADCAST_END,
+	PACKET_TYPE_BROADCAST_DATA = 0,	//MQTT广播包
+	PACKET_TYPE_BROADCAST_END,			//MQTT 广播包没有后续了
 
-	DL_STATE_IDLE = 0,
-	DL_STATE_WAIT_CACHE_OK,
-	DL_STATE_PLAY,
-	DL_STATE_PLAY_WAIT_CACHE_OK,
+	DL_STATE_IDLE = 0,				//对讲没有下行数据
+	DL_STATE_WAIT_CACHE_OK,			//对讲播放前缓冲足够的下行数据
+	DL_STATE_PLAY,					//对讲播放中
+	DL_STATE_PLAY_WAIT_CACHE_OK,	//对讲播放中缓冲下行数据
 };
 
 static void luat_mqtt_cb(luat_mqtt_ctrl_t *luat_mqtt_ctrl, uint16_t event){
@@ -235,12 +235,13 @@ static void luat_mqtt_cb(luat_mqtt_ctrl_t *luat_mqtt_ctrl, uint16_t event){
 	return;
 }
 
+//播放完成
 static void end_broadcast_play(void)
 {
 	LUAT_DEBUG_PRINT("broadcast play end!");
 	OS_DeInitBuffer(&speechc.downlink_cache);
 	luat_rtos_timer_stop(speechc.download_loop_timer);
-	luat_rtos_timer_stop(speechc.download_no_data_timer);
+//	luat_rtos_timer_stop(speechc.download_no_data_timer);
 	speechc.downlink_state = DL_STATE_IDLE;
 	speechc.play_no_more_data = 1;
 	luat_rtos_event_send(speechc.speech_task_handle, EVENT_AMR_PLAY_STOP, 0, 0, 0, 0);
@@ -256,12 +257,14 @@ static LUAT_RT_RET_TYPE download_timeout(LUAT_RT_CB_PARAM)
 	}
 	else
 	{
+		//长时间没有数据就停止对讲
 		luat_rtos_event_send(speechc.mqtt_task_handle, EVENT_MQTT_FORCE_STOP, 0, 0, 0, 0);
 	}
 }
 
 static LUAT_RT_RET_TYPE download_loop(LUAT_RT_CB_PARAM)
 {
+	//定时检查一下下行数据是否及时接收了
 	luat_rtos_event_send(speechc.mqtt_task_handle, EVENT_MQTT_CHECK_DOWNLINK, 0, 0, 0, 0);
 }
 
@@ -282,7 +285,7 @@ static void mqtt_task(void *param)
 	char remote_client[16];
 	char clientId[16] = {0};
 	luat_rtos_timer_create(&speechc.download_loop_timer);
-	luat_rtos_timer_create(&speechc.download_no_data_timer);
+//	luat_rtos_timer_create(&speechc.download_no_data_timer);
 	luat_mqtt_ctrl_t *luat_mqtt_ctrl = (luat_mqtt_ctrl_t *)luat_heap_malloc(sizeof(luat_mqtt_ctrl_t));
 	luat_mqtt_init(luat_mqtt_ctrl, NW_ADAPTER_INDEX_LWIP_GPRS);
 
@@ -352,6 +355,7 @@ static void mqtt_task(void *param)
 							LUAT_DEBUG_PRINT("not continue msg");
 							goto RX_DATA_DONE;
 						}
+						//检查一下播放数据顺序是否有异常，有异常的重新开始同步
 						if ((play_block_cnt_last + 1) != play_block_cnt)
 						{
 							LUAT_DEBUG_PRINT("packet cnt resync %u,%u", play_block_cnt_last, play_block_cnt);
@@ -376,7 +380,7 @@ static void mqtt_task(void *param)
 					speechc.download_data_flag = 1;
 					switch(speechc.downlink_state)
 					{
-					case DL_STATE_IDLE:
+					case DL_STATE_IDLE:	//准备同步数据
 						LUAT_DEBUG_PRINT("find first packet");
 						play_block_cnt_last = play_block_cnt;
 						OS_ReInitBuffer(&speechc.downlink_cache, 1024);
@@ -388,7 +392,7 @@ static void mqtt_task(void *param)
 						luat_rtos_timer_start(speechc.download_loop_timer, 3000, 1, download_timeout, NULL);
 						luat_rtos_event_send(speechc.led_task_handle, EVENT_LED_DOWNLOAD_START, 0, 0, 0, 0);
 						break;
-					case DL_STATE_WAIT_CACHE_OK:
+					case DL_STATE_WAIT_CACHE_OK:	//缓存PCM_CACHE_FRAME_BEFORE_PLAY帧数据后才能进行播放
 						OS_BufferWrite(&speechc.downlink_cache, (void *)(event.param2 + 20), event.param3 - 20);
 						cache_data_cnt++;
 						if (cache_data_cnt >= PCM_CACHE_FRAME_BEFORE_PLAY)
@@ -403,11 +407,11 @@ static void mqtt_task(void *param)
 							luat_rtos_event_send(speechc.speech_task_handle, EVENT_AMR_START, 0, 0, 0, 0);
 						}
 						break;
-					case DL_STATE_PLAY:
+					case DL_STATE_PLAY://播放中，接收数据，并缓存
 						OS_WriteFifo(&speechc.downlink_buffer, (void *)(event.param2 + 20), event.param3 - 20);
 
 						break;
-					case DL_STATE_PLAY_WAIT_CACHE_OK:
+					case DL_STATE_PLAY_WAIT_CACHE_OK://播放空白音，缓存PCM_CACHE_FRAME_BEFORE_PLAY帧数据后重新播放
 						OS_BufferWrite(&speechc.downlink_cache, (void *)(event.param2 + 20), event.param3 - 20);
 						cache_data_cnt++;
 						if (cache_data_cnt >= PCM_CACHE_FRAME_BEFORE_PLAY)
@@ -426,6 +430,7 @@ RX_DATA_DONE:
 			free((char *)event.param2);
 			break;
 		case EVENT_MQTT_CHECK_DOWNLINK:
+			//没有足够的数据，先填充空白音，等待延迟的数据到来
 			if (DL_STATE_PLAY_WAIT_CACHE_OK == speechc.downlink_state)
 			{
 				LUAT_DEBUG_PRINT("add blank data");
@@ -436,6 +441,7 @@ RX_DATA_DONE:
 				break;
 			}
 			play_block_check_cnt_start++;
+			//数据延迟达到2帧时（200ms），重新开始同步，为了播放正常进行，仍然需要填充空白帧
 			if (play_block_cnt_last <= (play_block_check_cnt_start + 2))
 			{
 				LUAT_DEBUG_PRINT("broadcast play need resync! %u,%u", play_block_cnt_last, play_block_check_cnt_start);
@@ -472,6 +478,7 @@ RX_DATA_DONE:
 			}
 			break;
 		case EVENT_MQTT_FORCE_SYNC:
+			//强制重新同步，一般是接收数据出现异常
 			LUAT_DEBUG_PRINT("broadcast play force resync! %u,%u", play_block_cnt_last, play_block_check_cnt_start);
 			play_block_cnt_last = 0;
 			cache_data_cnt = 0;
@@ -642,6 +649,7 @@ static void speech_task(void *arg)
 		switch(event.id)
 		{
 		case EVENT_AMR_RUN_ONCE:
+			//20ms进行一次amr编解码，SDK必须先编码1个block,然后解码1个block，否则没有回声抑制效果
 			if (!speechc.audio_enable)
 			{
 				break;
@@ -650,16 +658,17 @@ static void speech_task(void *arg)
 			if (play_delay)
 			{
 				play_delay--;
-				if (!play_delay)	//2fps解码后，再delay一段时间真正开始播放
+				if (!play_delay)	//2fps解码后，再delay一段时间真正开始播放，没有为什么
 				{
 					luat_start_rtos_timer(play_start_timer, 13, 0);
 				}
 
 			}
+			//有下行的fifo数据，就取出解码
 			if (OS_CheckFifoUsedSpace(&speechc.downlink_buffer))
 			{
-				OS_QueryFifo(&speechc.downlink_buffer, amr_buff, 1);
-				if ( ((amr_buff[0] >> 3) > 0x0f) || ((amr_buff[0] & 0x07) != 0x04) )
+				OS_QueryFifo(&speechc.downlink_buffer, amr_buff, 1);//查询一下amr数据
+				if ( ((amr_buff[0] >> 3) > 0x0f) || ((amr_buff[0] & 0x07) != 0x04) )	//无效的amr数据需要重新同步
 				{
 					LUAT_DEBUG_PRINT("ERROR AMR PARAM! %x", amr_buff[0]);
 					speechc.resync_flag = 1;
@@ -667,13 +676,14 @@ static void speech_task(void *arg)
 					goto ARM_ENCODE;
 				}
 				temp_len = amr_wb_byte_len[(amr_buff[0] >> 3)] + 1;
-				OS_ReadFifo(&speechc.downlink_buffer, amr_buff, temp_len);
+				OS_ReadFifo(&speechc.downlink_buffer, amr_buff, temp_len);//真正读出fifo数据
 				luat_audio_inter_amr_decode(pcm_buff, amr_buff, &out_len);
 				goto ARM_ENCODE;
 			}
-			else
+			else //没有下行fifo数据了
 			{
-				//如果需要停止，先让缓冲区的数据放完再停止
+				//如果需要停止，先让DMA缓冲区的数据放完再停止
+				//DMA缓冲区数据播放完了，才能真正的停止播放
 				if (wait_stop_play)
 				{
 					wait_stop_play = 0;
@@ -687,9 +697,10 @@ static void speech_task(void *arg)
 				}
 				else if (speechc.play_enable && !speechc.play_no_more_data && !speechc.resync_flag)
 				{
+					//不应该出现的
 					LUAT_DEBUG_ASSERT(0, "NO DATA");
 				}
-				else
+				else	//不需要停止播放，那就是解码空白数据，在播放开头是需要解码2block空白音
 				{
 					if (speechc.play_no_more_data)
 					{
@@ -702,14 +713,17 @@ static void speech_task(void *arg)
 ARM_ENCODE:
 			if (speechc.record_enable)
 			{
+				//编码一次数据
 				if (!speechc.mqtt_ready)
 				{
 					need_stop_record = 1;
 				}
 				luat_audio_inter_amr_encode(pcm_data, amr_buff, &out_len);
 				record_cnt++;
+				//数据保存到上行缓存区
 				memcpy(speechc.amr_wb_save_buffer[speechc.amr_wb_save_buffer_point].amr_save_data + speechc.amr_wb_save_buffer[speechc.amr_wb_save_buffer_point].amr_save_data_len, amr_buff, out_len);
 				speechc.amr_wb_save_buffer[speechc.amr_wb_save_buffer_point].amr_save_data_len += out_len;
+				//录音到5个block后，就合成1帧数据，交给MQTT
 				if (record_cnt >= PCM_ONE_FRAME_BLOCK_NUM)
 				{
 					record_cnt = 0;
@@ -721,6 +735,7 @@ ARM_ENCODE:
 						LUAT_DEBUG_PRINT("record buffer %d is full!", speechc.amr_wb_save_buffer_point);
 					}
 					speechc.amr_wb_save_buffer[speechc.amr_wb_save_buffer_point].amr_save_data_len = 0;
+					//如果有停止录音的请求，则在5个block完成后，让MQTT上行一次终止包
 					if (need_stop_record)
 					{
 						LUAT_DEBUG_PRINT("upload stop!");
@@ -732,6 +747,7 @@ ARM_ENCODE:
 					}
 				}
 			}
+			//既没有播放也没有录音，就直接停止audio
 			if (!speechc.record_enable && !speechc.play_enable)
 			{
 				LUAT_DEBUG_PRINT("audio stop!");
@@ -769,13 +785,13 @@ ARM_ENCODE:
 				speechc.audio_enable = 1;
 				luat_audio_pm_request(MULTIMEDIA_ID, LUAT_AUDIO_PM_RESUME);
 				luat_audio_inter_amr_init(1, 8);
-				play_delay = 2;
+				play_delay = 2;//先解码2fps空白数据，再编码真正的数据
 				record_cnt = 0;
 				luat_audio_record_and_play(MULTIMEDIA_ID, 16000, NULL, 640, 3);
 				//luat_audio_record_and_play(MULTIMEDIA_ID, 8000, NULL, 320, 6);
 				check_time = luat_mcu_tick64_ms();
 				amr_times = 0;
-				if (speechc.record_enable)
+				if (speechc.record_enable)//已经请求录音了，那么就开始录音了
 				{
 					start_broadcast_record();
 				}
