@@ -359,6 +359,7 @@ typedef struct
 	uint8_t fast_rx_ack;
 	uint8_t next_socket_index;
 	uint8_t check_enable;
+	uint8_t cache_heap_mode;
 }net_lwip_ctrl_struct;
 
 extern void *soc_get_clat_netif(void);
@@ -409,7 +410,7 @@ static socket_data_t * net_lwip_create_data_node(uint8_t socket_id, const uint8_
 		p->tag = prvlwip.socket[socket_id].tag;
 		if (data && len)
 		{
-			p->data = malloc(len);
+			p->data = luat_heap_opt_malloc(prvlwip.cache_heap_mode,len);
 			if (p->data)
 			{
 				memcpy(p->data, data, len);
@@ -480,7 +481,7 @@ static int net_lwip_rx_data(int socket_id, struct pbuf *p, const ip_addr_t *addr
 	socket_data_t *data_p = net_lwip_create_data_node(socket_id, NULL, 0, addr, port);
 	if (data_p)
 	{
-		data_p->data = malloc(p->tot_len);
+		data_p->data = luat_heap_opt_malloc(prvlwip.cache_heap_mode, p->tot_len);
 		if (data_p->data)
 		{
 			data_p->len = pbuf_copy_partial(p, data_p->data, p->tot_len, 0);
@@ -2119,6 +2120,11 @@ void soc_lwip_init_hook(void)
 	prvlwip.task_handle = luat_get_current_task();
 	prvlwip.dns_udp = udp_new();
 	prvlwip.dns_udp->recv = net_lwip_dns_recv_cb;
+#ifdef __LUATOS__
+	prvlwip.cache_heap_mode = LUAT_HEAP_PSRAM;
+#else
+	prvlwip.cache_heap_mode = LUAT_HEAP_SRAM;
+#endif
 	prvlwip.dns_udp->err_arg = (void *)0xffffffff;
 	udp_bind(prvlwip.dns_udp, NULL, 55);
 	dns_init_client(&prvlwip.dns_client);
@@ -2186,4 +2192,8 @@ int net_lwip_check_netif_ready(uint8_t adapter_index)
 	return prvlwip.netif_network_ready;
 }
 
+void net_lwip_set_cache_heap_mode(uint8_t mode)
+{
+	prvlwip.cache_heap_mode = mode;
+}
 #endif
