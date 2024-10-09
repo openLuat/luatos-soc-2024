@@ -49,7 +49,7 @@ target(project_name,function()
             end
         end
         local FLASH_FOTA_REGION_START = 0x340000 -- ec718e/ec718p/ec718pv FLASH_FOTA_REGION_START
-        if chip_target == "ec718u" then FLASH_FOTA_REGION_START = 0x6C8000 -- ec718u FLASH_FOTA_REGION_START
+        if chip_target == "ec718u" then FLASH_FOTA_REGION_START = 0x649000 -- ec718u FLASH_FOTA_REGION_START
         end
         -- print("FLASH_FOTA_REGION_START",FLASH_FOTA_REGION_START)
         local LUAT_SCRIPT_SIZE = tonumber(conf_data:match("#define LUAT_SCRIPT_SIZE (%d+)"))
