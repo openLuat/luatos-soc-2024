@@ -613,6 +613,7 @@ static void adc_temp_cb(uint32_t result) {
 static uint32_t prv_adc_gain;
 static int32_t prv_adc_offset;
 static uint8_t adc_is_init;
+static uint8_t adc_open_log;
 
 int luat_adc_get_cal_param(int id, uint32_t *gain, int32_t *offset)
 {
@@ -676,7 +677,14 @@ int luat_adc_open(int id, void* ptr) {
         	adc_ctrl[id].p1 = range_map[i].p1;
         	adc_ctrl[id].p2 = range_map[i].p2;
         	int32_t max = (prv_adc_gain * 1000 + (prv_adc_offset * 125 >> 1)) * range_map[i].p1 / range_map[i].p2;
-        	DBG("adc%d param %d,%d,%d,%d,%d, max read:%dmv", id, adc_ctrl[id].aio, adc_ctrl[id].range, adc_ctrl[id].resdiv, adc_ctrl[id].p1, adc_ctrl[id].p2, max);
+        	if (adc_open_log & (1 << id)) {
+
+            }
+            else {
+                DBG("adc%d param %d,%d,%d,%d,%d, max read:%dmv", id, adc_ctrl[id].aio, adc_ctrl[id].range, adc_ctrl[id].resdiv, adc_ctrl[id].p1, adc_ctrl[id].p2, max);
+                adc_open_log |= (1 << id);
+            }
+
             if (!adc_ctrl[id].wait_finish) {
             	luat_rtos_semaphore_create(&adc_ctrl[id].wait_finish, 1);
             }
