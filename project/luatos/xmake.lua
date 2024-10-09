@@ -37,9 +37,16 @@ target(project_name,function()
 
         local conf_data = io.readfile(out_path .. "/luat_conf_bsp.txt")
         local ap_load_add
-        if chip_target == "ec718p" and has_config("denoise_force") or chip_target == "ec718pv" then ap_load_add = "0x000Ba000" -- ec718pv AP_FLASH_LOAD_ADDR
-        elseif chip_target == "ec718p" or chip_target == "ec718e" or chip_target == "ec716e" then ap_load_add = "0x0007e000"  -- ec718p AP_FLASH_LOAD_ADDR
-        elseif chip_target == "ec718u" then ap_load_add = "0x000C8000"  -- ec718u AP_FLASH_LOAD_ADDR
+        if chip_target == "ec718p" and has_config("denoise_force") or chip_target == "ec718pv" then
+            ap_load_add = "0x000Ba000" -- ec718pv AP_FLASH_LOAD_ADDR
+        elseif chip_target == "ec718p" or chip_target == "ec718e" or chip_target == "ec716e" then
+            ap_load_add = "0x0007e000"  -- ec718p AP_FLASH_LOAD_ADDR
+        elseif chip_target == "ec718u" then
+            if has_config("denoise_force") or conf_data:find("LUAT_USE_VOLTE") then
+                ap_load_add = "0x000C8000"  -- ec718u AP_FLASH_LOAD_ADDR,开启volte
+            else
+                ap_load_add = "0x0008C000"  -- ec718u 不开VoLTE
+            end
         end
         local FLASH_FOTA_REGION_START = 0x340000 -- ec718e/ec718p/ec718pv FLASH_FOTA_REGION_START
         if chip_target == "ec718u" then FLASH_FOTA_REGION_START = 0x6C8000 -- ec718u FLASH_FOTA_REGION_START
