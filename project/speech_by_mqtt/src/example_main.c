@@ -775,7 +775,7 @@ ARM_ENCODE:
 		case EVENT_AMR_START_TRUE_PLAY:
 			check_time = luat_mcu_tick64_ms();
 			amr_times = 0;
-			luat_audio_record_and_play(MULTIMEDIA_ID, 16000, luat_audio_inter_amr_pcm_address(), 640, 3);
+			luat_audio_record_and_play(MULTIMEDIA_ID, 16000, luat_audio_inter_amr_pcm_address(), 640, 3);//这里才播放真正的数据
 			//luat_audio_record_and_play(MULTIMEDIA_ID, 8000, luat_audio_inter_amr_pcm_address(), 320, 6);
 			LUAT_DEBUG_PRINT("true play start!");
 			break;
@@ -785,9 +785,9 @@ ARM_ENCODE:
 				speechc.audio_enable = 1;
 				luat_audio_pm_request(MULTIMEDIA_ID, LUAT_AUDIO_PM_RESUME);
 				luat_audio_inter_amr_init(1, 8);
-				play_delay = 2;//先解码2fps空白数据，再编码真正的数据
+				play_delay = 2;//先编解码2次后，再delay一段时间后才能真正的播放
 				record_cnt = 0;
-				luat_audio_record_and_play(MULTIMEDIA_ID, 16000, NULL, 640, 3);
+				luat_audio_record_and_play(MULTIMEDIA_ID, 16000, NULL, 640, 3);	//这里播放空白数据
 				//luat_audio_record_and_play(MULTIMEDIA_ID, 8000, NULL, 320, 6);
 				check_time = luat_mcu_tick64_ms();
 				amr_times = 0;
