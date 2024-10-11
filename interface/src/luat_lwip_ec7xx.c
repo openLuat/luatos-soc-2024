@@ -360,6 +360,7 @@ typedef struct
 	uint8_t next_socket_index;
 	uint8_t check_enable;
 	uint8_t cache_heap_mode;
+	uint8_t is_inited;
 }net_lwip_ctrl_struct;
 
 extern void *soc_get_clat_netif(void);
@@ -2120,11 +2121,15 @@ void soc_lwip_init_hook(void)
 	prvlwip.task_handle = luat_get_current_task();
 	prvlwip.dns_udp = udp_new();
 	prvlwip.dns_udp->recv = net_lwip_dns_recv_cb;
+	if (!prvlwip.is_inited)
+	{
 #ifdef __LUATOS__
-	prvlwip.cache_heap_mode = LUAT_HEAP_AUTO;
+		prvlwip.cache_heap_mode = LUAT_HEAP_AUTO;
 #else
-	prvlwip.cache_heap_mode = LUAT_HEAP_SRAM;
+		prvlwip.cache_heap_mode = LUAT_HEAP_SRAM;
 #endif
+	}
+
 	prvlwip.dns_udp->err_arg = (void *)0xffffffff;
 	udp_bind(prvlwip.dns_udp, NULL, 55);
 	dns_init_client(&prvlwip.dns_client);
@@ -2195,5 +2200,6 @@ int net_lwip_check_netif_ready(uint8_t adapter_index)
 void net_lwip_set_cache_heap_mode(uint8_t mode)
 {
 	prvlwip.cache_heap_mode = mode;
+	prvlwip.is_inited = 1;
 }
 #endif
