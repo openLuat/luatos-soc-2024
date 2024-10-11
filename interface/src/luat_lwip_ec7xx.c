@@ -2121,7 +2121,7 @@ void soc_lwip_init_hook(void)
 	prvlwip.dns_udp = udp_new();
 	prvlwip.dns_udp->recv = net_lwip_dns_recv_cb;
 #ifdef __LUATOS__
-	prvlwip.cache_heap_mode = LUAT_HEAP_PSRAM;
+	prvlwip.cache_heap_mode = LUAT_HEAP_AUTO;
 #else
 	prvlwip.cache_heap_mode = LUAT_HEAP_SRAM;
 #endif
