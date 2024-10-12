@@ -882,6 +882,7 @@ int luat_audio_inter_amr_encode(const uint16_t *pcm_buf, uint8_t *amr_buf, uint8
 	ec7xx_voice_eng_ctrl_t *eng = (ec7xx_voice_eng_ctrl_t *)prv_audio_config.hardware_data;
 	eng->encode_req.pPcmData = (uint8_t *)pcm_buf;
 	eng->encode_req.sn++;
+	eng->encode_req.pRefVemPcmData = NULL;
 	eng->wait_flag = HAL_VOICE_ENCODE_CNF;
 	halVoiceEncodeReq(&eng->encode_req);
     if (luat_audio_inter_amr_wait(eng))
@@ -910,6 +911,57 @@ int luat_audio_inter_amr_encode(const uint16_t *pcm_buf, uint8_t *amr_buf, uint8
     			{
     				DBG("encode frametype %d", eng->encode_cnf.frameType);
     			}        		
+				out_len = 1;
+        		amr_buf[0] = (0xf << 3)|0x04;
+    		}
+    		else
+    		{
+    			out_len = eng->byte_table[eng->encode_cnf.frameType] + 1;
+    			amr_buf[0] = (eng->encode_cnf.frameType << 3)|0x04;
+    			memcpy(amr_buf + 1, voice_amr, eng->byte_table[eng->encode_cnf.frameType]);
+    		}
+    	}
+    }
+	eng->wait_flag = 0;
+	*amr_len = out_len;
+	return 0;
+}
+
+int luat_audio_inter_amr_encode_with_ref(const uint16_t *pcm_buf, uint8_t *amr_buf, uint8_t *amr_len, uint8_t *ref_input)
+{
+	uint8_t out_len = 0;
+	ec7xx_voice_eng_ctrl_t *eng = (ec7xx_voice_eng_ctrl_t *)prv_audio_config.hardware_data;
+	eng->encode_req.pPcmData = (uint8_t *)pcm_buf;
+	eng->encode_req.sn++;
+	eng->encode_req.pRefVemPcmData = ref_input;
+	eng->wait_flag = HAL_VOICE_ENCODE_CNF;
+	halVoiceEncodeReq(&eng->encode_req);
+    if (luat_audio_inter_amr_wait(eng))
+    {
+    	DBG("failed!");
+    	return -1;
+    }
+    else
+    {
+
+    	if (eng->encode_cnf.rc)
+    	{
+//			DBG("%d,%d,%d,%d,%d,%d,%x,%x,%x,%x,%x", eng->encode_cnf.rc, eng->encode_cnf.codecType, eng->encode_cnf.sn,
+//					 eng->encode_cnf.frameType,eng->encode_cnf.outBitOffset,eng->encode_cnf.amrBitLen,
+//					 eng->encode_cnf.pAmrData, eng->encode_cnf.pPcmData, eng->encode_cnf.pPostVemPcmData, eng->encode_cnf.pExtra0, eng->encode_cnf.pExtra1);
+    		DBG("encode error %d", eng->encode_cnf.rc);
+    		out_len = 1;
+    		amr_buf[0] = (0xf << 3)|0x04;
+    	}
+    	else
+    	{
+
+    		if (eng->encode_cnf.frameType > eng->max_frame_type)
+    		{
+    			if (eng->encode_cnf.frameType != 15)
+    			{
+    				DBG("encode frametype %d", eng->encode_cnf.frameType);
+    			}
 				out_len = 1;
         		amr_buf[0] = (0xf << 3)|0x04;
     		}
