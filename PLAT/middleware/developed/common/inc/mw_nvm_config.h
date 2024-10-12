@@ -122,6 +122,8 @@ typedef enum _EPAT_MidWareCfgParamId_Enum
 
     MW_CFG_SIM_STK_PARAM,           /* TLV,  MWNvmCfgSimStkParam */
 
+    MW_CFG_PER_PLMN_PARAM,          /* TLV,  MWNvmCfgPerPlmnParam */
+    
     MW_CFG_PARAM_END,
     /* As need a bitmap to record which CFG is set/configed, here limit the MAX ID to 256, than 8 words bitmap is enough  */
     MW_CFG_PARAM_MAX    =   MW_CFG_PARAM_BASE + 0x100   //1280
@@ -501,6 +503,22 @@ typedef struct _SIG_EPAT_MW_CFG_URC_RI_OTHER_PARAM
 }MWNvmCfgUrcRIOtherParam;       //4 bytes
 
 
+/*
+ * PER-PLMN setting param config
+ * paramId: MW_CFG_PER_PLMN_PARAM
+*/
+typedef struct _SIG_EPAT_MW_CFG_PER_PLMN_PARAM
+{
+    UINT32          bAutoApn : 1;/* indicated whether auto set APN according the PLMN */
+    UINT32          imsiLength : 5;
+    UINT32          bThreeDigitalMnc : 1;
+    UINT32          resvd : 25;
+
+    /*example: IMSI: "460002343454245" */
+    UINT8           lastImsi[MID_WARE_DM_SIM_IMSI_LEN]; /* last IMSI */
+    UINT8           resv0[2];
+}MWNvmCfgPerPlmnParam;     //24 bytes
+
 
 /*
  * Middle ware NVM file structure
@@ -668,6 +686,7 @@ typedef struct MidWareNvmConfig_Tag
     */
     MWNvmCfgSimStkParam         simStkParamCfg;
 
+    MWNvmCfgPerPlmnParam        perPlmnCfg;
 }MidWareNvmConfig;
 
 
@@ -1081,6 +1100,11 @@ void mwNvmCfgGetUsrCodecVolumn(MWNvmCfgUsrSetCodecVolumn *pUsrCodecVolumn);
 void mwNvmCfgGetVolumnSetFlag(MWNvmCfgVolumnSetFlag *pVolumnSetFlag);
 void mwNvmCfgSetAndSaveUsrCodecVolumn(UINT16 usrDigVolumn, UINT16 usrAnaVolumn);
 void mwNvmCfgSetAndSaveUsrCodecVolumnFlag(MWNvmCfgVolumnSetFlag* pVolumnSetFlag);
+
+void mwNvmCfgSetAndSaveAutoApnCfg(BOOL enable);
+BOOL mwNvmCfgGetAutoApnCfg(void);
+void mwNvmCfgSetAndSaveLastImsiParam(UINT8 imsiLength, BOOL bThreeDigitalMnc, UINT8 *imsi);
+void mwNvmCfgGetPerPlmnCfg(MWNvmCfgPerPlmnParam *pPerPlmnCfg);
 
 #endif
 

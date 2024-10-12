@@ -198,26 +198,28 @@ typedef struct __PACKED
  *----------------------------------------------------------------------------*/
 
 /**
- * @brief cmuxFrameDecap(UlPduBlockList_t *list, CmuxFrameDesc_t *desc);
+ * @brief cmuxFrameDecap(UlPduBlockList_t *list, CmuxFrameDesc_t *desc, void *cmuxCtx);
  * @details extract a complete cmux frame from ulpdu list every time and no frame format any more
  *
  * @param list    The received uplink octect stream
  * @param desc    description of the cmux frame
+ * @param cmuxCtx cmux context of all dlcs
  * @return 0 succ; < 0 failure with errno.
  */
-int32_t cmuxFrameDecap(UlPduBlockList_t *list, CmuxFrameDesc_t *desc);
+int32_t cmuxFrameDecap(UlPduBlockList_t *list, CmuxFrameDesc_t *desc, void/* CmuxDlcCtxMan_t */ *cmuxCtx);
 
 /**
- * @brief cmuxFrameEncap(DlPduBlock_t **dlpdu, uint8_t initiator, uint8_t dlci, uint8_t type);
+ * @brief cmuxFrameEncap(DlPduBlock_t **dlpdu, uint8_t initiator, uint8_t dlci, uint8_t type, uint16_t confMtu);
  * @details set cmux frame format for output data
  *
- * @param dlpdu      the output data to be set format and the remaining data to be set next time for memory lack if *dlpdu != NULL
+ * @param dlpdu      the data to be encapsulated in cmux format, and if *dlpdu != NULL, the remainings would be set next time as a result of memory lack
  * @param initiator  the device is an initiator side or not?
  * @param dlci       index of cmux dlc
  * @param type       frame type in frame format
+ * @param confMtu    mtu of a specific dlc
  * @return !NULL the output data with cmux format; NULL failure with errno.
  */
-DlPduBlock_t* cmuxFrameEncap(DlPduBlock_t **dlpdu, uint8_t initiator, uint8_t dlci, uint8_t type);
+DlPduBlock_t* cmuxFrameEncap(DlPduBlock_t **dlpdu, uint8_t initiator, uint8_t dlci, uint8_t type, uint16_t confMtu);
 
 
 #ifdef __cplusplus

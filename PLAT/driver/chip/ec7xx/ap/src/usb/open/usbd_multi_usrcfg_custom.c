@@ -600,7 +600,7 @@ static multidev_custom_info_st t_multidev_custom_info = {
     },
     .elem_arr[5]  =
     {
-        (const uint8_t*)"raw",
+        (const uint8_t*)"vcom3",
         multidev_tp_vcom_com,
         ccinst_setting_cdc_vcom_maintp,
         ccinst_setting_vcom_subtp0_inhrnt,

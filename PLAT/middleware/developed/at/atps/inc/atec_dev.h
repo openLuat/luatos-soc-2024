@@ -199,7 +199,7 @@
 #define ATC_ECCFG_1_SMALL_UL_TBS_OPT_DEFAULT         (0)
 
 #define ATC_ECCFG_1_UPDATE_LOCI_CTRL_VAL_MIN              (0)
-#define ATC_ECCFG_1_UPDATE_LOCI_CTRL_VAL_MAX              (1)
+#define ATC_ECCFG_1_UPDATE_LOCI_CTRL_VAL_MAX              (2)
 #define ATC_ECCFG_1_UPDATE_LOCI_CTRL_VAL_DEFAULT          (0)
 
 #define ATC_ECCFG_1_ROAM_MODE_VAL_MIN              (1)

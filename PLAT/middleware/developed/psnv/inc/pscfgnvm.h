@@ -67,7 +67,7 @@ typedef enum _EPAT_PsConfigParamId_Enum
     UICC_CFG_SIM_PRESENCE_DETECTION_ENABLE,         /* TV,  BOOL bSimPreDetect, whether enable SIM presence detection */
     UICC_CFG_SOFT_SIM_ENABLE,                       /* TV,  BOOL bSoftSim, whether use softSIM */
 
-    CEPLMN_CFG_PLMN_SELECT_TYPE,                    /* TLV, PsCfgPlmnSelectType */
+    CEPLMN_CFG_PLMN_SELECT_TYPE,                    /* TV,  UINT8 */
     CEPLMN_CFG_CELL_LOCK_INFO,                      /* TLV, PsCfgCellLockInfo */
     CEPLMN_CFG_BAND_INFO,                           /* TLV, PsCfgPlmnBandInfo */
     CEPLMN_CFG_PLMN_SEARCH_LEVEL,                   /* TV,  PlmnSearchPowerLevel */
@@ -205,25 +205,6 @@ typedef OsaCfgTVTypeValue   PsCfgTVTypeValue;
  * Parameter STRUCT start here
  *****************************************************************************
 ******************************************************************************/
-
-/*
- * Type: CEPLMN_CFG_PLMN_SELECT_TYPE
- * 0                                                      31
- * +-+---------------------------+-------------------------+
- * |1|CEPLMN_CFG_PLMN_SELECT_TYPE|        Len = 8          |
- * +-+---------------------------+-------------------------+
- * |                  PsCfgPlmnSelectType0                 |
- * |                  PsCfgPlmnSelectType1                 |
- * +-------------------------------------------------------+
-*/
-typedef struct _SIG_EPAT_CEPLMN_CFG_PLMN_SELECT_TYPE
-{
-    UINT8   plmnSelectType;     //CemmPlmnSelectTypeEnum
-    UINT8   rsvd0;
-    UINT16  rsvd1;
-
-    Plmn    manualPlmn;         //if plmnSelectType == CEMM_MANUAL_PLMN_REG/CEMM_MANUAL_THEN_AUTO_PLMN_REG, specify the PLMN
-}PsCfgPlmnSelectType;   // 8 bytes
 
 /*
  * CEPLMN_CFG_CELL_LOCK_INFO
@@ -553,7 +534,6 @@ typedef struct _SIG_EPAT_CEMM_CFG_FAKE_CELL_OPT
  * Get default setting
 */
 UINT16 PsCfgGetTVTypeDefaultValue(PsConfigParamId paramId);
-void PsCfgDefaultPlmnSelectType(PsCfgPlmnSelectType *pPlmnSelectType);
 void PsCfgDefaultPlmnCellLockInfo(PsCfgCellLockInfo *pCellLockInfo);
 void PsCfgDefaultPlmnBandInfo(PsCfgPlmnBandInfo *pBandInfo);
 void PsCfgDefaultCemmUeNwCapability(PsCfgCemmUeNwCapa *pCemmUeNwCapability);

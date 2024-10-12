@@ -22,11 +22,43 @@ __attribute__((weak)) const AudioConfig_t audio_cfg_default =
 #endif
 
 #if defined(TX_ANS)
-	    .CVT_ANS = {
-	    .bypass = 0,
-	    .mode = 0,
-	    .eqBypass = 0,
-	    },
+	.CVT_ANS = {
+		.bypass = 0,
+		.mode = 0,
+		.eqBypass = 0,
+		.eqBand[0] = 32767,//20240229	//[0-32767]
+		.eqBand[1] = 32767,
+		.eqBand[2] = 32767,
+		.eqBand[3] = 32767,
+		.eqBand[4] = 32767,
+		.eqBand[5] = 32767,
+		.eqBand[6] = 32767,
+		.eqBand[7] = 32767,
+		.eqBand[8] = 32767,
+		.eqBand[9] = 32767,
+		.eqBand[10] = 32767,
+		.eqBand[11] = 32767,
+		.eqBand[12] = 32767,
+		.eqBand[13] = 32767,
+		.eqBand[14] = 32767,
+		.eqBand[15] = 32767,
+		.eqBand[16] = 32767,
+		.eqBand[17] = 32767,
+		.eqBand[18] = 32767,
+		.eqBand[19] = 32767,
+		.eqBand[20] = 32767,
+		.eqBand[21] = 32767,
+		.eqBand[22] = 32767,
+		.eqBand[23] = 32767,
+		.eqBand[24] = 32767,
+		.eqBand[25] = 32767,
+		.eqBand[26] = 32767,
+		.eqBand[27] = 32767,
+		.eqBand[28] = 32767,
+		.eqBand[29] = 32767,
+		.eqBand[30] = 32767,
+		.eqBand[31] = 32767,
+		},
 #endif
 
 #if defined(TX_DRC)
@@ -73,11 +105,43 @@ __attribute__((weak)) const AudioConfig_t audio_cfg_default =
 	{
 
 #if defined(RX_ANS)
-	    .CVT_ANS_RX = {
-	    .bypass = 1,
-	    .mode = 0,
-	    .eqBypass = 0,
-	    },
+	.CVT_ANS_RX = {
+		.bypass = 1,
+		.mode = 0,
+		.eqBypass = 0,
+		.eqBand[0] = 32767,//20240229	//[0-32767]
+		.eqBand[1] = 32767,
+		.eqBand[2] = 32767,
+		.eqBand[3] = 32767,
+		.eqBand[4] = 32767,
+		.eqBand[5] = 32767,
+		.eqBand[6] = 32767,
+		.eqBand[7] = 32767,
+		.eqBand[8] = 32767,
+		.eqBand[9] = 32767,
+		.eqBand[10] = 32767,
+		.eqBand[11] = 32767,
+		.eqBand[12] = 32767,
+		.eqBand[13] = 32767,
+		.eqBand[14] = 32767,
+		.eqBand[15] = 32767,
+		.eqBand[16] = 32767,
+		.eqBand[17] = 32767,
+		.eqBand[18] = 32767,
+		.eqBand[19] = 32767,
+		.eqBand[20] = 32767,
+		.eqBand[21] = 32767,
+		.eqBand[22] = 32767,
+		.eqBand[23] = 32767,
+		.eqBand[24] = 32767,
+		.eqBand[25] = 32767,
+		.eqBand[26] = 32767,
+		.eqBand[27] = 32767,
+		.eqBand[28] = 32767,
+		.eqBand[29] = 32767,
+		.eqBand[30] = 32767,
+		.eqBand[31] = 32767,
+		},
 #endif
 
 #if defined(RX_DRC)

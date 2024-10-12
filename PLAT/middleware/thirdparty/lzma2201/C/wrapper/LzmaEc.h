@@ -114,8 +114,9 @@ typedef struct ecCompBinSectionInfo_S
     unsigned int origLen;
     unsigned char type;
     unsigned char ziped;
-    unsigned short resv;
-	char hash[32];
+    unsigned char grPid;
+    unsigned char secFlag;
+    char hash[32];
 } ecCompBinSectionInfo;
 
 typedef struct ecCompBinHeader_S
@@ -133,7 +134,7 @@ typedef struct ecApCompExecuteRet_S
     int apDecompTimeRet[DECOMPRESS_RET_MAX];
     int apDecompHashTimeRet[DECOMPRESS_RET_MAX];
     int cpDecompHashRet[DECOMPRESS_RET_MAX];
-    int cpDecompHashTimeRet[DECOMPRESS_RET_MAX];	
+    int cpDecompHashTimeRet[DECOMPRESS_RET_MAX];    
 } apCompExecRet;
 
 typedef struct ecCpCompExecuteRet_S

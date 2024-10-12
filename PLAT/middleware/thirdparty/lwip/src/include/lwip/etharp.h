@@ -99,6 +99,8 @@ u8_t etharp_find_netif_cache_entry(struct netif *netif, ip4_addr_t *ipaddr, stru
 #if ETHARP_SUPPORT_STATIC_ENTRIES
 err_t etharp_add_static_entry(const ip4_addr_t *ipaddr, struct eth_addr *ethaddr);
 err_t etharp_remove_static_entry(const ip4_addr_t *ipaddr);
+err_t etharp_add_static_entry_with_netif(const ip4_addr_t *ipaddr, struct eth_addr *ethaddr, struct netif *netif);
+
 #endif /* ETHARP_SUPPORT_STATIC_ENTRIES */
 
 #endif /* LWIP_IPV4 && LWIP_ARP */

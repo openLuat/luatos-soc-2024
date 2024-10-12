@@ -160,6 +160,7 @@ size_t xPortGetMinimumEverFreeHeapSize_Psram( void ) PRIVILEGED_FUNCTION;
 size_t xPortGetMaximumFreeBlockSize_Psram( void ) PRIVILEGED_FUNCTION;
 uint8_t xPortGetFreeHeapPct_Psram( void ) PRIVILEGED_FUNCTION;
 uint8_t xPortIsFreeHeapOnAlert_Psram( void ) PRIVILEGED_FUNCTION;
+void prvHeapInit_Psram( void );
 #endif
 
 /*

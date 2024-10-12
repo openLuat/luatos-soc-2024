@@ -357,7 +357,7 @@
  * LWIP_USE_EXTERNAL_POLARSSL: Use external PolarSSL library
  */
 #ifndef LWIP_USE_EXTERNAL_POLARSSL
-#define LWIP_USE_EXTERNAL_POLARSSL      1
+#define LWIP_USE_EXTERNAL_POLARSSL      0
 #endif
 
 /**

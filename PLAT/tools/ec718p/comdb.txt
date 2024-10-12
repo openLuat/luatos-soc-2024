@@ -1,8 +1,8 @@
 DbVersion
-1840591687,100
+378536898,100
 <end>
 BuildInfo
-The current data file was built by the Application Ver. 2.2.81.216, Fri Sep 27 11:59:29 2024
+The current data file was built by the Application Ver. 2.2.81.216, Sat Oct 12 15:40:04 2024
 <end>
 EnumVals
 0,0,0,0,PHY_ONLINE,PHY_ICS_MODULE,PhyIcsMeasMainEntrance_0,P_INFO,swLogPrintf("ICS MEAS of euArfcn %d will be started ");
@@ -82,15 +82,16 @@ EnumVals
 1024,2140159,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,PhyTxTpuTimer4Cfg_2,P_INFO,swLogPrintf("TX RTN is stopped , no need to stop again! ");
 1024,2142207,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,PhyTxTpuTimer4Cfg_1,P_INFO,swLogPrintf("Start TX RTN ");
 1024,2144255,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,PhyTxTpuTimer4Cfg_3,P_INFO,swLogPrintf("TX RTN is started , no need to start again! ");
-1024,2145024,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,phyTxInfoCreate_0,P_ERROR,swLogPrintf("Tx Related Dynamic Data are not PNULL when IDLE2CONN , PhyDynMemBmpGet ( ) ->bmpVal = 0x%X , gpPhyUlStaticPara = 0x%X , gpPhyTxSchdInfo = 0x%X , gpPhyTxHwParam = 0x%X ");
-1024,2146816,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,phyTxInfoCreate_1,P_ERROR,swLogPrintf("TX dynamic mem allocate fail! gpPhyUlStaticPara = 0x%X , gpPhyTxSchdInfo = 0x%X , gpPhyTxHwParam = 0x%X ");
-1024,2149120,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,phyTxInfoRelease,P_ERROR,swLogPrintf("Tx Related Dynamic Data are PNULL when CONN2IDLE , PhyDynMemBmpGet ( ) ->bmpVal = 0x%X , gpPhyUlStaticPara = 0x%X , gpPhyTxSchdInfo = 0x%X , gpPhyTxHwParam = 0x%X ");
-1024,2150400,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,PhyTxScheduleWrapper_0,P_WARNING,swLogPrintf("TxScheduleWrapper re-trigger for hfnSfnSbn = 0x%X ");
-1024,2152704,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,PhyTxScheduleWrapper_1,P_ERROR,swLogPrintf("Miss calling of TxScheduleWrapper for txHfnSfnSbn = 0x%X , missed subframe num = %d ");
-1024,2154752,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,PhyTxScheduler_0,P_WARNING,swLogPrintf("chanMode = %d is cannceled due to large tailZeros = %d! ");
-1024,2157568,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,PhyTxPowerPrint_1,P_INFO,swLogPrintf("type = 0x%x ( Bit3 : SRS , Bit2 : PUCCH , Bit1 : PUSCH , Bit0 : PRACH ) , SrsPower = %d ( dBm ) , PucchPower = %d ( dBm ) , PuschPower = %d ( dBm ) , PrachPower = %d ( dBm ) ");
-1024,2159616,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,PhyTxPowerPrint_0,P_INFO,swLogPrintf("type = 0x%x ( Bit3 : SRS , Bit2 : PUCCH , Bit1 : PUSCH , Bit0 : PRACH ) , SrsPower = %d ( dBm ) , PucchPower = %d ( dBm ) , PuschPower = %d ( dBm ) , PrachPower = %d ( dBm ) ");
-1024,2162687,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,PhyTxCancelAll_0,P_INFO,swLogPrintf("PhyTxCancelAll! ");
+1024,2144512,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,PhyPucchPowerRampProc_0,P_INFO,swLogPrintf("pucch power ramp! ack2NackTotalNum = %d , currRampPower = %d ");
+1024,2147072,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,phyTxInfoCreate_0,P_ERROR,swLogPrintf("Tx Related Dynamic Data are not PNULL when IDLE2CONN , PhyDynMemBmpGet ( ) ->bmpVal = 0x%X , gpPhyUlStaticPara = 0x%X , gpPhyTxSchdInfo = 0x%X , gpPhyTxHwParam = 0x%X ");
+1024,2148864,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,phyTxInfoCreate_1,P_ERROR,swLogPrintf("TX dynamic mem allocate fail! gpPhyUlStaticPara = 0x%X , gpPhyTxSchdInfo = 0x%X , gpPhyTxHwParam = 0x%X ");
+1024,2151168,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,phyTxInfoRelease,P_ERROR,swLogPrintf("Tx Related Dynamic Data are PNULL when CONN2IDLE , PhyDynMemBmpGet ( ) ->bmpVal = 0x%X , gpPhyUlStaticPara = 0x%X , gpPhyTxSchdInfo = 0x%X , gpPhyTxHwParam = 0x%X ");
+1024,2152448,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,PhyTxScheduleWrapper_0,P_WARNING,swLogPrintf("TxScheduleWrapper re-trigger for hfnSfnSbn = 0x%X ");
+1024,2154752,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,PhyTxScheduleWrapper_1,P_ERROR,swLogPrintf("Miss calling of TxScheduleWrapper for txHfnSfnSbn = 0x%X , missed subframe num = %d ");
+1024,2156800,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,PhyTxScheduler_0,P_WARNING,swLogPrintf("chanMode = %d is cannceled due to large tailZeros = %d! ");
+1024,2159616,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,PhyTxPowerPrint_1,P_INFO,swLogPrintf("type = 0x%x ( Bit3 : SRS , Bit2 : PUCCH , Bit1 : PUSCH , Bit0 : PRACH ) , SrsPower = %d ( dBm ) , PucchPower = %d ( dBm ) , PuschPower = %d ( dBm ) , PrachPower = %d ( dBm ) ");
+1024,2161664,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,PhyTxPowerPrint_0,P_INFO,swLogPrintf("type = 0x%x ( Bit3 : SRS , Bit2 : PUCCH , Bit1 : PUSCH , Bit0 : PRACH ) , SrsPower = %d ( dBm ) , PucchPower = %d ( dBm ) , PuschPower = %d ( dBm ) , PrachPower = %d ( dBm ) ");
+1024,2164735,0,0,PHY_ONLINE,PHY_ULPATH_MODULE,PhyTxCancelAll_0,P_INFO,swLogPrintf("PhyTxCancelAll! ");
 2048,4194304,0,0,PHY_ONLINE,PHY_RXDFE_MODULE,DcCheckError,P_ERROR,swLogPrintf("DC : max = %d ");
 2048,4196352,0,0,PHY_ONLINE,PHY_RXDFE_MODULE,DcCheckWarn,P_WARNING,swLogPrintf("DC : max = %d ");
 2048,4198400,0,0,PHY_ONLINE,PHY_RXDFE_MODULE,DcCheckSig,P_SIG,swLogPrintf("DC : max = %d ");
@@ -524,12 +525,13 @@ EnumVals
 12288,25225215,0,0,PHY_ONLINE,PHY_MAC_MODULE,PhyHandleRandomAccessReq_1,P_WARNING,swLogPrintf("UL Data RA triggered when SR resource is existed! ");
 12288,25227263,0,0,PHY_ONLINE,PHY_MAC_MODULE,phyMacHandleCrntiConfigReq_0,P_SIG,swLogPrintf("Crnti Configured when raStage is SUCCESS , skipped by PHY! ");
 12288,25227264,0,0,PHY_ONLINE,PHY_MAC_MODULE,phyMacHandleCrntiConfigReq_1,P_SIG,swLogPrintf("Crnti Configured ( RA SUCC ) : cRnti = %d ");
-12288,25229312,0,0,PHY_ONLINE,PHY_MAC_MODULE,PhyTaTaskProc_0,P_WARNING,swLogPrintf("taSpn = %d is out of range !!! ");
-12288,25231360,0,0,PHY_ONLINE,PHY_MAC_MODULE,PhyTaTaskProc_1,P_WARNING,swLogPrintf("taSpn = %d is out of range !!! ");
-12288,25233664,0,0,PHY_ONLINE,PHY_MAC_MODULE,PhyDataReq_0,P_ERROR,swLogPrintf("Mac Send TX Data Late! harqID = %d , expected transTime ( HFNSFNSBN ) = 0x%X ");
-12288,25235456,0,0,PHY_ONLINE,PHY_MAC_MODULE,PhyTxDataReq_1,P_WARNING,swLogPrintf("data Status = %d is Invalid ");
-12288,25237760,0,0,PHY_ONLINE,PHY_MAC_MODULE,macTimerStart,P_ERROR,swLogPrintf("Start a MacTimer with too short length! ( userID<<16 ) |timerID = 0x%x , length = %d ");
-12288,25241599,0,0,PHY_ONLINE,PHY_MAC_MODULE,macTimerExpiredIsr,P_WARNING,swLogPrintf("NO Running Timer when SW timer Expired! ");
+12288,25229312,0,0,PHY_ONLINE,PHY_MAC_MODULE,PhyTaTaskProc_2,P_WARNING,swLogPrintf("in static sence , taSpn = %d is out of range , restrain ta ");
+12288,25231360,0,0,PHY_ONLINE,PHY_MAC_MODULE,PhyTaTaskProc_0,P_WARNING,swLogPrintf("taSpn = %d is out of range !!! ");
+12288,25233408,0,0,PHY_ONLINE,PHY_MAC_MODULE,PhyTaTaskProc_1,P_WARNING,swLogPrintf("taSpn = %d is out of range !!! ");
+12288,25235712,0,0,PHY_ONLINE,PHY_MAC_MODULE,PhyDataReq_0,P_ERROR,swLogPrintf("Mac Send TX Data Late! harqID = %d , expected transTime ( HFNSFNSBN ) = 0x%X ");
+12288,25237504,0,0,PHY_ONLINE,PHY_MAC_MODULE,PhyTxDataReq_1,P_WARNING,swLogPrintf("data Status = %d is Invalid ");
+12288,25239808,0,0,PHY_ONLINE,PHY_MAC_MODULE,macTimerStart,P_ERROR,swLogPrintf("Start a MacTimer with too short length! ( userID<<16 ) |timerID = 0x%x , length = %d ");
+12288,25243647,0,0,PHY_ONLINE,PHY_MAC_MODULE,macTimerExpiredIsr,P_WARNING,swLogPrintf("NO Running Timer when SW timer Expired! ");
 13312,27263232,0,0,PHY_ONLINE,PHY_MEAS_MODULE,PhyCeParaReCnfgReq_1,P_INFO,swLogPrintf("Add CE / RxDFE / RxSEQ algorithm para. reconfiguration of trigger source 0x%X HW task with startTime of 0x%X ");
 13312,27265024,0,0,PHY_ONLINE,PHY_MEAS_MODULE,PhyIcsMeasConnCnfgParaGen_1,P_INFO,swLogPrintf("startTime of inter FRS_CONN need be adjusted to 0x%X ");
 13312,27267072,0,0,PHY_ONLINE,PHY_MEAS_MODULE,PhyMeasNCellListMaintain_1,P_INFO,swLogPrintf("add PCI %d into NCELL list because expiredCnt has NOT reached to expired timer ");
@@ -1149,148 +1151,146 @@ EnumVals
 265216,544043008,0,0,PLAT_AP,PLA_DRIVER,usblpw_enter_start_proc_0_1,P_VALUE,swLogPrintf("force_cfg_pwr_down 0x%x ");
 265216,544045056,0,0,PLAT_AP,PLA_DRIVER,usblpw_enter_start_proc_0_2,P_VALUE,swLogPrintf("cur_pwr_state 0x%x ");
 265216,544047360,0,0,PLAT_AP,PLA_DRIVER,usblpw_enter_abort_proc_wkmon_1,P_VALUE,swLogPrintf("wkmon_ll_enter_ctx %d , wkmon_lpusbwkup_flag %d ");
-265216,544049152,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_dev_int_handler_hibsrdis_0,P_WARNING,swLogPrintf("hib resume LpusbWakeup_IRQn En %d ");
-265216,544051200,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_dev_int_handler_hibsrdis_1,P_WARNING,swLogPrintf("hib reset , LpusbWakeup_IRQn En %d ");
-265216,544053760,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_poll_gpwr_break_1,P_VALUE,swLogPrintf("gpwr_cur %x , gpwr_prev %x , hold cnt %d reset ");
-265216,544056064,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_poll_gpwr_break_2,P_VALUE,swLogPrintf("gpwr_cur %x , gpwr_prev %x , hold cnt %d reset , break2_cnt %d ");
-265216,544057600,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_poll_gpwr_break_3,P_VALUE,swLogPrintf("break_cnt %x , break2_cnt %x ");
-265216,544059648,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_poll_gpwr_match_2,P_VALUE,swLogPrintf("stage %d , detect gpwr ( 0x%x ) timeout ");
-265216,544061952,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_poll_gpwr_match_3,P_VALUE,swLogPrintf("detect cnt %x , gpwr_cur %x , detect gpwr ( 0x%x ) ");
-265216,544063488,0,0,PLAT_AP,PLA_DRIVER,usblpw_pre_restore_1,P_VALUE,swLogPrintf("detect gpwr 0x%x ");
-265216,544065536,0,0,PLAT_AP,PLA_DRIVER,usblpw_pre_restore_2,P_VALUE,swLogPrintf("usblpw_get_cur_pwr_state %d ");
-265216,544069631,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_hibslp2_try_stack_rest_1,P_WARNING,swLogPrintf("usblpw_retothwk_stackrest_chk_illegal ");
-265216,544071679,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_hibslp2_try_stack_rest_2,P_WARNING,swLogPrintf("usblpw_retothwk_hibslp2_stack_restore fail ");
-265216,544073727,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_slp1_try_stack_rest_1,P_WARNING,swLogPrintf("usblpw_retothwk_stackrest_chk_illegal ");
-265216,544075775,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_slp1_try_stack_rest_2,P_WARNING,swLogPrintf("usblpw_retwkup_slp1_stack_restore fail ");
-265216,544075776,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_wkmon_actv_proc_1,P_WARNING,swLogPrintf("retothwk wkmon stage %d not match ");
-265216,544077824,0,0,PLAT_AP,PLA_DRIVER,usb_lpwkup_step_show_1,P_VALUE,swLogPrintf("usb_lpwkup_step 0x%x ");
-265216,544081919,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2hib_1,P_VALUE,swLogPrintf("reset ");
-265216,544081920,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2hib_4,P_VALUE,swLogPrintf("permit %d ");
-265216,544083968,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2hib_3,P_VALUE,swLogPrintf("dlychk %d ");
-265216,544086016,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2hib_5,P_VALUE,swLogPrintf("usbc_proc_susp2hib %d ");
-265216,544088064,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2hib_6,P_VALUE,swLogPrintf("premit_proc %d ");
-265216,544092159,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2vbustbl_1_0,P_WARNING,swLogPrintf("guard none ");
-265216,544092160,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2vbustbl_2_1,P_WARNING,swLogPrintf("invalid guard status %d ");
-265216,544094208,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2vbustbl_2_2,P_VALUE,swLogPrintf("start %d ");
-265216,544096256,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2vbustbl_4,P_VALUE,swLogPrintf("permit %d ");
-265216,544098304,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2vbustbl_3,P_VALUE,swLogPrintf("dlychk %d ");
-265216,544100352,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2vbustbl_5_1,P_VALUE,swLogPrintf("premit_proc %d ");
-265216,544102400,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2vbustbl_5_2,P_VALUE,swLogPrintf("clear unexpect %d ");
-265216,544104448,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2vbustbl_6,P_VALUE,swLogPrintf("unexpected guard state%d ");
-265216,544106496,0,0,PLAT_AP,PLA_DRIVER,usblpw_rmtwkup_monbus_start_1,P_VALUE,swLogPrintf("prev monbus_stat %d , start ");
-265216,544108544,0,0,PLAT_AP,PLA_DRIVER,usblpw_rmtwkup_monbus_int_upd_stat_1,P_VALUE,swLogPrintf("1st intr detected , intr_type 0x%x ");
-265216,544110592,0,0,PLAT_AP,PLA_DRIVER,usblpw_rmtwkup_monbus_susp_upd_stat_1,P_WARNING,swLogPrintf("unblocked , intr<<1|sof cond %x ");
-265216,544114687,0,0,PLAT_AP,PLA_DRIVER,usblpw_rmtwkup_monbus_susp_upd_stat_3,P_WARNING,swLogPrintf("blocked ");
-265216,544114688,0,0,PLAT_AP,PLA_DRIVER,usblpw_rmtwkup_monbus_dlychk_1,P_VALUE,swLogPrintf("dlychk %d ");
-265216,544118783,0,0,PLAT_AP,PLA_DRIVER,usblpw_rmtwkup_monbus_dlychk_2,P_VALUE,swLogPrintf("penalty end ");
-265216,544118784,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep_backup_00_00,P_WARNING,swLogPrintf("NVIC_GetEnableIRQ ( Usb_IRQn ) 0x%x ");
-265216,544120832,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep_backup_00_01,P_WARNING,swLogPrintf("irq_mask 0x%x ");
-265216,544124927,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep_backup_test_00_02,P_WARNING,swLogPrintf("usblpw_enable_lpusbwkup_src ");
-265216,544126975,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep_backup_test_00_04,P_WARNING,swLogPrintf("NVIC_GetPendingIRQ ( Usb_IRQn ) true , abort backup ");
-265216,544129023,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep1_pre_recovery_0,P_WARNING,swLogPrintf("Disable LpusbWakeup_IRQn ");
-265216,544129280,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep1_pre_recovery_1,P_VALUE,swLogPrintf("vbus_nvic rec %d , vbus_pad %d ");
-265216,544133119,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep_recovery_test_00,P_WARNING,swLogPrintf("usblpw_exit_aoncfg no config to avoid lost ");
-265216,544133376,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep1_locinit_gint_regs,P_WARNING,swLogPrintf("gintsts 0x%x , gintmsk 0x%x ");
-265216,544137215,0,0,PLAT_AP,PLA_DRIVER,usblpw_is_retothwks2_slp1_start_2,P_WARNING,swLogPrintf("Disable LpusbWakeup_IRQn ");
-265216,544139263,0,0,PLAT_AP,PLA_DRIVER,usblpw_is_retothwks2_slp1_start_3,P_WARNING,swLogPrintf("usblpw_innophy_susp_chk_patch ");
-265216,544139264,0,0,PLAT_AP,PLA_DRIVER,usblpw_is_retothwks2_slp1_start_4,P_WARNING,swLogPrintf("reg ctxstat %d unmatch ");
-265216,544141568,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep1_locinit_1,P_VALUE,swLogPrintf("ctx state ( %d ) is not none , vbus_nvic rec %d , wkup hard restore skip ");
-265216,544143616,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep1_locinit_2,P_VALUE,swLogPrintf("prev ctx state ( %d ) before slp1 not success , vbus [ 2 ] or pad [ 1 ] or vbus_nvic_r [ 0 ] 0x%x , wkup hard restore skip ");
-265216,544145664,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep1_locinit_3,P_VALUE,swLogPrintf("vbus_nvic rec %d , vbus_pad %d ");
-265216,544149503,0,0,PLAT_AP,PLA_DRIVER,usblpw_sleep1_later_recovery_2,P_ERROR,swLogPrintf("vbus_mode_en and vbus pad nvic enabled , conflict stat ");
-265216,544150016,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep1_locinit_4,P_VALUE,swLogPrintf("hard_rest_warning or case 0x%x , usbslpmsk_en 0x%x , reg_retwkup_ctxstat 0x%x ");
-265216,544152320,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep1_locinit_6,P_VALUE,swLogPrintf("pwr state 0x%x , bootstat 0x%x , lastwkup 0x%x , inimod 0x%x ");
-265216,544153600,0,0,PLAT_AP,PLA_DRIVER,usblpw_sleep1_later_recovery_nvic,P_VALUE,swLogPrintf("NVIC 0x%x ");
-265216,544156160,0,0,PLAT_AP,PLA_DRIVER,usblpw_sleep1_later_recovery_1,P_VALUE,swLogPrintf("pwr state 0x%x , bootstat 0x%x , lastwkup 0x%x ");
-265216,544159743,0,0,PLAT_AP,PLA_DRIVER,usbpcd_retwkup_stack_restore_1,P_ERROR,swLogPrintf("early init fail ");
-265216,544161791,0,0,PLAT_AP,PLA_DRIVER,usbpcd_retwkup_stack_restore_2,P_ERROR,swLogPrintf("early load fail ");
-265216,544163839,0,0,PLAT_AP,PLA_DRIVER,usbpcd_retwkup_stack_restore_3,P_ERROR,swLogPrintf("retwkup restore fail ");
-265216,544165887,0,0,PLAT_AP,PLA_DRIVER,usbpcd_init_pre_1,P_WARNING,swLogPrintf("clk ungated ");
-265216,544167935,0,0,PLAT_AP,PLA_DRIVER,usbpcd_init_1,P_ERROR,swLogPrintf("early init fail ");
-265216,544169983,0,0,PLAT_AP,PLA_DRIVER,usbpcd_init_2,P_ERROR,swLogPrintf("early load fail ");
-265216,544172031,0,0,PLAT_AP,PLA_DRIVER,usbpcd_init_3,P_ERROR,swLogPrintf("dev init fail ");
-265216,544174079,0,0,PLAT_AP,PLA_DRIVER,usbpcd_proc_sim_cfgreq_1,P_VALUE,swLogPrintf("sim usb init start ");
-265216,544175360,0,0,PLAT_AP,PLA_DRIVER,UtfwDrvErrIsr_e_1,P_ERROR,swLogPrintf("UTFW ERROR! errStatus : 0x%lx ( %d , %d , %d ) , AhbRdErrAddr : 0x%x , AhbWdErrAddr : 0x%x ");
-265216,544178175,0,0,PLAT_AP,PLA_DRIVER,UtfwDrvErrIsr_dump_e_1,P_ERROR,swLogDump("UTFW ERROR , UTFW_OTHER_DEBUG_REG : ");
-265216,544179200,0,0,PLAT_AP,PLA_DRIVER,UtfwDrvErrIsr_ep_1,P_ERROR,swLogPrintf("UTFW ERROR! ep : %d , epCfg : 0x%lx ( %d , %d , %d ) ");
-265216,544180224,0,0,PLAT_AP,PLA_DRIVER,VpuErrIsr_0,P_ERROR,swLogPrintf("pVpuReg->errStatus.reg = 0x%X ");
-265216,544184319,0,0,PLAT_AP,PLA_DRIVER,VpuTaskEndIsr_0,P_INFO,swLogPrintf("pVpuReg->taskStatus.endStatus ");
-265216,544184832,0,0,PLAT_AP,PLA_DRIVER,adcProxyVBatCallback_1,P_VALUE,swLogPrintf("raw_result = 0x%x , vbat = 0x%x , aioStable = %d ");
-265216,544186880,0,0,PLAT_AP,PLA_DRIVER,adcProxyThermalCallback_1,P_VALUE,swLogPrintf("rawResult = 0x%x , Thermal = 0x%x , aioStable = %d ");
-265216,544188672,0,0,PLAT_AP,PLA_DRIVER,HibTimer_PS_Start_0,P_SIG,swLogPrintf("DeepSleep Timer Renew ID = %d , ticks = %d ");
-265216,544190720,0,0,PLAT_AP,PLA_DRIVER,HibTimer_PS_Start_1,P_SIG,swLogPrintf("DeepSleep Timer Change Period ID = %d , ticks = %d ");
-265216,544192768,0,0,PLAT_AP,PLA_DRIVER,HibTimer_PS_Start_2,P_SIG,swLogPrintf("Wakeup From DeepSleep , Timer Restart ID = %d , ticks = %d ");
-265216,544194816,0,0,PLAT_AP,PLA_DRIVER,HibTimer_PS_Start_3,P_SIG,swLogPrintf("DeepSleep Timer New ID = %d , ticks = %d ");
-265216,544196608,0,0,PLAT_AP,PLA_DRIVER,HibTimer_PS_Del_1,P_SIG,swLogPrintf("DeepSleep Timer Delete ID = %d ");
-265216,544200703,0,0,PLAT_AP,PLA_DRIVER,OsaGetFlashValue_1,P_INFO,swLogPrintf("get cclk time value , file not exist , create default one ");
-265216,544202751,0,0,PLAT_AP,PLA_DRIVER,OsaGetFlashValue_2,P_INFO,swLogPrintf("get cclk time value , file header error , create default one ");
-265216,544204799,0,0,PLAT_AP,PLA_DRIVER,OsaGetFlashValue_3,P_INFO,swLogPrintf("cclk time value file read sucess ");
-265216,544206847,0,0,PLAT_AP,PLA_DRIVER,OsaSetFlashValue_1,P_INFO,swLogPrintf("set cclk time value , file not exist , create default one ");
-265216,544208895,0,0,PLAT_AP,PLA_DRIVER,OsaSetFlashValue_2,P_INFO,swLogPrintf("cclk time value file write sucess ");
-265216,544209664,0,0,PLAT_AP,PLA_DRIVER,adc_efuse_read,P_INFO,swLogPrintf("adc efuse trim value , gain : 0x%x , offset : 0x%x , tcode : 0x%x , t0 : 0x%x ");
-265216,544211459,0,0,PLAT_AP,PLA_DRIVER,assert_func_1,P_ERROR,swLogPrintf("Assert , expr : %s , file : %s , line : %d \r \n ");
-265216,544215039,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_1,P_ERROR,swLogPrintf("Can ' t open ' plat_config ' file , use the defult value ");
-265216,544217087,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_2,P_ERROR,swLogPrintf("Can ' t read ' plat_config ' file header , use the defult value ");
-265216,544217088,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_5,P_ERROR,swLogPrintf("' plat_config ' version : %d not right , use the defult value ");
-265216,544219648,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_3,P_ERROR,swLogPrintf("' plat_config ' version : %d file body size not right : ( %u / %u ) , use the defult value ");
-265216,544221696,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_4,P_ERROR,swLogPrintf("Can ' t read ' plat_config ' version : %d file body , or body not right , ( %u / %u ) , use the defult value ");
-265216,544225279,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfig_1,P_ERROR,swLogPrintf("Can ' t open / create ' plat_config ' file , save plat_config failed ");
-265216,544227327,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfig_2,P_ERROR,swLogPrintf("Write ' plat_config ' file header failed ");
-265216,544229375,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfig_3,P_ERROR,swLogPrintf("Write ' plat_config ' file body failed ");
-265216,544231423,0,0,PLAT_AP,PLA_DRIVER,BSP_SetFSAssertCount_0,P_ERROR,swLogPrintf("Erase flash error!!! ");
-265216,544233471,0,0,PLAT_AP,PLA_DRIVER,BSP_SetFSAssertCount_1,P_ERROR,swLogPrintf("Update fsAssertCount value error!!! ");
-265216,544235519,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfigToRawFlash_1,P_ERROR,swLogPrintf("Erase flash error!!! ");
-265216,544237567,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfigToRawFlash_2,P_ERROR,swLogPrintf("Save plat config to raw flash error!!! ");
-265216,544239615,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfigToRawFlash_3,P_ERROR,swLogPrintf("Erase flash error!!! ");
-265216,544241663,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfigToRawFlash_4,P_ERROR,swLogPrintf("Save plat config to raw flash error!!! ");
-265216,544243711,0,0,PLAT_AP,PLA_DRIVER,BSP_WriteToRawFlash_1,P_ERROR,swLogPrintf("Erase flash error!!! ");
-265216,544245759,0,0,PLAT_AP,PLA_DRIVER,BSP_WriteToRawFlash_2,P_ERROR,swLogPrintf("Save plat config to raw flash error!!! ");
-265216,544247807,0,0,PLAT_AP,PLA_DRIVER,BSP_WriteToRawFlash_3,P_ERROR,swLogPrintf("Erase flash error!!! ");
-265216,544249855,0,0,PLAT_AP,PLA_DRIVER,BSP_WriteToRawFlash_4,P_ERROR,swLogPrintf("Save plat config to raw flash error!!! ");
-265216,544250112,0,0,PLAT_AP,PLA_DRIVER,BSP_GET_PLAT_CFG_3,P_WARNING,swLogPrintf("non-identical baud between fs ( %d ) & raw ( %d ) ! ");
-265216,544252672,0,0,PLAT_AP,PLA_DRIVER,CLOCK_Trace_1,P_WARNING,swLogPrintf("Clock Trace , id = 0x%x isEnable = %d counter = %d , funcPtr = %x ");
-265216,544254464,0,0,PLAT_AP,PLA_DRIVER,CLOCK_Trace_2,P_WARNING,swLogPrintf("Clock Trace , id = 0x%x counter = %d may overflow , funcPtr = %x ");
-265216,544256256,0,0,PLAT_AP,PLA_DRIVER,CLOCK_clockEnable_1,P_WARNING,swLogPrintf("Clock Enable Failed , id = 0x%x counter = %d ");
-265216,544258048,0,0,PLAT_AP,PLA_DRIVER,CLOCK_clockDisable_0,P_WARNING,swLogPrintf("Clock Disable check failed , id = 0x%x ");
-265216,544260352,0,0,PLAT_AP,PLA_DRIVER,TIMER_netlightPWM_1,P_SIG,swLogPrintf("Netlight mode = %u Instance = %d ");
-265216,544262144,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_init_1,P_WARNING,swLogPrintf("usb_wkup_pad_idx %d ");
-265216,544264448,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_1_1,P_WARNING,swLogPrintf("filter reset detect evt %x , vbus %d ");
-265216,544266496,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_1_2,P_WARNING,swLogPrintf("filter reset ( to ) evt %x , vbus %d ");
-265216,544268544,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_1,P_WARNING,swLogPrintf("port filtered unstable evt %x , vbus %d ");
-265216,544270592,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_2,P_WARNING,swLogPrintf("port vbus filter unstable level vbus last %d , vbus cur = %d ");
-265216,544272384,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_3,P_WARNING,swLogPrintf("port filtered type2 ( to ) invalid vbus , evt %x , vbus 0 ");
-265216,544274432,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_4,P_WARNING,swLogPrintf("port filtered type3 ( to ) invalid vbus , evt %x , vbus 1 ");
-265216,544276736,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_5,P_WARNING,swLogPrintf("port vbus trigger warning , ctx stat not valid %x , vbus %d ");
-265216,544278784,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_6,P_INFO,swLogPrintf("port vbus trigger , evt %x , vbus %d ");
-265216,544282623,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_1,P_WARNING,swLogPrintf("BSP_UsbDeInit ");
-265216,544284671,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_2,P_ERROR,swLogPrintf("BSP_UsbDeInit , ctx stat not match ");
-265216,544286719,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_3,P_WARNING,swLogPrintf("BSP_UsbInit ");
-265216,544288767,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_4,P_ERROR,swLogPrintf("BSP_UsbInit , ctx stat not match ");
-265216,544289024,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_5,P_WARNING,swLogPrintf("port vbus last %d , vbus cur = %d ");
-265216,544292863,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_4_1,P_WARNING,swLogPrintf("port stable wait evt change ");
-265216,544292864,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_4_2,P_WARNING,swLogPrintf("port stable detect evt %x ");
-265216,544294912,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_intr_cb_1,P_INFO,swLogPrintf("wkup_val : 0x%x ");
-265216,544297728,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_ccinfo_map_1,P_ERROR,swLogPrintf("clstype %d , inst_id %d , maintp %d , subtp %d ");
-265216,544299776,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_ccinfo_map_2,P_ERROR,swLogPrintf("clstype %d , inst_id %d , maintp %d , subtp %d ");
-265216,544301056,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_cfg_end_1,P_ERROR,swLogPrintf("p_multidev_load->load_cnt %x ");
-265216,544303884,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidevstr_desc_1,P_DEBUG,swLogPrintf("cls_type %d , inst_id 0x%x , name %s , intf string %s ");
-265216,544305921,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_cmndesc_1,P_DEBUG,swLogPrintf("name %s , cls = 0x%x , subcls 0x%x , protocol 0x%x ");
-265216,544307972,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_ctrl_proc_1,P_DEBUG,swLogPrintf("cls_type = %d , inst_id %d , name %s , req 0x%x ");
-265216,544311295,0,0,PLAT_AP,PLA_DRIVER,SoftSimInit_0,P_INFO,swLogPrintf("Softsim task has already been created ");
-265216,544313343,0,0,PLAT_AP,PLA_DRIVER,SoftSimInit_1,P_INFO,swLogPrintf("Start softsim task ");
-265216,544315391,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtInit_1,P_VALUE,swLogPrintf("Log above print through uart ");
-265216,544317439,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtInit_2,P_VALUE,swLogPrintf("Log below print through usb ");
-265216,544317440,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtInit_5,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtInit Process Time = %d ");
-265216,544319488,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtDinit_1,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtDinit Process Time = %d ");
-265216,544321536,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtReset_1,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtReset Process Time = %d ");
-265216,544325631,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtSuspend_3,P_VALUE,swLogPrintf("Log below print through uart ");
-265216,544325632,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtSuspend_4,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtSuspend Process Time = %d ");
-265216,544329727,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtResume_1,P_VALUE,swLogPrintf("Log above print through uart ");
-265216,544331775,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtResume_2,P_VALUE,swLogPrintf("Low below print through usb ");
-265216,544331776,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtResume_4,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtResume Process Time = %d ");
-265216,544334336,0,0,PLAT_AP,PLA_DRIVER,npiLoadNvmConfig_4,P_ERROR,swLogPrintf("Can ' t read ' npiconfig.nvm ' version : %d file body , or body not right , ( %u / %u ) , use the defult value ");
-265216,544335872,0,0,PLAT_AP,PLA_DRIVER,npiLoadNvmConfig_5,P_ERROR,swLogPrintf("' npiconfig.nvm ' version : %d not right , use the defult value ");
-265216,544338432,0,0,PLAT_AP,PLA_DRIVER,xTimerGenericCommand_1,P_WARNING,swLogPrintf("OsTimer Operation in ISR , msgId = %u , value = %d , pTimer = 0x%x ");
+265216,544049664,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_poll_gpwr_break_1,P_VALUE,swLogPrintf("gpwr_cur %x , gpwr_prev %x , hold cnt %d reset ");
+265216,544051968,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_poll_gpwr_break_2,P_VALUE,swLogPrintf("gpwr_cur %x , gpwr_prev %x , hold cnt %d reset , break2_cnt %d ");
+265216,544053504,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_poll_gpwr_break_3,P_VALUE,swLogPrintf("break_cnt %x , break2_cnt %x ");
+265216,544055552,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_poll_gpwr_match_2,P_VALUE,swLogPrintf("stage %d , detect gpwr ( 0x%x ) timeout ");
+265216,544057856,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_poll_gpwr_match_3,P_VALUE,swLogPrintf("detect cnt %x , gpwr_cur %x , detect gpwr ( 0x%x ) ");
+265216,544059392,0,0,PLAT_AP,PLA_DRIVER,usblpw_pre_restore_1,P_VALUE,swLogPrintf("detect gpwr 0x%x ");
+265216,544061440,0,0,PLAT_AP,PLA_DRIVER,usblpw_pre_restore_2,P_VALUE,swLogPrintf("usblpw_get_cur_pwr_state %d ");
+265216,544065535,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_hibslp2_try_stack_rest_1,P_WARNING,swLogPrintf("usblpw_retothwk_stackrest_chk_illegal ");
+265216,544067583,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_hibslp2_try_stack_rest_2,P_WARNING,swLogPrintf("usblpw_retothwk_hibslp2_stack_restore fail ");
+265216,544069631,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_slp1_try_stack_rest_1,P_WARNING,swLogPrintf("usblpw_retothwk_stackrest_chk_illegal ");
+265216,544071679,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_slp1_try_stack_rest_2,P_WARNING,swLogPrintf("usblpw_retwkup_slp1_stack_restore fail ");
+265216,544071680,0,0,PLAT_AP,PLA_DRIVER,usblpw_retothwk_wkmon_actv_proc_1,P_WARNING,swLogPrintf("retothwk wkmon stage %d not match ");
+265216,544073728,0,0,PLAT_AP,PLA_DRIVER,usb_lpwkup_step_show_1,P_VALUE,swLogPrintf("usb_lpwkup_step 0x%x ");
+265216,544077823,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2hib_1,P_VALUE,swLogPrintf("reset ");
+265216,544077824,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2hib_4,P_VALUE,swLogPrintf("permit %d ");
+265216,544079872,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2hib_3,P_VALUE,swLogPrintf("dlychk %d ");
+265216,544081920,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2hib_5,P_VALUE,swLogPrintf("usbc_proc_susp2hib %d ");
+265216,544083968,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2hib_6,P_VALUE,swLogPrintf("premit_proc %d ");
+265216,544088063,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2vbustbl_1_0,P_WARNING,swLogPrintf("guard none ");
+265216,544088064,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2vbustbl_2_1,P_WARNING,swLogPrintf("invalid guard status %d ");
+265216,544090112,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2vbustbl_2_2,P_VALUE,swLogPrintf("start %d ");
+265216,544092160,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2vbustbl_4,P_VALUE,swLogPrintf("permit %d ");
+265216,544094208,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2vbustbl_3,P_VALUE,swLogPrintf("dlychk %d ");
+265216,544096256,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2vbustbl_5_1,P_VALUE,swLogPrintf("premit_proc %d ");
+265216,544098304,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2vbustbl_5_2,P_VALUE,swLogPrintf("clear unexpect %d ");
+265216,544100352,0,0,PLAT_AP,PLA_DRIVER,usblpw_susp2vbustbl_6,P_VALUE,swLogPrintf("unexpected guard state%d ");
+265216,544102400,0,0,PLAT_AP,PLA_DRIVER,usblpw_rmtwkup_monbus_start_1,P_VALUE,swLogPrintf("prev monbus_stat %d , start ");
+265216,544104448,0,0,PLAT_AP,PLA_DRIVER,usblpw_rmtwkup_monbus_int_upd_stat_1,P_VALUE,swLogPrintf("1st intr detected , intr_type 0x%x ");
+265216,544106496,0,0,PLAT_AP,PLA_DRIVER,usblpw_rmtwkup_monbus_susp_upd_stat_1,P_WARNING,swLogPrintf("unblocked , intr<<1|sof cond %x ");
+265216,544110591,0,0,PLAT_AP,PLA_DRIVER,usblpw_rmtwkup_monbus_susp_upd_stat_3,P_WARNING,swLogPrintf("blocked ");
+265216,544110592,0,0,PLAT_AP,PLA_DRIVER,usblpw_rmtwkup_monbus_dlychk_1,P_VALUE,swLogPrintf("dlychk %d ");
+265216,544114687,0,0,PLAT_AP,PLA_DRIVER,usblpw_rmtwkup_monbus_dlychk_2,P_VALUE,swLogPrintf("penalty end ");
+265216,544114688,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep_backup_00_00,P_WARNING,swLogPrintf("NVIC_GetEnableIRQ ( Usb_IRQn ) 0x%x ");
+265216,544116736,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep_backup_00_01,P_WARNING,swLogPrintf("irq_mask 0x%x ");
+265216,544118784,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep_backup_test_00_02,P_WARNING,swLogPrintf("usblpw_enable_lpusbwkup_src , usbslpmsk_en %d ");
+265216,544122879,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep_backup_test_00_04,P_WARNING,swLogPrintf("NVIC_GetPendingIRQ ( Usb_IRQn ) true , abort backup ");
+265216,544124927,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep1_pre_recovery_0,P_WARNING,swLogPrintf("Disable LpusbWakeup_IRQn ");
+265216,544125184,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep1_pre_recovery_1,P_VALUE,swLogPrintf("vbus_nvic rec %d , vbus_pad %d ");
+265216,544129023,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep_recovery_test_00,P_WARNING,swLogPrintf("usblpw_exit_aoncfg no config to avoid lost ");
+265216,544129280,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep1_locinit_gint_regs,P_WARNING,swLogPrintf("gintsts 0x%x , gintmsk 0x%x ");
+265216,544133119,0,0,PLAT_AP,PLA_DRIVER,usblpw_is_retothwks2_slp1_start_2,P_WARNING,swLogPrintf("Disable LpusbWakeup_IRQn ");
+265216,544135167,0,0,PLAT_AP,PLA_DRIVER,usblpw_is_retothwks2_slp1_start_3,P_WARNING,swLogPrintf("usblpw_innophy_susp_chk_patch ");
+265216,544135168,0,0,PLAT_AP,PLA_DRIVER,usblpw_is_retothwks2_slp1_start_4,P_WARNING,swLogPrintf("reg ctxstat %d unmatch ");
+265216,544137472,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep1_locinit_1,P_VALUE,swLogPrintf("ctx state ( %d ) is not none , vbus_nvic rec %d , wkup hard restore skip ");
+265216,544139520,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep1_locinit_2,P_VALUE,swLogPrintf("prev ctx state ( %d ) before slp1 not success , vbus [ 2 ] or pad [ 1 ] or vbus_nvic_r [ 0 ] 0x%x , wkup hard restore skip ");
+265216,544141568,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep1_locinit_3,P_VALUE,swLogPrintf("vbus_nvic rec %d , vbus_pad %d ");
+265216,544145407,0,0,PLAT_AP,PLA_DRIVER,usblpw_sleep1_later_recovery_2,P_ERROR,swLogPrintf("vbus_mode_en and vbus pad nvic enabled , conflict stat ");
+265216,544145920,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep1_locinit_4,P_VALUE,swLogPrintf("hard_rest_warning or case 0x%x , usbslpmsk_en 0x%x , reg_retwkup_ctxstat 0x%x ");
+265216,544148224,0,0,PLAT_AP,PLA_DRIVER,usblpw_retwkup_sleep1_locinit_6,P_VALUE,swLogPrintf("pwr state 0x%x , bootstat 0x%x , lastwkup 0x%x , inimod 0x%x ");
+265216,544149504,0,0,PLAT_AP,PLA_DRIVER,usblpw_sleep1_later_recovery_nvic,P_VALUE,swLogPrintf("NVIC 0x%x ");
+265216,544152064,0,0,PLAT_AP,PLA_DRIVER,usblpw_sleep1_later_recovery_1,P_VALUE,swLogPrintf("pwr state 0x%x , bootstat 0x%x , lastwkup 0x%x ");
+265216,544155647,0,0,PLAT_AP,PLA_DRIVER,usbpcd_retwkup_stack_restore_1,P_ERROR,swLogPrintf("early init fail ");
+265216,544157695,0,0,PLAT_AP,PLA_DRIVER,usbpcd_retwkup_stack_restore_2,P_ERROR,swLogPrintf("early load fail ");
+265216,544159743,0,0,PLAT_AP,PLA_DRIVER,usbpcd_retwkup_stack_restore_3,P_ERROR,swLogPrintf("retwkup restore fail ");
+265216,544161791,0,0,PLAT_AP,PLA_DRIVER,usbpcd_init_pre_1,P_WARNING,swLogPrintf("clk ungated ");
+265216,544163839,0,0,PLAT_AP,PLA_DRIVER,usbpcd_init_1,P_ERROR,swLogPrintf("early init fail ");
+265216,544165887,0,0,PLAT_AP,PLA_DRIVER,usbpcd_init_2,P_ERROR,swLogPrintf("early load fail ");
+265216,544167935,0,0,PLAT_AP,PLA_DRIVER,usbpcd_init_3,P_ERROR,swLogPrintf("dev init fail ");
+265216,544169983,0,0,PLAT_AP,PLA_DRIVER,usbpcd_proc_sim_cfgreq_1,P_VALUE,swLogPrintf("sim usb init start ");
+265216,544171264,0,0,PLAT_AP,PLA_DRIVER,UtfwDrvErrIsr_e_1,P_ERROR,swLogPrintf("UTFW ERROR! errStatus : 0x%lx ( %d , %d , %d ) , AhbRdErrAddr : 0x%x , AhbWdErrAddr : 0x%x ");
+265216,544174079,0,0,PLAT_AP,PLA_DRIVER,UtfwDrvErrIsr_dump_e_1,P_ERROR,swLogDump("UTFW ERROR , UTFW_OTHER_DEBUG_REG : ");
+265216,544175104,0,0,PLAT_AP,PLA_DRIVER,UtfwDrvErrIsr_ep_1,P_ERROR,swLogPrintf("UTFW ERROR! ep : %d , epCfg : 0x%lx ( %d , %d , %d ) ");
+265216,544176128,0,0,PLAT_AP,PLA_DRIVER,VpuErrIsr_0,P_ERROR,swLogPrintf("pVpuReg->errStatus.reg = 0x%X ");
+265216,544180223,0,0,PLAT_AP,PLA_DRIVER,VpuTaskEndIsr_0,P_INFO,swLogPrintf("pVpuReg->taskStatus.endStatus ");
+265216,544180736,0,0,PLAT_AP,PLA_DRIVER,adcProxyVBatCallback_1,P_VALUE,swLogPrintf("raw_result = 0x%x , vbat = 0x%x , aioStable = %d ");
+265216,544182784,0,0,PLAT_AP,PLA_DRIVER,adcProxyThermalCallback_1,P_VALUE,swLogPrintf("rawResult = 0x%x , Thermal = 0x%x , aioStable = %d ");
+265216,544184576,0,0,PLAT_AP,PLA_DRIVER,HibTimer_PS_Start_0,P_SIG,swLogPrintf("DeepSleep Timer Renew ID = %d , ticks = %d ");
+265216,544186624,0,0,PLAT_AP,PLA_DRIVER,HibTimer_PS_Start_1,P_SIG,swLogPrintf("DeepSleep Timer Change Period ID = %d , ticks = %d ");
+265216,544188672,0,0,PLAT_AP,PLA_DRIVER,HibTimer_PS_Start_2,P_SIG,swLogPrintf("Wakeup From DeepSleep , Timer Restart ID = %d , ticks = %d ");
+265216,544190720,0,0,PLAT_AP,PLA_DRIVER,HibTimer_PS_Start_3,P_SIG,swLogPrintf("DeepSleep Timer New ID = %d , ticks = %d ");
+265216,544192512,0,0,PLAT_AP,PLA_DRIVER,HibTimer_PS_Del_1,P_SIG,swLogPrintf("DeepSleep Timer Delete ID = %d ");
+265216,544196607,0,0,PLAT_AP,PLA_DRIVER,OsaGetFlashValue_1,P_INFO,swLogPrintf("get cclk time value , file not exist , create default one ");
+265216,544198655,0,0,PLAT_AP,PLA_DRIVER,OsaGetFlashValue_2,P_INFO,swLogPrintf("get cclk time value , file header error , create default one ");
+265216,544200703,0,0,PLAT_AP,PLA_DRIVER,OsaGetFlashValue_3,P_INFO,swLogPrintf("cclk time value file read sucess ");
+265216,544202751,0,0,PLAT_AP,PLA_DRIVER,OsaSetFlashValue_1,P_INFO,swLogPrintf("set cclk time value , file not exist , create default one ");
+265216,544204799,0,0,PLAT_AP,PLA_DRIVER,OsaSetFlashValue_2,P_INFO,swLogPrintf("cclk time value file write sucess ");
+265216,544205568,0,0,PLAT_AP,PLA_DRIVER,adc_efuse_read,P_INFO,swLogPrintf("adc efuse trim value , gain : 0x%x , offset : 0x%x , tcode : 0x%x , t0 : 0x%x ");
+265216,544207363,0,0,PLAT_AP,PLA_DRIVER,assert_func_1,P_ERROR,swLogPrintf("Assert , expr : %s , file : %s , line : %d \r \n ");
+265216,544210943,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_1,P_ERROR,swLogPrintf("Can ' t open ' plat_config ' file , use the defult value ");
+265216,544212991,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_2,P_ERROR,swLogPrintf("Can ' t read ' plat_config ' file header , use the defult value ");
+265216,544212992,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_5,P_ERROR,swLogPrintf("' plat_config ' version : %d not right , use the defult value ");
+265216,544215552,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_3,P_ERROR,swLogPrintf("' plat_config ' version : %d file body size not right : ( %u / %u ) , use the defult value ");
+265216,544217600,0,0,PLAT_AP,PLA_DRIVER,BSP_LoadPlatConfig_4,P_ERROR,swLogPrintf("Can ' t read ' plat_config ' version : %d file body , or body not right , ( %u / %u ) , use the defult value ");
+265216,544221183,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfig_1,P_ERROR,swLogPrintf("Can ' t open / create ' plat_config ' file , save plat_config failed ");
+265216,544223231,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfig_2,P_ERROR,swLogPrintf("Write ' plat_config ' file header failed ");
+265216,544225279,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfig_3,P_ERROR,swLogPrintf("Write ' plat_config ' file body failed ");
+265216,544227327,0,0,PLAT_AP,PLA_DRIVER,BSP_SetFSAssertCount_0,P_ERROR,swLogPrintf("Erase flash error!!! ");
+265216,544229375,0,0,PLAT_AP,PLA_DRIVER,BSP_SetFSAssertCount_1,P_ERROR,swLogPrintf("Update fsAssertCount value error!!! ");
+265216,544231423,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfigToRawFlash_1,P_ERROR,swLogPrintf("Erase flash error!!! ");
+265216,544233471,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfigToRawFlash_2,P_ERROR,swLogPrintf("Save plat config to raw flash error!!! ");
+265216,544235519,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfigToRawFlash_3,P_ERROR,swLogPrintf("Erase flash error!!! ");
+265216,544237567,0,0,PLAT_AP,PLA_DRIVER,BSP_SavePlatConfigToRawFlash_4,P_ERROR,swLogPrintf("Save plat config to raw flash error!!! ");
+265216,544239615,0,0,PLAT_AP,PLA_DRIVER,BSP_WriteToRawFlash_1,P_ERROR,swLogPrintf("Erase flash error!!! ");
+265216,544241663,0,0,PLAT_AP,PLA_DRIVER,BSP_WriteToRawFlash_2,P_ERROR,swLogPrintf("Save plat config to raw flash error!!! ");
+265216,544243711,0,0,PLAT_AP,PLA_DRIVER,BSP_WriteToRawFlash_3,P_ERROR,swLogPrintf("Erase flash error!!! ");
+265216,544245759,0,0,PLAT_AP,PLA_DRIVER,BSP_WriteToRawFlash_4,P_ERROR,swLogPrintf("Save plat config to raw flash error!!! ");
+265216,544246016,0,0,PLAT_AP,PLA_DRIVER,BSP_GET_PLAT_CFG_3,P_WARNING,swLogPrintf("non-identical baud between fs ( %d ) & raw ( %d ) ! ");
+265216,544248576,0,0,PLAT_AP,PLA_DRIVER,CLOCK_Trace_1,P_WARNING,swLogPrintf("Clock Trace , id = 0x%x isEnable = %d counter = %d , funcPtr = %x ");
+265216,544250368,0,0,PLAT_AP,PLA_DRIVER,CLOCK_Trace_2,P_WARNING,swLogPrintf("Clock Trace , id = 0x%x counter = %d may overflow , funcPtr = %x ");
+265216,544252160,0,0,PLAT_AP,PLA_DRIVER,CLOCK_clockEnable_1,P_WARNING,swLogPrintf("Clock Enable Failed , id = 0x%x counter = %d ");
+265216,544253952,0,0,PLAT_AP,PLA_DRIVER,CLOCK_clockDisable_0,P_WARNING,swLogPrintf("Clock Disable check failed , id = 0x%x ");
+265216,544256256,0,0,PLAT_AP,PLA_DRIVER,TIMER_netlightPWM_1,P_SIG,swLogPrintf("Netlight mode = %u Instance = %d ");
+265216,544258048,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_init_1,P_WARNING,swLogPrintf("usb_wkup_pad_idx %d ");
+265216,544260352,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_1_1,P_WARNING,swLogPrintf("filter reset detect evt %x , vbus %d ");
+265216,544262400,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_1_2,P_WARNING,swLogPrintf("filter reset ( to ) evt %x , vbus %d ");
+265216,544264448,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_1,P_WARNING,swLogPrintf("port filtered unstable evt %x , vbus %d ");
+265216,544266496,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_2,P_WARNING,swLogPrintf("port vbus filter unstable level vbus last %d , vbus cur = %d ");
+265216,544268288,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_3,P_WARNING,swLogPrintf("port filtered type2 ( to ) invalid vbus , evt %x , vbus 0 ");
+265216,544270336,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_4,P_WARNING,swLogPrintf("port filtered type3 ( to ) invalid vbus , evt %x , vbus 1 ");
+265216,544272640,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_5,P_WARNING,swLogPrintf("port vbus trigger warning , ctx stat not valid %x , vbus %d ");
+265216,544274688,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_2_6,P_INFO,swLogPrintf("port vbus trigger , evt %x , vbus %d ");
+265216,544278527,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_1,P_WARNING,swLogPrintf("BSP_UsbDeInit ");
+265216,544280575,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_2,P_ERROR,swLogPrintf("BSP_UsbDeInit , ctx stat not match ");
+265216,544282623,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_3,P_WARNING,swLogPrintf("BSP_UsbInit ");
+265216,544284671,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_4,P_ERROR,swLogPrintf("BSP_UsbInit , ctx stat not match ");
+265216,544284928,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_3_5,P_WARNING,swLogPrintf("port vbus last %d , vbus cur = %d ");
+265216,544288767,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_4_1,P_WARNING,swLogPrintf("port stable wait evt change ");
+265216,544288768,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_task_4_2,P_WARNING,swLogPrintf("port stable detect evt %x ");
+265216,544290816,0,0,PLAT_AP,PLA_DRIVER,usb_portmon_intr_cb_1,P_INFO,swLogPrintf("wkup_val : 0x%x ");
+265216,544293632,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_ccinfo_map_1,P_ERROR,swLogPrintf("clstype %d , inst_id %d , maintp %d , subtp %d ");
+265216,544295680,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_ccinfo_map_2,P_ERROR,swLogPrintf("clstype %d , inst_id %d , maintp %d , subtp %d ");
+265216,544296960,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_cfg_end_1,P_ERROR,swLogPrintf("p_multidev_load->load_cnt %x ");
+265216,544299788,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidevstr_desc_1,P_DEBUG,swLogPrintf("cls_type %d , inst_id 0x%x , name %s , intf string %s ");
+265216,544301825,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_cmndesc_1,P_DEBUG,swLogPrintf("name %s , cls = 0x%x , subcls 0x%x , protocol 0x%x ");
+265216,544303876,0,0,PLAT_AP,PLA_DRIVER,usbcustom_multidev_ctrl_proc_1,P_DEBUG,swLogPrintf("cls_type = %d , inst_id %d , name %s , req 0x%x ");
+265216,544307199,0,0,PLAT_AP,PLA_DRIVER,SoftSimInit_0,P_INFO,swLogPrintf("Softsim task has already been created ");
+265216,544309247,0,0,PLAT_AP,PLA_DRIVER,SoftSimInit_1,P_INFO,swLogPrintf("Start softsim task ");
+265216,544311295,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtInit_1,P_VALUE,swLogPrintf("Log above print through uart ");
+265216,544313343,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtInit_2,P_VALUE,swLogPrintf("Log below print through usb ");
+265216,544313344,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtInit_5,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtInit Process Time = %d ");
+265216,544315392,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtDinit_1,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtDinit Process Time = %d ");
+265216,544317440,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtReset_1,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtReset Process Time = %d ");
+265216,544321535,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtSuspend_3,P_VALUE,swLogPrintf("Log below print through uart ");
+265216,544321536,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtSuspend_4,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtSuspend Process Time = %d ");
+265216,544325631,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtResume_1,P_VALUE,swLogPrintf("Log above print through uart ");
+265216,544327679,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtResume_2,P_VALUE,swLogPrintf("Low below print through usb ");
+265216,544327680,0,0,PLAT_AP,PLA_DRIVER,usbDevLowLvlEvtResume_4,P_VALUE,swLogPrintf("USB IRQ usbDevLowLvlEvtResume Process Time = %d ");
+265216,544330240,0,0,PLAT_AP,PLA_DRIVER,npiLoadNvmConfig_4,P_ERROR,swLogPrintf("Can ' t read ' npiconfig.nvm ' version : %d file body , or body not right , ( %u / %u ) , use the defult value ");
+265216,544331776,0,0,PLAT_AP,PLA_DRIVER,npiLoadNvmConfig_5,P_ERROR,swLogPrintf("' npiconfig.nvm ' version : %d not right , use the defult value ");
+265216,544334336,0,0,PLAT_AP,PLA_DRIVER,xTimerGenericCommand_1,P_WARNING,swLogPrintf("OsTimer Operation in ISR , msgId = %u , value = %d , pTimer = 0x%x ");
 266240,545259520,0,0,PLAT_AP,PLA_HAL,ApmuHandleScCalibrCancel,P_INFO,swLogPrintf("ApmuHandleScCalibration Cancelled! and timer status is %d ");
 266240,545263615,0,0,PLAT_AP,PLA_HAL,ApmuScCalibrTimerExpired_0,P_INFO,swLogPrintf("ApmuScCalibrTimerExpired! ");
 266240,545265663,0,0,PLAT_AP,PLA_HAL,ApmuScCalibrTimerExpired_1,P_INFO,swLogPrintf("AP do calibration itself , not notice CP ");
@@ -1692,7 +1692,7 @@ f4cd1cb4097b19f78b630924f40d36e734b252a85b42aaa8492f7b40ff9be0c9785d835c8948e0b8
 268288,549595136,0,0,PLAT_AP,OSA,ULFC_SET_USED_THRES,P_WARNING,swLogPrintf("invalid chanNo ( %d ) err! ");
 268288,549597184,0,0,PLAT_AP,OSA,ULFC_QUERY_ENABLE_STATE,P_WARNING,swLogPrintf("invalid chanNo ( %d ) err! ");
 268288,549599232,0,0,PLAT_AP,OSA,ULFC_QUERY_AVLB_SIZE,P_WARNING,swLogPrintf("invalid chanNo ( %d ) err! ");
-268288,549602048,0,0,PLAT_AP,OSA,OSA_ULFC_ALLOC,P_SIG,swLogPrintf("UlfcMem ( %d ) : alerting water! usedSize ( %d ) , alertThres ( %d / %d%% ) ");
+268288,549602048,0,0,PLAT_AP,OSA,OSA_ULFC_ALLOC_1,P_SIG,swLogPrintf("UlfcMem ( %d ) : alerting water! usedSize ( %d ) , alertThres ( %d / %d%% ) ");
 268288,549603328,0,0,PLAT_AP,OSA,OSA_ULFC_ENABLE_1,P_WARNING,swLogPrintf("invalid chanNo ( %d ) err! ");
 268288,549606664,0,0,PLAT_AP,OSA,OSA_ULFC_ENABLE_2,P_SIG,swLogPrintf("UlfcMem ( %d ) : set task ( %d / 0x%x ) to %s mode ( %d ) , latest ref ( %d ) ! ");
 268288,549607424,0,0,PLAT_AP,OSA,OSA_ULFC_DISABLE_1,P_WARNING,swLogPrintf("invalid chanNo ( %d ) err! ");
@@ -2034,11 +2034,11 @@ f4cd1cb4097b19f78b630924f40d36e734b252a85b42aaa8492f7b40ff9be0c9785d835c8948e0b8
 270336,553787648,0,0,PLAT_AP,CCIO,CMUX_DETTACH_2,P_WARNING,swLogPrintf("serlEnt ( 0x%x ) : deinit dlc ( %d ) fail! ");
 270336,553789696,0,0,PLAT_AP,CCIO,CMUX_DETTACH_3,P_ERROR,swLogPrintf("serlEnt ( 0x%x ) : %d dlc ( s ) remain to be deleted! ");
 270336,553791744,0,0,PLAT_AP,CCIO,CMUX_FSM_INPUT_ERR_1,P_WARNING,swLogPrintf("dlc ( %d ) : dlfc alloc ( %d ) fail! ");
-270336,553794816,0,0,PLAT_AP,CCIO,CMUX_SET_COMN_CONF,P_SIG,swLogPrintf("subset ( %d ) , n2 ( %d ) , t1 ( %d ) , t2 ( %d ) , t3 ( %d ) , win ( %d ) ");
+270336,553795072,0,0,PLAT_AP,CCIO,CMUX_SET_COMN_CONF,P_SIG,swLogPrintf("subset ( %d ) , n1 ( %d ) , n2 ( %d ) , t1 ( %d ) , t2 ( %d ) , t3 ( %d ) , win ( %d ) ");
 270336,553795584,0,0,PLAT_AP,CCIO,CMUX_START_1,P_SIG,swLogPrintf("serlEnt ( 0x%x ) : cmux already started? ");
 270336,553798144,0,0,PLAT_AP,CCIO,CMUX_FSM_INPUT_0,P_INFO,swLogPrintf("serlEnt ( 0x%x ) : frame ( %e<CmuxFrameType_e> ) from dlc ( %d ) . ");
 270336,553800192,0,0,PLAT_AP,CCIO,CMUX_FSM_INPUT_1,P_WARNING,swLogPrintf("serlEnt ( 0x%x ) : dlci ( %d ) overflow , max ( %d ) ! ");
-270336,553801984,0,0,PLAT_AP,CCIO,CMUX_FSM_INPUT_2,P_WARNING,swLogPrintf("serlEnt ( 0x%x ) : dlc ( %d ) dlcFns null err! ");
+270336,553801984,0,0,PLAT_AP,CCIO,CMUX_FSM_INPUT_2,P_WARNING,swLogPrintf("serlEnt ( 0x%x ) : dlc ( %d ) err , discard it... ");
 270336,553804032,0,0,PLAT_AP,CCIO,CMUX_SET_DLC_MODE_1,P_WARNING,swLogPrintf("dlc ( %d ) : serv ( %d ) not at or ppp! ");
 270336,553805824,0,0,PLAT_AP,CCIO,CMUX_SET_DLC_MODE_2,P_WARNING,swLogPrintf("dlc ( %d ) : dlcFns null err! ");
 270336,553808128,0,0,PLAT_AP,CCIO,CMUX_DLC_AT_INPUT_1,P_WARNING,swLogPrintf("dlc ( %d ) : not connected state ( %d ) , discard it... ");
@@ -4183,43 +4183,45 @@ dbfed5df942b35291ba21139e2f26a9f912e2375f27531aa2a96351fb688ab215d24c893d58c5c45
 296960,608245760,0,0,PLAT_AP,LWIP_OTHER,etharp_update_arp_disable_retry_timer_static,P_INFO,swLogPrintf("etharp_update_arp_entry : static arp entry %u ");
 296960,608248576,0,0,PLAT_AP,LWIP_OTHER,etharp_add_static_entry_11,P_INFO,swLogPrintf("etharp_add_static_entry : %u.%u.%u.%u ");
 296960,608251136,0,0,PLAT_AP,LWIP_OTHER,etharp_add_static_entry_12,P_INFO,swLogPrintf("etharp_add_static_entry : %u : %u : %u : %u : %u : %u ");
-296960,608252672,0,0,PLAT_AP,LWIP_OTHER,etharp_remove_static_entry_1,P_INFO,swLogPrintf("etharp_remove_static_entry : %u.%u.%u.%u ");
-296960,608255999,0,0,PLAT_AP,LWIP_OTHER,etharp_find_addr_1,P_ERROR,swLogPrintf("eth_ret = = NULL || ip_ret = = NULL ");
-296960,608258047,0,0,PLAT_AP,LWIP_OTHER,etharp_get_entry_1,P_ERROR,swLogPrintf("ipaddr = = NULL || ipaddr = = NULL || eth_ret = = NUL ");
-296960,608260095,0,0,PLAT_AP,LWIP_OTHER,etharp_input_1,P_ERROR,swLogPrintf("netif = = NULL ");
-296960,608260608,0,0,PLAT_AP,LWIP_OTHER,etharp_input_2,P_INFO,swLogPrintf("etharp_input : packet dropped , wrong hw type , hwlen , proto , protolen or ethernet type ( %u ^u %u %u ) ");
-296960,608264191,0,0,PLAT_AP,LWIP_OTHER,etharp_input_3,P_INFO,swLogPrintf("etharp_input : incoming ARP request ");
-296960,608266239,0,0,PLAT_AP,LWIP_OTHER,etharp_input_4,P_INFO,swLogPrintf("etharp_input : we are unconfigured , ARP request ignored ");
-296960,608268287,0,0,PLAT_AP,LWIP_OTHER,etharp_input_5,P_INFO,swLogPrintf("etharp_input : ARP request was not for us ");
-296960,608270335,0,0,PLAT_AP,LWIP_OTHER,etharp_input_6,P_INFO,swLogPrintf("etharp_input : incoming ARP reply ");
-296960,608270336,0,0,PLAT_AP,LWIP_OTHER,etharp_input_7,P_INFO,swLogPrintf("etharp_input : ARP unknown opcode type %u ");
-296960,608274431,0,0,PLAT_AP,LWIP_OTHER,etharp_output_to_arp_index_1,P_ERROR,swLogPrintf("arp_table [ arp_idx ] .state < ETHARP_STATE_STABLE ");
-296960,608274432,0,0,PLAT_AP,LWIP_OTHER,etharp_output_to_arp_index_enable_retry_timer_1,P_INFO,swLogPrintf("etharp_output_to_arp_index : enable retry timer entry %u ");
-296960,608276480,0,0,PLAT_AP,LWIP_OTHER,etharp_output_to_arp_index_enable_retry_timer_2,P_INFO,swLogPrintf("etharp_output_to_arp_index : enable retry timer entry %u ");
-296960,608280575,0,0,PLAT_AP,LWIP_OTHER,etharp_output_1,P_ERROR,swLogPrintf("netif = = NULL || q = = NULL || ipaddr = = NULL ");
-296960,608282623,0,0,PLAT_AP,LWIP_OTHER,etharp_query_1,P_ERROR,swLogPrintf("etharp_query : will not add non-unicast IP address to ARP cache ");
-296960,608284671,0,0,PLAT_AP,LWIP_OTHER,etharp_query_2,P_INFO,swLogPrintf("etharp_query : could not create ARP entry ");
-296960,608286719,0,0,PLAT_AP,LWIP_OTHER,etharp_query_3,P_INFO,swLogPrintf("etharp_query : packet dropped ");
-296960,608288767,0,0,PLAT_AP,LWIP_OTHER,etharp_query_4,P_ERROR,swLogPrintf("( arp_table [ i ] .state ! = ETHARP_STATE_PENDING ) && ( arp_table [ i ] .state < ETHARP_STATE_STABLE ) L ");
-296960,608290815,0,0,PLAT_AP,LWIP_OTHER,etharp_query_5,P_ERROR,swLogPrintf("q = = NULL ");
-296960,608292863,0,0,PLAT_AP,LWIP_OTHER,etharp_query_6,P_ERROR,swLogPrintf("no packet queues allowed ");
-296960,608293120,0,0,PLAT_AP,LWIP_OTHER,etharp_query_7,P_INFO,swLogPrintf("etharp_query : queued packet 0x%x on ARP entry %u ");
-296960,608294912,0,0,PLAT_AP,LWIP_OTHER,etharp_query_8,P_INFO,swLogPrintf("etharp_query : could not queue a copy of PBUF_REF packet 0x%x ( out of memory ) ");
-296960,608297216,0,0,PLAT_AP,LWIP_OTHER,etharp_query_10,P_INFO,swLogPrintf("etharp_query : dropped previously queued packe 0x%x for ARP entry %u ");
-296960,608301055,0,0,PLAT_AP,LWIP_OTHER,etharp_raw_1,P_ERROR,swLogPrintf("netif = = NULL ");
-296960,608303103,0,0,PLAT_AP,LWIP_OTHER,etharp_raw_2,P_ERROR,swLogPrintf("etharp_raw : could not allocate pbuf for ARP request ");
-296960,608305151,0,0,PLAT_AP,LWIP_OTHER,etharp_raw_3,P_ERROR,swLogPrintf("check that first pbuf can hold struct etharp_hdr ");
-296960,608307199,0,0,PLAT_AP,LWIP_OTHER,etharp_raw_4,P_INFO,swLogPrintf("etharp_raw : sending raw ARP packet ");
-296960,608309247,0,0,PLAT_AP,LWIP_OTHER,etharp_raw_5,P_ERROR,swLogPrintf("netif->hwaddr_len must be the same as ETH_HWADDR_LEN for etharp ");
-296960,608311295,0,0,PLAT_AP,LWIP_OTHER,etharp_request_1,P_VALUE,swLogPrintf("etharp_request : sending ARP request ");
-296960,608312576,0,0,PLAT_AP,LWIP_OTHER,ethernet_input_1_sub_1,P_INFO,swLogPrintf("ethernet_input : dest : %u : %u : %u : %u : %u : %u ");
-296960,608314880,0,0,PLAT_AP,LWIP_OTHER,ethernet_input_1_sub_2,P_INFO,swLogPrintf("ethernet_input : src : %u : %u : %u : %u : %u : %u , type %u ");
-296960,608315648,0,0,PLAT_AP,LWIP_OTHER,ethernet_input_2,P_INFO,swLogPrintf("ethernet_input : IPv4 packet dropped , too short ( %u %u ) ");
-296960,608317696,0,0,PLAT_AP,LWIP_OTHER,ethernet_input_3,P_INFO,swLogPrintf("ethernet_input : ARP response packet dropped , too short ( %u %u ) ");
-296960,608319744,0,0,PLAT_AP,LWIP_OTHER,ethernet_input_4,P_INFO,swLogPrintf("ethernet_input : IPv6 packet dropped , too short ( %u %u ) ");
-296960,608323583,0,0,PLAT_AP,LWIP_OTHER,ethernet_output_2,P_ERROR,swLogPrintf("netif->hwaddr_len must be 6 for ethernet_output ");
-296960,608323584,0,0,PLAT_AP,LWIP_OTHER,ethernet_output_3,P_INFO,swLogPrintf("ethernet_output : sending packet 0x%x ");
-296960,608327679,0,0,PLAT_AP,LWIP_OTHER,ethernet_output_4,P_ERROR,swLogPrintf("ethernet_output : could not allocate room for header ");
+296960,608252672,0,0,PLAT_AP,LWIP_OTHER,etharp_add_static_entry_with_netif_11,P_INFO,swLogPrintf("etharp_add_static_entry : %u.%u.%u.%u ");
+296960,608255232,0,0,PLAT_AP,LWIP_OTHER,etharp_add_static_entry_with_netif_12,P_INFO,swLogPrintf("etharp_add_static_entry : %u : %u : %u : %u : %u : %u ");
+296960,608256768,0,0,PLAT_AP,LWIP_OTHER,etharp_remove_static_entry_1,P_INFO,swLogPrintf("etharp_remove_static_entry : %u.%u.%u.%u ");
+296960,608260095,0,0,PLAT_AP,LWIP_OTHER,etharp_find_addr_1,P_ERROR,swLogPrintf("eth_ret = = NULL || ip_ret = = NULL ");
+296960,608262143,0,0,PLAT_AP,LWIP_OTHER,etharp_get_entry_1,P_ERROR,swLogPrintf("ipaddr = = NULL || ipaddr = = NULL || eth_ret = = NUL ");
+296960,608264191,0,0,PLAT_AP,LWIP_OTHER,etharp_input_1,P_ERROR,swLogPrintf("netif = = NULL ");
+296960,608264704,0,0,PLAT_AP,LWIP_OTHER,etharp_input_2,P_INFO,swLogPrintf("etharp_input : packet dropped , wrong hw type , hwlen , proto , protolen or ethernet type ( %u ^u %u %u ) ");
+296960,608268287,0,0,PLAT_AP,LWIP_OTHER,etharp_input_3,P_INFO,swLogPrintf("etharp_input : incoming ARP request ");
+296960,608270335,0,0,PLAT_AP,LWIP_OTHER,etharp_input_4,P_INFO,swLogPrintf("etharp_input : we are unconfigured , ARP request ignored ");
+296960,608272383,0,0,PLAT_AP,LWIP_OTHER,etharp_input_5,P_INFO,swLogPrintf("etharp_input : ARP request was not for us ");
+296960,608274431,0,0,PLAT_AP,LWIP_OTHER,etharp_input_6,P_INFO,swLogPrintf("etharp_input : incoming ARP reply ");
+296960,608274432,0,0,PLAT_AP,LWIP_OTHER,etharp_input_7,P_INFO,swLogPrintf("etharp_input : ARP unknown opcode type %u ");
+296960,608278527,0,0,PLAT_AP,LWIP_OTHER,etharp_output_to_arp_index_1,P_ERROR,swLogPrintf("arp_table [ arp_idx ] .state < ETHARP_STATE_STABLE ");
+296960,608278528,0,0,PLAT_AP,LWIP_OTHER,etharp_output_to_arp_index_enable_retry_timer_1,P_INFO,swLogPrintf("etharp_output_to_arp_index : enable retry timer entry %u ");
+296960,608280576,0,0,PLAT_AP,LWIP_OTHER,etharp_output_to_arp_index_enable_retry_timer_2,P_INFO,swLogPrintf("etharp_output_to_arp_index : enable retry timer entry %u ");
+296960,608284671,0,0,PLAT_AP,LWIP_OTHER,etharp_output_1,P_ERROR,swLogPrintf("netif = = NULL || q = = NULL || ipaddr = = NULL ");
+296960,608286719,0,0,PLAT_AP,LWIP_OTHER,etharp_query_1,P_ERROR,swLogPrintf("etharp_query : will not add non-unicast IP address to ARP cache ");
+296960,608288767,0,0,PLAT_AP,LWIP_OTHER,etharp_query_2,P_INFO,swLogPrintf("etharp_query : could not create ARP entry ");
+296960,608290815,0,0,PLAT_AP,LWIP_OTHER,etharp_query_3,P_INFO,swLogPrintf("etharp_query : packet dropped ");
+296960,608292863,0,0,PLAT_AP,LWIP_OTHER,etharp_query_4,P_ERROR,swLogPrintf("( arp_table [ i ] .state ! = ETHARP_STATE_PENDING ) && ( arp_table [ i ] .state < ETHARP_STATE_STABLE ) L ");
+296960,608294911,0,0,PLAT_AP,LWIP_OTHER,etharp_query_5,P_ERROR,swLogPrintf("q = = NULL ");
+296960,608296959,0,0,PLAT_AP,LWIP_OTHER,etharp_query_6,P_ERROR,swLogPrintf("no packet queues allowed ");
+296960,608297216,0,0,PLAT_AP,LWIP_OTHER,etharp_query_7,P_INFO,swLogPrintf("etharp_query : queued packet 0x%x on ARP entry %u ");
+296960,608299008,0,0,PLAT_AP,LWIP_OTHER,etharp_query_8,P_INFO,swLogPrintf("etharp_query : could not queue a copy of PBUF_REF packet 0x%x ( out of memory ) ");
+296960,608301312,0,0,PLAT_AP,LWIP_OTHER,etharp_query_10,P_INFO,swLogPrintf("etharp_query : dropped previously queued packe 0x%x for ARP entry %u ");
+296960,608305151,0,0,PLAT_AP,LWIP_OTHER,etharp_raw_1,P_ERROR,swLogPrintf("netif = = NULL ");
+296960,608307199,0,0,PLAT_AP,LWIP_OTHER,etharp_raw_2,P_ERROR,swLogPrintf("etharp_raw : could not allocate pbuf for ARP request ");
+296960,608309247,0,0,PLAT_AP,LWIP_OTHER,etharp_raw_3,P_ERROR,swLogPrintf("check that first pbuf can hold struct etharp_hdr ");
+296960,608311295,0,0,PLAT_AP,LWIP_OTHER,etharp_raw_4,P_INFO,swLogPrintf("etharp_raw : sending raw ARP packet ");
+296960,608313343,0,0,PLAT_AP,LWIP_OTHER,etharp_raw_5,P_ERROR,swLogPrintf("netif->hwaddr_len must be the same as ETH_HWADDR_LEN for etharp ");
+296960,608315391,0,0,PLAT_AP,LWIP_OTHER,etharp_request_1,P_VALUE,swLogPrintf("etharp_request : sending ARP request ");
+296960,608316672,0,0,PLAT_AP,LWIP_OTHER,ethernet_input_1_sub_1,P_INFO,swLogPrintf("ethernet_input : dest : %u : %u : %u : %u : %u : %u ");
+296960,608318976,0,0,PLAT_AP,LWIP_OTHER,ethernet_input_1_sub_2,P_INFO,swLogPrintf("ethernet_input : src : %u : %u : %u : %u : %u : %u , type %u ");
+296960,608319744,0,0,PLAT_AP,LWIP_OTHER,ethernet_input_2,P_INFO,swLogPrintf("ethernet_input : IPv4 packet dropped , too short ( %u %u ) ");
+296960,608321792,0,0,PLAT_AP,LWIP_OTHER,ethernet_input_3,P_INFO,swLogPrintf("ethernet_input : ARP response packet dropped , too short ( %u %u ) ");
+296960,608323840,0,0,PLAT_AP,LWIP_OTHER,ethernet_input_4,P_INFO,swLogPrintf("ethernet_input : IPv6 packet dropped , too short ( %u %u ) ");
+296960,608327679,0,0,PLAT_AP,LWIP_OTHER,ethernet_output_2,P_ERROR,swLogPrintf("netif->hwaddr_len must be 6 for ethernet_output ");
+296960,608327680,0,0,PLAT_AP,LWIP_OTHER,ethernet_output_3,P_INFO,swLogPrintf("ethernet_output : sending packet 0x%x ");
+296960,608331775,0,0,PLAT_AP,LWIP_OTHER,ethernet_output_4,P_ERROR,swLogPrintf("ethernet_output : could not allocate room for header ");
 297984,610271488,0,0,PLAT_AP,RLC,CatRlcAmDecodeDlSnPdu_hw_3,P_WARNING,swLogPrintf("AM DL , L2 DL BM highwater , could only RECV / ACCEPT VRR : %d PDU , discard this SN : %d ");
 299008,612368384,0,0,PLAT_AP,TCPIP_NETMGR,NetMgrProcCeregCnf_1,P_WARNING,swLogPrintf("NM , PS not REG : %d , but not try to search / register to NW ");
 299008,612370688,0,0,PLAT_AP,TCPIP_NETMGR,NetMgrProcCeregCnf_2,P_WARNING,swLogPrintf("NM , PS not REG : %d , actCidsBitmap : 0x%x ");
@@ -5717,72 +5719,73 @@ ab92c85ce7bae4092736e68fe2b48b1752497e91bec408e303bf592d5163db4d2ab1d7647fafdfe7
 e10d629af73ee1ac5b2c85cc182566f0e571854e8158cec6d6c744ff4d17a9cc2ab1d7647fafdfe7d66403d2d8fa7b21a4ad2500689ac96f556a2533ae54ebf8d9df680a5b11d46ecab1dbb4f4dffa5c5d0d1959a55ce3af7d4863268ac5a4cd37c4fa2ec7fa69b20711982b9a7fa38c4258f0f1144f02333dc6397ad8210d4ad9cc74572fa56b0fbe6d7585d92751a451999b761ec7c7bd1bba7ab922b03df65a1a1bc1d1d28a0efd74696d888457170821c929ca5317528167e0585ba90504748423d52ade7bd6c08f1e815dbda8dc
 84a0147da53bdb9eebba6ca5a58abee9089a1f24974cc938a705957455d18346f1ff9550c6aeef9a4cabcdffe89ffddea89109a1c0bce0eefee657832ce3c81fe6ed521c29abbae56084da4cccb24745b1864d4f2a5b7f881711ad3641f089fa657f735aa488cb359e2e3bd09b5205f652c9649e0e05dae3e8428b3f1d79f16a7102486c44d3909bea960c20ee3ddcc6c37481a78a9acf771e69373bc6ad68c85ffb8b3a6a9ae922fbfffa9bd002e4dc
 6530e3af5e47e8d39c3cd49f9846109fe571854e8158cec6d6c744ff4d17a9ccf1ff9550c6aeef9a4cabcdffe89ffddeb6e60b85179e97464f005fe8dcae73c5e6ed521c29abbae56084da4cccb24745b1864d4f2a5b7f881711ad3641f089fa3f3fa779bff983592d5e1b4d59770741782133981d744d40498d38762655e8b15c645ea8cb361bd782bd70a301e73621e123d2e1cac1f624829c4f64ef4bf2af748423d52ade7bd6c08f1e815dbda8dc
-4e42a6fa1e35487625a4ceabd9dd1358260cc3d56dbb7ab3a30362617c677d0cf1ff9550c6aeef9a4cabcdffe89ffddeeb16724bb72892325ed2b5ce9b69b9851a85efb6b29ac084828d276332bab9c5381c4feca646a1b75b33783fffbf2b1b3ceedbdae7ec37871807aca5df772ef826949da606976b182a95d717f4230587a6d9f6fb35b6031248aa7de98e94734ca61cdfbf75a236233ba79dcb8c6da046748423d52ade7bd6c08f1e815dbda8dc
-462b49816a8f8b81e74807785eb0f6de52497e91bec408e303bf592d5163db4df1ff9550c6aeef9a4cabcdffe89ffddedd3840f71c86f101e4acda46ab5e0c9430fcbbc3f762bda2f12b54ae0b52fd504458ea2b8889f02bb917f727c9611db036256e2c27fcfd8931730dd5768624a66e349cc6eb5329db5668837749f116bf1d0442292541a1e48ecd3b158ac739b3421069fc65858121340883bcf2cd7564ba5b5975f33fbcc33f1646b37a3b11b0d3754319ba4335442f530b9a02802c62ac8fdc243e59689a2c6694bafb8762ad07b807fad01c4dd1a4552ab9a10e999a3dfa24f3dd87dfd434ec551c37c415ce
-2713c25f1b0aa2f113ee17ae1c9ec19f089a1f24974cc938a705957455d18346f1ff9550c6aeef9a4cabcdffe89ffddedd3840f71c86f101e4acda46ab5e0c9493f6cacb201e2b89298f662b438dc8854458ea2b8889f02bb917f727c9611db036256e2c27fcfd8931730dd5768624a66e349cc6eb5329db5668837749f116bfe14a3f2d11eb7190fd33cc64afd67ebcca79aa83e7de76af2071c6c7fd9a1c17bcf89eb9f0bb2dd6c7a9c20b5ebd74cd5241ece14fc9b0f5b15350ebaf884ba1d0443ac12e85347b716e7c793411bc0c
-bfc4f47bc202593745dc90ac48328afd260cc3d56dbb7ab3a30362617c677d0cf1ff9550c6aeef9a4cabcdffe89ffddeb1f68eb67d8b001372f6c6231cc296651a85efb6b29ac084828d276332bab9c5381c4feca646a1b75b33783fffbf2b1b7727b6d12e4bd4a25af1e78c26b8568d67ad888149a77e0b24510422f9c2704b89cc42e082fd8c11f02e3b80711bd79920c11a3a6ecfc8df5ed585835f7c72a1eac98b1e0217ec9b8a3b2a1990b07c53
-ddc5cf741dcb83146b7516cb0277aa6ce571854e8158cec6d6c744ff4d17a9ccf1ff9550c6aeef9a4cabcdffe89ffdde19fee8cc746ec1c7b9ab59533aa9d720ca2ed863ff2aa1b279ad66249ff303055cd7ff90469e1240eee3a5fb88cbd0c54ea937dee3d22c50e733edaa4e337913548afd9fb88958b864d3cafa570f8035dd5782e31f87b1fac78fa21093360551
-30f45d75e2d26471883c12221dd4c450e571854e8158cec6d6c744ff4d17a9ccf1ff9550c6aeef9a4cabcdffe89ffdde0c611e595713f06135cc93e5d00abadfb7eceffeeab58056571ef030d33ae8ea62191e9de27b8033cfcb0b703a99874df311195449ddba04ec4245af8d1272d6027ba5c493f3f1b843c5e62575c29e9fdae0db575d1042b6b7023732b29ff34a430d6a03de03bae232fda169cbf361c55d17e26cef03e09d824e357770788104bacd79b625b2b9e864984bb7cf5b183a0534385a8b448b7517ada4aea9876ec73365c37c9c225ce5698357cc2d25c8df
-ebc2bdc17ef65c9eae650962452bd31d260cc3d56dbb7ab3a30362617c677d0cf1ff9550c6aeef9a4cabcdffe89ffdde0c611e595713f06135cc93e5d00abadf0420c36f8888fd466ea748e7ba0eced662191e9de27b8033cfcb0b703a99874df311195449ddba04ec4245af8d1272d672062795d51bfca1317eaf375cec7ba02e91fa8e05251e5a583f21fb5c0ba2baab41c78a238268e9987208ec3c1bdf63fb7ecb80bd4abe4e6e76d1c97200617fd0443ac12e85347b716e7c793411bc0c
-0128bf25e38e779202098a28e29d5a12089a1f24974cc938a705957455d18346f1ff9550c6aeef9a4cabcdffe89ffdde0c611e595713f06135cc93e5d00abadff714a36d9b0db5d091ba97e3c87b87e162191e9de27b8033cfcb0b703a99874df311195449ddba04ec4245af8d1272d64800e3e9a5b88a5de5bdf1518b40cdf521be28f2b03e0a635e180535be8851920adb8c3063fa17c42dc7604785afac91628357042ac16bc3d84cb858bebf609b2e73e9e725bbe85abf0acf82e11f2ad9b3397ad874ec0ee7ff75edaefb86433a3dfa24f3dd87dfd434ec551c37c415ce
-561152,1149323776,0,0,PS1,PDCP,CatPdcpDlDecodeOneStatusReportPdu_fms_1,P_VALUE,swLogPrintf("PDCP DL , LCID : %d , recv status report , fmsCount : 0x%x , nextTxCount : 0x%x ");
-646a5e2a944bd0ee8559c3c29da07dee089a1f24974cc938a705957455d18346f1ff9550c6aeef9a4cabcdffe89ffddea7cfff412f722b7c3c7b8674dfe30a62b7eceffeeab58056571ef030d33ae8ea62191e9de27b8033cfcb0b703a99874df311195449ddba04ec4245af8d1272d6027ba5c493f3f1b843c5e62575c29e9f7024d09529abb9d18e4efb7e3cb9268f757fe55b1ba6fa522105a3844073cae5e957c5b259ee8db23de4fe599400f083cefdf5fe2e10b14f515eaa215538f747eff0116f16cfa26b235a6ee3c054ae48
-019f95380b6ef686e10cb8adadfda97752497e91bec408e303bf592d5163db4df1ff9550c6aeef9a4cabcdffe89ffddea7cfff412f722b7c3c7b8674dfe30a620420c36f8888fd466ea748e7ba0eced662191e9de27b8033cfcb0b703a99874df311195449ddba04ec4245af8d1272d6fa1954bce84e54bad5ddf90625033d8962a8332128cab5b8179fa520b107d49d00686709f74362e691bae60d2868b00e30082cb31c78055477a792f5a5907f808f2ff7b3b2d5a907854837f23912800c
-43f5c5bcd7d5ae5b968a4dfb001825c8e571854e8158cec6d6c744ff4d17a9ccf1ff9550c6aeef9a4cabcdffe89ffddea7cfff412f722b7c3c7b8674dfe30a62134b31c54d4225c16849e78a4fdf5f28a930e5677ed822925caf32baf66455817085e8d73b1a755987b76dab3af89f169b5926b33c8d7bbd30f42a281f02ce4e697a536af28b08cd7cb9144e227caac665a8ad817cad08c659a55f910e27d38324109cc4aa4db40c7b974a2f4c0fc8c7
-a6c84390a91f450e3258363418ed492152497e91bec408e303bf592d5163db4df1ff9550c6aeef9a4cabcdffe89ffddea7cfff412f722b7c3c7b8674dfe30a625ecfb81fd09adabfb787664c0a784673a930e5677ed822925caf32baf664558158a436556f26a3527cfcebc2839afbd2a5a53c7f178e6a41afb4ec94a9859d7ee7df9a2efeea5779b66984c65b7d2d606d7aacb132619ef035b57432490298f35336b350578b65c42c97920fba8ad6fe5ffb8b3a6a9ae922fbfffa9bd002e4dc
-791cacd51a1684a74ececd12c8f9814e089a1f24974cc938a705957455d18346f1ff9550c6aeef9a4cabcdffe89ffdde32d5b27808ac762cde3312915e92a5460cb543b96d02f8b9e0f50607b2dc8cbe04359bbcae46c7a7af778971c130b313cc997e0d3bb9d776779d5c77934d7d816923b2120f68c69c0460a78e1b477aff1a39ae7e092cecfdb7f07098546915d57188daab7f725cabd3841947a41e51e2eac98b1e0217ec9b8a3b2a1990b07c53
-a54d103a48945889312df58980e0fe2c687278817cc8c5334f85f3e42e775f5df1ff9550c6aeef9a4cabcdffe89ffdde9c27dbde4513c270e14c2cc7359392d24af381efc3b6295e3adf454b0613a26f08e2940ab225eff89790a1500b9b92fc2a06fa9bc29ec2f78df99ac966bce1fa83cb72d92b70755ce2b9f1d9b615b9d4
-8a5ffa803b87a6513b32acb161087127260cc3d56dbb7ab3a30362617c677d0ca1672b824eba37efe72f09c780bb5a87802af05f25f43d2b811ac8258b1955d34af381efc3b6295e3adf454b0613a26fa930e5677ed822925caf32baf66455819ec192ee1ccd5bbe131fd1a7c6ad877713d2438c30d2a8afdca5579906f8b7df4c5d1d1fbded870d7fddf0619ba8269bee48df50fb2c8aa8dc155e6afc827f65cca2b1bdd108e61424b95a5b873cf14b
-561152,1149339648,0,0,PS1,PDCP,CatPdcpDlProcUpPduInd_highwater_2,P_WARNING,swLogPrintf("PDCP LCID : %d , DL PKG memory highwater , backup PDCP PDU ");
-561152,1149341952,0,0,PS1,PDCP,CatPdcpDlProcUpPduInd_highwater_3,P_WARNING,swLogPrintf("PDCP LCID : %d , SCT Node Mem Num : %d , DL PKG memory highwater , discard all backup PKG ");
-561152,1149343744,0,0,PS1,PDCP,CatPdcpDlProcUpPduInd_highwater_4,P_WARNING,swLogPrintf("PDCP LCID : %d , DL PKG memory highwater , backup left PDCP PDU ");
-c8278241ace378c1aee5533bbb4c00be089a1f24974cc938a705957455d18346a1672b824eba37efe72f09c780bb5a877d141b298edaf6d2afeb18f3d419b220237f01cc2bad2ad70b589348f2672df238fbb8de2416729e5f53055ed2463b2f2d9b46503ff54a7063b1c58267224b5ad50af0ce06cbe82b14fb264e006b2b84907e67dfba8db9044953d3b5d7392e584a2762cd387ab42eccba3d4d910a13ed23884ddd116e14ffd65dfb1ef9a94d7861838d2a455c107ca0b6c92ed89c12ab
-79ec23a5491124d929428f1d4619262252497e91bec408e303bf592d5163db4da1672b824eba37efe72f09c780bb5a87e3c30cec929fba308e943a8936a70e99237f01cc2bad2ad70b589348f2672df238fbb8de2416729e5f53055ed2463b2f2d9b46503ff54a7063b1c58267224b5a02760cc5c148e8ea0c1ddcbee075fcfb18aa60dd474b49db744a6d5510ac057dcd6149d60e36852cca88666eaca7a10b4a2762cd387ab42eccba3d4d910a13ed83f0157c6a1e7cec9cc9cdcfce32dc7061838d2a455c107ca0b6c92ed89c12ab
-bfaf00484a5ed0bf5df4027ecc1269c7e571854e8158cec6d6c744ff4d17a9cca1672b824eba37efe72f09c780bb5a878aa9db4daa46fd8a644c3729c046a27fcca838dc34e9f0d3bddf1ac610037e96249f59acaa9501af3614ae5db82a30c38e28b2a875bc1daf33cabc2393e2251fd7bd9e63251f3a7cabea43c2013db053a193a019754064d847db40faddadd36c427cebf648a898b90878263dedbb31965ffb8b3a6a9ae922fbfffa9bd002e4dc
-bf6d0ba1a54d2e291f249ad6b9efaa1ed3a1a7b1650db57cf008ad53a49d04e5a002c2b55a85675aee4a0881cf104b5e890f4cc0ebaee80e006de2f1c5d7ee4eca2ed863ff2aa1b279ad66249ff303055cd7ff90469e1240eee3a5fb88cbd0c5b1c25be62c7177814a704960cf7d5b1830910823e388ece47f2a3a2b52d165208cf38ce25821128017dc8399677747a408ad9570a7edf470789aaf6120a6be38c624eec996b7114f83b023ca163ce1e8
-8654100d3f982d0a329c36be85b71d8e089a1f24974cc938a705957455d18346c46e243e37b098ab8cef5ef4cbc2f42432bd8f00f7f4e413b9bcbbf3d6446c5d208b6dea7c95eeaa21b9f130043ea0fff4320e7569708504902eb34c8e81c30974f4e477927b8e172fcd293f30c82d14943f9b9f8e423d5b9caa2de527bef9b011a8dd41a2c682859b47c3cac1fc1163c5bc85768faf4b2471731a09df2bbeeea5d0c8e2d3b151896d7fdd727955ee585ffb8b3a6a9ae922fbfffa9bd002e4dc
-2269a38c321ec3a62df8c2ddfaf9721752497e91bec408e303bf592d5163db4db9ebdda71612575d541d7eca2cd8b63e04e4f6bb98415154a18cd03acc8512ebcca838dc34e9f0d3bddf1ac610037e96cd58076bfa39bfb62679281045082b766e353fab52b25eb8bbaf6b34001e25830eaf456447d0af295caa5dbdeadabd4fe432e47b685d0665aefdaaccbee5c5084fae51fda82537dbd6852c4304c4afe1
-dc037c1d54ffc00ae6aed48ec2824d23260cc3d56dbb7ab3a30362617c677d0cb9ebdda71612575d541d7eca2cd8b63ebce6eb984cc1a4b7c9d707ca9442a8a3cca838dc34e9f0d3bddf1ac610037e96cd58076bfa39bfb62679281045082b760bf588e8594675645235ab65e963dcf40eaf456447d0af295caa5dbdeadabd4fe432e47b685d0665aefdaaccbee5c5084fae51fda82537dbd6852c4304c4afe1
-d697a4ef403ede2fed3bcb844d413e55da8173e2fd464fcdd8b44bd07561336a0a086ebba6fb2f2c94815a44985c6ab0e082c59057da7df2ed0da266037813fd8664e18aa2401f7ce647f666d141c808e3c1d1231c64fe72df060e5c30073a1c3285a98d28a76b20f25e46d00366fdcc68e99cb743fc213fb866e1423a737bc9058c2cfd5a44c656142eec5f167c90ff5b86182b5530169ec27bfcbd39965a6181483b81d3d15e77819ac999e0daf745
-d697a4ef403ede2fed3bcb844d413e55d3a1a7b1650db57cf008ad53a49d04e50a086ebba6fb2f2c94815a44985c6ab0e082c59057da7df2ed0da266037813fd72c49cd00f55025c17aa094a73dde8652c646423176fcca19ed8a1b846df547eacba1038c35ccf4128df951f20d50abc13d2438c30d2a8afdca5579906f8b7dfcb9f8649157b15613d6c757e244e351a18744c0e59493a8d41bd3f0fa82609604fa6700cd7d6110287758729860439082bd42b616f6f27820b32c7956e0d6a36f2c05e8d325e6324c0233425715accaa
-08813cb50271c28cf5d0ebeec9cc0926260cc3d56dbb7ab3a30362617c677d0c74ef4693244ee0f7dd033d59cf944218585b8f94a0bb3ef05f5298d9b6b7d487cca838dc34e9f0d3bddf1ac610037e96cd58076bfa39bfb62679281045082b76f453694dd3ce9629ded4f112c1dad53701c8ec5a35e86dd59094afe5f26d238f301fe15b01afbc2eb9a8658a3e5645291936688f1060b173d9306efddb44d1e53dfa24f3dd87dfd434ec551c37c415ce
-93a4c4c22a9d68566645a8711cdc821252497e91bec408e303bf592d5163db4d74ef4693244ee0f7dd033d59cf94421862e24a57d35c2c9fc1505a52105f39a1cca838dc34e9f0d3bddf1ac610037e96cd58076bfa39bfb62679281045082b76f453694dd3ce9629ded4f112c1dad53733524f77c654b68a0cd453c03b3048ddbfdc73a6d2589a5750647b65d77facec3c647071f1facdf56bd82ef27df87737
-859b57b4e71261e9792efc15ddd4571ae571854e8158cec6d6c744ff4d17a9ccae60f0aa937e154c7f0a70bcb64667d8a329fe7ed15d088ca9add329f494d2a431722bb8f078d7ff6634c62a82d2edcf249f59acaa9501af3614ae5db82a30c316b1968bc6431d1f29b79ddb71e9b60a860ab362acf8aa74f8d9ef7d9be0a0df3cb8e1f40e0a0000662810571bc2e7b243d4d2b9955b6436c792e45aba81a0ab148cf3d29ae052fb258d576e8eb5b8dcd5c6ed6dc5c74ea8c08f59e7c48f7c445fffcf341941241c1a673d83986dbfd5c624eec996b7114f83b023ca163ce1e8
-ae53033f20a39c9cad0194a51ad7301d260cc3d56dbb7ab3a30362617c677d0c9b4e91aed9a205724dbe8c5dd405c7dfcbea6b2e36f4a36c2e43ac2b8df53ed0db195934c19c2bd4c72ca2abccd54e070733a33a7999e6bdad734ac92fa40f31cb32f26529ce280b910ee27442c72e4c3748e93bed113ed7fb33db84b16547c2d0443ac12e85347b716e7c793411bc0c
-719f5fd07ba3efed1e5002093fb087b2d3a1a7b1650db57cf008ad53a49d04e591ffbcd4c2819a7c146db8a0d4aaa65f3066560e4910e29b56577cbd34cad31004359bbcae46c7a7af778971c130b3131220fbbabb24b521cbdde0b1b1ac7d4099777de74a2a71afc17c6767ab5d87da027fb0106e53fccbfebf5a767686de4622b80e7863f4597768a105a6ea34bb8e596b42c1061c48394935a2729720684c
-0dab33f5075781ebe37c518b8f52eea7d3a1a7b1650db57cf008ad53a49d04e582288de35b8e0d86910fb0728eeadcec102cdc2b2e3c37ae8590fdbf38ad10ac4d98d44470a4024a3b81ed4c94d97de604359bbcae46c7a7af778971c130b313825cfe64738d9e256de5faeeefd4719713fdf81ff180b1c7817befe53d87d715aaf1fbc6048aae9d5b243c4722eed2391d62a3f78eb071d59e9e0a1e93cf8768ebed9404d225c1b2fe08d9775a6b762e
-02b6fc6631b4d9c245075f618e0b5b35e571854e8158cec6d6c744ff4d17a9cc82288de35b8e0d86910fb0728eeadcec102cdc2b2e3c37ae8590fdbf38ad10ac90c6ecd681a924614052e4caf4162ad6e3c1d1231c64fe72df060e5c30073a1cb63da7eeadf2787ff876aca59ecf053b916f39f5a86a1ed7697560ecebe5cd952b1b4b9067614a20830d29af7b9f17da6890b6f0e717a4f82a4c15468956bfc6
-fa4672346d2f8871763b72611db20e7952497e91bec408e303bf592d5163db4d82288de35b8e0d86910fb0728eeadcec102cdc2b2e3c37ae8590fdbf38ad10ac70cc886a11657c3151786d898877b0aa2c646423176fcca19ed8a1b846df547e9be8ff5e32110b6940c2be6a4849550564cd89228ffb3d267acb7df2fa474113c0e0d0307859266aba7058c6597064016a7c0f5098e2373e7d55e7423e90ad2f748423d52ade7bd6c08f1e815dbda8dc
-b2c0b5cad5a2360d5ef2f12e153ccdad089a1f24974cc938a705957455d1834682288de35b8e0d86910fb0728eeadcec102cdc2b2e3c37ae8590fdbf38ad10ac530c418c01e6670e1e88b5139f1072aa2c646423176fcca19ed8a1b846df547e9be8ff5e32110b6940c2be6a4849550599c1f9e081ae7f5ca9a5910df7297ed67233f2c22578506c7a07b568bf6db63fa78314c6bbbeca3539eb303df00718b361838d2a455c107ca0b6c92ed89c12ab
-1472271cb0026733da735565863efdde99644e44ce3ebc07b73d8d2c46cb52f057eebbd03cc4c927a0e1613a1e6fe5371d9f89baf2d045bda8ba50c3781b4e27d52c46c4c4e5e492cad49b2f6556ee3532a973f6b5c4785e19be54254ca977130cfaaf181d8c9567834b01f1eebf62b92c14dff5f6636b0215465905c9ae1389d561957f5e6e4b52c5af3f34f655a1db
-22f53364fdff8e06105de1aae9180752d31b5f122c76dd4be8cf550250720c2c57eebbd03cc4c927a0e1613a1e6fe537c81270472b45d79ed308fe3e0a58e147d52c46c4c4e5e492cad49b2f6556ee35d0eabbf7b52296c136863797e30d7c4b508c6aeb6b7238eb1f9aff58a2f284eba819dc21ac51f846f7bb08115e21bb2e87d4f4da52fecbf9d3c4d555a7f9d086471dede80fc4f3c1b21d33e7bc88f0943dfa24f3dd87dfd434ec551c37c415ce
-f74b3a536956605313a8d8ff47e51d08e571854e8158cec6d6c744ff4d17a9cc19b6b36a0a9377694445912477162020473de73f6df0cc57393a6867db11a864a184cd47fb88a3ca2dd397994656c8d8e3c1d1231c64fe72df060e5c30073a1cb63da7eeadf2787ff876aca59ecf053b916f39f5a86a1ed7697560ecebe5cd952b1b4b9067614a20830d29af7b9f17da6890b6f0e717a4f82a4c15468956bfc6
-dc3d5c4276345cd9b0d00ef32d74223f52497e91bec408e303bf592d5163db4d19b6b36a0a937769444591247716202065c3bdfd30d6b0c6f10dce8cf5c3ea0642056bb1958dddd960bf94f0d2e5c90b04359bbcae46c7a7af778971c130b31348df5a575e9c20b9bd3c6bc3ceaef8fcb62e128bb83372b0a17728f60265652939eca3b4f5c2d72c83c529e9dd22ad035b480cf4c5bce8c6e6501956568f3afdab3e1a3366589d86cb05740a15cae50b
-e169aebb1a5ee506f453f1af472932ad089a1f24974cc938a705957455d1834619b6b36a0a9377694445912477162020519cd993a499d0b5944bfec01fe6b29adcb2b8060a7d37339431de7ec393991a4458ea2b8889f02bb917f727c9611db079ec02553a331d012a607fd3ea6fbc392fd1b4ad5ca85a3fe9e6742c61c8731c466c35a5ce747bab918cb201586661cde5342eb29e1563dfdf405aacd71cb81f03e5c847d32992cb590962ed9e69cc51
-8fb452d75ba9be211edf6876eade82bcd3a1a7b1650db57cf008ad53a49d04e5c81a5e2ebcc7dc3117371c897c96e5c26538b3e755c5862f3a99cbba5aeef0fbdbb7cd88d4fd4cc376fc45cc3677f8340dd1e18debd67549675baf43caa2e62679ec9b34cb90fc9c257da6c1df66ca4d0d918dc35d4c08da3827eb9687f3cbdb0601294c62363e16963dd3088e9ab8ffe55430375259b5ffe987e9173dcc70c9e1778d322256a95d796db5c7b40ce71d12899969795cf06de83e40afd4f4f892449eb883c86bc93bf955af0dee828a449c32899aa5f04012127909b8e64d460d88bde41e81bd74014a4d91073141b003cb28405ab8472c988f168c7e79874bd0
-09b87c7218f12575ec636dc4ebdbdf9c089a1f24974cc938a705957455d18346c81a5e2ebcc7dc3117371c897c96e5c23d4b5153e2b66d09755e9417b4609b9eb3435f50cdadb4749bd64aa48b4337ff0dd1e18debd67549675baf43caa2e62679ec9b34cb90fc9c257da6c1df66ca4deb6b884f539ec4dd5b8a0ed0693fdd9f0601294c62363e16963dd3088e9ab8ffe55430375259b5ffe987e9173dcc70c9e1778d322256a95d796db5c7b40ce71d12899969795cf06de83e40afd4f4f892449eb883c86bc93bf955af0dee828a449c32899aa5f04012127909b8e64d460d88bde41e81bd74014a4d91073141b003cb28405ab8472c988f168c7e79874bd0
-988b419bd8c093edb3f5d419ae61f10552497e91bec408e303bf592d5163db4de2a1c71dccf5cc98ba1ea4588bd26065e5570aa57f1632d373eb89a6a70bd77a31841c1a7876e1c8ca3fc36cd282e6cb3d0eb87d3f6930e6145dd1a105c4ae6cfc4eab1315b69ce5192b6f344b23de4ff90f31b34645dacc031737135e821b54b3da209b77fa001fc1d7470b8ef2d00cfe10f3f07b903cf42f681e8f3a56a6d024dce5a831ef242ac0a54b9b901400b25ffb8b3a6a9ae922fbfffa9bd002e4dc
-69afb3275057839d976d30bfe0544c7a260cc3d56dbb7ab3a30362617c677d0ce2a1c71dccf5cc98ba1ea4588bd260659ada066ceb385a586f19f3d1cf68c0e231841c1a7876e1c8ca3fc36cd282e6cb3d0eb87d3f6930e6145dd1a105c4ae6cfc4eab1315b69ce5192b6f344b23de4ff90f31b34645dacc031737135e821b54d80ca30d60496a700033bd80a0fb97927aa46327d6d15c3c134b0be396a39c5c3bd2a6ed98f5f85ee3d25ab58339e043
-36f4fa9f5e1ab0ec102b9ec3716145a5260cc3d56dbb7ab3a30362617c677d0ce2a1c71dccf5cc98ba1ea4588bd2606598d245688338b139d2b1f770e4fd328bd9df680a5b11d46ecab1dbb4f4dffa5ce866f4774889136eacc1b9d74c9e8b16a0e8f9ec703bd997baa9fc16e26855a9e79ffd0b21829efbacab2da4bf0d5ed8a20538d3e3b4a6641eac9c025b79efa06c1916de2566d73d14f74b2412bb5a4c373be2ec01be52cf1d2219e8bb675d4339ffcca5c405e89fcb74eab2ad53d43559a1210ada94b55e9552d5972e8d9061
-f8b6427a5b07a31e26eb6758d0670c92d3a1a7b1650db57cf008ad53a49d04e5e2a1c71dccf5cc98ba1ea4588bd260650490507c7d66849b188244ed61a070b8ca2ed863ff2aa1b279ad66249ff30305381c4feca646a1b75b33783fffbf2b1b3ceedbdae7ec37871807aca5df772ef8f17ffefbeae4cb6f9bcc076ad18bf6d866602b3092a0f1cd88d0a1c51a341c25
-561152,1149405696,0,0,PS1,PDCP,CatPdcpUlProcCpDataReqSig_1,P_VALUE,swLogPrintf("SRB LCID : %d , UL data , total len : %d , contain nas len : %d ");
-d2c39578ab84c6663d4e97d7d4db19e752497e91bec408e303bf592d5163db4db4b2b4acd188f3fc46d8baa5a3ba61e26fe063c020e28e19e88e7a7f7b17284a2c646423176fcca19ed8a1b846df547ede998337b0ea140ac165625c1a93a9916c8316ad9a5ba01db94f73d59331582c987b2bf5fda6bcfb0a24ee85d51b11f33dacfe893f591bb1c59ed2fb003a7b7156a58065eb165e94e1dd638f0caa8806
-3f64ac66750d842ca46a248ac93d9260d3a1a7b1650db57cf008ad53a49d04e5b4b2b4acd188f3fc46d8baa5a3ba61e2e17caea1daeee8ed482fbed530ff610d2c646423176fcca19ed8a1b846df547ede998337b0ea140ac165625c1a93a9919fc413b2cc36c45dceb88edaa88d487dc80f595cba2257eead03e1a4727bf80b2cb6e8a9923b208dfa4bcffc9df404246890b6f0e717a4f82a4c15468956bfc6
-5365324f509b076f853fd1f65dbc5b75089a1f24974cc938a705957455d18346b4b2b4acd188f3fc46d8baa5a3ba61e205183bc4447da7f1082957b393623fc9d52c46c4c4e5e492cad49b2f6556ee35669e9dada5d94ae060aaa7a4f6ee6b995b9e10ed22450313c2f9a2dfda9414800157f9fb4da934e5ac428dd510136141b50421a46864ca9268e55e5a87454d3f7e67a4f621c9092ba1fe590bd6547ef4014e377a37a0d53510a67e168d5ea9d43dfa24f3dd87dfd434ec551c37c415ce
-f66790d5fd9a2149a299b630ab713e7ee571854e8158cec6d6c744ff4d17a9ccb4b2b4acd188f3fc46d8baa5a3ba61e294c47ae7ef19894dd3aa499fcb3b396dd9df680a5b11d46ecab1dbb4f4dffa5c5d0d1959a55ce3af7d4863268ac5a4cd15152678f7fb559d1ed65994c2515b1f3d60b99966a958eb6e9932582f3a9e558c9d22c9daed58fde1ae92dea355de7b0d849e7558215719025144b86dda8e7b9ea21a4083be2025a8261ee0ed871fc261838d2a455c107ca0b6c92ed89c12ab
-a767434720a70ab2f3cce15147581ddad3a1a7b1650db57cf008ad53a49d04e555748f7eb26c513c6aee6c7bc3c4c6ecf7f0a7b5888d34065d16b147e6b8326004359bbcae46c7a7af778971c130b313825cfe64738d9e256de5faeeefd471971627ae1bfc5d501de419b6f9a5ab1e4e2f115e0d8b49ddc656322c402d769fa92e5ab13e286d141c8142e0395e76aec6413ea30857fc537a0d145feb0556c732
-5ddd6ed718b1f3e34d28f54c7e6143a7e571854e8158cec6d6c744ff4d17a9cc55748f7eb26c513c6aee6c7bc3c4c6ecd908120c92c1a54d5209fdf689d9095404359bbcae46c7a7af778971c130b313825cfe64738d9e256de5faeeefd471971627ae1bfc5d501de419b6f9a5ab1e4e2f115e0d8b49ddc656322c402d769fa9cbe1831da0211e9851611308dc5894ef
-44e524a1d6c188b8a20a5109ab3b7130d3a1a7b1650db57cf008ad53a49d04e555748f7eb26c513c6aee6c7bc3c4c6ec5b761c368e6a222a7c3d4c4dc2acd12504359bbcae46c7a7af778971c130b313825cfe64738d9e256de5faeeefd47197d8ee1154aa5780a93070aad5c3c764621f2f811876e34a9dac170e55a424948d748423d52ade7bd6c08f1e815dbda8dc
-b116ed8481d19588f73b55c13a30fa3a089a1f24974cc938a705957455d183462ac74a5c1c39d83b1c2667b3ec57c54d6989620c6f4a87fe681b3c16a85d2b3404359bbcae46c7a7af778971c130b313825cfe64738d9e256de5faeeefd47197f5c9fb68a5444cd9f6e45ae8fdf9cddd9108e18c09d49bca309da9ef2262aa652baf875a33dbd1b4cbf7a43dad8c6f2c
-59a889a027ae095149629c40939c55b3d3a1a7b1650db57cf008ad53a49d04e52ac74a5c1c39d83b1c2667b3ec57c54d81590b128086cc5c7873820a90834ade4458ea2b8889f02bb917f727c9611db036256e2c27fcfd8931730dd5768624a63bcc9d9dbb72b3b159f2c6639a88377a207a89d99a7f8dabe20f1486c32b7b380e6363af090f9dc918a850246e0f8116
-3b2e2bb66a0ca024507a848fa9a97cdd089a1f24974cc938a705957455d183462ac74a5c1c39d83b1c2667b3ec57c54d040567a40e8e11ad0c49b6837c154702e0b1d6b2443053222487ee3e261ad805ddc0b1b009362d6b4cd4da5908c459722d9b46503ff54a7063b1c58267224b5a8810723fba409f6222dbc4f533183ebaf3d1f27196f7487c9ce2b68adefd3c80490acad6a41fc6ecf6e31f56b94b0adbc624eec996b7114f83b023ca163ce1e8
-1711294e589caf883a3593a2e93fbce352497e91bec408e303bf592d5163db4d2ac74a5c1c39d83b1c2667b3ec57c54df32b31740a4313828796333feb5a48aa04359bbcae46c7a7af778971c130b313016ab802926645ea8a47e8fdcb82eab2f70bd487123edd59cfd56b03bd31200e3c647071f1facdf56bd82ef27df87737
-a50d908ac3043a7f4a3de924a2a2a070260cc3d56dbb7ab3a30362617c677d0c70b03d7cde7376d0d7030caf9aff7bda3bd17d0174fc370c1ce0b73a8db031d681989a6d3cf94b85b5b7ace6ee961ca1b1864d4f2a5b7f881711ad3641f089fab2c897c8b6fd582c03b31418e8d125415951791e33858c6bffacec56d840a2333bd2a6ed98f5f85ee3d25ab58339e043
-325da77ffcebeb3f6c0081f8f7c85813089a1f24974cc938a705957455d1834670b03d7cde7376d0d7030caf9aff7bdadbb64641def27832acb748ed7dc45cd1ca2ed863ff2aa1b279ad66249ff30305381c4feca646a1b75b33783fffbf2b1b2da8df0ac5a5995592a1236718633986b5f1aadd1d5f0de1b5f1a78c9c0c1438049e64d880d5f1dee02736f927923af759c1bb85a4a40dddef3fae7c80d7999b
-f7c10e2e85d4f26d3f69840cde9152e052497e91bec408e303bf592d5163db4dc71ae1cc2475fd5b99571cf5abf4cf05b2c750768683f5fe47cec3c6eeef59bdd9df680a5b11d46ecab1dbb4f4dffa5c63c5b4d48f1e057253d3852a49641865e728fec0589477085334cc8693bbaedef5d370c45b2630c002b1fc632aa2759ca6fa33904a372cf59c22923e515a03976cde36443d2952756f4db8f9fbd5372461838d2a455c107ca0b6c92ed89c12ab
-11a73ad8a01ce3bc7619782693ac6139e571854e8158cec6d6c744ff4d17a9ccc71ae1cc2475fd5b99571cf5abf4cf05cf507e689167dac83c1b5fe83f906b9e4af381efc3b6295e3adf454b0613a26fa930e5677ed822925caf32baf6645581e57c3158a318744d91e52b58284166402db92cc0de01c50f21f0c3e023deb96322895e84e2420ca1b6dfe73608250956fe22b36858f2cef0078fe6f993bbb0162133dfd86c3629f47db4c51ccca7a6b62d53b5ed578cb370b9c6b20950b2c5bf144b3d43118732b3561488b2272e23edcb28405ab8472c988f168c7e79874bd0
-561152,1149439999,0,0,PS1,PDCP,CatPdcpUlSendStatusReport_status_rpt_dump,P_VALUE,swLogDump("PDCP UL , send status report : ");
-4b898c337ffb127aaa31da03d09b6d51d3a1a7b1650db57cf008ad53a49d04e543ebdef94faff7bd3bc0d48d30da17a43cf747fd0826940afc709eb494ccddd6d0340d91cf1ef115f46236651dbe4d8ba0a18c6f784f513298dea0c2d8230c1b771f4e84eddddde5e09a1866552066837aa7a41253293143046d8c5bd3eea559ced0ccedb3f40230bab234159cf2ad717546ba3ad3f90f9d0e06d18f8db17816012e0bcd87bcc1b294d45aae9adce1d7413ea30857fc537a0d145feb0556c732
+4e42a6fa1e35487625a4ceabd9dd1358260cc3d56dbb7ab3a30362617c677d0cf1ff9550c6aeef9a4cabcdffe89ffdde7984935e4280e851e303f48ce860b0c8e6ed521c29abbae56084da4cccb24745b1864d4f2a5b7f881711ad3641f089fa3f3fa779bff983592d5e1b4d59770741d7ae31ba29d160c44f375b247f5c3d5a8cd1e1e78cba0c0e24c2ce3bf40a536d8796ae5998d2d36d995d256c1a990fbb
+e9dc3ca4e81a39676c3ea018e1ae79fae571854e8158cec6d6c744ff4d17a9ccf1ff9550c6aeef9a4cabcdffe89ffddeeb16724bb72892325ed2b5ce9b69b9851a85efb6b29ac084828d276332bab9c5381c4feca646a1b75b33783fffbf2b1b3ceedbdae7ec37871807aca5df772ef826949da606976b182a95d717f4230587a6d9f6fb35b6031248aa7de98e94734ca61cdfbf75a236233ba79dcb8c6da046748423d52ade7bd6c08f1e815dbda8dc
+c9d6a415fc43fab0cb053f12cacd9c64260cc3d56dbb7ab3a30362617c677d0cf1ff9550c6aeef9a4cabcdffe89ffddedd3840f71c86f101e4acda46ab5e0c9430fcbbc3f762bda2f12b54ae0b52fd504458ea2b8889f02bb917f727c9611db036256e2c27fcfd8931730dd5768624a66e349cc6eb5329db5668837749f116bf1d0442292541a1e48ecd3b158ac739b3421069fc65858121340883bcf2cd7564ba5b5975f33fbcc33f1646b37a3b11b0d3754319ba4335442f530b9a02802c62ac8fdc243e59689a2c6694bafb8762ad07b807fad01c4dd1a4552ab9a10e999a3dfa24f3dd87dfd434ec551c37c415ce
+a2a64757f2e7e54863e149e2f3d5fcb552497e91bec408e303bf592d5163db4df1ff9550c6aeef9a4cabcdffe89ffddedd3840f71c86f101e4acda46ab5e0c9493f6cacb201e2b89298f662b438dc8854458ea2b8889f02bb917f727c9611db036256e2c27fcfd8931730dd5768624a66e349cc6eb5329db5668837749f116bfe14a3f2d11eb7190fd33cc64afd67ebcca79aa83e7de76af2071c6c7fd9a1c17bcf89eb9f0bb2dd6c7a9c20b5ebd74cd5241ece14fc9b0f5b15350ebaf884ba1d0443ac12e85347b716e7c793411bc0c
+ddc5cf741dcb83146b7516cb0277aa6ce571854e8158cec6d6c744ff4d17a9ccf1ff9550c6aeef9a4cabcdffe89ffddeb1f68eb67d8b001372f6c6231cc296651a85efb6b29ac084828d276332bab9c5381c4feca646a1b75b33783fffbf2b1b7727b6d12e4bd4a25af1e78c26b8568d67ad888149a77e0b24510422f9c2704b89cc42e082fd8c11f02e3b80711bd79920c11a3a6ecfc8df5ed585835f7c72a1eac98b1e0217ec9b8a3b2a1990b07c53
+74d4ea5c0aab5cc124d4505e32023cc6d3a1a7b1650db57cf008ad53a49d04e5f1ff9550c6aeef9a4cabcdffe89ffdde19fee8cc746ec1c7b9ab59533aa9d720ca2ed863ff2aa1b279ad66249ff303055cd7ff90469e1240eee3a5fb88cbd0c54ea937dee3d22c50e733edaa4e337913548afd9fb88958b864d3cafa570f8035dd5782e31f87b1fac78fa21093360551
+79f1eac5eb96c3e367e98ff84cffa866d3a1a7b1650db57cf008ad53a49d04e5f1ff9550c6aeef9a4cabcdffe89ffdde0c611e595713f06135cc93e5d00abadfb7eceffeeab58056571ef030d33ae8ea62191e9de27b8033cfcb0b703a99874df311195449ddba04ec4245af8d1272d6027ba5c493f3f1b843c5e62575c29e9fdae0db575d1042b6b7023732b29ff34a430d6a03de03bae232fda169cbf361c55d17e26cef03e09d824e357770788104bacd79b625b2b9e864984bb7cf5b183a0534385a8b448b7517ada4aea9876ec73365c37c9c225ce5698357cc2d25c8df
+9fdc6fd5418e8d66074bc4c129fa9ff5e571854e8158cec6d6c744ff4d17a9ccf1ff9550c6aeef9a4cabcdffe89ffdde0c611e595713f06135cc93e5d00abadf0420c36f8888fd466ea748e7ba0eced662191e9de27b8033cfcb0b703a99874df311195449ddba04ec4245af8d1272d672062795d51bfca1317eaf375cec7ba02e91fa8e05251e5a583f21fb5c0ba2baab41c78a238268e9987208ec3c1bdf63fb7ecb80bd4abe4e6e76d1c97200617fd0443ac12e85347b716e7c793411bc0c
+f6663b76d474cb4d157629061459de8652497e91bec408e303bf592d5163db4df1ff9550c6aeef9a4cabcdffe89ffdde0c611e595713f06135cc93e5d00abadff714a36d9b0db5d091ba97e3c87b87e162191e9de27b8033cfcb0b703a99874df311195449ddba04ec4245af8d1272d64800e3e9a5b88a5de5bdf1518b40cdf521be28f2b03e0a635e180535be8851920adb8c3063fa17c42dc7604785afac91628357042ac16bc3d84cb858bebf609b2e73e9e725bbe85abf0acf82e11f2ad9b3397ad874ec0ee7ff75edaefb86433a3dfa24f3dd87dfd434ec551c37c415ce
+561152,1149325824,0,0,PS1,PDCP,CatPdcpDlDecodeOneStatusReportPdu_fms_1,P_VALUE,swLogPrintf("PDCP DL , LCID : %d , recv status report , fmsCount : 0x%x , nextTxCount : 0x%x ");
+019f95380b6ef686e10cb8adadfda97752497e91bec408e303bf592d5163db4df1ff9550c6aeef9a4cabcdffe89ffddea7cfff412f722b7c3c7b8674dfe30a62b7eceffeeab58056571ef030d33ae8ea62191e9de27b8033cfcb0b703a99874df311195449ddba04ec4245af8d1272d6027ba5c493f3f1b843c5e62575c29e9f7024d09529abb9d18e4efb7e3cb9268f757fe55b1ba6fa522105a3844073cae5e957c5b259ee8db23de4fe599400f083cefdf5fe2e10b14f515eaa215538f747eff0116f16cfa26b235a6ee3c054ae48
+c25f93cd19e5afefccc2bed5d52503de260cc3d56dbb7ab3a30362617c677d0cf1ff9550c6aeef9a4cabcdffe89ffddea7cfff412f722b7c3c7b8674dfe30a620420c36f8888fd466ea748e7ba0eced662191e9de27b8033cfcb0b703a99874df311195449ddba04ec4245af8d1272d6fa1954bce84e54bad5ddf90625033d8962a8332128cab5b8179fa520b107d49d00686709f74362e691bae60d2868b00e30082cb31c78055477a792f5a5907f808f2ff7b3b2d5a907854837f23912800c
+d4a3f95bd8661bfe89d3bead2b159824d3a1a7b1650db57cf008ad53a49d04e5f1ff9550c6aeef9a4cabcdffe89ffddea7cfff412f722b7c3c7b8674dfe30a62134b31c54d4225c16849e78a4fdf5f28a930e5677ed822925caf32baf66455817085e8d73b1a755987b76dab3af89f169b5926b33c8d7bbd30f42a281f02ce4e697a536af28b08cd7cb9144e227caac665a8ad817cad08c659a55f910e27d38324109cc4aa4db40c7b974a2f4c0fc8c7
+db159dd55e7387a167d47431e5b88a68260cc3d56dbb7ab3a30362617c677d0cf1ff9550c6aeef9a4cabcdffe89ffddea7cfff412f722b7c3c7b8674dfe30a625ecfb81fd09adabfb787664c0a784673a930e5677ed822925caf32baf664558158a436556f26a3527cfcebc2839afbd2a5a53c7f178e6a41afb4ec94a9859d7ee7df9a2efeea5779b66984c65b7d2d606d7aacb132619ef035b57432490298f35336b350578b65c42c97920fba8ad6fe5ffb8b3a6a9ae922fbfffa9bd002e4dc
+fba7531116e2092d5507ea91b14d3c1852497e91bec408e303bf592d5163db4df1ff9550c6aeef9a4cabcdffe89ffdde32d5b27808ac762cde3312915e92a5460cb543b96d02f8b9e0f50607b2dc8cbe04359bbcae46c7a7af778971c130b313cc997e0d3bb9d776779d5c77934d7d816923b2120f68c69c0460a78e1b477aff1a39ae7e092cecfdb7f07098546915d57188daab7f725cabd3841947a41e51e2eac98b1e0217ec9b8a3b2a1990b07c53
+d26b229de1719ee1b09821d72b29c201554723ee936765449450661bd62ca00ef1ff9550c6aeef9a4cabcdffe89ffdde9c27dbde4513c270e14c2cc7359392d24af381efc3b6295e3adf454b0613a26f08e2940ab225eff89790a1500b9b92fc2a06fa9bc29ec2f78df99ac966bce1fa83cb72d92b70755ce2b9f1d9b615b9d4
+d26b229de1719ee1b09821d72b29c201e571854e8158cec6d6c744ff4d17a9cca1672b824eba37efe72f09c780bb5a87802af05f25f43d2b811ac8258b1955d34af381efc3b6295e3adf454b0613a26fa930e5677ed822925caf32baf66455819ec192ee1ccd5bbe131fd1a7c6ad877713d2438c30d2a8afdca5579906f8b7df4c5d1d1fbded870d7fddf0619ba8269bee48df50fb2c8aa8dc155e6afc827f65cca2b1bdd108e61424b95a5b873cf14b
+561152,1149341696,0,0,PS1,PDCP,CatPdcpDlProcUpPduInd_highwater_2,P_WARNING,swLogPrintf("PDCP LCID : %d , DL PKG memory highwater , backup PDCP PDU ");
+561152,1149344000,0,0,PS1,PDCP,CatPdcpDlProcUpPduInd_highwater_3,P_WARNING,swLogPrintf("PDCP LCID : %d , SCT Node Mem Num : %d , DL PKG memory highwater , discard all backup PKG ");
+561152,1149345792,0,0,PS1,PDCP,CatPdcpDlProcUpPduInd_highwater_4,P_WARNING,swLogPrintf("PDCP LCID : %d , DL PKG memory highwater , backup left PDCP PDU ");
+79ec23a5491124d929428f1d4619262252497e91bec408e303bf592d5163db4da1672b824eba37efe72f09c780bb5a877d141b298edaf6d2afeb18f3d419b220237f01cc2bad2ad70b589348f2672df238fbb8de2416729e5f53055ed2463b2f2d9b46503ff54a7063b1c58267224b5ad50af0ce06cbe82b14fb264e006b2b84907e67dfba8db9044953d3b5d7392e584a2762cd387ab42eccba3d4d910a13ed23884ddd116e14ffd65dfb1ef9a94d7861838d2a455c107ca0b6c92ed89c12ab
+2edc227700a1aa427c550f123c63ecba260cc3d56dbb7ab3a30362617c677d0ca1672b824eba37efe72f09c780bb5a87e3c30cec929fba308e943a8936a70e99237f01cc2bad2ad70b589348f2672df238fbb8de2416729e5f53055ed2463b2f2d9b46503ff54a7063b1c58267224b5a02760cc5c148e8ea0c1ddcbee075fcfb18aa60dd474b49db744a6d5510ac057dcd6149d60e36852cca88666eaca7a10b4a2762cd387ab42eccba3d4d910a13ed83f0157c6a1e7cec9cc9cdcfce32dc7061838d2a455c107ca0b6c92ed89c12ab
+bf6d0ba1a54d2e291f249ad6b9efaa1ed3a1a7b1650db57cf008ad53a49d04e5a1672b824eba37efe72f09c780bb5a878aa9db4daa46fd8a644c3729c046a27fcca838dc34e9f0d3bddf1ac610037e96249f59acaa9501af3614ae5db82a30c38e28b2a875bc1daf33cabc2393e2251fd7bd9e63251f3a7cabea43c2013db053a193a019754064d847db40faddadd36c427cebf648a898b90878263dedbb31965ffb8b3a6a9ae922fbfffa9bd002e4dc
+8654100d3f982d0a329c36be85b71d8e089a1f24974cc938a705957455d18346a002c2b55a85675aee4a0881cf104b5e890f4cc0ebaee80e006de2f1c5d7ee4eca2ed863ff2aa1b279ad66249ff303055cd7ff90469e1240eee3a5fb88cbd0c5b1c25be62c7177814a704960cf7d5b1830910823e388ece47f2a3a2b52d165208cf38ce25821128017dc8399677747a408ad9570a7edf470789aaf6120a6be38c624eec996b7114f83b023ca163ce1e8
+2269a38c321ec3a62df8c2ddfaf9721752497e91bec408e303bf592d5163db4dc46e243e37b098ab8cef5ef4cbc2f42432bd8f00f7f4e413b9bcbbf3d6446c5d208b6dea7c95eeaa21b9f130043ea0fff4320e7569708504902eb34c8e81c30974f4e477927b8e172fcd293f30c82d14943f9b9f8e423d5b9caa2de527bef9b011a8dd41a2c682859b47c3cac1fc1163c5bc85768faf4b2471731a09df2bbeeea5d0c8e2d3b151896d7fdd727955ee585ffb8b3a6a9ae922fbfffa9bd002e4dc
+dc037c1d54ffc00ae6aed48ec2824d23260cc3d56dbb7ab3a30362617c677d0cb9ebdda71612575d541d7eca2cd8b63e04e4f6bb98415154a18cd03acc8512ebcca838dc34e9f0d3bddf1ac610037e96cd58076bfa39bfb62679281045082b766e353fab52b25eb8bbaf6b34001e25830eaf456447d0af295caa5dbdeadabd4fe432e47b685d0665aefdaaccbee5c5084fae51fda82537dbd6852c4304c4afe1
+5e9641cf4c3534598269e3fbb0a742ace571854e8158cec6d6c744ff4d17a9ccb9ebdda71612575d541d7eca2cd8b63ebce6eb984cc1a4b7c9d707ca9442a8a3cca838dc34e9f0d3bddf1ac610037e96cd58076bfa39bfb62679281045082b760bf588e8594675645235ab65e963dcf40eaf456447d0af295caa5dbdeadabd4fe432e47b685d0665aefdaaccbee5c5084fae51fda82537dbd6852c4304c4afe1
+272a2e9c0edac624b07ba4ece999636b99644e44ce3ebc07b73d8d2c46cb52f00a086ebba6fb2f2c94815a44985c6ab0e082c59057da7df2ed0da266037813fd8664e18aa2401f7ce647f666d141c808e3c1d1231c64fe72df060e5c30073a1c3285a98d28a76b20f25e46d00366fdcc68e99cb743fc213fb866e1423a737bc9058c2cfd5a44c656142eec5f167c90ff5b86182b5530169ec27bfcbd39965a6181483b81d3d15e77819ac999e0daf745
+272a2e9c0edac624b07ba4ece999636b089a1f24974cc938a705957455d183460a086ebba6fb2f2c94815a44985c6ab0e082c59057da7df2ed0da266037813fd72c49cd00f55025c17aa094a73dde8652c646423176fcca19ed8a1b846df547eacba1038c35ccf4128df951f20d50abc13d2438c30d2a8afdca5579906f8b7dfcb9f8649157b15613d6c757e244e351a18744c0e59493a8d41bd3f0fa82609604fa6700cd7d6110287758729860439082bd42b616f6f27820b32c7956e0d6a36f2c05e8d325e6324c0233425715accaa
+af168ae0dbd0a175c7f6220e3f5002ece571854e8158cec6d6c744ff4d17a9cc74ef4693244ee0f7dd033d59cf944218585b8f94a0bb3ef05f5298d9b6b7d487cca838dc34e9f0d3bddf1ac610037e96cd58076bfa39bfb62679281045082b76f453694dd3ce9629ded4f112c1dad53701c8ec5a35e86dd59094afe5f26d238f301fe15b01afbc2eb9a8658a3e5645291936688f1060b173d9306efddb44d1e53dfa24f3dd87dfd434ec551c37c415ce
+266bb3253bc31c1c18b29ac9106ae492260cc3d56dbb7ab3a30362617c677d0c74ef4693244ee0f7dd033d59cf94421862e24a57d35c2c9fc1505a52105f39a1cca838dc34e9f0d3bddf1ac610037e96cd58076bfa39bfb62679281045082b76f453694dd3ce9629ded4f112c1dad53733524f77c654b68a0cd453c03b3048ddbfdc73a6d2589a5750647b65d77facec3c647071f1facdf56bd82ef27df87737
+90030d787a713125105bad7ba0a9c6c2d3a1a7b1650db57cf008ad53a49d04e5ae60f0aa937e154c7f0a70bcb64667d8a329fe7ed15d088ca9add329f494d2a431722bb8f078d7ff6634c62a82d2edcf249f59acaa9501af3614ae5db82a30c316b1968bc6431d1f29b79ddb71e9b60a860ab362acf8aa74f8d9ef7d9be0a0df3cb8e1f40e0a0000662810571bc2e7b243d4d2b9955b6436c792e45aba81a0ab148cf3d29ae052fb258d576e8eb5b8dcd5c6ed6dc5c74ea8c08f59e7c48f7c445fffcf341941241c1a673d83986dbfd5c624eec996b7114f83b023ca163ce1e8
+ef9596c486680a1f31ac74bdc6f0e7b1e571854e8158cec6d6c744ff4d17a9cc9b4e91aed9a205724dbe8c5dd405c7dfcbea6b2e36f4a36c2e43ac2b8df53ed0db195934c19c2bd4c72ca2abccd54e070733a33a7999e6bdad734ac92fa40f31cb32f26529ce280b910ee27442c72e4c3748e93bed113ed7fb33db84b16547c2d0443ac12e85347b716e7c793411bc0c
+e382fefff17ee63dc6117126bdeb8f1f089a1f24974cc938a705957455d1834691ffbcd4c2819a7c146db8a0d4aaa65f3066560e4910e29b56577cbd34cad31004359bbcae46c7a7af778971c130b3131220fbbabb24b521cbdde0b1b1ac7d4099777de74a2a71afc17c6767ab5d87da027fb0106e53fccbfebf5a767686de4622b80e7863f4597768a105a6ea34bb8e596b42c1061c48394935a2729720684c
+9d055683431572e16d056cb319186f6d089a1f24974cc938a705957455d1834682288de35b8e0d86910fb0728eeadcec102cdc2b2e3c37ae8590fdbf38ad10ac4d98d44470a4024a3b81ed4c94d97de604359bbcae46c7a7af778971c130b313825cfe64738d9e256de5faeeefd4719713fdf81ff180b1c7817befe53d87d715aaf1fbc6048aae9d5b243c4722eed2391d62a3f78eb071d59e9e0a1e93cf8768ebed9404d225c1b2fe08d9775a6b762e
+af3168831349b5116a537ad54bc8c93ed3a1a7b1650db57cf008ad53a49d04e582288de35b8e0d86910fb0728eeadcec102cdc2b2e3c37ae8590fdbf38ad10ac90c6ecd681a924614052e4caf4162ad6e3c1d1231c64fe72df060e5c30073a1cb63da7eeadf2787ff876aca59ecf053b916f39f5a86a1ed7697560ecebe5cd952b1b4b9067614a20830d29af7b9f17da6890b6f0e717a4f82a4c15468956bfc6
+9baa89ee54332274f02bf39710350b2c260cc3d56dbb7ab3a30362617c677d0c82288de35b8e0d86910fb0728eeadcec102cdc2b2e3c37ae8590fdbf38ad10ac70cc886a11657c3151786d898877b0aa2c646423176fcca19ed8a1b846df547e9be8ff5e32110b6940c2be6a4849550564cd89228ffb3d267acb7df2fa474113c0e0d0307859266aba7058c6597064016a7c0f5098e2373e7d55e7423e90ad2f748423d52ade7bd6c08f1e815dbda8dc
+4d860f40261abe84f5f41517a26bc54e52497e91bec408e303bf592d5163db4d82288de35b8e0d86910fb0728eeadcec102cdc2b2e3c37ae8590fdbf38ad10ac530c418c01e6670e1e88b5139f1072aa2c646423176fcca19ed8a1b846df547e9be8ff5e32110b6940c2be6a4849550599c1f9e081ae7f5ca9a5910df7297ed67233f2c22578506c7a07b568bf6db63fa78314c6bbbeca3539eb303df00718b361838d2a455c107ca0b6c92ed89c12ab
+22f53364fdff8e06105de1aae9180752d31b5f122c76dd4be8cf550250720c2c57eebbd03cc4c927a0e1613a1e6fe5371d9f89baf2d045bda8ba50c3781b4e27d52c46c4c4e5e492cad49b2f6556ee3532a973f6b5c4785e19be54254ca977130cfaaf181d8c9567834b01f1eebf62b92c14dff5f6636b0215465905c9ae1389d561957f5e6e4b52c5af3f34f655a1db
+fb773e70d6550a819eb30052e0a5ee0d687278817cc8c5334f85f3e42e775f5d57eebbd03cc4c927a0e1613a1e6fe537c81270472b45d79ed308fe3e0a58e147d52c46c4c4e5e492cad49b2f6556ee35d0eabbf7b52296c136863797e30d7c4b508c6aeb6b7238eb1f9aff58a2f284eba819dc21ac51f846f7bb08115e21bb2e87d4f4da52fecbf9d3c4d555a7f9d086471dede80fc4f3c1b21d33e7bc88f0943dfa24f3dd87dfd434ec551c37c415ce
+84b4a8c79838955e0472296110796d0cd3a1a7b1650db57cf008ad53a49d04e519b6b36a0a9377694445912477162020473de73f6df0cc57393a6867db11a864a184cd47fb88a3ca2dd397994656c8d8e3c1d1231c64fe72df060e5c30073a1cb63da7eeadf2787ff876aca59ecf053b916f39f5a86a1ed7697560ecebe5cd952b1b4b9067614a20830d29af7b9f17da6890b6f0e717a4f82a4c15468956bfc6
+fcd557af6057310b33f125f2d054b2ea260cc3d56dbb7ab3a30362617c677d0c19b6b36a0a937769444591247716202065c3bdfd30d6b0c6f10dce8cf5c3ea0642056bb1958dddd960bf94f0d2e5c90b04359bbcae46c7a7af778971c130b31348df5a575e9c20b9bd3c6bc3ceaef8fcb62e128bb83372b0a17728f60265652939eca3b4f5c2d72c83c529e9dd22ad035b480cf4c5bce8c6e6501956568f3afdab3e1a3366589d86cb05740a15cae50b
+d5d04c899ed7341a2b7f00d57214f73b52497e91bec408e303bf592d5163db4d19b6b36a0a9377694445912477162020519cd993a499d0b5944bfec01fe6b29adcb2b8060a7d37339431de7ec393991a4458ea2b8889f02bb917f727c9611db079ec02553a331d012a607fd3ea6fbc392fd1b4ad5ca85a3fe9e6742c61c8731c466c35a5ce747bab918cb201586661cde5342eb29e1563dfdf405aacd71cb81f03e5c847d32992cb590962ed9e69cc51
+09b87c7218f12575ec636dc4ebdbdf9c089a1f24974cc938a705957455d18346c81a5e2ebcc7dc3117371c897c96e5c26538b3e755c5862f3a99cbba5aeef0fbdbb7cd88d4fd4cc376fc45cc3677f8340dd1e18debd67549675baf43caa2e62679ec9b34cb90fc9c257da6c1df66ca4d0d918dc35d4c08da3827eb9687f3cbdb0601294c62363e16963dd3088e9ab8ffe55430375259b5ffe987e9173dcc70c9e1778d322256a95d796db5c7b40ce71d12899969795cf06de83e40afd4f4f892449eb883c86bc93bf955af0dee828a449c32899aa5f04012127909b8e64d460d88bde41e81bd74014a4d91073141b003cb28405ab8472c988f168c7e79874bd0
+815caa0c0c287a3d861adef92b05692c52497e91bec408e303bf592d5163db4dc81a5e2ebcc7dc3117371c897c96e5c23d4b5153e2b66d09755e9417b4609b9eb3435f50cdadb4749bd64aa48b4337ff0dd1e18debd67549675baf43caa2e62679ec9b34cb90fc9c257da6c1df66ca4deb6b884f539ec4dd5b8a0ed0693fdd9f0601294c62363e16963dd3088e9ab8ffe55430375259b5ffe987e9173dcc70c9e1778d322256a95d796db5c7b40ce71d12899969795cf06de83e40afd4f4f892449eb883c86bc93bf955af0dee828a449c32899aa5f04012127909b8e64d460d88bde41e81bd74014a4d91073141b003cb28405ab8472c988f168c7e79874bd0
+69afb3275057839d976d30bfe0544c7a260cc3d56dbb7ab3a30362617c677d0ce2a1c71dccf5cc98ba1ea4588bd26065e5570aa57f1632d373eb89a6a70bd77a31841c1a7876e1c8ca3fc36cd282e6cb3d0eb87d3f6930e6145dd1a105c4ae6cfc4eab1315b69ce5192b6f344b23de4ff90f31b34645dacc031737135e821b54b3da209b77fa001fc1d7470b8ef2d00cfe10f3f07b903cf42f681e8f3a56a6d024dce5a831ef242ac0a54b9b901400b25ffb8b3a6a9ae922fbfffa9bd002e4dc
+1bb10c47c13944022bedb8872d2cf2e2e571854e8158cec6d6c744ff4d17a9cce2a1c71dccf5cc98ba1ea4588bd260659ada066ceb385a586f19f3d1cf68c0e231841c1a7876e1c8ca3fc36cd282e6cb3d0eb87d3f6930e6145dd1a105c4ae6cfc4eab1315b69ce5192b6f344b23de4ff90f31b34645dacc031737135e821b54d80ca30d60496a700033bd80a0fb97927aa46327d6d15c3c134b0be396a39c5c3bd2a6ed98f5f85ee3d25ab58339e043
+a91084394d313f2b0beb47064ee0d3abe571854e8158cec6d6c744ff4d17a9cce2a1c71dccf5cc98ba1ea4588bd2606598d245688338b139d2b1f770e4fd328bd9df680a5b11d46ecab1dbb4f4dffa5ce866f4774889136eacc1b9d74c9e8b16a0e8f9ec703bd997baa9fc16e26855a9e79ffd0b21829efbacab2da4bf0d5ed8a20538d3e3b4a6641eac9c025b79efa06c1916de2566d73d14f74b2412bb5a4c373be2ec01be52cf1d2219e8bb675d4339ffcca5c405e89fcb74eab2ad53d43559a1210ada94b55e9552d5972e8d9061
+a32c0aaedc8da2482485eae513e52688089a1f24974cc938a705957455d18346e2a1c71dccf5cc98ba1ea4588bd260650490507c7d66849b188244ed61a070b8ca2ed863ff2aa1b279ad66249ff30305381c4feca646a1b75b33783fffbf2b1b3ceedbdae7ec37871807aca5df772ef8f17ffefbeae4cb6f9bcc076ad18bf6d866602b3092a0f1cd88d0a1c51a341c25
+561152,1149407744,0,0,PS1,PDCP,CatPdcpUlProcCpDataReqSig_1,P_VALUE,swLogPrintf("SRB LCID : %d , UL data , total len : %d , contain nas len : %d ");
+c05bddff1346549e307e8ac07e14d604260cc3d56dbb7ab3a30362617c677d0cb4b2b4acd188f3fc46d8baa5a3ba61e26fe063c020e28e19e88e7a7f7b17284a2c646423176fcca19ed8a1b846df547ede998337b0ea140ac165625c1a93a9916c8316ad9a5ba01db94f73d59331582c987b2bf5fda6bcfb0a24ee85d51b11f33dacfe893f591bb1c59ed2fb003a7b7156a58065eb165e94e1dd638f0caa8806
+5365324f509b076f853fd1f65dbc5b75089a1f24974cc938a705957455d18346b4b2b4acd188f3fc46d8baa5a3ba61e2e17caea1daeee8ed482fbed530ff610d2c646423176fcca19ed8a1b846df547ede998337b0ea140ac165625c1a93a9919fc413b2cc36c45dceb88edaa88d487dc80f595cba2257eead03e1a4727bf80b2cb6e8a9923b208dfa4bcffc9df404246890b6f0e717a4f82a4c15468956bfc6
+39b0925f219bea51428a2b947631ccb352497e91bec408e303bf592d5163db4db4b2b4acd188f3fc46d8baa5a3ba61e205183bc4447da7f1082957b393623fc9d52c46c4c4e5e492cad49b2f6556ee35669e9dada5d94ae060aaa7a4f6ee6b995b9e10ed22450313c2f9a2dfda9414800157f9fb4da934e5ac428dd510136141b50421a46864ca9268e55e5a87454d3f7e67a4f621c9092ba1fe590bd6547ef4014e377a37a0d53510a67e168d5ea9d43dfa24f3dd87dfd434ec551c37c415ce
+a767434720a70ab2f3cce15147581ddad3a1a7b1650db57cf008ad53a49d04e5b4b2b4acd188f3fc46d8baa5a3ba61e294c47ae7ef19894dd3aa499fcb3b396dd9df680a5b11d46ecab1dbb4f4dffa5c5d0d1959a55ce3af7d4863268ac5a4cd15152678f7fb559d1ed65994c2515b1f3d60b99966a958eb6e9932582f3a9e558c9d22c9daed58fde1ae92dea355de7b0d849e7558215719025144b86dda8e7b9ea21a4083be2025a8261ee0ed871fc261838d2a455c107ca0b6c92ed89c12ab
+45c6a784a00316021eba317f03f662ce089a1f24974cc938a705957455d1834655748f7eb26c513c6aee6c7bc3c4c6ecf7f0a7b5888d34065d16b147e6b8326004359bbcae46c7a7af778971c130b313825cfe64738d9e256de5faeeefd471971627ae1bfc5d501de419b6f9a5ab1e4e2f115e0d8b49ddc656322c402d769fa92e5ab13e286d141c8142e0395e76aec6413ea30857fc537a0d145feb0556c732
+44e524a1d6c188b8a20a5109ab3b7130d3a1a7b1650db57cf008ad53a49d04e555748f7eb26c513c6aee6c7bc3c4c6ecd908120c92c1a54d5209fdf689d9095404359bbcae46c7a7af778971c130b313825cfe64738d9e256de5faeeefd471971627ae1bfc5d501de419b6f9a5ab1e4e2f115e0d8b49ddc656322c402d769fa9cbe1831da0211e9851611308dc5894ef
+b116ed8481d19588f73b55c13a30fa3a089a1f24974cc938a705957455d1834655748f7eb26c513c6aee6c7bc3c4c6ec5b761c368e6a222a7c3d4c4dc2acd12504359bbcae46c7a7af778971c130b313825cfe64738d9e256de5faeeefd47197d8ee1154aa5780a93070aad5c3c764621f2f811876e34a9dac170e55a424948d748423d52ade7bd6c08f1e815dbda8dc
+a2cb7f9d5e418e92016ffa6c7547e47f52497e91bec408e303bf592d5163db4d2ac74a5c1c39d83b1c2667b3ec57c54d6989620c6f4a87fe681b3c16a85d2b3404359bbcae46c7a7af778971c130b313825cfe64738d9e256de5faeeefd47197f5c9fb68a5444cd9f6e45ae8fdf9cddd9108e18c09d49bca309da9ef2262aa652baf875a33dbd1b4cbf7a43dad8c6f2c
+3b2e2bb66a0ca024507a848fa9a97cdd089a1f24974cc938a705957455d183462ac74a5c1c39d83b1c2667b3ec57c54d81590b128086cc5c7873820a90834ade4458ea2b8889f02bb917f727c9611db036256e2c27fcfd8931730dd5768624a63bcc9d9dbb72b3b159f2c6639a88377a207a89d99a7f8dabe20f1486c32b7b380e6363af090f9dc918a850246e0f8116
+1711294e589caf883a3593a2e93fbce352497e91bec408e303bf592d5163db4d2ac74a5c1c39d83b1c2667b3ec57c54d040567a40e8e11ad0c49b6837c154702e0b1d6b2443053222487ee3e261ad805ddc0b1b009362d6b4cd4da5908c459722d9b46503ff54a7063b1c58267224b5a8810723fba409f6222dbc4f533183ebaf3d1f27196f7487c9ce2b68adefd3c80490acad6a41fc6ecf6e31f56b94b0adbc624eec996b7114f83b023ca163ce1e8
+a50d908ac3043a7f4a3de924a2a2a070260cc3d56dbb7ab3a30362617c677d0c2ac74a5c1c39d83b1c2667b3ec57c54df32b31740a4313828796333feb5a48aa04359bbcae46c7a7af778971c130b313016ab802926645ea8a47e8fdcb82eab2f70bd487123edd59cfd56b03bd31200e3c647071f1facdf56bd82ef27df87737
+09c7f2c18e561a8cc42144368609798ae571854e8158cec6d6c744ff4d17a9cc70b03d7cde7376d0d7030caf9aff7bda3bd17d0174fc370c1ce0b73a8db031d681989a6d3cf94b85b5b7ace6ee961ca1b1864d4f2a5b7f881711ad3641f089fab2c897c8b6fd582c03b31418e8d125415951791e33858c6bffacec56d840a2333bd2a6ed98f5f85ee3d25ab58339e043
+f7c10e2e85d4f26d3f69840cde9152e052497e91bec408e303bf592d5163db4d70b03d7cde7376d0d7030caf9aff7bdadbb64641def27832acb748ed7dc45cd1ca2ed863ff2aa1b279ad66249ff30305381c4feca646a1b75b33783fffbf2b1b2da8df0ac5a5995592a1236718633986b5f1aadd1d5f0de1b5f1a78c9c0c1438049e64d880d5f1dee02736f927923af759c1bb85a4a40dddef3fae7c80d7999b
+9d3f9f0ef2422578089212677dadf4a3260cc3d56dbb7ab3a30362617c677d0cc71ae1cc2475fd5b99571cf5abf4cf05b2c750768683f5fe47cec3c6eeef59bdd9df680a5b11d46ecab1dbb4f4dffa5c63c5b4d48f1e057253d3852a49641865e728fec0589477085334cc8693bbaedef5d370c45b2630c002b1fc632aa2759ca6fa33904a372cf59c22923e515a03976cde36443d2952756f4db8f9fbd5372461838d2a455c107ca0b6c92ed89c12ab
+3f014dfbf81dbbd3b5af16236eecf23fd3a1a7b1650db57cf008ad53a49d04e5c71ae1cc2475fd5b99571cf5abf4cf05cf507e689167dac83c1b5fe83f906b9e4af381efc3b6295e3adf454b0613a26fa930e5677ed822925caf32baf6645581e57c3158a318744d91e52b58284166402db92cc0de01c50f21f0c3e023deb96322895e84e2420ca1b6dfe73608250956fe22b36858f2cef0078fe6f993bbb0162133dfd86c3629f47db4c51ccca7a6b62d53b5ed578cb370b9c6b20950b2c5bf144b3d43118732b3561488b2272e23edcb28405ab8472c988f168c7e79874bd0
+561152,1149442047,0,0,PS1,PDCP,CatPdcpUlSendStatusReport_status_rpt_dump,P_VALUE,swLogDump("PDCP UL , send status report : ");
+978a2c6dc0d3221b4770fa9758851de0089a1f24974cc938a705957455d1834643ebdef94faff7bd3bc0d48d30da17a43cf747fd0826940afc709eb494ccddd6d0340d91cf1ef115f46236651dbe4d8ba0a18c6f784f513298dea0c2d8230c1b771f4e84eddddde5e09a1866552066837aa7a41253293143046d8c5bd3eea559ced0ccedb3f40230bab234159cf2ad717546ba3ad3f90f9d0e06d18f8db17816012e0bcd87bcc1b294d45aae9adce1d7413ea30857fc537a0d145feb0556c732
 562176,1151336704,0,0,PS1,BM,CatUpCheckFreeBuffBlock_ul_1,P_WARNING,swLogPrintf("CAT UP BM , cancel UL highwater : %d , totalNum : %d ");
 562176,1151338752,0,0,PS1,BM,CatUpCheckFreeBuffBlock_dl_1,P_WARNING,swLogPrintf("CAT UP BM , cancel DL highwater : %d , totalNum : %d ");
 8fb7583b0064f0d535df6f325f2994c16485bbf0bf5c761c4e9c8ff2ab88e9b1d3d53b39cf932eb90ce547893b6bb986cc97d8f11741e4610af2b076f00d0d8fc5cdacd79e5269f1f1b5b312d59746f9a45329f94707ca0dadcb729b01c8a9ea9014c05073b77b23842f8dbd23dec4a6e5f940993b044c68c194f26c26735173292189375eca63c2c8a4c8081cd78592283dcfef9d0953f240ea3d8dcabfc43b048e851f4a7deb7e95e08be266377a90945d129edb62bbab9e9b33a929da664301be5f7a04ff7163deb125c8d76cdd6a8d2a9d930b7e58767baffb88b4ad9a071a698d94e21f41165e44b6c422383cf7c624eec996b7114f83b023ca163ce1e8
@@ -8216,7 +8219,7 @@ fe228bcae12adba27a1a6c3e785eae25927ef569caa9003e6b5de9d1ac28820668a9902776217e97
 7d546584e2ddd24d0e63a3e9a43fd7053ebdd67d0a6bdbf666f71a389395feee68a9902776217e9748a0cc070231c541b2a8450e1dc4c09879f68ddf5ed221a231841c1a7876e1c8ca3fc36cd282e6cb264120c6dd6cb4d6155341d4ba0bce13ee7bf30bc639aff7649cce117dec95f2b304ae81110abf7a4aa6c4cced513d3233a25ed9c6875e0006208ccff7b27f096918cad12bb80f658b1dc279fa64eae151186ad924d44366b164dc59791512f4
 67b5a404f2e31d50e25941204361f87e245b8e65c7d09cdfb6a654c44b840fbc0f99eac1b914f425e384d0595c9acd03995e38d1a5e1c89f76b28af237eb49d04c16b3d8e631b39d3342e3998eae866942cf8edf1628ec648d52947b785d30d37b89b377240a697265c16351c09c44272a39bce8ca25eec161f69b8b7e6ed9356f0f595b4d8ebc0e26471b8253083ea2e8668249d0c067bfeaf959fabd65190b5568193150612ec39f253e29c705c2c940e3b2b10ee30631673b44f2fff5d006cb66b5955585469667023cb3f05abca3748423d52ade7bd6c08f1e815dbda8dc
 c00e09d941f0d68ed7ada7b25998828ba8269c5f1024659ac5bd9eb1526f9eef0f99eac1b914f425e384d0595c9acd03995e38d1a5e1c89f76b28af237eb49d056f1f603d47f56ac7559038c8dd7008942cf8edf1628ec648d52947b785d30d387b43e96a1cc86a5c9f7e3279a17c96ff2faaed1ade578345e13ef384721a103cd4b8c64275dd379cfe9216f70718f930def3176954040e1b8e20ace3ff1735b058248d176c13644f11d2f43bcc4f3974b3cc3bf8b1ec31bd80c44cf62d6ded4748423d52ade7bd6c08f1e815dbda8dc
-0218efdcae81fd9ebbc71e11fe6702d3a8269c5f1024659ac5bd9eb1526f9eef0f99eac1b914f425e384d0595c9acd03995e38d1a5e1c89f76b28af237eb49d03cc7aad9101f71b89821dbbfb17010b042cf8edf1628ec648d52947b785d30d3c926f449ff1f87a9f95ea04bee30ef82472085d55cc32c0a1afe2aedc8fa1d816709b684afd5cd9d8484f01b28dfa127145226bb7b9160b127855b95b1f46ec6caee745699cd062f5d6cc7247e674c2383e49270dc3b26cabcab5bb39a58a1e659d1a0144fe962f25229659de51b2a77
+0218efdcae81fd9ebbc71e11fe6702d3a8269c5f1024659ac5bd9eb1526f9eef0f99eac1b914f425e384d0595c9acd03995e38d1a5e1c89f76b28af237eb49d03cc7aad9101f71b89821dbbfb17010b042cf8edf1628ec648d52947b785d30d3c926f449ff1f87a9f95ea04bee30ef82472085d55cc32c0a1afe2aedc8fa1d816709b684afd5cd9d8484f01b28dfa127145226bb7b9160b127855b95b1f46ec6caee745699cd062f5d6cc7247e674c23df5923c8d6f4c057a5d3ede5984130620c1a840b99ae8b28c8a78730bf698ecc
 9097b71eec71ca3fb66aee4453cd6becfde42049eae280968ebb711c970999710f99eac1b914f425e384d0595c9acd03995e38d1a5e1c89f76b28af237eb49d00325bd501d574c337bcfcdc9ff8466f642cf8edf1628ec648d52947b785d30d3a276c9346ebb3386bd3d7587875be22e352eda75b74beaa6e69188aa1ec3c8495b7ba16ebdb173ccd4fe7016f2b993a869557741f73b74575208307a3350d8de89ec703ba0ebdceb5b1d05815c815e764881b686292cf6ba7705c59a9bc0f06a6aada10fff01d8f300ea4ba98ce398e3c3b834a45d7d36b95806aca838412cdcf429541e8b0499ba74492690e002ff50caf8cfeb3b27353b08032b7a94629991
 f339482b5fabf66c52bca3ec33425488fde42049eae280968ebb711c970999710f99eac1b914f425e384d0595c9acd03995e38d1a5e1c89f76b28af237eb49d091b9e0d434516dabd1fca6d87ae104c942cf8edf1628ec648d52947b785d30d37b3eaa635ea74027805e9cefa85ccbf324570c7c7d20167375edfd83ccce4fa5da8845a75a1b4356774fc53b25981baed6625bbe9007420be185c6a53fc3767b
 b814bb968ca441a668b84c58de444f7c245b8e65c7d09cdfb6a654c44b840fbc0f99eac1b914f425e384d0595c9acd03995e38d1a5e1c89f76b28af237eb49d092abed221552b86fbd98fde8f9ea367442cf8edf1628ec648d52947b785d30d3a29138267abe779e22c337236432195c21f5368da1b8df7b1b2773f597300215437596c782b54cdd8e0513c03e0bef483a88bd15a59f1d7c322f3bb106484574748423d52ade7bd6c08f1e815dbda8dc
@@ -9382,6 +9385,7 @@ b5ef6ae5b8170d5b1bd895b14fa42764c9ec1979a3484904c7e5eb1d0a8d8acaace93dbcb62ddfb5
 2aca0778ea9d6c0d2b5659bb969b49c63116c2685027c965af8fa0fb3ddcd833fe3f8d35b9690c1740610858bf3a6560e8c3c4751baaf6de83e328b245e4149d9593f56d8cd246791888faf2f195e67245ef0fb1326cc5ddb7d3786f4a471ead7f76e44ccfd997dcd0373065906583766a893c0ab8c943c15243485f42c6dc2ea55d4348c72e6b47287ad47020cb288b37ee674de2119dde153d78a25b44d8525b5f8c8b4f34d15734a77f782f23881866b8fef288a590d32bb2b613d00308f8d87773b130e31e9d69aa77a08d58260ad33388c0db0dc0abae1cdee2026391e4b8e3034852c1c3193d22df21fbddac27
 ff34463fff5f56a66eb386e047934db039173d3d1aa0d81f018284a16fa26faa95bcb79296cf19c0697c8c1437eb3519f06d9e9f4763d9ea9aa781494d1da14eca6db5e44414ea6324821554cacb7e0a812cbe5c10ed44148d657b53b7adb1d570ce5c717beeffa468c547f56d8995cd09fa207252ee4bcc5e806fde8c3deb0df5b08f4f84ce84f80d9737081d3af2d24a0a10aba0ce08233cdf4ce8d0235c01c7ab682aeb3676a1573859a72f3247efe299304e66f69c1ce3194b8713102ff8bd3dcf826d86cde03d0d4b0501eaa2932061bf9568d37604e00605c8a9e67e5cbea3fe8eedbff6105d225f1a90b37fbc882458d54b62b4e4ed0695345671e56c1a3b085f9886de33ee0add4500445a48
 ec272cd7bcdeef08e05529ee90d785b98fc98b81b217e752fe61ca1f70311849e3a27167aef7836af8598b4b796f9e867b90df90560cb0cfe48a2956996f590715c4ab17f41314a6addf614dffabad805041ade050a7702aad055e0d75c65e3a7b90df90560cb0cfe48a2956996f59071682779f82336cd72f03fa6aac2ea02daf85a644dba5710c05afb7e3c93745d4945e87844b98958c59543917fff098883ebf992b54aa0e61b7a9e0b3683649b61dd7a5b70e100bf6752daee24174e905a255a9b4d06895e996a30ee35b0500af6b75e78a8d0088f60f19a6ab2be3b40fce781237d9b3efeecb99b843c3fd16b7e7d71c89c0dc36302e53ec82f83ec8cd743ee234ed31390e00277b8aaa97029293010cb058ee8c3606092a3de8970ae7f06d9e9f4763d9ea9aa781494d1da14e5c6439269d58dd787663dfaf96835c6d1224e89ae146d2762c1d9dcc49e2972d06d5173aa5f9a001fc2d01070d58327289925a7989b14367a5823c0d83c5a31ed82c331faefabc7a6a4a6e9250b7f7957f76e44ccfd997dcd0373065906583766caa6850b47394a1e89bfec1937cb49a
+0fe6234e40e4f81a7f4471b32f93c01e80979b9cea65260f52252229bdc3495825822a516a1b8c941034d49d9fc41c9cf8a23f7376a97af2759ee649f1afb6d0416e0b54ebc476791f9b5d70591c744ea6c2ddccfd5cca98a727ebc595b84b91492622f225bda4302705a702abff793ba5b62234f3ea7e2a2cfd7a9689646d3974909203ee9e2bf399078cb5706ac75ec9eefe8bee773771ca560aef554602c705bb46ca8c0c85eb0bd01fe55230b5ee6cfa510c65e70da7f1754a59c1065afb5092138dbcca09efca24ec981f2d113d2fd894da2d583ae8c194825b03f84aef765946f3d15f1c3c3e5889d42be5d8be3d1df1a18bb1ac13f468c06c35df5c7bdaaf09b800049a13d1f98621d34ce408d4ae2f766200beaac0f75c03cda04ab2533001f86d58a0e683ad7541c5fa0a9d1dd7a5b70e100bf6752daee24174e90507a528bf917e6924474cd08ce5f8e1fd5a2fae3fbef58d933fee083fe56194f8
 bf23c39d946e378ab3e870c8f92b59ba45bcb48f8fb6ef38d96357d0e1005a03a4707d22b3535804e08c7958b419f853510111e06b878629b3b09d2daf75d38b54caa8928226ea02bbe58dc553bed89c812cbe5c10ed44148d657b53b7adb1d5c77a05139a1b5bfdda5def592a19548cefaf5a7a77c0e7ac65a7e97c9fe63a500241dba70aa19ee3be5dc9abc99534656a0f73f276637ddb0c6fe1acfe6d6c07
 7832c1759a5003da6cb63d2368339c84aace1e0d99b652d8193ac90dc92a5b96b09ea68f2437c2ba6c77e5eb58b3ec7b301da5a0fcbebf0a41f8828780f716fb08b308b302c6841c910f385b3e9186bc676d363ddb19b8ecd762b51523e3390d422f92cebfbdea5560ed401434f97fcfb5636c1c33bc3046d36c5d37c02d7a246c17613da89acb61f7837acffa6b4bb553835173b1f0e725d18df789519f6ff73fcc6d5a947141eba850c29dbd0333af9cf2dcf4ea4472417ed727814ee215712a7d88ac2729b903c8132b7aaccf54ea492622f225bda4302705a702abff793ba5b62234f3ea7e2a2cfd7a9689646d397b54b24adc533bdf879561b3d0c0cc85
 bbca95d4680b56eb3600ebdafe7c317b6485a9b4cdd8f062b2163348506ef4817455a5018e55de132c3c6c2d82beebad19fe62e40aceb0f96f1879d1549dc4a6aaac04e0c13632e5c8b9b2e455764c3e1a3b085f9886de33ee0add4500445a48
@@ -9524,7 +9528,6 @@ f24024aff169e75f04536b0d7bc366fde08f2b79022df209663cec19dd7ddba682d6a8b8f182ad05
 f201a0d09ad709741af9b6dbbef564f805949e3d307c146db0e6bdd5076474c193d5c6d438d215c16b4e95ef917af3c6be6b35103b9fa20a8d0dae3a89a26f8382b6d5a8eabbac793abd05ebaafae8134ee3fb7cdc568513c64600c9d3928eacf4370021b3bf4ebe6dd80ca657694ead1a3b085f9886de33ee0add4500445a48
 0f9182f572ed3a803c46f51de023c28dc139c4606ca0c5fd0f2fe7309e4468b91dd7a5b70e100bf6752daee24174e90507a528bf917e6924474cd08ce5f8e1fd35edceaaa19efb975d7d997a9185537b
 1215ebaf311ed5ea6a84b7cd992d9e9d95db6d1a5f6adbb8e6e3def59f17f438c2f69415b6578907864e5630e870713929a2541d5941450bca4d665112e83a5d310277e8934c574972be1fe5d33f4365150d80b3a0e8c4aa60dc8a486cfc68fc295f009ec3e8e49b15174b257f57472fbbcf0aed0f7289ff96d210af8aa9e701f00351830596c56dffe229de3ce27791de9c4345d985cff814061b3103086a4e7ad5d35bb63761f78efba3e24d69b9380ce4ceb308e7aefda069bc089d016d12db3c0360618b0b7565f1b3c1eb7587cbc9d6fd48b5db1cea3b4d92d5367860008eba1ce84b7415ea06846968d17d5c5c673c79d742598c2dcc5b6d269fe26b77e5001df2f163e02a634bb1d032370ec7
-05db7098e957588635fc28ec1109da585f92d3146b5076cff1c5620c08cae156eee8690c637b239832e13481ff280929bea3fe8eedbff6105d225f1a90b37fbc0808c66831a1d05b2e524fc9e11b5ff9b8a3ef26d2f0f0a77f98e96f8c5e326b06d5173aa5f9a001fc2d01070d5832727b11fd3f4bb83c0e783539fc43b7991e29a2541d5941450bca4d665112e83a5d88bdca6eec63b9673c9d3615c9dbfbcd92ed5936269ef356054b30a37149034e714ac5ab363917318b6c78a16c903c7f77d2099fad22f180eff6706719ff4090
 1eb6d274bc9ab05d215b9dabe5fe4cf87b10c5d53120f53cf64f19966afb4023f1df2776b83d661be4d044aeb83dd690aeee3a0a53e8b77fb0b2a0ba6b227ff039034ed1dd1dc12231a4eb8a87ca012fd2e9aff736c802169b6eb67bf9f73840aeee3a0a53e8b77fb0b2a0ba6b227ff039034ed1dd1dc12231a4eb8a87ca012f9f2dc4ffa84e0448ee48c13605325c92908c2953013cda8e657eb2cbc4074a5b48fb917a1492b0c9b93240c7cd920b6693dc800257f97dadce391fba29099d73af9aec944cf078c4ae429dd9d1c6e74605bb46ca8c0c85eb0bd01fe55230b5ee0dc25269879252cff00508cf4ef4dc26678db09e54aec00ccea2ec93e392f938
 94b57d31cbc744d34c1d5748711cf679d9acb48741e272ee7654b66674a910e12fd894da2d583ae8c194825b03f84aef98d7fca327f35b9eefe566c86f1c3cf5c0c156b8853038074cdfc2bbb455c57dea337ee8aadf19d992baca17d1954f06fecca34b60757992edf742aa3882c49b
 1edd41b0c87a494f4b126e38db5de277d9acb48741e272ee7654b66674a910e12fd894da2d583ae8c194825b03f84aef98d7fca327f35b9eefe566c86f1c3cf5c0c156b8853038074cdfc2bbb455c57dea337ee8aadf19d992baca17d1954f06fecca34b60757992edf742aa3882c49b
@@ -9736,7 +9739,7 @@ a655b2359fd078ef3080586d2e3f32267973eb510bf87af3bb629cc6d5ab02cb83df4276d9b946c8
 97762ff11db612525270548bea44e980069d955e005a8e9afb85d80fd45b87587fb3699db531591580f2d63ea59ad712abbda39ba1604ff99c98f85e6bebbf268165f17606e34b160370bd1ac6ef0930e0e4dea89a30cbfedc3e3b4dd5dca7dfc0947beba75252ac312913c4255208fe730f49eb3e49c1782ce4012883b09377bba8d9998f800960baebc4bd3492406ca7c54e603daddd49145dd2b3e490b0c3bd1719dd30440dd2a35cb65e7f5368124de6ac02e40f52a03659d65715ebd4c55729e9a8f99650348208a9ee30f083b0d6b6db0cfe1a5f66ac8863eed5a2b42c0730d0b5bdad2265b6bb20588c973cebb8dbbb7cc0e6b2f09f05f9e3dd136bf916d65ca9abcc645cdbb68b45060fc30b767b7a8ab8ed39c2ee2bd3f7ae3d4fc9f8a44243cc6ebc4974cc6983c2f922c65cffe24a7bca1d6b2892e55815ef04c7af8d42e2691da34e123d7198db6a851f48481bbaae7bc11a8856d311f63c340fa075927dbd05284494d8ae32125b1e56e66bb9f0e5ea693622c6a7ae7f39d763
 1ade8443472c74df47045b3c635a32a93d681dc410607944784712dcb40da4fee648074cec992a114ce6e4c2688e82496c76f0bce0b1c7e316e6386361e52720500da3dd116139b1c384ee72f41d1ce716666310834b15acff0c30b80924bb7a93d17ecfebbaf0a2fe32e9c11c320211841f9f2114ad5349288890a111e0dbd455dd32a3a9cc71abec7a48e172950f4997722edd1eb5fb7e8455b80369ebe86b38789f93a0c7231d4c915b8f6efa5d509b1667b4999ad41448fe530a566fde037deb79898135924102b41d404eabd33e58cb0575381719b100eef0bcfb395cddc20d2b842fa44c3b0c556e4058a24742ebfa8d01fcaa4cd3633fd2c46bbf28866e7a003e9bd9e4ab9ab38dc11a03a881198eb3bb7c07bec4c5b82f8346fea82a9232934fe1994026ca588471a243a304e2e668f82c631559dd1979dcddef75a2df854828016a5cdd324756ff8ed7fa1e1f195088f5886cb8d5006ebffcfb4897500da3dd116139b1c384ee72f41d1ce7eb0410b558dc25bd10518cd6800370ad19e9ce8978fe8e64e184646d117d3749
 de47a5e0edd20fc6e34b8ed22884a03314b2d173245223bae6b070059221fba7a2f20047b920bba8fba06e6811f36462a096e86e998be7032105eec213de04a606aebc10ab7d8cc9038f5740c3a321cd6647325308b42571aca066e579d76484d52a854a3c28219cbc7b39144ecf0f5194962958275c6c5826f4ec6c19afa32e8e3f45cbb1d212367dffcb3f8691bcc2a72899683b803f3ad7b13a8d4aacaada
-7d4767e248fa2f9b474ee4308d291af0eb0891e835231d4ed155a874da72589c6ae666b73f8ef490e1596b8d4ce854861f91220d311003ad91fe86ba27297194c02b95d01e06f715b7902546b0d8df6923b64b9648ce0a4479892fc9b5725dc49847ca376ebc8dfd0ba2660d5848ca8089da672d238ba41d245870144e961a1b04a5c2463c85cb16a41a92d75742da506bef8da726328ba3430c90e0aa02fed855d1ad54eea2c87c77ef18140b96219da6720d25d60a8be4c73c39bbbc22bbf779000575586bc90ec5d4981ecd9a3bdafe9fcdf3644ebef8a888224cd95eeb7af6ec4c20c225452a7a8eb9f18dd45f135ec3f1c7f79a86ad04cae7643c8e68dca002e0fdece0c0759293ce80b432317ad1dc9740dc623f3835735e45c892d5410e663eb3dbcf6cbc1e598486e96d143b8cac3adeb1fa4616204d85ad92dc9aca1822be5f732db3dd278d8657e7c9551852cc08fe7b342df0e75fb57be25e92a00326ae7c514b645701b43304aece2422f491b3dc93234bd4100fa2778fc6ad544975d0d182f5d6b789aebff691df0188866cf14d68c835c641fcfdb332fa9c0e58107421774ebd031e5ab48dfd8dc3ba480b3168cfe8e64dadfa6f73adf75d1013422b58dd92b53125d1b830bf54a3d71d5d2ab5a251d30949fe49ff51bb1ec4a5cab8dbdb65abc95bd3828893287c2c0a4aae8d340bae526a6c75af53f2ed9fbb40741b4919653568bb3a3e9b146bd9221f6f3c9e4d35434f86850818e2fbdcf95cae3db325a76ab49d8d091fc5f397010d75102f399295cc36f8087009b03de8e660906868f05a7f15a89897ac0057f047c73e06094df036ecb5a353409b922ca166bf7adbcac456681e8058f4e05c3ddde507fb75961293e014034fd74334d6c767baf6c1996a7d3b18b978bff85cda85a4d8e3120ea56efe42c68444de6308517fe022bb5d440afc9e274c7553f9c37a19bbe1468229a7e2f2c7807c959add456e4a64e1f65b8a46264aa57ef6652eca47f63229007b04a5269dafbd746d36af63bced138c8b5b037bfbef1c6ca1f3c78f77fb8b55b0c4bc6e9bfa97ee12934401ebf3ef7aad33b91d934d1fea29d0fd3357701f83783553a714841d88984ae56da4276dbcea54929cf63aaf734d13703ee93907500bf95cc5672e9a44e9f4f2c0da22a164ba46a15a53c73ca5991ed1304ab629fa0b4abc1e9d6423c80c72d89bd9b43c3fce331c01054738cfb65a6ceb56d671a796dfb9f4b98d53dea2c0df7cf7f33deb87d2c10337155db1cc4673ca27549f9d67fd669b8a776d2e06ee6de826702097eae239e362c7a8e459348cf7688a8d8ec45bb0af3f8c1bd68170bed4e7b8e4691249a6178dcce84d38e7c3c3b5eb061328c994bea0a23180b25457d2e2e81ac4fd9ba27b9e1bcebe8697114a7e545d4537046cf60f26859d40ddcee2fb76fca0d2ba0b2e19c860e0f774015ad1d94a0f3d9034ffb3f6441e2a8a54488f6a1e6baa7f7c377ef29d75996901a01377e985d2881af8751f7fd14b59c1da8602821afe534e89b68dfb4b6acc3b1a1c5c9f0ed83832e84f7181cb1b52339b842705035066e86c03256b489fd61126faf4b9d8911423f2088ead611b87f6b6e0774f776f1c17afdc266e550e2aed4fefee0ea0fa39c683ced8d7d626022aa42aefbef4aab0e32d1b7a531a9174601b7a3989a8f61d7e0946cf27a9fac8f5d03fe44fb90ec418510acea631bb85c69052d6b26b4cf26ee5da0fcd57577df9f6e978be54e72eda905aeafe5dac7b1ff192078b584c59d38108fd7843ab4a1218960d5d10c43c3d7837a6554cd01a3b085f9886de33ee0add4500445a48
+7d4767e248fa2f9b474ee4308d291af0eb0891e835231d4ed155a874da72589c6ae666b73f8ef490e1596b8d4ce854861f91220d311003ad91fe86ba27297194c02b95d01e06f715b7902546b0d8df6923b64b9648ce0a4479892fc9b5725dc49847ca376ebc8dfd0ba2660d5848ca8089da672d238ba41d245870144e961a1b04a5c2463c85cb16a41a92d75742da506bef8da726328ba3430c90e0aa02fed855d1ad54eea2c87c77ef18140b96219da6720d25d60a8be4c73c39bbbc22bbf779000575586bc90ec5d4981ecd9a3bdafe9fcdf3644ebef8a888224cd95eeb7af6ec4c20c225452a7a8eb9f18dd45f135ec3f1c7f79a86ad04cae7643c8e68dca002e0fdece0c0759293ce80b432317ad1dc9740dc623f3835735e45c892d5410e663eb3dbcf6cbc1e598486e96d143b8cac3adeb1fa4616204d85ad92dc9aca1822be5f732db3dd278d8657e7c9551852cc08fe7b342df0e75fb57be25e92a00326ae7c514b645701b43304aece2422f491b3dc93234bd4100fa2778fc6ad544975d0d182f5d6b789aebff691df0188866cf14d68c835c641fcfdb332fa9c0e58107421774ebd031e5ab48dfd8dc3ba480b3168cfe8e64dadfa6f73adf75d1013422b58dd92b53125d1b830bf54a3d71d5d2ab5a251d30949fe49ff51bb1ec4a5cab8dbdb65abc95bd3828893287c2c0a4aae8d340bae526a6c75af53f2ed9fbb40741b4919653568bb3a3e9b146bd9221f6f3c9e4d35434f86850818e2fbdcf95cae3db325a76ab49d8d091fc5f397010d75102f399295cc36f8087009b03de8e660906868f05a7f15a89897ac0057f047c73e06094df036ecb5a353409b922ca166bf7adbcac456681e8058f4e05c3ddde507fb75961293e014034fd74334d6c767baf6c1996a7d3b18b978bff85cda85a4d8e3120ea56efe42c68444de6308517fe022bb5d440afc9e274c7553f9c37a19bbe1468229a7e2f2c7807c959add456e4a64e1f65b8a46264aa57ef6652eca47f63229007b04a5269dafbd746d36af63bced138c8b5b037bfbef1c6ca1f3c78f77fb8b55b0c4bc6e9bfa97ee12934401ebf3ef7aad33b91d934d1fea29d0fd3357701f83783553a714841d88984ae56da4276dbcea54929cf63aaf734d13703ee93907500bf95cc5672e9a44e9f4f2c0da22a164ba46a15a53c73ca5991ed1304ab629fa0b4abc1e9d6423c80c72d89bd9b43c3fce331c01054738cfb65a6ceb56d671a796dfb9f4b98d53dea2c0df7cf7f33deb87d2c10337155db1cc4673ca27549f9d67fd669b8a776d2e06ee6de826702097eae239e362c7a8e459348cf7688a8d8ec45bb0af3f8c1bd68170bed4e7b8e4691249a6178dcce84d38e7c3c3b5eb061328c994bea0a23180b25457d2e2e81ac4fd9ba27b9e1bcebe8697114a7e545d4537046cf60f26859d40ddcee2fb76fca0d2ba0b2e19c860e0f774015ad1d94a0f3d9034ffb3f6441e2a8a54488f6a1e6baa7f7c377ef29d75996901a01377e985d2881af8751f7fd14b59c1da8602821afe534e89b68dfb4b6acc3b1a1c5c9f0ed83832e84f7181cb1b52339b842705035066e86c03256b489fd61126faf4b9d8911423f2088ead611b87f6b6e0774f776f1c17afdc266e550e2aed4fefee0ea0fa39c683ced8d7d626022aa42aefbef4aab0e32d1b7a531a9174601b7a3989a8f61d7e0946cf27a9fac8f5d03fe44fb90ec418510acea631bb85c69052d6b26b4cf26ee5da0fcd57573cfac44669d68bcd32fbc78d28118b8dc44989007983be17cf019555b5a747e14281fdfaae3b389c0b83470ab650baf83c4265fcbff9dc36d48defba15077d4c81a0b600f3e2844f269888183274265b
 8fc93d6fc44d1426ad75922335f97080eb0a2315ca054d7f5edab94e9ab07b0db5f57fa8ae2d2a5dbffb5060919399cae5b722086a4caacacc571ad33066147d6a2002a63aff117427defd05b9b1adba6a9621246cd09e5677c6fdd1a1b63e8bfb75a628821e5041d8610f979a88c757f760116a9874d99023b6afb1659326f132c05d4fae3bc0f0d472fc0481ac2dc3a4e9e03eebd36ce17a326041cf2c1849354c72d6573773c147f051a83ed4e9db
 b996433957d368f77b7f855b2125e75f8f83c5819549820a333bd453e31842fc173f94d10f954b8246cba0c42f07d20c84a3d84e215104f1d55e0517d21a5a48eaee4e7d7313a8722d0135d9fcf9d6b9d784975702e56ade79ce8774fa733b5f219b32ed4492964e9872d5fb6b30e09e437d891e652362bdd493b83ffabf8563
 f2791765e0b050083c914611b7ea57231caaf65d98f1581dccb147fc86fed812434f38b4ad2846f61da5e686f9da8ca4aa8bce390dc90220b63f746bcc7155d00f7925de13e0fb531aec86d723473ad94451a037f2c0a04f576b6c9d722ebed82e91068b23e90ffd462f65709d228ec54cc86c5780a7101e87ee791a32c1bf0d6bb1df8662c25524e763ee7f7d8fb43ce4a3049e834b504ba84d1a25183a756bdda4e5e56e989241531469061f769b22c016aaf3bfc8850abb41772e53ffc764dda4e5e56e989241531469061f769b222bac64c1ef987e19656260501b8aa65660758637b5f37da886ab9c9cf348652258cac6649a368e57c04b0b87c4939e4f27e4f92db04f016eaf51224525fad664ceefbc3516a7c79b1079009b7a432aecc69dcab6a9ac6f4a8566e96e3d5748207874a177e21e91dcbdebf523380f7013bfd75e0fe9153a3eeb744181feddbb8325412fea23b9a786bedfdcf7bbb7115e908384ed7ca5643b61cf9af2aa15f069d4acbaa2706d94fc1517f617ed4adbdac47bfb473b1c993f42f85fa797fc72a5ba107d4e893a4e39cb721ddb64c63698
@@ -9836,6 +9839,7 @@ MW_CFG_DM_CUCC_PARAM,MWNvmCfgDmCuccParam
 MW_CFG_NET_HOST_INFO_PARAM,MWNvmCfgNetHostInfoParam
 MW_CFG_NET_PARAM,MWNvmCfgNetParam
 MW_CFG_NET_CLAT_PARAM,MWNvmCfgNetXlatParam
+MW_CFG_PER_PLMN_PARAM,MWNvmCfgPerPlmnParam
 MW_CFG_POWER_ON_CFUN,MWNvmCfgPowerOnCfun
 MW_CFG_SIM_STK_PARAM,MWNvmCfgSimStkParam
 MW_CFG_URC_DELAY_PARAM,MWNvmCfgUrcDelayParam
@@ -9864,7 +9868,6 @@ CESM_CFG_USER_DEFINED_T3492,PsCfgCesmUserDefinedT3492
 L2_CFG_DATA_COUNTER_INFO,PsCfgL2DataCounterInfo
 CEPLMN_CFG_BAND_INFO,PsCfgPlmnBandInfo
 CEPLMN_CFG_OOS_PLMN_INTERVAL,PsCfgPlmnOosInterval
-CEPLMN_CFG_PLMN_SELECT_TYPE,PsCfgPlmnSelectType
 CEPLMN_CFG_USER_DEFINED_HIGH_PRI_PLMN_TIMER,PsCfgUserDefinedHighPriPlmnTimer
 CCM_CFG_UE_OPERATION_MODE,PsUeOperationModeEnum
 SIMSTKPSPROXYSIGID_Tag,SIMBIPSTKPSPROXYSIGID
@@ -9874,5 +9877,5 @@ MW_INFO_PHY_EDRX_PARAM,midWareNvmInfoPhyEdrxParam
 plat_config,plat_config_fs_t
 <end>
 OptionalSegment
-optional_sk_01,EDCB9E50A4C7796D2730F141CD9B27D6B555F37D011CEE92758E1493E51C3653
+optional_sk_01,64F6DF800E61A1AED380C9DA2AA008096F338656636B15AAD58A8A40AA3FDC69
 <end>

@@ -406,7 +406,7 @@ PLAT_BL_UNCOMP_FLASH_TEXT __attribute__((noinline)) void decompressCpRamCodeHash
     {
         for(i=0; i<compBinHeader.numOfSec; i++)
         {
-            if(pCompBinSectionInfoAddr[i].type == ramCodeType)
+            if((pCompBinSectionInfoAddr[i].type == ramCodeType)&&(pCompBinSectionInfoAddr[i].ziped == 0x1)&&(pCompBinSectionInfoAddr[i].secFlag == 0x1))
             {
                 index = i;
                 decompInfoFlag = 0xff;

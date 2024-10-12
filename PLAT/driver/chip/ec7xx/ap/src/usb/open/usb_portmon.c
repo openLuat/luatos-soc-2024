@@ -344,6 +344,12 @@ int Pad1WakeupHook(void)
     return usb_portmon_intr_cb();
 }
 
+int Pad3WakeupHook(void)
+{
+    return usb_portmon_intr_cb();
+}
+
+
 int Pad5WakeupHook(void)
 {
     return usb_portmon_intr_cb();
@@ -357,6 +363,10 @@ int PadCmnWakeupHook(uint32_t pad_num)
         {
             case 1:
                 Pad1WakeupHook();
+                break;
+            case 3:
+                Pad3WakeupHook();
+                
                 break;
             case 5:
                 Pad5WakeupHook();

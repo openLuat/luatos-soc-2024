@@ -206,6 +206,12 @@ typedef struct
     UINT16      pcmLen;         /* input PCM data len, in byte */
     UINT16      rsvd1;
 
+    /*3a ref input data ptr, get from audio speech buf, point to the voice frame that is currently being played,
+	filled by app or audioplay, if set PNULL, cp use decoder output as refinput*/
+    UINT8       *pRefVemPcmData;
+
+    UINT8       *pPostVemPcmData;/* output PCM data buffer for app PCM+VEM record path, AP need to free it*/
+
     UINT8       *pPcmData;      /* input PCM data buffer */
 
     UINT8       *pAmrData;      /* output AMR data buffer */
@@ -230,6 +236,10 @@ typedef struct
                                  * +---------------|----------------------------------------------------------------------|-------+
                                 */
     UINT8       *pPcmData;      /* input PCM buffer */
+
+    /*3a ref input data ptr, get from audio speech buf, point to the voice frame that is currently being played,
+	filled by app or audioplay, if set PNULL, cp use decoder output as refinput*/
+    UINT8       *pRefVemPcmData;
 
     UINT8       *pPostVemPcmData;/* output PCM data buffer for app PCM+VEM record path, AP need to free it*/
     void        *pExtra0;

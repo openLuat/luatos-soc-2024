@@ -21,7 +21,6 @@
  *                    INCLUDES                                                *
  *----------------------------------------------------------------------------*/
 #include "uldp.h"
-#include "pspdu.h"
 #include "osaulfcmem.h"
 #include "osadlfcmem.h"
 
@@ -158,6 +157,7 @@ extern "C" {
 #define CCIO_ULPDU_LIST_APPEND_LIST(list, hd, tl)   \
              do\
              {\
+                 if((tl) == NULL)break;\
                  if(((UlPduBlockList_t*)(list))->tail)\
                  {\
                      ((UlPduBlockList_t*)(list))->tail->pNext = (hd);\
@@ -190,6 +190,7 @@ extern "C" {
 #define CCIO_DLPDU_LIST_APPEND_LIST(list, hd, tl)   \
              do\
              {\
+                 if((tl) == NULL)break;\
                  if(((DlPduBlockList_t*)(list))->tail)\
                  {\
                      ((DlPduBlockList_t*)(list))->tail->pNext = (hd);\
@@ -256,7 +257,9 @@ typedef struct CmuxFrameDesc
     uint8_t   control;    /* the type of frame */
     uint8_t   inState;    /* refer to 'CmuxPdState_e' */
     uint8_t   inFcs;      /* fcs of input data */
-    uint16_t  length;     /* remaining length of the frame */
+    uint16_t  dataLen;    /* payload length of the frame */
+    uint16_t  remnLen;    /* remaining length of the frame */
+    uint16_t  rsvd;
     uint16_t  isCmplt  :1;
     uint16_t  rsvdBits :7;
     uint16_t  errno    :8;  /* CmuxFrameErrNo_e */

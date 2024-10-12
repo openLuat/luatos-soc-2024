@@ -232,5 +232,7 @@ void psCamCmiReq(UINT16 srcHdr, UINT8 sgId, UINT16 primId, UINT16 primSize, void
 BOOL psDialBeSmsReady(void);
 #endif
 
+void psDialProcAutoApnSetting(UINT16 mcc, UINT16 mnc);
+
 #endif
 

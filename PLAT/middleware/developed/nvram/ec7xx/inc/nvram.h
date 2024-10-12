@@ -177,6 +177,8 @@ uint32_t nvramGetAddr(NvType_t nvt);
 uint32_t nvramSave2Fac(void);
 uint32_t nvramSave2FacAp();
 uint32_t nvramGetnvAddr(NvType_t nvt);
+void *nvramGetDCXOBufAddr( void );
+
 
 #ifdef CORE_IS_AP
 uint32_t nvramGetnvFacAddr(NvType_t nvt);

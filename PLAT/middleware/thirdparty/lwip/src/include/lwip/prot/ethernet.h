@@ -165,6 +165,13 @@ enum eth_type {
 
 BOOL eth_addr_is_broad_cast(struct eth_addr *addr);
 
+#define eth_addr_is_zero(addr) (((addr)[0] == 0) && \
+                                ((addr)[1] == 0) && \
+                                ((addr)[2] == 0) && \
+                                ((addr)[3] == 0) && \
+                                ((addr)[4] == 0) && \
+                                ((addr)[5] == 0))
+
 
 #ifdef __cplusplus
 }

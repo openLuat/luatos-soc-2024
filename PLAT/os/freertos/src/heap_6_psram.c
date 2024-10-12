@@ -52,8 +52,6 @@ extern uint8_t gucPoolGroupSel;
  * Called automatically to setup the required heap structures the first time
  * pvPortMalloc() is called.
  */
-static void prvHeapInit_Psram( void );
-
 static PLAT_FPSRAM_ZI tlsf_t    pxTlsf_psram = NULL;
 
 PLAT_PSRAM_HEAP6_RAMCODE void *pvPortZeroMalloc_Psram( size_t xWantedSize)
@@ -292,7 +290,7 @@ PLAT_PSRAM_HEAP6_RAMCODE bool vPortGetHeapInfo_Psram(uint8_t type, int *mem_rang
     return false;
 }
 
-PLAT_PSRAM_HEAP6_RAMCODE static void prvHeapInit_Psram( void )
+PLAT_PSRAM_HEAP6_RAMCODE void prvHeapInit_Psram( void )
 {
 #ifdef CORE_IS_AP
     gTotalHeapSize_psram = (UINT32)&(heap_endAddr_psram) - (UINT32)&(end_ap_data_psram);
