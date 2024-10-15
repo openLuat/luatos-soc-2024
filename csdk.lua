@@ -328,7 +328,6 @@ function description_common()
             archive.extract(csdk_root.."/PLAT/libs/"..plat_sha1..".7z", libs_plat_dir)
         end
 
-        local prebuild_url = "http://cdndownload.openluat.com/xmake/libs/%s/%s.7z"
         local libs_prebuild_dir = csdk_root.."/PLAT/prebuild/"
         local prebuild_metas_table = json.loadfile(csdk_root.."/PLAT/prebuild/metas.json")
         local prebuild_sha1 = prebuild_metas_table["prebuild"]["sha1"]
