@@ -114,6 +114,7 @@ static void luatos_http_cb(int status, void *data, uint32_t len, void *param)
 static void luat_test_http_get_async_task(void *param)
 {
 	luat_event_t event = {0};
+	int result;
 	uint8_t is_end = 0;
 	uint32_t done_len = 0;
 	luat_http_ctrl_t *http = luat_http_client_create(luatos_http_cb, luat_rtos_get_current_handle(), -1);
@@ -150,6 +151,11 @@ static void luat_test_http_get_async_task(void *param)
 		}
 	}
 	LUAT_DEBUG_PRINT("http test end, total count %d", done_len);
+	//如果服务器会在下载完成后主动断开，就会多一个TEST_HTTP_FAILED消息，需要接收处理掉
+	do
+	{
+		result = luat_rtos_event_recv(g_s_task_handle, 0, &event, NULL, 100);
+	}while(result >= 0);
 	luat_http_client_close(http);
 	luat_http_client_destroy(&http);
 	while(1)
