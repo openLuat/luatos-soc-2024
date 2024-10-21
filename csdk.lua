@@ -320,8 +320,8 @@ function description_common()
         local plat_sha1 = metas_table["libs"][libs_plat]["sha1"]
 
         if not os.isfile(csdk_root.."/PLAT/libs/"..plat_sha1) then
-            local file = io.open(csdk_root.."/PLAT/libs/"..plat_sha1, "w"):close()
             if os.isdir(libs_plat_dir) then os.rmdir(libs_plat_dir) end
+            io.open(csdk_root.."/PLAT/libs/"..plat_sha1, "w"):close()
         end
 
         if not os.isfile(csdk_root.."/PLAT/libs/"..plat_sha1..".7z") or plat_sha1 ~= hash.sha1(csdk_root.."/PLAT/libs/"..plat_sha1..".7z") then
@@ -338,8 +338,8 @@ function description_common()
         local prebuild_sha1 = prebuild_metas_table["prebuild"]["sha1"]
 
         if not os.isfile(libs_prebuild_dir..prebuild_sha1) then
-            local file = io.open(libs_prebuild_dir..prebuild_sha1, "w"):close()
             if os.isdir(libs_prebuild_dir.."FW") then os.rmdir(libs_prebuild_dir.."FW") os.rmdir(libs_prebuild_dir.."PLAT") os.rmdir(libs_prebuild_dir.."PS") end
+            io.open(libs_prebuild_dir..prebuild_sha1, "w"):close()
         end
 
         if not os.isfile(libs_prebuild_dir..prebuild_sha1..".7z") or prebuild_sha1 ~= hash.sha1(libs_prebuild_dir..prebuild_sha1..".7z") then
