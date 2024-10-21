@@ -268,6 +268,10 @@ function description_common()
                     csdk_root.."/PLAT/prebuild/PLAT/inc")
 
     on_load(function (target)
+        import("core.base.json")
+        import("net.http")
+        import("utils.archive")
+
         local csdk_root = target:values("csdk_root")
         local chip_target = get_config("chip_target")
         assert (chip_target == "ec718u" or chip_target == "ec718e" or chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718s" or chip_target == "ec716s" or chip_target == "ec716e" ,"target only support ec718u/ec718e/ec718p/ec718pv/ec718s/ec716s/ec716e")
@@ -286,7 +290,6 @@ function description_common()
             elseif is_plat("macosx") then
                 cprint(format("${cyan}OS VERSION : ${red}%s",macosx.version()))
             end
-
 
             cprint(format("${cyan}project_name : ${red}%s",target:values("project_name")))
             cprint(format("${cyan}chip_target : ${red}%s",chip_target))
@@ -312,19 +315,21 @@ function description_common()
         end
         -- print("libs_plat:",libs_plat)
         local libs_plat_dir = csdk_root.."/PLAT/libs/"..libs_plat
-        import("core.base.json")
+        
         local metas_table = json.loadfile(csdk_root.."/PLAT/libs/metas.json")
         local plat_sha1 = metas_table["libs"][libs_plat]["sha1"]
-        
-        if not os.isfile(csdk_root.."/PLAT/libs/"..plat_sha1..".7z") or plat_sha1 ~= hash.sha1(csdk_root.."/PLAT/libs/"..plat_sha1..".7z") then
-            import("net.http")
+
+        if not os.isfile(csdk_root.."/PLAT/libs/"..plat_sha1) then
+            local file = io.open(csdk_root.."/PLAT/libs/"..plat_sha1, "w"):close()
             if os.isdir(libs_plat_dir) then os.rmdir(libs_plat_dir) end
+        end
+
+        if not os.isfile(csdk_root.."/PLAT/libs/"..plat_sha1..".7z") or plat_sha1 ~= hash.sha1(csdk_root.."/PLAT/libs/"..plat_sha1..".7z") then
             http.download(format(plat_url,libs_plat,plat_sha1), csdk_root.."/PLAT/libs/"..plat_sha1..".7z")
         end
         assert(os.isfile(csdk_root.."/PLAT/libs/"..plat_sha1..".7z"),csdk_root.."/PLAT/libs/"..plat_sha1..".7z".." not exist , mabe download failed")
 
         if not os.isdir(libs_plat_dir) then
-            import("utils.archive")
             archive.extract(csdk_root.."/PLAT/libs/"..plat_sha1..".7z", libs_plat_dir)
         end
 
@@ -332,22 +337,23 @@ function description_common()
         local prebuild_metas_table = json.loadfile(csdk_root.."/PLAT/prebuild/metas.json")
         local prebuild_sha1 = prebuild_metas_table["prebuild"]["sha1"]
 
-        if not os.isfile(csdk_root.."/PLAT/prebuild/"..prebuild_sha1..".7z") or prebuild_sha1 ~= hash.sha1(csdk_root.."/PLAT/prebuild/"..prebuild_sha1..".7z") then
-            import("net.http")
+        if not os.isfile(libs_prebuild_dir..prebuild_sha1) then
+            local file = io.open(libs_prebuild_dir..prebuild_sha1, "w"):close()
             if os.isdir(libs_prebuild_dir.."FW") then os.rmdir(libs_prebuild_dir.."FW") os.rmdir(libs_prebuild_dir.."PLAT") os.rmdir(libs_prebuild_dir.."PS") end
-            print("--> 开始下载prebuild的库文件", prebuild_sha1)
-            http.download(format(plat_url,"prebuild",prebuild_sha1), csdk_root.."/PLAT/prebuild/"..prebuild_sha1..".7z")
-            print("<-- 下载完成", prebuild_sha1)
-        end
-        assert(os.isfile(csdk_root.."/PLAT/prebuild/"..prebuild_sha1..".7z"),csdk_root.."/PLAT/prebuild/"..prebuild_sha1..".7z".." not exist , mabe download failed")
-        
-        if not os.isdir(libs_prebuild_dir.."FW") then
-            import("utils.archive")
-            print("--> 开始解压prebuild的库文件", prebuild_sha1)
-            archive.extract(csdk_root.."/PLAT/prebuild/"..prebuild_sha1..".7z", libs_prebuild_dir)
-            print("<-- 解压完成", prebuild_sha1)
         end
 
+        if not os.isfile(libs_prebuild_dir..prebuild_sha1..".7z") or prebuild_sha1 ~= hash.sha1(libs_prebuild_dir..prebuild_sha1..".7z") then
+            print("--> 开始下载prebuild的库文件", prebuild_sha1)
+            http.download(format(plat_url,"prebuild",prebuild_sha1), libs_prebuild_dir..prebuild_sha1..".7z")
+            print("<-- 下载完成", prebuild_sha1)
+        end
+        assert(os.isfile(libs_prebuild_dir..prebuild_sha1..".7z"),libs_prebuild_dir..prebuild_sha1..".7z".." not exist , mabe download failed")
+        
+        if not os.isdir(libs_prebuild_dir.."FW") then
+            print("--> 开始解压prebuild的库文件", prebuild_sha1)
+            archive.extract(libs_prebuild_dir..prebuild_sha1..".7z", libs_prebuild_dir)
+            print("<-- 解压完成", prebuild_sha1)
+        end
 
         for _, filepath in ipairs(os.files(target:values("project_dir").."/**/mem_map_7xx.h")) do
             if target:name()== target:values("project_name") then
