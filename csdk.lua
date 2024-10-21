@@ -322,8 +322,11 @@ function description_common()
         local prebuild_metas_table = json.loadfile(csdk_root.."/PLAT/prebuild/metas.json")
         local prebuild_sha1 = prebuild_metas_table["prebuild"]["sha1"]
 
-        if not os.isfile(libs_prebuild_dir.."FW".."/"..prebuild_sha1) then
+        if not os.isfile(libs_plat_dir.."/"..plat_sha1) then
             if os.isdir(libs_plat_dir) then os.rmdir(libs_plat_dir) end
+        end
+        
+        if not os.isfile(libs_prebuild_dir.."FW".."/"..prebuild_sha1) then
             if os.isdir(libs_prebuild_dir.."FW") then os.rmdir(libs_prebuild_dir.."FW") os.rmdir(libs_prebuild_dir.."PLAT") os.rmdir(libs_prebuild_dir.."PS") end
         end
 
@@ -331,6 +334,7 @@ function description_common()
             print("--> 开始下载libs的库文件", plat_sha1)
             http.download(format(plat_url,libs_plat,plat_sha1), csdk_root.."/PLAT/libs/"..plat_sha1..".7z")
             print("<-- 下载完成", plat_sha1)
+            if os.isdir(libs_plat_dir) then os.rmdir(libs_plat_dir) end
         end
         assert(os.isfile(csdk_root.."/PLAT/libs/"..plat_sha1..".7z"),csdk_root.."/PLAT/libs/"..plat_sha1..".7z".." not exist , mabe download failed")
 
@@ -338,12 +342,14 @@ function description_common()
             print("--> 开始解压libs的库文件", plat_sha1)
             archive.extract(csdk_root.."/PLAT/libs/"..plat_sha1..".7z", libs_plat_dir)
             print("<-- 解压完成", plat_sha1)
+            io.open(libs_plat_dir.."/"..plat_sha1, "w"):close()
         end
 
         if not os.isfile(libs_prebuild_dir..prebuild_sha1..".7z") or prebuild_sha1 ~= hash.sha1(libs_prebuild_dir..prebuild_sha1..".7z") then
             print("--> 开始下载prebuild的库文件", prebuild_sha1)
             http.download(format(plat_url,"prebuild",prebuild_sha1), libs_prebuild_dir..prebuild_sha1..".7z")
             print("<-- 下载完成", prebuild_sha1)
+            if os.isdir(libs_prebuild_dir.."FW") then os.rmdir(libs_prebuild_dir.."FW") os.rmdir(libs_prebuild_dir.."PLAT") os.rmdir(libs_prebuild_dir.."PS") end
         end
         assert(os.isfile(libs_prebuild_dir..prebuild_sha1..".7z"),libs_prebuild_dir..prebuild_sha1..".7z".." not exist , mabe download failed")
         
