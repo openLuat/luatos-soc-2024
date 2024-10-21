@@ -321,7 +321,6 @@ function description_common()
 
         if not os.isfile(csdk_root.."/PLAT/libs/"..plat_sha1) then
             if os.isdir(libs_plat_dir) then os.rmdir(libs_plat_dir) end
-            io.open(csdk_root.."/PLAT/libs/"..plat_sha1, "w"):close()
         end
 
         if not os.isfile(csdk_root.."/PLAT/libs/"..plat_sha1..".7z") or plat_sha1 ~= hash.sha1(csdk_root.."/PLAT/libs/"..plat_sha1..".7z") then
@@ -331,6 +330,7 @@ function description_common()
 
         if not os.isdir(libs_plat_dir) then
             archive.extract(csdk_root.."/PLAT/libs/"..plat_sha1..".7z", libs_plat_dir)
+            io.open(csdk_root.."/PLAT/libs/"..plat_sha1, "w"):close()
         end
 
         local libs_prebuild_dir = csdk_root.."/PLAT/prebuild/"
@@ -339,7 +339,6 @@ function description_common()
 
         if not os.isfile(libs_prebuild_dir..prebuild_sha1) then
             if os.isdir(libs_prebuild_dir.."FW") then os.rmdir(libs_prebuild_dir.."FW") os.rmdir(libs_prebuild_dir.."PLAT") os.rmdir(libs_prebuild_dir.."PS") end
-            io.open(libs_prebuild_dir..prebuild_sha1, "w"):close()
         end
 
         if not os.isfile(libs_prebuild_dir..prebuild_sha1..".7z") or prebuild_sha1 ~= hash.sha1(libs_prebuild_dir..prebuild_sha1..".7z") then
@@ -353,6 +352,7 @@ function description_common()
             print("--> 开始解压prebuild的库文件", prebuild_sha1)
             archive.extract(libs_prebuild_dir..prebuild_sha1..".7z", libs_prebuild_dir)
             print("<-- 解压完成", prebuild_sha1)
+            io.open(libs_prebuild_dir..prebuild_sha1, "w"):close()
         end
 
         for _, filepath in ipairs(os.files(target:values("project_dir").."/**/mem_map_7xx.h")) do
