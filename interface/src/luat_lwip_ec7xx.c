@@ -2111,7 +2111,7 @@ void net_lwip_set_link_state(uint8_t adapter_index, uint8_t updown)
 	platform_send_event(prvlwip.task_handle, EV_LWIP_NETIF_LINK_STATE, updown, 0, adapter_index);
 }
 
-struct netif * net_lwip_get_netif(uint8_t adapter_index)
+__USER_FUNC_IN_RAM__ struct netif * net_lwip_get_netif(uint8_t adapter_index)
 {
 	return prvlwip.lwip_netif;
 }
@@ -2192,7 +2192,7 @@ __ISR_IN_RAM__ u32_t soc_tcpip_rx_cache(void)
 	return prvlwip.user_tcp_rx_cache?prvlwip.user_tcp_rx_cache:(6 * TCP_MSS);
 }
 
-int net_lwip_check_netif_ready(uint8_t adapter_index)
+__USER_FUNC_IN_RAM__ int net_lwip_check_netif_ready(uint8_t adapter_index)
 {
 	return prvlwip.netif_network_ready;
 }
