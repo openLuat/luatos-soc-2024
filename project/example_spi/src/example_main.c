@@ -2,8 +2,11 @@
 #include "luat_rtos.h"
 #include "luat_debug.h"
 #include "luat_spi.h"
-
+#ifdef CHIP_EC716
+#define TEST_SPI_ID   0
+#else
 #define TEST_SPI_ID   1
+#endif
 
 
 luat_rtos_task_handle spi_task_handle;
@@ -18,7 +21,11 @@ static void task_test_spi(void *param)
         .bit_dict = 0,
         .master = 1,
         .mode = 1,             // mode设置为1，全双工
+#ifdef CHIP_EC716
         .bandrate = 25600000,
+#else
+		.bandrate = 44000000,
+#endif
         .cs = 8
     };
 
