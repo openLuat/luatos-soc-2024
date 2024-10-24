@@ -158,7 +158,9 @@
 #define LUAT_MCU_IOMUX_CTRL 1
 
 #if (defined TYPE_EC718P && defined (FEATURE_IMS_ENABLE)) || (defined (TYPE_EC718U) && defined (FEATURE_IMS_ENABLE) )
+#ifndef LUAT_USE_VOLTE
 #define LUAT_USE_VOLTE
+#endif
 
 #ifndef LUAT_USE_MEDIA
 #define LUAT_USE_MEDIA 1

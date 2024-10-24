@@ -1196,6 +1196,13 @@
                         "rsize": 10832,
                         "fsize": 298252,
                         "dft": false
+                    },
+                    {
+                        "name": "antbot",
+                        "content": "蚂蚁链,由蚂蚁集团提供,需要联系蚂蚁集团获取正式的token",
+                        "rsize": 5200,
+                        "fsize": 357620,
+                        "dft": false
                     }
                 ]
             }
