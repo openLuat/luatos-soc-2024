@@ -182,7 +182,14 @@ int luat_spi_setup(luat_spi_t* spi) {
 	}
 #endif
 	g_s_luat_spi_mode[spi->id] = spi->mode;
-    SPI_MasterInit(spi->id, spi->dataw, spi_mode, spi->bandrate, NULL, NULL);
+	if (spi->master)
+	{
+		SPI_MasterInit(spi->id, spi->dataw, spi_mode, spi->bandrate, NULL, NULL);
+	}
+	else
+	{
+		SPI_SlaveInit(spi->id, spi->dataw, spi_mode, spi->bandrate, NULL, NULL);
+	}
     return 0;
 }
 
@@ -275,4 +282,34 @@ int luat_spi_no_block_transfer(int spi_id, uint8_t *tx_buff, uint8_t *rx_buff, s
 	SPI_SetCallbackFun(spi_id, CB, pParam);
 	SPI_SetNoBlock(spi_id);
 	return SPI_TransferEx(spi_id, tx_buff, rx_buff, len, 0, 1);
+}
+
+int luat_spi_set_slave_callback(int spi_id, luat_spi_irq_callback_t callback, void *user_data)
+{
+    if (!spi_exist(spi_id))
+        return -1;
+    SPI_SetCallbackFun(spi_id, (CBFuncEx_t)callback, user_data);
+    return 0;
+}
+
+int luat_spi_slave_transfer(int spi_id, const char* send_buf,  char* recv_buf, size_t total_length)
+{
+    if (!spi_exist(spi_id))
+        return -1;
+    return SPI_SlaveTransferStart(spi_id, send_buf, recv_buf, total_length);
+}
+
+int luat_spi_slave_transfer_pause_and_read_data(int spi_id)
+{
+    if (!spi_exist(spi_id))
+        return -1;
+    return SPI_SlaveTransferStopAndGetRxLen(spi_id);
+}
+
+int luat_spi_slave_transfer_stop(int spi_id)
+{
+    if (!spi_exist(spi_id))
+        return -1;
+    SPI_TransferStop(spi_id);
+    return 0;
 }
