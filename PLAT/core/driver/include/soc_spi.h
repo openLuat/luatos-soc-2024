@@ -18,5 +18,6 @@ uint32_t SPI_GetSpeed(uint8_t SpiID);
 
 void SPI_SlaveInit(uint8_t SpiID, uint8_t DataBit, uint8_t Mode, uint32_t Speed, CBFuncEx_t CB, void *pUserData);
 int SPI_SlaveTransferStart(uint8_t SpiID, uint8_t* TxBuffer, uint8_t* RxBuffer, uint16_t BufferLen);
+void SPI_SlaveFastStop(uint8_t SpiID);
 uint32_t SPI_SlaveTransferStopAndGetRxLen(uint8_t SpiID);
 #endif
