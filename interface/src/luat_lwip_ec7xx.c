@@ -759,6 +759,19 @@ __USER_FUNC_IN_RAM__ ip_addr_t *net_lwip_get_ip6(uint8_t adapter_index)
 	return NULL;
 }
 
+ip_addr_t *net_lwip_get_ip6_preferred(uint8_t adapter_index)
+{
+	int i;
+	for(i = 0; i < LWIP_IPV6_NUM_ADDRESSES; i++)
+	{
+		if (IP6_ADDR_PREFERRED == (prvlwip.lwip_netif->ip6_addr_state[i] & IP6_ADDR_PREFERRED))
+		{
+			return &prvlwip.lwip_netif->ip6_addr[i];
+		}
+	}
+	return NULL;
+}
+
 static int net_lwip_dns_recv_cb(void *arg, struct udp_pcb *pcb, struct pbuf *p,
     const ip_addr_t *addr, u16_t port)
 {
@@ -2201,5 +2214,10 @@ void net_lwip_set_cache_heap_mode(uint8_t mode)
 {
 	prvlwip.cache_heap_mode = mode;
 	prvlwip.is_inited = 1;
+}
+
+void *net_lwip_get_dns_client(uint8_t adapter_index)
+{
+	return &prvlwip.dns_client;
 }
 #endif

@@ -31,6 +31,7 @@
 #include "driver_gpio.h"
 #include "soc_service.h"
 #include "mem_map.h"
+#include "platform_define.h"
 static uint8_t g_s_luat_spi_mode[SPI_MAX] ={0};
 
 static int spi_exist(int id) {
@@ -306,6 +307,11 @@ int luat_spi_slave_transfer_pause_and_read_data(int spi_id)
     return SPI_SlaveTransferStopAndGetRxLen(spi_id);
 }
 
+__USER_FUNC_IN_RAM__ int luat_spi_slave_transfer_pause_in_irq(int spi_id)
+{
+	SPI_SlaveFastStop(spi_id);
+	return 0;
+}
 int luat_spi_slave_transfer_stop(int spi_id)
 {
     if (!spi_exist(spi_id))
