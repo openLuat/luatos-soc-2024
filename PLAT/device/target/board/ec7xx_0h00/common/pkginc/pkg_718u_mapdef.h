@@ -4,7 +4,7 @@
 #define AP_FLASH_BASE_LNA 0x800000
 
 //For 718U, CP image in AP Flash
-#define CP_PKGIMG_LNA (0x00828000)
+#define CP_PKGIMG_LNA (0x0082D000)
 
 #define BL_PKGIMG_LNA (0x00803000)
 
@@ -12,17 +12,17 @@
 
 #if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
 
-#define AP_PKGIMG_LNA   (0x008c8000)
+#define AP_PKGIMG_LNA   (0x008CD000)
 
-#define AP_PKGIMG_LIMIT_SIZE    (0x651000)//6468KB
+#define AP_PKGIMG_LIMIT_SIZE    (0x63F000)//6396KB   
 
 #define CP_PKGIMG_LIMIT_SIZE    (0xA0000)
 
 #else
 
-#define AP_PKGIMG_LNA   (0x0088c000)
+#define AP_PKGIMG_LNA   (0x00891000)
 
-#define AP_PKGIMG_LIMIT_SIZE    (0x68D000)//6708KB
+#define AP_PKGIMG_LIMIT_SIZE    (0x67B000)//6636KB   
 
 #define CP_PKGIMG_LIMIT_SIZE    (0x64000)
 

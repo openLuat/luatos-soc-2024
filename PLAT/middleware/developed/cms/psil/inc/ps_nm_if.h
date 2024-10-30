@@ -32,6 +32,9 @@ CmsRetId psGetDnsServer(UINT8 cid, NmNetIfDnsCfg *dnsServer);
 
 CmsRetId psSetDnsServer(UINT8 cid, NmNetIfDnsCfg *dnsServer);
 
+#if LWIP_XLAT_ENABLE
+CmsRetId psCaltIp6PrefixDiscoveryReq(UINT8 op, const CHAR* url, UINT8 cid);
+#endif
 
 #endif
 

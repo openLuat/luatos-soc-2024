@@ -55,7 +55,7 @@ cspiDataFmt_t cspiDataFmt =
     .slotSize               = 7,
     .wordSize               = 7,
     .alignMode              = 0,
-    .endianMode             = 0, // 0:LSB(gc 2sdr)  1: MSB(donglian debug)
+    .endianMode             = 0,
     .dataDly                = 0,
     .txPad                  = 0,
     .rxSignExt              = 0,
@@ -123,11 +123,11 @@ cspiCtrl_t cspiCtrl =
     .enable                 = 0,
     .csEn                   = 0,
     .rxWid                  = 1, // 0: 1bit; 1: 2bit
-    .rxdSeq                 = 0, // gc032a 0, sp0a39 1
+    .rxdSeq                 = 0,
     .cpol                   = 0,
-    .cpha                   = 0, // donglian debug
+    .cpha                   = 0,
     .frameProcEn            = 1,
-    .fillYonly              = 1, // gc032a: 1; This means for gc032a, pic0[320*240];
+    .fillYonly              = 1,
     .hwInitEn               = 1,
     .lsCheckEn              = 1,
     .dpCheckEn              = 1,
@@ -639,6 +639,7 @@ int32_t cspiDeInit(cspiRes_t *cspi)
     apmuVoteToDozeState(PMU_DOZE_USP_MOD, true);
 #endif
 
+    DMA_closeChannel(cspi->dma->rxInstance, cspi->dma->rxCh);
     return ARM_DRIVER_OK;
 }
 
@@ -681,6 +682,7 @@ int32_t cspiPowerCtrl(cspiPowerState_e state, cspiRes_t *cspi)
             // Disable CSPI fclk and pclk
             CLOCK_clockDisable(cspiClk[instance*2]);
             CLOCK_clockDisable(cspiClk[instance*2+1]);
+            CLOCK_clockDisable(CLK_HF306M_G);
             break;
 
         case CSPI_POWER_FULL:

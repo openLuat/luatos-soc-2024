@@ -165,8 +165,9 @@ uint32_t camGetCspiInt(cspiInstance_e instance);
 void cspi2LspiEnable(uint8_t enable);
 void camRegisterErrStatsCb(camErrCb errCb);
 void camCheckErrStats();
-
-
+#if (ENABLE_CAMERA_LDO == 1)
+void camPowerOn(uint8_t ioInitVal);
+#endif
 /** \} */
 
 #endif

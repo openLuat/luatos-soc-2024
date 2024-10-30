@@ -66,9 +66,8 @@ extern "C" {
 #endif
 
 //#if LWIP_XLAT_ENABLE /*Closed source part enabeles XLAT by default*/
-#if 1
 #define PBUF_CLAT_OFFSET (IP6_HLEN - IP_HLEN)
-#endif
+//#endif /*#if LWIP_XLAT_ENABLE*/
 
 
 /**
@@ -100,9 +99,8 @@ typedef enum {
   PBUF_RAW,
 
 //#if LWIP_XLAT_ENABLE /*Closed source part enabeles XLAT by default*/
-#if 1
     PBUF_CLAT,
-#endif
+//#endif /*#if LWIP_XLAT_ENABLE*/
 
 #if ENABLE_PSIF
   /*

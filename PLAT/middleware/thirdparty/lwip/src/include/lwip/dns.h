@@ -216,6 +216,10 @@ err_t          dns_local_addhost(const char *hostname, const ip_addr_t *addr);
 void dns_entry_retry_timer_handler(void* arg);
 void dns_entry_cache_timer_handler(void* arg);
 
+void dns_entry_clat_discovery_cache_timer_op(void *pClatCfg, BOOL is_start, u32_t timeout);
+err_t dns_entry_stop_clat_discovery_timer(void *pClatCfg, const char *name);
+err_t dns_entry_clat_discovery_start_cycle_retry(void *pClatCfg, const char *name, u32_t retry_timeout);
+void dns_entry_clat_discovery_fail_retry_timer_op(void *pClatCfg, BOOL is_start, u32_t timeout);
 #endif
 
 #if PS_ENABLE_TCPIP_HIB_SLEEP2_MODE

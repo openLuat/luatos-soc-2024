@@ -411,7 +411,7 @@ int lcdDmaTrans(lcdDrvFunc_t *lcd, void *sourceAddress, uint32_t totalLength)
     {
         package                 -= (patch / dmaChainCnt);   
         lcdDmaTxCfg.totalLength  = package;  
-        DMA_buildDescriptorChain(lcdDmaTxDesc, &lcdDmaTxCfg, dmaChainCnt, false, true, true);
+        DMA_buildDescriptorChain(lcdDmaTxDesc, &lcdDmaTxCfg, dmaChainCnt, true, true, true);
         ret                     += dmaChainCnt;
         res                     -= dmaChainCnt * package;
     }
@@ -877,7 +877,7 @@ void lcdIoInit(bool isAonIO)
     config.mux = LCD_EN_PAD_ALT_FUNC;
     PAD_setPinConfig(LCD_EN_PAD_INDEX, &config);
     gpioCfg.pinDirection = GPIO_DIRECTION_OUTPUT;
-    gpioCfg.misc.initOutput = 0;
+    gpioCfg.misc.initOutput = 1;
     GPIO_pinConfig(LCD_EN_GPIO_INSTANCE, LCD_EN_GPIO_PIN, &gpioCfg);
 #endif    
 

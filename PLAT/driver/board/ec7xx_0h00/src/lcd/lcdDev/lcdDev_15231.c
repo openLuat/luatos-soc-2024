@@ -46,8 +46,9 @@ static initLine_t initTable15231[] =
     {0x29, 1,  {0}},
 #endif
 
-    {0xbb, 8,  {0x00,0x00,0x00,0x00,0x00,0x00,0x5a,0xa5}},
-    {0xa0, 1,  {0x29}},
+	// ec 15231 need this two lines, donglian don't need these two line
+    //{0xbb, 8,  {0x00,0x00,0x00,0x00,0x00,0x00,0x5a,0xa5}},
+    //{0xa0, 1,  {0x29}},
 };
 
 /* 
@@ -101,7 +102,7 @@ void axs15231HandleUspIrq4Fill(lcdDrvFunc_t *lcd)
 
 static int axs15231Init(lcdDrvFunc_t *lcd, void* uspCb, void *dmaCb, uint32_t freq, uint8_t bpp)
 {     
-    lcdIoInit(false);
+    lcdIoInit(true);
     dmaInit(dmaCb);
     lspiDefaultCfg(lcd, uspCb, freq, bpp);
     lcdRst(100, 100);
@@ -194,6 +195,25 @@ static void axs15231BackLight(lcdDrvFunc_t *lcd, uint8_t level)
     lcdPwmBkLevel(level);
 #endif
 }
+
+static void axs15231PowerOnOff(lcdDrvFunc_t *lcd, lcdPowerOnOff_e onoff)
+{
+#if (ENABLE_LDO == 1)
+    //ECPLAT_PRINTF(UNILOG_PLA_DRIVER, asx15231Poweronoff_0, P_DEBUG, "onoff:%d", onoff);
+    
+	if (onoff == LCD_POWER_ON)
+	{
+		// power on
+		GPIO_pinWrite(LCD_EN_GPIO_INSTANCE, 1 << LCD_EN_GPIO_PIN, 1 << LCD_EN_GPIO_PIN);
+	}
+	else
+	{
+		// power off
+		GPIO_pinWrite(LCD_EN_GPIO_INSTANCE, 1 << LCD_EN_GPIO_PIN, 0);
+	}
+#endif	
+}
+
 
 
 
@@ -449,6 +469,7 @@ lcdDrvFunc_t axs15231Drv =
     .setWindow          = axs15231AddrSet,
     .fill               = axs15231Fill,
     .backLight          = axs15231BackLight,
+	.powerOnOff			= axs15231PowerOnOff,
     .startStop          = axs15231StartStop,
     .startStopPreview   = axs15231CamPreviewStartStop,
     .uspIrq4CamCb       = NULL,

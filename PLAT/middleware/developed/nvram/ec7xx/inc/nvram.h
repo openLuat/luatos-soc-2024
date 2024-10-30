@@ -32,7 +32,8 @@
 #include "win32_config.h"
 #endif
 
-#if (defined CHIP_EC618) || (defined TYPE_EC718H)
+#ifdef __USER_CODE__ //for 718U old
+#if (defined CHIP_EC618) || (defined TYPE_EC718H) || (defined __EC718U_G__)
 // the size of rf calibration table is 100K bytes.
 #define RF_CALI_TABLE_SIZE_100K
 #define RF_CALI_NV_SECTOR_BANK_NUM_MAX     25
@@ -41,7 +42,17 @@
 #define RF_CALI_TABLE_SIZE_48K
 #define RF_CALI_NV_SECTOR_BANK_NUM_MAX     12
 #endif
-
+#else
+#if (defined CHIP_EC618) || (defined TYPE_EC718H) || (defined TYPE_EC718U)
+// the size of rf calibration table is 100K bytes.
+#define RF_CALI_TABLE_SIZE_100K
+#define RF_CALI_NV_SECTOR_BANK_NUM_MAX     25
+#elif (defined CHIP_EC716) || (defined TYPE_EC718S) || (defined TYPE_EC718P)// EC716, EC718S, EC718P || (defined TYPE_EC718U)
+// the size of rf calibration table is 48K bytes.
+#define RF_CALI_TABLE_SIZE_48K
+#define RF_CALI_NV_SECTOR_BANK_NUM_MAX     12
+#endif
+#endif
 /*----------------------------------------------------------------------------*
  *                    MACROS                                                  *
  *----------------------------------------------------------------------------*/
@@ -51,9 +62,23 @@
 
 #define NVRAM_FAC_RESTORE_ERR	0xFFFFFFFE
 
+#ifdef __USER_CODE__	//for 718U old
+#if (defined __EC718U_G__)
+#define NVRAM_COMPRESS_FAC_MAX_SIZE   (0x9000)//36k
+#define NVRAM_DECOMPRESS_FAC_MAX_SIZE (0x19000)//100k
+#else
 #define NVRAM_COMPRESS_FAC_MAX_SIZE   (0x4000)//16k
 #define NVRAM_DECOMPRESS_FAC_MAX_SIZE (0xC000)//48k
-
+#endif
+#else
+#if (defined TYPE_EC718U)
+#define NVRAM_COMPRESS_FAC_MAX_SIZE   (0x9000)//36k
+#define NVRAM_DECOMPRESS_FAC_MAX_SIZE (0x19000)//100k
+#else
+#define NVRAM_COMPRESS_FAC_MAX_SIZE   (0x4000)//16k
+#define NVRAM_DECOMPRESS_FAC_MAX_SIZE (0xC000)//48k
+#endif
+#endif
 #define NVRAM_COMPRESS_HEADER_MAGIC     0xECAC0129
 
 #if (defined TYPE_EC716S) ||(defined TYPE_EC718S) || (defined TYPE_EC718P) || (defined TYPE_EC716E) || (defined TYPE_EC718U)// EC716S, EC718S, EC718P, EC716E
@@ -105,6 +130,47 @@ typedef enum
     SAVE_OTHER,
 } NvSaveFac_e;
 
+#ifdef __USER_CODE__ //for 718U old
+#if(defined TYPE_EC718H)
+typedef enum
+{
+    APNV1 = 0x0,
+    APNV2,
+    APNV3,
+    APNV4,
+    CPNV1,
+    CPNV2,
+    CPNV3,
+    CPNV4,
+    CPNV5,
+    CPNV6,
+    NV_MAX,
+} NvType_t;
+#elif (defined __EC718U_G__)
+typedef enum
+{
+    APNV1 = 0x0,
+    CPNV1,
+    CPNV2,
+    CPNV3,
+    CPNV4,
+    CPNV5,
+    CPNV6,
+    NV_MAX,
+} NvType_t;
+#elif (defined TYPE_EC716S) ||(defined TYPE_EC718S)|| (defined TYPE_EC718P) || (defined TYPE_EC716E) || (defined TYPE_EC718U)// EC716S, EC718S, EC718P, EC716E
+typedef enum
+{
+    APNV1 = 0x0,
+    CPNV1,
+    CPNV2,
+    CPNV3,
+    CPNV4,
+    NV_MAX,
+} NvType_t;
+
+#endif
+#else
 #if(defined TYPE_EC718H)
 typedef enum 
 {
@@ -120,7 +186,7 @@ typedef enum
     CPNV6,
     NV_MAX,
 } NvType_t;
-#elif (defined TYPE_EC716S) ||(defined TYPE_EC718S)|| (defined TYPE_EC718P) || (defined TYPE_EC716E) || (defined TYPE_EC718U)// EC716S, EC718S, EC718P, EC716E
+#elif (defined TYPE_EC716S) ||(defined TYPE_EC718S)|| (defined TYPE_EC718P) || (defined TYPE_EC716E)// EC716S, EC718S, EC718P, EC716E
 
 typedef enum
 {
@@ -131,6 +197,20 @@ typedef enum
     CPNV4,
     NV_MAX,
 } NvType_t;
+
+#elif (defined TYPE_EC718U)
+typedef enum 
+{
+    APNV1 = 0x0,
+    CPNV1,
+    CPNV2,
+    CPNV3,
+    CPNV4,
+    CPNV5,
+    CPNV6,
+    NV_MAX,
+} NvType_t;
+#endif
 #endif
 
 #if (defined TYPE_EC716S) ||(defined TYPE_EC718S) || (defined TYPE_EC718P) || (defined TYPE_EC716E) || (defined TYPE_EC718U) // EC716S, EC718S, EC718P, EC716E

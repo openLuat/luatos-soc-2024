@@ -18,32 +18,32 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 0x00003000          |---------------------------------|
                     |      bl 128KB                   |
 0x00023000          |---------------------------------|
-                    |      rel data(factory)20KB      |
-0x00028000          |---------------------------------|
+                    |      rel data(factory)40KB      |
+0x0002D000          |---------------------------------|
 
 #if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
                     |      cp img 640KB               |
-0x000C8000          |---------------------------------|
-                    |      app img 6468KB             |
+0x000CD000          |---------------------------------|
+                    |      app img 6396KB             |
 #else
                     |      cp img 400KB               |
-0x0008C000          |---------------------------------|
-                    |      app img 6708KB             |
+0x00091000          |---------------------------------|
+                    |      app img 6636KB             |
 #endif
-0x00719000          |---------------------------------|
+0x0070C000          |---------------------------------|
                     |      hib backup 96KB            |
-0x00731000          |---------------------------------|
+0x00724000          |---------------------------------|
 #if defined (FEATURE_FOTA_FS_ENABLE)
                     |      lfs  720KB                 |
-0x007e5000          |---------------------------------|
+0x007D8000          |---------------------------------|
                     |      fota rsvd 48KB             |
 #else
                     |      lfs  256KB                 |
-0x00771000          |---------------------------------|
+0x00764000          |---------------------------------|
                     |      fota 512KB                 |
 #endif
-0x007f1000          |---------------------------------|
-                    |      rel data 52KB              |
+0x007E4000          |---------------------------------|
+                    |      rel data 104KB             |
 0x007fe000          |---------------------------------|
                     |      plat config 8KB            |
 0x00800000          |---------------------------------|
@@ -75,48 +75,48 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 
 //ap image addr and size
 #if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
-#define AP_FLASH_LOAD_ADDR              (0x008C8000)
+#define AP_FLASH_LOAD_ADDR              (0x008CD000)
 
-#define AP_FLASH_LOAD_SIZE              (0x651000)//6468KB
+#define AP_FLASH_LOAD_SIZE              (0x63F000)//6396KB  
 #define AP_FLASH_LOAD_UNZIP_SIZE        (0x6D6000)//7000KB ,for ld
 #else
-#define AP_FLASH_LOAD_ADDR              (0x0088C000)
+#define AP_FLASH_LOAD_ADDR              (0x00891000)
 
-#define AP_FLASH_LOAD_SIZE              (0x68D000)//6708KB
+#define AP_FLASH_LOAD_SIZE              (0x67B000)//6636KB  
 #define AP_FLASH_LOAD_UNZIP_SIZE        (0x6D6000)//7000KB ,for ld
 #endif
 
 //hib bakcup addr and size
 #define FLASH_HIB_BACKUP_EXIST          (1)
 #define FLASH_MEM_BACKUP_ADDR           (AP_FLASH_XIP_ADDR+FLASH_MEM_BACKUP_NONXIP_ADDR)
-#define FLASH_MEM_BACKUP_NONXIP_ADDR    (0x719000)
+#define FLASH_MEM_BACKUP_NONXIP_ADDR    (0x70C000)
 #define FLASH_MEM_BACKUP_SIZE           (0x18000)//96KB
 #define FLASH_MEM_BLOCK_SIZE            (0x6000)
 #define FLASH_MEM_BLOCK_CNT             (0x4)
 
 //fs addr and size
-#define FLASH_FS_REGION_START           (0x731000)
+#define FLASH_FS_REGION_START           (0x724000)
 #define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START)
 #if defined (FEATURE_FOTA_FS_ENABLE)
-#define FLASH_FS_REGION_END             (0x7e5000)  // 720KB
+#define FLASH_FS_REGION_END             (0x7D8000)  // 720KB
 
 //fota addr and size
-#define FLASH_FOTA_REGION_START         (0x7e5000)
+#define FLASH_FOTA_REGION_START         (0x7D8000)
 #define FLASH_FOTA_REGION_LEN           (0xc000)//48KB
 #else
-#define FLASH_FS_REGION_END             (0x771000)
+#define FLASH_FS_REGION_END             (0x764000)
 
 //fota addr and size
-#define FLASH_FOTA_REGION_START         (0x771000)
+#define FLASH_FOTA_REGION_START         (0x764000)
 #define FLASH_FOTA_REGION_LEN           (0x80000)//512KB
 #endif
-#define FLASH_FOTA_REGION_END           (0x7f1000)
+#define FLASH_FOTA_REGION_END           (0x7E4000)
 
 //ap reliable addr and size
 #define NVRAM_FACTORY_PHYSICAL_BASE     (0x23000)
-#define NVRAM_FACTORY_PHYSICAL_SIZE     (0x5000)//20KB
-#define NVRAM_PHYSICAL_BASE             (0x7f1000)
-#define NVRAM_PHYSICAL_SIZE             (0xD000)//52KB
+#define NVRAM_FACTORY_PHYSICAL_SIZE     (0xA000)//40KB   
+#define NVRAM_PHYSICAL_BASE             (0x7E4000)
+#define NVRAM_PHYSICAL_SIZE             (0x1A000)//104KB   
 
 //plat config addr and size
 #define FLASH_MEM_PLAT_INFO_ADDR        (AP_FLASH_XIP_ADDR+FLASH_MEM_PLAT_INFO_NONXIP_ADDR)
@@ -128,7 +128,7 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 #define CP_FLASH_XIP_ADDR               (0x00800000)
 
 //cp img
-#define CP_FLASH_LOAD_ADDR              (0x00828000)
+#define CP_FLASH_LOAD_ADDR              (0x0082D000)
 #if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
 //cp img
 #define CP_FLASH_LOAD_SIZE              (0xA0000)//640KB,real region size, tool will check when zip
@@ -142,9 +142,9 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 
 //cp reliable addr and size, cp nvm write by ap
 #define CP_NVRAM_FACTORY_PHYSICAL_BASE  (NVRAM_FACTORY_PHYSICAL_BASE + 0x1000)
-#define CP_NVRAM_FACTORY_PHYSICAL_SIZE  (0x4000)//16KB
+#define CP_NVRAM_FACTORY_PHYSICAL_SIZE  (0x9000)//36KB      
 #define CP_NVRAM_PHYSICAL_BASE          (NVRAM_PHYSICAL_BASE + 0x1000)
-#define CP_NVRAM_PHYSICAL_SIZE          (0xc000)//48KB
+#define CP_NVRAM_PHYSICAL_SIZE          (0x19000)//100KB    
 
 
 //add for img merge tool,should fix as AP_xx/CP_xx/BL_xx, tool will extract img type from it

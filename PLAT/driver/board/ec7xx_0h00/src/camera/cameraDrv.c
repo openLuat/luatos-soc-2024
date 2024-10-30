@@ -251,6 +251,23 @@ void camSetMemAddr(uint32_t dataAddr)
     cspiDrv->ctrl(CSPI_CTRL_MEM_ADDR , dataAddr); // register the recv memory
 }
 
+#if (ENABLE_CAMERA_LDO == 1)
+void camPowerOn(uint8_t ioInitVal)
+{
+	PadConfig_t padConfig;
+    PAD_getDefaultConfig(&padConfig);
+    padConfig.pullUpEnable 		= PAD_PULL_UP_DISABLE;
+	padConfig.pullDownEnable 	= PAD_PULL_DOWN_DISABLE;
+    padConfig.mux 				= CAM_PD_PAD_ALT_FUNC;
+    PAD_setPinConfig(CAM_PD_PAD_INDEX, &padConfig);
+
+    GpioPinConfig_t config;
+    config.pinDirection 		= GPIO_DIRECTION_OUTPUT;
+    config.misc.initOutput 		= ioInitVal;
+    GPIO_pinConfig(CAM_PD_GPIO_INSTANCE, CAM_PD_GPIO_PIN, &config);
+}
+#endif
+
 void camInit(void* dataAddr, cspiCbEvent_fn cb)
 {
 	camResolution_e camResolution;
@@ -355,8 +372,6 @@ void camInit(void* dataAddr, cspiCbEvent_fn cb)
 	camParamCfg.colScaleRatio		= 0;
 	camParamCfg.scaleBytes		    = 0;
 	camResolution 			= CAM_CHAIN_COUNT;
-    // recv 8w pic into memory
-    camParamCfg.yOnly               = 1;
 #elif (CAMERA_ENABLE_GC6153)
  #if (GC6153_1SDR)
  	camParamCfg.wireNum  	= WIRE_1;
@@ -372,9 +387,21 @@ void camInit(void* dataAddr, cspiCbEvent_fn cb)
     camParamCfg.colScaleRatio       = 0;
     camParamCfg.scaleBytes          = 0;
 	camResolution 			= CAM_CHAIN_COUNT;	
-
-	// recv 8w pic into memory
-    camParamCfg.yOnly               = 1;
+#elif (CAMERA_ENABLE_GC6133)
+ #if (GC6133_1SDR)
+ 	camParamCfg.wireNum  	= WIRE_1;
+ #endif
+	camParamCfg.endianMode  = CAM_LSB_MODE;
+	camParamCfg.rxSeq		= SEQ_0;
+	camParamCfg.cpha		= 1;
+	camParamCfg.cpol		= 0;
+	camParamCfg.yOnly       = 1;
+	camParamCfg.ddrMode     = 0;
+	camParamCfg.wordIdSeq   = 0;
+    camParamCfg.rowScaleRatio       = 0;
+    camParamCfg.colScaleRatio       = 0;
+    camParamCfg.scaleBytes          = 0;
+	camResolution 			= CAM_CHAIN_COUNT;		
 #endif
 
     camInterfaceCfg(&camParamCfg);

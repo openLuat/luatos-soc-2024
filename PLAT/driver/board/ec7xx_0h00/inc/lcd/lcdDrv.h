@@ -111,6 +111,12 @@ typedef enum
     DIS_SWAP_XY  = 0x80, /**< Swap XY axis */
 } DisDirection_e;
 
+typedef enum 
+{
+	LCD_POWER_OFF = 0,
+	LCD_POWER_ON  = 1
+}lcdPowerOnOff_e;
+
 typedef struct _lcdDrvFunc_t lcdDrvFunc_t;
 typedef void (*lspiErrCb)(uint32_t stats);
 
@@ -129,7 +135,8 @@ typedef struct _lcdDrvFunc_t
     void        (*drawPoint)            (lcdDrvFunc_t *lcd, uint16_t x, uint16_t y, uint32_t dataWrite);
     uint32_t    (*setWindow)            (lcdDrvFunc_t *lcd, uint16_t sx, uint16_t ex, uint16_t sy, uint16_t ey);
     int         (*fill)                 (lcdDrvFunc_t *lcd, uint32_t fillLen, uint8_t *buf);
-    void        (*backLight)            (lcdDrvFunc_t *lcd, uint8_t  level);   
+    void        (*backLight)            (lcdDrvFunc_t *lcd, uint8_t  level);
+    void        (*powerOnOff)           (lcdDrvFunc_t *lcd, lcdPowerOnOff_e  onoff);
     void        (*startStop)            (lcdDrvFunc_t *lcd, bool startOrStop);
     void        (*startStopPreview)     (lcdDrvFunc_t *lcd, camPreviewStartStop_e previewStartStop);
     void        (*uspIrq4CamCb)         (lcdDrvFunc_t *lcd);
@@ -176,6 +183,9 @@ uint32_t        lcdSetWindow(lcdDrvFunc_t *pdrv, uint16_t sx, uint16_t sy, uint1
 void            lspiRstAndClearFifo();
 void            lspiRegisterErrStatsCb(lspiErrCb errCb);
 void            lspiCheckErrStats();
+void 			imageRotateColor(uint8_t* src, uint32_t width, uint32_t height, uint8_t* dst, uint8_t bpp);
+void 			imageRotateGray(uint8_t* src, uint32_t width, uint32_t height, uint8_t* dst);
+
 #ifdef __cplusplus
 }
 #endif

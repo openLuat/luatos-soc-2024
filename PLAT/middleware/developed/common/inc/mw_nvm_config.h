@@ -261,7 +261,7 @@ typedef struct _SIG_EPAT_MW_CFG_NET_CLAT_PARAM
     BOOL    bEnable; /*whether enable xlat feature*/
     UINT8   bindIpv6Cid; //the ipv6 cid bind with
     UINT8   ipv6PrefixLen; //the trans ipv6 prefix len
-    UINT8   rsvd;
+    BOOL    bEnablePrefixDiscovery; /*whether enable prefix discover function. Ref: RFC7050*/
     UINT8   ipv6Preix[MID_WARE_IPV6_ADDR_LEN]; //the trans ipv6 prefix info
     UINT8   ipv4Local[MID_WARE_IPV4_ADDR_LEN]; //ue local private ipv4 address
     UINT8   ipv4Dns1[MID_WARE_IPV4_ADDR_LEN]; //ipv4 dns server 1 for clat dns resolve
@@ -759,7 +759,6 @@ typedef struct MWNvmCfgSetCNMIParam_Tag
 
     MWNvmCfgCNMIParam  cnmiParam;
 }MWNvmCfgSetCNMIParam;
-
 
 /******************************************************************************
  *****************************************************************************

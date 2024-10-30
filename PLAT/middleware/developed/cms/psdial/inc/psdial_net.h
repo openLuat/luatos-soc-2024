@@ -54,7 +54,19 @@ typedef struct PsDialNetStaticContext_Tag
     UINT32      rsvd            :31;
 
 }PsDialNetStaticContext;
+#if LWIP_XLAT_ENABLE
+typedef struct PsDialNetClatInfo_Tag
+{
+    UINT8   op :2; /*op=0:invalid; op=1: set calt info; op=2:get clat info*/
+    UINT8   ipv6PreixPresent :1; /*Used for set info*/
+    UINT8   ipv6PrefixDiscoverdCleanPresent :1;/*Used for clean prefix discovery*/
 
+    UINT8   rsvdBit:4;
+    UINT8   rsvd[3];
+
+    NetMgrClatCfg clagCfgInfo;
+}PsDialNetClatInfo;      // 72 bytes
+#endif
 
 /******************************************************************************
  ******************************************************************************
@@ -114,6 +126,10 @@ void psDialNetLinkDown(UINT8 cid);
 */
 void psDialNetInit(void);
 
+#if LWIP_XLAT_ENABLE
+void psDialClatInit();
+BOOL psDialGetSetClatCfg(PsDialNetClatInfo *pClatInfo);
+#endif
 
 #endif
 

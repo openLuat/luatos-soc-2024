@@ -41,7 +41,7 @@ void owSetMode(OwModeSel_e mode)
     if (mode == STANDARD)
     {
         // add for ds18b20
-        OW->ATCR = (OW->ATCR &~ OW_ATCR_WRRD_START_Msk) | EIGEN_VAL2FLD(OW_ATCR_WRRD_START, 3);
+        //OW->ATCR = (OW->ATCR &~ OW_ATCR_WRRD_START_Msk) | EIGEN_VAL2FLD(OW_ATCR_WRRD_START, 3);
         
 #if (OW_IRQ_MODE == 1)
 #if 0

@@ -175,6 +175,16 @@ void lcdBackLight(lcdDrvFunc_t *lcd, uint8_t level)
     return lcd->backLight(lcd, level);
 }
 
+void lcdPowerOnOff(lcdDrvFunc_t *lcd, lcdPowerOnOff_e onoff)
+{
+    if (lcd == NULL)
+    {
+        return;
+    }
+    return lcd->powerOnOff(lcd, onoff);
+}
+
+
 void lspiRstAndClearFifo()
 {
     lspiCtrl.enable = 0;
@@ -217,6 +227,35 @@ void lspiCheckErrStats()
 
     return;    
 }
+
+void imageRotateColor(uint8_t* src, uint32_t width, uint32_t height, uint8_t* dst, uint8_t bpp)
+{
+	int i, j, bytePerLine, tmp, i2;
+
+	bytePerLine = width * bpp / 8;
+	for (i = 0; i < width; i++)
+	{
+		i2 = i*bpp / 8;
+		for (j = 0; j < height; j++)
+		{
+			tmp 	= (height - 1 - j) * bytePerLine + i2;
+			*dst++ 	= src[tmp];
+			*dst++ 	= src[tmp+1];
+		}
+	}
+}
+
+void imageRotateGray(uint8_t* src, uint32_t width, uint32_t height, uint8_t* dst)
+{
+	for (int i= 0; i < width; i++)
+	{
+		for (int j = 0; j < height; j++)
+		{
+			dst[i*height + j] = src[(height-1-j) * width + i];
+		}
+	}
+}
+
 
 
 

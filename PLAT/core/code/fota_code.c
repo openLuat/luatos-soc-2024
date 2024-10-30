@@ -704,9 +704,19 @@ static int32_t fotaNvmCheckDeltaState(FotaDefChkDeltaState_t *chkDelta)
     fotaNvmRead(FOTA_NVM_ZONE_DELTA, offset, (uint8_t*)&parh, sizeof(CustFotaParHdr_t));
     if(!FOTA_CHECK_PAR_MAGIC(parh.pmagic))
     {
-        ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_DELTA_1, P_SIG, "delta: not a par! pmagic(%x%x)\n", parh.pmagic[0], parh.pmagic[1]);
+        ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_DELTA_0, P_SIG, "delta: not a par! pmagic(%x%x)\n", parh.pmagic[0], parh.pmagic[1]);
         return FOTA_EPAR;
     }
+
+#ifdef FEATURE_FOTA_FS_ENABLE
+    uint32_t deltaSize = fotaNvmFsSize(gFotaNvmZoneMan.zone[FOTA_NVM_ZONE_DELTA].handle);
+    if(deltaSize < parh.parLen)
+    {
+        chkDelta->state = FOTA_DCS_DELTA_PARTIAL;
+        ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_DELTA_1, P_SIG, "delta: partial(%d) par! real size(%d)\n", deltaSize, parh.parLen);
+        return FOTA_EPARSZ;
+    }
+#endif
 
     chkDelta->state = FOTA_DCS_DELTA_INVALID;
 
@@ -840,7 +850,7 @@ PLAT_BL_CIRAM_FLASH_TEXT int32_t fotaNvmInit(void)
 #if (FOTA_NVM_A2CP_XIP_ADDR != FOTA_NVM_A2AP_XIP_ADDR)
     if(FOTA_IS_CPFLASH_DISABLED())
     {
-        ECPLAT_PRINTF(UNILOG_FOTA, FOTA_NVM_INIT, P_SIG, "cp flash wil be enabled...\n");
+        ECPLAT_PRINTF(UNILOG_FOTA, FOTA_NVM_INIT_1, P_SIG, "cp flash wil be enabled...\n");
 
         uint32_t mask = SaveAndSetIRQMask();
         BSP_QSPI_ENABLE_CP_FLASH();
@@ -854,15 +864,19 @@ PLAT_BL_CIRAM_FLASH_TEXT int32_t fotaNvmInit(void)
     fotaNvmSetZone(FOTA_NVM_ZONE_REMAP, FOTA_NVM_REMAP_ADDR, FOTA_NVM_REMAP_SIZE, 0, FOTA_NVM_A2AP_XIP_ADDR);
 
 #ifdef FEATURE_BOOTLOADER_PROJECT_ENABLE
-    const char *mode = "rd";
     LFS_init();
+    int32_t fd = fotaNvmFsOpen(FOTA_DELTA_PAR_NAME, "rd");
 #else
-    const char *mode = "rw+";
     fotaNvmFsRemove(FOTA_DELTA_PAR_NAME);
     fotaNvmClearRemap(0, fotaNvmGetRemapSize(0));
+    int32_t fd = fotaNvmFsOpen(FOTA_DELTA_PAR_NAME, "rw+");
 #endif
+    if(fd < 0)
+    {
+        ECPLAT_PRINTF(UNILOG_FOTA, FOTA_NVM_INIT_2, P_WARNING, "init: fd(%d), no *.par?\n", fd);
+    }
 
-    fotaNvmSetZone(FOTA_NVM_ZONE_DELTA, fotaNvmFsOpen(FOTA_DELTA_PAR_NAME, mode), FOTA_DELTA_PAR_MAXSIZE, 0, 0);
+    fotaNvmSetZone(FOTA_NVM_ZONE_DELTA, fd, FOTA_DELTA_PAR_MAXSIZE, 0, 0);
 #else /* NFS */
     fotaNvmSetZone(FOTA_NVM_ZONE_DELTA, FOTA_NVM_DELTA_ADDR, FOTA_NVM_DELTA_SIZE, FOTA_NVM_DELTA_BACKUP_SIZE, FOTA_NVM_A2AP_XIP_ADDR);
 #endif
@@ -876,6 +890,7 @@ PLAT_BL_CIRAM_FLASH_TEXT int32_t fotaNvmInit(void)
 #endif
 #ifdef FOTA_CUST_APP_ENABLE
     fotaNvmSetZone(FOTA_NVM_ZONE_APP, FOTA_NVM_APP_LOAD_ADDR, FOTA_NVM_APP_LOAD_SIZE, 0, FOTA_NVM_A2AP_XIP_ADDR);
+    //fotaNvmSetZone(FOTA_NVM_ZONE_APP2, FOTA_NVM_APP2_LOAD_ADDR, FOTA_NVM_APP2_LOAD_SIZE, 0, FOTA_NVM_A2AP_XIP_ADDR);
 #endif
 
     return FOTA_EOK;
@@ -888,7 +903,13 @@ PLAT_BL_CIRAM_FLASH_TEXT int32_t fotaNvmInit(void)
  ******************************************************************************/
 PLAT_BL_CIRAM_FLASH_TEXT int32_t fotaNvmDeinit(void)
 {
-    BSP_QSPI_DISABLE_CP_FLASH();
+#if (FOTA_NVM_A2CP_XIP_ADDR != FOTA_NVM_A2AP_XIP_ADDR)
+    ECPLAT_PRINTF(UNILOG_FOTA, FOTA_NVM_DEINIT, P_SIG, "cp flash wil be disabled...\n");
+
+    uint32_t mask = SaveAndSetIRQMask();
+    BSP_QSPI_DISABLE_CP_FLASH(); /* dummy API even if cpflash exists! */
+    RestoreIRQMask(mask);
+#endif
 
 #ifdef FEATURE_FOTA_FS_ENABLE
 #ifdef FEATURE_BOOTLOADER_PROJECT_ENABLE
