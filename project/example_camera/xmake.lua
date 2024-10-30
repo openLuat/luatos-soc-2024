@@ -24,6 +24,6 @@ target(project_name,function()
     add_files(luatos_root.."/components/tiny_jpeg/*.c")
 
     add_linkdirs(csdk_root.."/lib",csdk_root.."/PLAT/core/lib",{public = true})
-	add_linkgroups("image_decoder_0", {whole = true,public = true})
+	add_linkgroups("image_decoder_0", "mm_common","mm_jpeg","mm_videoutil",{whole = true,public = true})
 
 end)

@@ -28,6 +28,7 @@
  * 扫码由于PSRAM的硬件限制，8W可以双buffer，30W只能单buffer
  * demo只有2种模式，扫码或者拍照，均默认启用预览，拍照时按下BOOT键启动一次照片并通过USB/UART上传
  * 扫码demo下，按下BOOT键启动/停止扫码
+ * 2024.10.30改用内部硬件加速jpeg编码，注意xmake新增调用的库
  */
 #include "common_api.h"
 #include "luat_camera.h"
@@ -40,9 +41,9 @@
 #include "luat_lcd.h"
 #include "mem_map.h"
 #include "luat_pm.h"
-#include "tiny_jpeg.h"
-
-#define CAMERA_TEST_QRCODE			//扫码
+//#include "tiny_jpeg.h"
+#include "mm_jpeg_if.h"
+//#define CAMERA_TEST_QRCODE			//扫码
 #define LCD_ENABLE						//默认均开启LCD预览
 #define USB_UART_ENABLE
 
@@ -50,12 +51,12 @@
 #define CAMERA_I2C_ID	(g_s_camera_app.camera_id)
 #define CAMERA_SPI_ID   CSPI_ID1
 #define CAMERA_PD_PIN	HAL_GPIO_5
-//#define CAMERA_POWER_PIN HAL_GPIO_25	//外部LDO控制
-//#define CAMERA_POWER_PIN_ALT 0
+#define CAMERA_POWER_PIN HAL_GPIO_16	//外部LDO控制
+#define CAMERA_POWER_PIN_ALT 4
 //内部LDO就是VDD_EXT, 不需要单独控制
 
-#define CAMERA_USE_BFXXXX
-// #define CAMERA_USE_GC03XX
+//#define CAMERA_USE_BFXXXX
+#define CAMERA_USE_GC03XX
 
 #define BF30A2_I2C_ADDRESS	(0x6e)
 #define GC03XX_I2C_ADDR		(0x21)
@@ -317,7 +318,7 @@ static int luat_bfxxxx_init(void)
 #ifdef CAMERA_POWER_PIN
 	luat_gpio_set(CAMERA_POWER_PIN, LUAT_GPIO_HIGH);
 #endif
-	luat_rtos_task_sleep(1);
+	luat_rtos_task_sleep(10);
 	id[0] = 0xfc;
 	if (luat_i2c_transfer(0, BF30A2_I2C_ADDRESS, id, 1, id, 2))
 	{
@@ -435,7 +436,7 @@ static int luat_gc032a_init(void)
 #ifdef CAMERA_POWER_PIN
 	luat_gpio_set(CAMERA_POWER_PIN, LUAT_GPIO_HIGH);
 #endif
-	luat_rtos_task_sleep(1);
+	luat_rtos_task_sleep(10);
 	id[0] = 0xf0;
 	if (luat_i2c_transfer(0, GC03XX_I2C_ADDR, id, 1, id, 2))
 	{
@@ -529,6 +530,22 @@ static int gpio_level_irq(void *data, void* args)
 
 static void luat_camera_task(void *param)
 {
+
+	JPEG_ENC_PARAM jpeg_enc = {
+			.eFmt = JPEG_COLOR_FMT_YUYV,
+#if defined CAMERA_USE_GC03XX
+			.uWidth = 640,
+			.uHeight = 480,
+#endif
+			.uQuality = 90	//最高可以到100,
+	};
+	JPEG_IMAGE_BUF jpeg_image = {
+			.eFmt = JPEG_COLOR_FMT_YUYV,
+#if defined CAMERA_USE_GC03XX
+			.uWidth = 640,
+			.uHeight = 480,
+#endif
+	};
 	luat_event_t event;
 	void *stack = NULL;
 	uint32_t all,now_used_block,max_used_block;
@@ -623,6 +640,16 @@ static void luat_camera_task(void *param)
 		case CAMERA_FRAME_JPEG_ENCODE:
 			p_cache = g_s_camera_app.p_cache[0];
 			g_s_camera_app.jpeg_data_point = 0;
+#if 1
+			JPEGEncodeHandle = JpegE_Create();
+			error = JpegE_SetParam(JPEGEncodeHandle, &jpeg_enc, &g_s_camera_app.jpeg_data_point);
+			LUAT_DEBUG_PRINT("%d 预期大小%ubyte", error, g_s_camera_app.jpeg_data_point);
+			jpeg_image.pData[0] = g_s_camera_app.p_cache[0];
+			g_s_camera_app.jpeg_data_point = g_s_camera_app.image_w * g_s_camera_app.image_h;
+			error = JpegE_Encode(JPEGEncodeHandle, &jpeg_image, g_s_camera_app.p_cache[1],&g_s_camera_app.jpeg_data_point);
+			LUAT_DEBUG_PRINT("%d 实际大小%ubyte", error, g_s_camera_app.jpeg_data_point);
+			JpegE_Destroy(JPEGEncodeHandle);
+#else
 			LUAT_DEBUG_PRINT("转JPEG开始 ");
 			JPEGEncodeHandle = jpeg_encode_init(luat_camera_save_JPEG_data, 0, 1, g_s_camera_app.image_w, g_s_camera_app.image_h, 3);
 			for(i = 0; i < g_s_camera_app.image_h; i+= 8)
@@ -653,6 +680,7 @@ static void luat_camera_task(void *param)
 
 			jpeg_encode_end(JPEGEncodeHandle);
 			free(JPEGEncodeHandle);
+#endif
 			LUAT_DEBUG_PRINT("转JPEG完成，大小%ubyte", g_s_camera_app.jpeg_data_point);
 			luat_uart_write(LUAT_VUART_ID_0, g_s_camera_app.p_cache[1], g_s_camera_app.jpeg_data_point);
 			luat_rtos_task_sleep(1000);
