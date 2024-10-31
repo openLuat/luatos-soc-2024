@@ -40,11 +40,13 @@ typedef struct
 }luat_camera_ctrl_t;
 
 #ifdef __LUATOS__
-#include "tiny_jpeg.h"
+//#include "tiny_jpeg.h"
+#include "mm_jpeg_if.h"
 #include "luat_msgbus.h"
 #include "luat_mem.h"
 #include "luat_zbuff.h"
 #include "luat_lcd.h"
+
 extern luat_lcd_conf_t *l_lcd_get_default_conf(void);
 enum
 {
@@ -374,21 +376,20 @@ int luat_camera_close(int id)
 
 #ifdef __LUATOS__
 
-static void luat_camera_save_JPEG_data(void *cxt, void *data, int size)
-{
-	uint8_t *p = luat_camera_app.p_cache[1];
-	memcpy(p + luat_camera_app.jpeg_data_point, data, size);
-	luat_camera_app.jpeg_data_point += size;
-}
-
 static void luat_camera_task(void *param)
 {
+	JPEG_ENC_PARAM jpeg_enc = {
+			.eFmt = JPEG_COLOR_FMT_YUYV,
+			.uQuality = 90	//最高可以到100,
+	};
+	JPEG_IMAGE_BUF jpeg_image = {
+			.eFmt = JPEG_COLOR_FMT_YUYV,
+	};
 	luat_event_t event;
 	rtos_msg_t msg = {0};
     HANDLE JPEGEncodeHandle = NULL;
     HANDLE fd;
     void *stack = NULL;
-    uint8_t *ycb_cache;
     uint8_t *file_data;
     uint8_t *p_cache;
     uint32_t i,j,k;
@@ -437,43 +438,33 @@ static void luat_camera_task(void *param)
 				{
 					luat_heap_free(luat_camera_app.p_cache[1]);
 				}
-				luat_camera_app.p_cache[1] = luat_heap_opt_malloc(LUAT_HEAP_PSRAM, luat_camera_app.config.sensor_width * luat_camera_app.config.sensor_height * 2);
+				luat_camera_app.p_cache[1] = luat_heap_opt_malloc(LUAT_HEAP_PSRAM, luat_camera_app.config.sensor_width * luat_camera_app.config.sensor_height);
 			}
-			luat_camera_app.jpeg_data_point = 0;
-			JPEGEncodeHandle = jpeg_encode_init(luat_camera_save_JPEG_data, 0, luat_camera_app.jpeg_quality?luat_camera_app.jpeg_quality:1, luat_camera_app.config.sensor_width, luat_camera_app.config.sensor_height, 3);
-			ycb_cache = malloc(luat_camera_app.config.sensor_width * 8 * 3);
-			for(i = 0; i < luat_camera_app.config.sensor_height; i+= 8)
-			{
-				if (luat_camera_app.config.only_y)
-				{
-					for(j = i * luat_camera_app.config.sensor_width , k = 0; j < (i + 8) * luat_camera_app.config.sensor_width; j+=2, k+=6)
-					{
-						ycb_cache[k] = p_cache[j];
-						ycb_cache[k + 1] = 128;
-						ycb_cache[k + 2] = 128;
-						ycb_cache[k + 3] = p_cache[j + 1];
-						ycb_cache[k + 4] = 128;
-						ycb_cache[k + 5] = 128;
-					}
-				}
-				else
-				{
-					for(j = i * luat_camera_app.config.sensor_width * 2, k = 0; j < (i + 8) * luat_camera_app.config.sensor_width * 2; j+=4, k+=6)
-					{
-						ycb_cache[k] = p_cache[j];
-						ycb_cache[k + 1] = p_cache[j + 1];
-						ycb_cache[k + 2] = p_cache[j + 3];
-						ycb_cache[k + 3] = p_cache[j + 2];
-						ycb_cache[k + 4] = p_cache[j + 1];
-						ycb_cache[k + 5] = p_cache[j + 3];
-					}
-				}
 
-				jpeg_encode_run(JPEGEncodeHandle, ycb_cache);
+			jpeg_enc.uHeight = luat_camera_app.config.sensor_height;
+			jpeg_enc.uWidth = luat_camera_app.config.sensor_width;
+			jpeg_image.uHeight = luat_camera_app.config.sensor_height;
+			jpeg_image.uWidth = luat_camera_app.config.sensor_width;
+			jpeg_image.pData[0] = luat_camera_app.p_cache[0];
+			JPEGEncodeHandle = JpegE_Create();
+			switch(luat_camera_app.jpeg_quality)
+			{
+			case 1:
+				jpeg_enc.uQuality = 90;
+				break;
+			case 2:
+				jpeg_enc.uQuality = 98;
+				break;
+			case 3:
+				jpeg_enc.uQuality = 100;
+				break;
+			default:
+				jpeg_enc.uQuality = luat_camera_app.jpeg_quality;
 			}
-			jpeg_encode_end(JPEGEncodeHandle);
-			free(JPEGEncodeHandle);
-			free(ycb_cache);
+			JpegE_SetParam(JPEGEncodeHandle, &jpeg_enc, &luat_camera_app.jpeg_data_point);
+			luat_camera_app.jpeg_data_point = luat_camera_app.config.sensor_width * luat_camera_app.config.sensor_height;
+			JpegE_Encode(JPEGEncodeHandle, &jpeg_image, luat_camera_app.p_cache[1],&luat_camera_app.jpeg_data_point);
+			JpegE_Destroy(JPEGEncodeHandle);
 			if (luat_camera_app.buff)
 			{
 				if (luat_camera_app.buff->len < luat_camera_app.jpeg_data_point)

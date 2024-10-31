@@ -79,6 +79,7 @@ target(project_name,function()
             target:add("linkgroups","aisound50_16K", {whole = true,public = true})
         end
 		target:add("linkgroups","image_decoder_0", {whole = true,public = true})
+		
         local LUAT_USE_TLS_DISABLE = conf_data:find("#define LUAT_USE_TLS_DISABLE")
         if not LUAT_USE_TLS_DISABLE then
             -- mbedtls
@@ -301,7 +302,9 @@ target(project_name,function()
     --加入代码和头文件
     add_includedirs("./inc",{public = true})
     add_files("./src/*.c",{public = true})
-
+	if chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718u" then
+		add_linkgroups("mm_common","mm_jpeg","mm_videoutil",{whole = true,public = true})
+	end
 	if os.isfile(csdk_root.."/lib/libtgt_app_service.a") and chip_target == "ec718u" and has_config("lspd_mode") then
 		--加入代码和头文件
 		add_linkgroups("tgt_app_service", {whole = true,public = true})
