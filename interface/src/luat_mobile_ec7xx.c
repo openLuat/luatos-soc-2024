@@ -1252,3 +1252,9 @@ uint32_t luat_mobile_get_search_plmn(void)
 	}
 	return upv.u32;
 }
+
+extern void soc_netif_set_ip_os_mode(uint8_t on_off);
+void luat_mobile_data_ip_mode(uint8_t on_off)
+{
+	soc_netif_set_ip_os_mode(on_off);
+}

@@ -70,37 +70,37 @@ uint32_t luat_rtos_task_get_high_water_mark(luat_rtos_task_handle task_handle)
 	if (!task_handle) return -1;
 	return uxTaskGetStackHighWaterMark(task_handle);
 }
-void luat_rtos_task_sleep(uint32_t ms)
+__USER_FUNC_IN_RAM__ void luat_rtos_task_sleep(uint32_t ms)
 {
 	vTaskDelay(ms);
 }
 
-void luat_task_suspend_all(void)
+__USER_FUNC_IN_RAM__ void luat_task_suspend_all(void)
 {
 	vTaskSuspendAll();
 }
-void luat_task_resume_all(void)
+__USER_FUNC_IN_RAM__ void luat_task_resume_all(void)
 {
 	xTaskResumeAll();
 }
 
-void *luat_get_current_task(void)
+__USER_FUNC_IN_RAM__ void *luat_get_current_task(void)
 {
 	return xTaskGetCurrentTaskHandle();
 }
 
-int luat_rtos_event_send(luat_rtos_task_handle task_handle, uint32_t id, uint32_t param1, uint32_t param2, uint32_t param3, uint32_t timeout)
+__USER_FUNC_IN_RAM__ int luat_rtos_event_send(luat_rtos_task_handle task_handle, uint32_t id, uint32_t param1, uint32_t param2, uint32_t param3, uint32_t timeout)
 {
 	if (!task_handle) return -1;
 	return send_event_to_task(task_handle, NULL, id, param1, param2, param3, timeout);
 }
 
-LUAT_RET luat_send_event_to_task(void *task_handle, uint32_t id, uint32_t param1, uint32_t param2, uint32_t param3)
+__USER_FUNC_IN_RAM__ LUAT_RET luat_send_event_to_task(void *task_handle, uint32_t id, uint32_t param1, uint32_t param2, uint32_t param3)
 {
 	if (!task_handle) return -1;
 	return send_event_to_task(task_handle, NULL, id, param1, param2, param3, LUAT_WAIT_FOREVER);
 }
-LUAT_RET luat_wait_event_from_task(void *task_handle, uint32_t wait_event_id, luat_event_t *out_event, void *call_back, uint32_t ms)
+__USER_FUNC_IN_RAM__ LUAT_RET luat_wait_event_from_task(void *task_handle, uint32_t wait_event_id, luat_event_t *out_event, void *call_back, uint32_t ms)
 {
 	if (!task_handle) return -1;
 	return get_event_from_task(task_handle, wait_event_id, (void *)out_event, call_back, ms);
@@ -118,11 +118,11 @@ void *luat_mutex_create(void)
 	}
 	return sem;
 }
-LUAT_RET luat_mutex_lock(void *mutex)
+__USER_FUNC_IN_RAM__ LUAT_RET luat_mutex_lock(void *mutex)
 {
 	return luat_rtos_semaphore_take(mutex, LUAT_WAIT_FOREVER);
 }
-LUAT_RET luat_mutex_unlock(void *mutex)
+__USER_FUNC_IN_RAM__ LUAT_RET luat_mutex_unlock(void *mutex)
 {
 	return luat_rtos_semaphore_release(mutex);
 }
@@ -160,7 +160,7 @@ int luat_rtos_semaphore_delete(luat_rtos_semaphore_t semaphore_handle)
 	return 0;
 }
 
-int luat_rtos_semaphore_take(luat_rtos_semaphore_t semaphore_handle, uint32_t timeout)
+__USER_FUNC_IN_RAM__ int luat_rtos_semaphore_take(luat_rtos_semaphore_t semaphore_handle, uint32_t timeout)
 {
 	if (!semaphore_handle) return -1;
 	if (pdTRUE == xSemaphoreTake(semaphore_handle, timeout))
@@ -168,7 +168,7 @@ int luat_rtos_semaphore_take(luat_rtos_semaphore_t semaphore_handle, uint32_t ti
 	return -1;
 }
 
-int luat_rtos_semaphore_release(luat_rtos_semaphore_t semaphore_handle)
+__USER_FUNC_IN_RAM__ int luat_rtos_semaphore_release(luat_rtos_semaphore_t semaphore_handle)
 {
 	if (!semaphore_handle) return -1;
 	if (osIsInISRContext())
@@ -200,7 +200,7 @@ int luat_rtos_mutex_create(luat_rtos_mutex_t *mutex_handle)
 	return 0;
 }
 
-int luat_rtos_mutex_lock(luat_rtos_mutex_t mutex_handle, uint32_t timeout)
+__USER_FUNC_IN_RAM__ int luat_rtos_mutex_lock(luat_rtos_mutex_t mutex_handle, uint32_t timeout)
 {
 	if (!mutex_handle) return -1;
 	if (pdFALSE == xSemaphoreTakeRecursive(mutex_handle, timeout))
@@ -208,7 +208,7 @@ int luat_rtos_mutex_lock(luat_rtos_mutex_t mutex_handle, uint32_t timeout)
 	return 0;
 }
 
-int luat_rtos_mutex_unlock(luat_rtos_mutex_t mutex_handle)
+__USER_FUNC_IN_RAM__ int luat_rtos_mutex_unlock(luat_rtos_mutex_t mutex_handle)
 {
 	if (!mutex_handle) return -1;
 	if (pdFALSE == xSemaphoreGiveRecursive(mutex_handle))
@@ -241,7 +241,7 @@ int luat_rtos_queue_delete(luat_rtos_queue_t queue_handle)
 	return 0;
 }
 
-int luat_rtos_queue_send(luat_rtos_queue_t queue_handle, void *item, uint32_t item_size, uint32_t timeout)
+__USER_FUNC_IN_RAM__ int luat_rtos_queue_send(luat_rtos_queue_t queue_handle, void *item, uint32_t item_size, uint32_t timeout)
 {
 	if (!queue_handle || !item) return -1;
 	if (osIsInISRContext())
@@ -260,7 +260,7 @@ int luat_rtos_queue_send(luat_rtos_queue_t queue_handle, void *item, uint32_t it
 	return 0;
 }
 
-int luat_rtos_queue_recv(luat_rtos_queue_t queue_handle, void *item, uint32_t item_size, uint32_t timeout)
+__USER_FUNC_IN_RAM__ int luat_rtos_queue_recv(luat_rtos_queue_t queue_handle, void *item, uint32_t item_size, uint32_t timeout)
 {
 	if (!queue_handle || !item)
 		return -1;
@@ -301,7 +301,7 @@ int luat_rtos_flag_create(
 	return (*flag_handle)?0:-1;
 }
 
-int luat_rtos_flag_wait(
+__USER_FUNC_IN_RAM__ int luat_rtos_flag_wait(
 	luat_rtos_flag_t flag_handle,
 	uint32_t mask,
 	LUAT_FLAG_OP_E operation,
@@ -331,7 +331,7 @@ int luat_rtos_flag_wait(
 	return 0;
 }
 
-int luat_rtos_flag_release(
+__USER_FUNC_IN_RAM__ int luat_rtos_flag_release(
 	luat_rtos_flag_t flag_handle,		/* OS flag reference 					   		*/
 	uint32_t mask,				/* flag mask to wait for				   		*/
 	LUAT_FLAG_OP_E operation /* IOT_FLAG_AND, IOT_FLAG_AND_CLEAR,	   		*/
@@ -364,7 +364,7 @@ int luat_rtos_flag_delete(
 }
 
 
-static void s_timer_callback(TimerHandle_t hTimer)
+static __USER_FUNC_IN_RAM__  void s_timer_callback(TimerHandle_t hTimer)
 {
 	luat_rtos_user_timer_t *timer = (luat_rtos_user_timer_t *)pvTimerGetTimerID(hTimer);
 	if (!timer)
@@ -398,7 +398,7 @@ void *luat_create_rtos_timer(void *cb, void *param, void *task_handle)
 	}
 	return timer;
 }
-int luat_start_rtos_timer(void *timer, uint32_t ms, uint8_t is_repeat)
+__USER_FUNC_IN_RAM__ int luat_start_rtos_timer(void *timer, uint32_t ms, uint8_t is_repeat)
 {
 	if (!timer) return -1;
 	luat_rtos_user_timer_t *htimer = (luat_rtos_user_timer_t *)timer;
@@ -426,7 +426,7 @@ int luat_start_rtos_timer(void *timer, uint32_t ms, uint8_t is_repeat)
 	return 0;
 }
 
-void luat_stop_rtos_timer(void *timer)
+__USER_FUNC_IN_RAM__ void luat_stop_rtos_timer(void *timer)
 {
 	if (!timer) return;
 	luat_rtos_user_timer_t *htimer = (luat_rtos_user_timer_t *)timer;
@@ -457,7 +457,7 @@ void luat_release_rtos_timer(void *timer)
 }
 
 
-int luat_rtos_timer_start(luat_rtos_timer_t timer_handle, uint32_t timeout, uint8_t repeat, luat_rtos_timer_callback_t callback_fun, void *user_param)
+__USER_FUNC_IN_RAM__ int luat_rtos_timer_start(luat_rtos_timer_t timer_handle, uint32_t timeout, uint8_t repeat, luat_rtos_timer_callback_t callback_fun, void *user_param)
 {
 	if (!timer_handle) return -1;
 	luat_rtos_user_timer_t *htimer = (luat_rtos_user_timer_t *)timer_handle;
@@ -490,7 +490,7 @@ int luat_rtos_timer_start(luat_rtos_timer_t timer_handle, uint32_t timeout, uint
 
 }
 
-int luat_rtos_timer_is_active(luat_rtos_timer_t timer_handle)
+__USER_FUNC_IN_RAM__ int luat_rtos_timer_is_active(luat_rtos_timer_t timer_handle)
 {
 	if (!timer_handle) return -1;
 	luat_rtos_user_timer_t *htimer = (luat_rtos_user_timer_t *)timer_handle;
@@ -508,7 +508,7 @@ int luat_rtos_timer_is_active(luat_rtos_timer_t timer_handle)
  *
  * @return uint32_t 退出临界保护所需参数
  */
-uint32_t luat_rtos_entry_critical(void)
+__USER_FUNC_IN_RAM__ uint32_t luat_rtos_entry_critical(void)
 {
 	return OS_EnterCritical();
 }
@@ -518,7 +518,7 @@ uint32_t luat_rtos_entry_critical(void)
  *
  * @param critical 进入临界保护时返回的参数
  */
-void luat_rtos_exit_critical(uint32_t critical)
+__USER_FUNC_IN_RAM__ void luat_rtos_exit_critical(uint32_t critical)
 {
 	OS_ExitCritical(critical);
 }
