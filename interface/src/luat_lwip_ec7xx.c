@@ -2148,6 +2148,11 @@ void soc_lwip_init_hook(void)
 	dns_init_client(&prvlwip.dns_client);
 }
 
+void soc_set_dns_local_port(uint16_t port)
+{
+	udp_bind(prvlwip.dns_udp, NULL, port);
+}
+
 void soc_set_netif(struct netif *netif)
 {
 	prvlwip.lwip_netif = netif;
