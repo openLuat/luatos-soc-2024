@@ -294,7 +294,8 @@ target(project_name,function()
                 luatos_root.."/components/little_flash/port",
                 {public = true})
     add_files(luatos_root.."/components/little_flash/**.c")
-    -- 马应龙
+    -- 蚂蚁链
+    add_includedirs(csdk_root.."/thirdparty/antbot/include", {public = true})
     add_includedirs(luatos_root.."/components/antbot/include", {public = true})
     add_files(luatos_root.."/components/antbot/**.c")
     add_linkgroups("bot", {whole = true,public = true})
