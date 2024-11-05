@@ -22,4 +22,5 @@ void SPI_SlaveFastStop(uint8_t SpiID);
 uint32_t SPI_SlaveTransferStopAndGetRxLen(uint8_t SpiID);
 uint32_t SPI_SlaveGetRxLenFast(uint8_t SpiID);
 void SPI_SlaveStartNextFast(uint8_t SpiID, uint8_t* TxBuffer, uint8_t* RxBuffer, uint16_t BufferLen);
+void SPI_SlaveTransferStop(uint8_t SpiID);
 #endif
