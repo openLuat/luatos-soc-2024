@@ -314,13 +314,13 @@ static CmsRetId luat_sms_msg_encode_user_data(PsilMsgCodingType  coding_scheme,
                 else
                 {
                     luat_sms_ascii_gsm_def_alpha_bet(pSrc, (UINT8)msgLen, gsm7bitBuf, &gsm7bitLen);
-                    LUAT_SMS_INFO("gsm7bitLen is %u", gsm7bitLen);
+                    //LUAT_SMS_INFO("gsm7bitLen is %u", gsm7bitLen);
 
                     length = (UINT8)luat_sms_encode_gsm_7_bit_data(gsm7bitBuf, gsm7bitLen, &p_tpdu[offset + 1], PSIL_SMS_MAX_PDU_SIZE - offset, 0);
                     p_tpdu[offset] = gsm7bitLen;
-                    LUAT_SMS_INFO("length: %hu, gsm7bitLen is %u", length, gsm7bitLen);
+                    //LUAT_SMS_INFO("length: %hu, gsm7bitLen is %u", length, gsm7bitLen);
                 }
-                LUAT_SMS_INFO("length is %d", length);
+                //LUAT_SMS_INFO("length is %d", length);
                 if (charSet == PSIL_SMS_CHAR_SET_UCS2)
                 {
                     free(pSrc);
