@@ -1,42 +1,42 @@
 {
   "version": "1.0",
-  "update_time": "2024-10-31 11:02:29.700019",
+  "update_time": "2024-11-05 14:47:23.258466",
   "libs": {
     "ec718u": {
-      "sha1": "6ccd5f420ade1e59aaad89386e6b970c29626dd4",
-      "size": 7195990
+      "sha1": "3a98dae44da6d9bb8d1da69c6391a36257d70c77",
+      "size": 7197084
     },
     "ec718u-ims": {
-      "sha1": "330e54e21ac0c575188047ff7046beeb00f9ed15",
-      "size": 7321368
+      "sha1": "ae80ce07753c550ef2735d8e0dcb946f2f6c48ed",
+      "size": 7325323
     },
     "ec718p": {
-      "sha1": "0ba1cf8f18259e24ddbf09df833f6e8e3a10756a",
-      "size": 7215655
+      "sha1": "017cd6913f939342b73e8b03443a3a48524e7cbe",
+      "size": 7208412
     },
     "ec718pv": {
-      "sha1": "602ddd3484b247084cea9daa8bea83d935ea2f8a",
-      "size": 7337842
+      "sha1": "741c71b2f83042d5d8e385b0708d3cde94a8c7ec",
+      "size": 7337825
     },
     "ec718s": {
-      "sha1": "e43f06df18d2d8cf1cce2e7d2ef40d795bda31a3",
-      "size": 13573123
+      "sha1": "270bb0f84011e3063f1665d9ec2dafebe9d63033",
+      "size": 13572192
     },
     "ec716s": {
-      "sha1": "0a02fbb4da02b158627bd27e54636c2beed98f2c",
-      "size": 13538954
+      "sha1": "096d839fea042daab95ab247aff10c7c5db8305a",
+      "size": 13526373
     },
     "ec716e": {
-      "sha1": "7c0d6a7e98127fc34741674a9736af698b997803",
-      "size": 7111698
+      "sha1": "3e46548dbeea9b0230cebd1441964ac19e2498a0",
+      "size": 7113366
     },
     "ec718s-mid": {
-      "sha1": "57ec39f02ed86e1e1b26102e2cb60296eb50e327",
-      "size": 13349276
+      "sha1": "e6ae2fab5ffa656620d9f157d09814a3778a7752",
+      "size": 13353253
     },
     "ec716s-mid": {
-      "sha1": "cf78e01c09a8071f5ae5ff955e490d70578fa066",
-      "size": 13300061
+      "sha1": "efd310d7243f9ca263c2946a5ecccbb0d0cfbfb5",
+      "size": 13309596
     }
   }
 }
