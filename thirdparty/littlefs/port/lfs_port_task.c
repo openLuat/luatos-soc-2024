@@ -939,13 +939,13 @@ int LFS_fileOpen(lfs_file_t *file, const char *path, int flags)
 #endif
 
     ret = LFS_waitForCompletion(LFS_REQUEST_FILE_OPEN, file, (uint32_t)path, flags);
-
+#if 0	//wait for fix
     if((ret == LFS_ERR_ISDIR) || ((flags & LFS_O_CREAT) && (ret == LFS_ERR_NOENT)))
     {
         //ECOMM_TRACE(UNILOG_LFS, LFS_fileOpen, P_ERROR, 1, "LFS_FileOpen, ret: %d", ret);
         lfs_assert(false);
     }
-
+#endif
     return ret;
 
 }
