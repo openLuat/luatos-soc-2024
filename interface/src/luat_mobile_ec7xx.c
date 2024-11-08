@@ -943,6 +943,7 @@ uint8_t soc_user_usb_eth_mode(void)
 int luat_mobile_config(uint8_t item, uint32_t value)
 {
 	EcCfgSetParamsReq req = {0};
+	TxPowerSettingReq TReq = {0};
 	switch(item)
 	{
 
@@ -998,6 +999,16 @@ int luat_mobile_config(uint8_t item, uint32_t value)
 	case MOBILE_CONF_DISABLE_NCELL_MEAS:
 		req.disableNCellMeasPresent = 1;
 		req.disableNCellMeas = value;
+		break;
+	case MOBILE_CONF_MAX_TX_POWER:
+		TReq.setTxPowerFixedReq.maxPowerPresent = 1;
+		TReq.setTxPowerFixedReq.maxPower = value;
+		if (appSetTxPowerSetting(&TReq) != CMS_RET_SUCC)
+		{
+			return -1;
+		} else {
+			return 0;
+		}
 		break;
 	default:
 		return -1;
