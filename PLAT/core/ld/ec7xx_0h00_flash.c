@@ -286,7 +286,12 @@ SECTIONS
   #endif
   Image$$LOAD_APOS$$Length = SIZEOF(.load_apos);
   #endif
+  #if defined FEATURE_IMS_ENABLE
+  #else
+  PROVIDE(load_ap_zidata_asmb_end_addr = . );
   
+  ASSERT(CP_AONMEMBACKUP_START_ADDR>load_ap_zidata_asmb_end_addr,"load ap use too much ram, exceed to unload_cpaon")
+  #endif
   .unload_cpaon CP_AONMEMBACKUP_START_ADDR (NOLOAD):
   {
     KEEP(*(.sect_rawflash_bss.*))		// keep this dummy section for overlay check, cp use this memory
