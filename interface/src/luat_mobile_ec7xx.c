@@ -1269,3 +1269,32 @@ void luat_mobile_data_ip_mode(uint8_t on_off)
 {
 	soc_netif_set_ip_os_mode(on_off);
 }
+/*****global apn*****/
+extern void soc_mobile_auto_apn_config(uint8_t on_off);
+void soc_mobile_set_attach_apn_info(
+		uint8_t ip_type,
+		uint8_t protocol_type,
+		uint8_t *apn_name, uint8_t apn_name_len,
+		uint8_t *user, uint8_t user_len,
+		uint8_t *password, uint8_t password_len);
+void luat_mobile_init_auto_apn(void)
+{
+	soc_mobile_auto_apn_config(1);
+}
+#ifdef __LUATOS__
+uint8_t soc_mobile_auto_by_mcc_mnc(uint16_t mcc, uint16_t mnc)
+{
+	apn_info_t info;
+	if(luat_mobile_find_apn_by_mcc_mnc(mcc, mnc, &info))
+	{
+		return 0;
+	}
+	else
+	{
+		soc_mobile_set_attach_apn_info(info.ip_type, info.protocol, info.data, info.name_len,
+				info.user_len?(info.data + info.name_len):NULL, info.user_len, info.password_len?(info.data + info.name_len + info.user_len):NULL, info.password_len);
+		return 1;
+	}
+}
+#endif
+/*****global apn*****/
