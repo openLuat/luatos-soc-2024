@@ -306,6 +306,7 @@ target(project_name,function()
 	if chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718u" then
 		add_linkgroups("mm_common","mm_jpeg","mm_videoutil",{whole = true,public = true})
 	end
+	add_linkgroups("apn",{whole = true,public = true})
 	if os.isfile(csdk_root.."/lib/libtgt_app_service.a") and chip_target == "ec718u" and has_config("lspd_mode") then
 		--加入代码和头文件
 		add_linkgroups("tgt_app_service", {whole = true,public = true})

@@ -1282,19 +1282,31 @@ void luat_mobile_init_auto_apn(void)
 	soc_mobile_auto_apn_config(1);
 }
 #ifdef __LUATOS__
+extern int get_apn_info_by_static(uint16_t mcc, uint16_t mnc, apn_info_t *info);
 uint8_t soc_mobile_auto_by_mcc_mnc(uint16_t mcc, uint16_t mnc)
 {
 	apn_info_t info;
 	if(luat_mobile_find_apn_by_mcc_mnc(mcc, mnc, &info))
 	{
-		return 0;
+		if (get_apn_info_by_static(mcc, mnc, &info))
+		{
+			return 0;
+		}
+		if (!info.data)
+		{
+			DBG("mcc 0x%x, mnc 0x%x no need apn");
+			return 0;
+		}
 	}
-	else
-	{
-		soc_mobile_set_attach_apn_info(info.ip_type, info.protocol, info.data, info.name_len,
-				info.user_len?(info.data + info.name_len):NULL, info.user_len, info.password_len?(info.data + info.name_len + info.user_len):NULL, info.password_len);
-		return 1;
-	}
+
+	DBG("mcc 0x%x, mnc 0x%x, ip_type %d, auth_type %d, apn %dbyte %.*s, user %dbyte %.*s, password %dbyte %.*s",
+			mcc, mnc, info.ip_type, info.protocol, info.name_len, info.name_len, info.data,
+			info.user_len, info.user_len, info.user_len?(info.data + info.name_len):NULL,
+			info.password_len, info.password_len, info.password_len?(info.data + info.name_len + info.user_len):NULL);
+
+	soc_mobile_set_attach_apn_info(info.ip_type, info.protocol, info.data, info.name_len,
+			info.user_len?(info.data + info.name_len):NULL, info.user_len, info.password_len?(info.data + info.name_len + info.user_len):NULL, info.password_len);
+	return 1;
 }
 #endif
 /*****global apn*****/
