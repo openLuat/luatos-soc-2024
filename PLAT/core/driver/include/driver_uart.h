@@ -68,4 +68,8 @@ void Uart_ChangeBR(uint8_t UartID, uint32_t BaudRate);
 uint32_t Uart_GetLastError(uint8_t UartID);
 void Uart_SetDebug(uint8_t UartID, uint8_t OnOff);
 void Uart_SetErrorDropData(uint8_t UartID, uint8_t IsDrop);
+
+void Uart_SetupFlowCtrl(uint8_t UartID, uint8_t OnOff);
+void Uart_SetRTS(uint8_t UartID, uint8_t IsHigh);
+uint8_t Uart_GetCTS(uint8_t UartID);
 #endif
