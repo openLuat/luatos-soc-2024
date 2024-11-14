@@ -159,6 +159,9 @@ static int32_t luat_uart_cb(void *pData, void *pParam){
             break;
         case UART_CB_ERROR:
             break;
+        case UART_CB_CTS_IN_IRQ:
+        	uart_cb[uartid].cts_callback_fun(uartid, Uart_GetCTS(uartid)?1:0);
+        	break;
 	}
 	return 0;
 }
@@ -441,16 +444,99 @@ int luat_setup_cb(int uartid, int received, int sent) {
     return 0;
 }
 
+
+int luat_uart_setup_flow_ctrl(int uart_id, luat_uart_cts_callback_t  cts_callback_fun)
+{
+	if (luat_uart_exist(uart_id) && (uart_id < UART_MAX))
+	{
+		if (cts_callback_fun)
+		{
+			uart_cb[uart_id].cts_callback_fun = cts_callback_fun;
+			Uart_SetupFlowCtrl(uart_id, 1);
+		}
+		else
+		{
+			Uart_SetupFlowCtrl(uart_id, 0);
+		}
+		if(luat_mcu_iomux_is_default(LUAT_MCU_PERIPHERAL_UART, uart_id))
+		{
+	#ifdef CHIP_EC716
+			switch (uart_id)
+			{
+			case UART_ID0:
+				GPIO_IomuxEC7XX(14, 5, 0, 0);
+				GPIO_IomuxEC7XX(15, 5, 0, 0);
+				break;
+			case UART_ID1:
+				GPIO_IomuxEC7XX(10, 5, 0, 0);
+				GPIO_IomuxEC7XX(11, 5, 0, 0);
+				break;
+			case UART_ID2:
+				GPIO_IomuxEC7XX(10, 2, 0, 0);
+				GPIO_IomuxEC7XX(11, 2, 0, 0);
+				break;
+			default:
+				break;
+			}
+	#else
+			switch (uart_id)
+			{
+			case UART_ID0:
+				GPIO_IomuxEC7XX(42, 3, 0, 0);
+				GPIO_IomuxEC7XX(43, 3, 0, 0);
+				break;
+			case UART_ID1:
+				GPIO_IomuxEC7XX(16, 3, 0, 0);
+				GPIO_IomuxEC7XX(17, 3, 0, 0);
+				break;
+			case UART_ID2:
+				GPIO_IomuxEC7XX(23, 3, 0, 0);
+				GPIO_IomuxEC7XX(24, 3, 0, 0);
+				break;
+			case UART_ID3:
+				GPIO_IomuxEC7XX(27, 5, 0, 0);
+				GPIO_IomuxEC7XX(28, 5, 0, 0);
+				break;
+			default:
+				break;
+			}
+	#endif
+		}
+		return 0;
+	}
+	return -1;
+}
+
 int luat_uart_ctrl(int uart_id, LUAT_UART_CTRL_CMD_E cmd, void* param){
     if (luat_uart_exist(uart_id)) {
         if (uart_id >= MAX_DEVICE_COUNT){
             uart_id = UART_MAX;
             set_usb_serial_input_callback(luat_usb_recv_cb);
         }
-        if (cmd == LUAT_UART_SET_RECV_CALLBACK){
-            uart_cb[uart_id].recv_callback_fun = param;
-        }else if(cmd == LUAT_UART_SET_SENT_CALLBACK){
-            uart_cb[uart_id].sent_callback_fun = param;
+        switch(cmd)
+        {
+        case LUAT_UART_SET_RECV_CALLBACK:
+        	uart_cb[uart_id].recv_callback_fun = param;
+        	break;
+        case LUAT_UART_SET_SENT_CALLBACK:
+        	uart_cb[uart_id].sent_callback_fun = param;
+        	break;
+        case LUAT_UART_SET_RTS_STATE:
+        	if (uart_id < UART_MAX)
+        	{
+        		Uart_SetRTS(uart_id, (uint32_t)param);
+        	}
+        	break;
+        case LUAT_UART_GET_CTS_STATE:
+        	if (uart_id < UART_MAX)
+        	{
+        		return Uart_GetCTS(uart_id)?1:0;
+        	}
+        	else
+        	{
+        		return 0;
+        	}
+        	break;
         }
         return 0;
     }
