@@ -14,7 +14,7 @@
 #include <linux/if.h>
 #include <linux/if_tun.h>
 #include <linux/types.h>
-#include <linux/spi/spi.h>
+//#include <linux/spi/spi.h>
 #include <linux/spi/spidev.h>
 
 #include <linux/gpio.h>
