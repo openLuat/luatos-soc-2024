@@ -9,6 +9,7 @@
 #include <sys/time.h>
 #include <sys/select.h>
 #include <unistd.h> 
+#include <poll.h>
 
 
 #include <linux/if.h>
@@ -20,7 +21,6 @@
 #include <linux/gpio.h>
 
 #include "airspi.h"
-
 
 int g_spi_fd = 0;
 int g_tun_fd = 0;
@@ -61,6 +61,7 @@ static int gpio_init(void) {
             SPINET_LOG("invalid spi cs pin %d\n", SPINET_CFG_SPI_CS_PIN);
             return -1;
         }
+        gpio_request(SPINET_CFG_SPI_CS_PIN, "spinet_cs");
         ret = gpio_direction_output(SPINET_CFG_SPI_CS_PIN, 1);
         if (ret) {
             SPINET_LOG("set spi cs pin %d direction error\n", SPINET_CFG_SPI_CS_PIN);
@@ -72,6 +73,7 @@ static int gpio_init(void) {
             SPINET_LOG("invalid spi irq pin %d\n", SPINET_CFG_SPI_IRQ_PIN);
             return -1;
         }
+        gpio_request(SPINET_CFG_SPI_IRQ_PIN, "spinet_irq");
         ret = gpio_direction_input(SPINET_CFG_SPI_IRQ_PIN);
         if (ret) {
             SPINET_LOG("set spi irq pin %d direction error\n", SPINET_CFG_SPI_IRQ_PIN);
@@ -118,26 +120,26 @@ static int spinet_xfer2(int fd, uint8_t *tx, uint8_t *rx, int len)
 static int main_loop(void) {
     // 首先, 初始化一个 tun 设备
     char devname[16] = {0};
-    int             retval;
-    fd_set          rfds;
-    struct timeval  tv;
+    int retval = 0;
+    struct pollfd  pfds[2] = {0};
 
-    FD_ZERO(&rfds);
-
-    tv.tv_sec = 0;
-    tv.tv_usec = 100;
+    pfds[0].fd = g_tun_fd;
+    pfds[0].events = POLLIN;
 
     while (1)
     {
         // 读取tun设备中的数据
-        FD_SET(g_tun_fd, &rfds);
-        retval = select(1, &rfds, NULL, NULL, &tv);
-        if (retval == -1) {
-            SPINET_LOG("select tun fd error\n");
+        retval = poll(pfds, 1, 1000);
+        if (retval < 0) {
+            SPINET_LOG("poll tun fd error\n");
             break;
         }
-        else if (retval) {
-            int len = read(0, g_tun_rx, sizeof(g_tun_rx));
+        if (retval == 0) {
+            continue;
+        }
+
+        if (pfds[0].revents & POLLIN) {
+            int len = read(g_tun_fd, g_tun_tx, sizeof(g_tun_tx));
             if (len > 0) {
                 SPINET_LOG("read tun fd %d bytes\n", len);
                 // TODO 发送数据到SPI设备
