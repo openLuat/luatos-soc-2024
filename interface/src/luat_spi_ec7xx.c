@@ -126,28 +126,32 @@ int luat_spi_bus_setup(luat_spi_device_t* spi_dev){
 
 int luat_spi_change_speed(int spi_id, uint32_t speed)
 {
-    if (!spi_exist(spi_id))
+    if (!spi_exist(spi_id)) {
         return -1;
+	}
 	SPI_SetNewConfig(spi_id, speed, 0xff);
 	return 0;
 }
 
 int luat_spi_get_mode(int spi_id) {
-    if (!spi_exist(spi_id))
+    if (!spi_exist(spi_id)) {
         return -1;
+	}
     return g_s_luat_spi_mode[spi_id];
 }
 
 int luat_spi_set_mode(int spi_id, uint8_t mode) {
-    if (!spi_exist(spi_id))
+    if (!spi_exist(spi_id)) {
         return -1;
+	}
     g_s_luat_spi_mode[spi_id] = mode;
 	return 0;
 }
 
 int luat_spi_setup(luat_spi_t* spi) {
-    if (!spi_exist(spi->id))
+    if (!spi_exist(spi->id)) {
         return -1;
+	}
     uint8_t spi_mode = SPI_MODE_0;
     if(spi->CPHA&&spi->CPOL)spi_mode = SPI_MODE_3;
     else if(spi->CPOL)spi_mode = SPI_MODE_2;
@@ -201,8 +205,9 @@ int luat_spi_close(int spi_id) {
 
 //收发SPI数据，返回接收字节数
 int luat_spi_transfer(int spi_id, const char* send_buf, size_t send_length, char* recv_buf, size_t recv_length) {
-    if (!spi_exist(spi_id))
+    if (!spi_exist(spi_id)) {
         return -1;
+	}
     int ret = 0;
     spi_psram_dma_on_check((uint32_t)send_buf, (uint32_t)recv_buf);
     if(g_s_luat_spi_mode[spi_id])
@@ -234,8 +239,9 @@ int luat_spi_transfer(int spi_id, const char* send_buf, size_t send_length, char
 
 //收SPI数据，返回接收字节数
 int luat_spi_recv(int spi_id, char* recv_buf, size_t length) {
-    if (!spi_exist(spi_id))
+    if (!spi_exist(spi_id)) {
         return -1;
+	}
 //    if (SPI_GetSpeed(spi_id) > 12800000)
 //    {
 //    	SPI_SetDMAEnable(spi_id, 0);
@@ -262,8 +268,9 @@ int luat_spi_recv(int spi_id, char* recv_buf, size_t length) {
 }
 //发SPI数据，返回发送字节数
 int luat_spi_send(int spi_id, const char* send_buf, size_t length) {
-    if (!spi_exist(spi_id))
+    if (!spi_exist(spi_id)) {
         return -1;
+	}
     spi_psram_dma_on_check((uint32_t)send_buf, 0);
     if (SPI_BlockTransfer(spi_id, send_buf, NULL, length))
     {
@@ -279,7 +286,9 @@ int luat_spi_send(int spi_id, const char* send_buf, size_t length) {
 
 int luat_spi_no_block_transfer(int spi_id, uint8_t *tx_buff, uint8_t *rx_buff, size_t len, void *CB, void *pParam)
 {
-	if (SPI_IsTransferBusy(spi_id)) return -1;
+	if (SPI_IsTransferBusy(spi_id)) {
+        return -1;
+	}
 	SPI_SetCallbackFun(spi_id, CB, pParam);
 	SPI_SetNoBlock(spi_id);
 	return SPI_TransferEx(spi_id, tx_buff, rx_buff, len, 0, 1);
@@ -287,23 +296,26 @@ int luat_spi_no_block_transfer(int spi_id, uint8_t *tx_buff, uint8_t *rx_buff, s
 
 int luat_spi_set_slave_callback(int spi_id, luat_spi_irq_callback_t callback, void *user_data)
 {
-    if (!spi_exist(spi_id))
+    if (!spi_exist(spi_id)) {
         return -1;
+	}
     SPI_SetCallbackFun(spi_id, (CBFuncEx_t)callback, user_data);
     return 0;
 }
 
 int luat_spi_slave_transfer(int spi_id, const char* send_buf,  char* recv_buf, size_t total_length)
 {
-    if (!spi_exist(spi_id))
+    if (!spi_exist(spi_id)) {
         return -1;
+	}
     return SPI_SlaveTransferStart(spi_id, send_buf, recv_buf, total_length);
 }
 
 int luat_spi_slave_transfer_pause_and_read_data(int spi_id)
 {
-    if (!spi_exist(spi_id))
+    if (!spi_exist(spi_id)) {
         return -1;
+	}
     return SPI_SlaveTransferStopAndGetRxLen(spi_id);
 }
 
@@ -314,8 +326,9 @@ __USER_FUNC_IN_RAM__ int luat_spi_slave_transfer_pause_in_irq(int spi_id)
 }
 int luat_spi_slave_transfer_stop(int spi_id)
 {
-    if (!spi_exist(spi_id))
+    if (!spi_exist(spi_id)) {
         return -1;
+	}
     SPI_TransferStop(spi_id);
     return 0;
 }
