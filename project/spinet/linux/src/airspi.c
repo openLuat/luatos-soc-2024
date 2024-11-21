@@ -139,9 +139,10 @@ static int main_loop(void) {
         }
 
         if (pfds[0].revents & POLLIN) {
-            int len = read(g_tun_fd, g_tun_tx, sizeof(g_tun_tx));
+            int len = read(g_tun_fd, g_tun_rx, sizeof(g_tun_rx));
             if (len > 0) {
                 SPINET_LOG("read tun fd %d bytes\n", len);
+		SPINET_LOG("pkg dump %02X%02X%02X%02X\n", g_tun_rx[0], g_tun_rx[1], g_tun_rx[2],g_tun_rx[3]);
                 // TODO 发送数据到SPI设备
             }
         }
