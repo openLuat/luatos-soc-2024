@@ -59,8 +59,8 @@ static void luat_test_task(void *param)
 	const char remote_ip[] = "112.125.89.8";
 	int port = 47160;
 	const char hello[] = "hello, luatos!";
-	uint8_t *tx_data = malloc(1024);
-	uint8_t *rx_data = malloc(1024 * 8);
+	uint8_t *tx_data = luat_heap_malloc(1024);
+	uint8_t *rx_data = luat_heap_malloc(1024 * 8);
 	uint32_t tx_len, rx_len, cnt;
 	uint64_t uplink, downlink;
 	int result;
@@ -148,7 +148,7 @@ static void luat_server_test_task(void *param)
 	network_set_base_mode(g_s_server_network_ctrl, 1, 15000, 1, 600, 5, 9);
 	network_set_local_port(g_s_server_network_ctrl, server_port);
 	g_s_server_network_ctrl->is_debug = 1;
-	uint8_t *rx_data = malloc(1024);
+	uint8_t *rx_data = luat_heap_malloc(1024);
 	uint32_t tx_len, rx_len;
 	int result;
 	uint8_t is_break,is_timeout;
@@ -192,7 +192,7 @@ static void luat_udp_server_test_task(void *param)
 	network_set_base_mode(g_s_server_network_ctrl, 0, 15000, 1, 600, 5, 9);
 	network_set_local_port(g_s_server_network_ctrl, server_port);
 	g_s_server_network_ctrl->is_debug = 1;
-	uint8_t *rx_data = malloc(1024);
+	uint8_t *rx_data = luat_heap_malloc(1024);
 	uint32_t tx_len, rx_len;
 	ip_addr_t remote_ip;
 	uint16_t remote_port;
@@ -264,7 +264,7 @@ static void luat_async_test_task(void *param)
 	network_init_ctrl(netc, NULL, luat_async_test_socket_callback, g_s_upload_test_task_handle);
 	network_set_base_mode(netc, 1, 15000, 1, 600, 5, 9);
 	const char remote_ip[] = "112.125.89.8";
-	uint8_t *upload_buff = malloc(32 * 1024);
+	uint8_t *upload_buff = luat_heap_malloc(32 * 1024);
 	uint32_t tx_len;
 	uint64_t start_ms, stop_ms;
 	uint8_t cnt;

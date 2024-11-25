@@ -94,7 +94,7 @@ __USER_FUNC_IN_RAM__ err_t spi_netif_tx(struct pbuf *p)
 		}
 	}
 	luat_rtos_exit_critical(cr);
-	data = malloc(sizeof(data_node_t) + PAYLOAD_MAX_LEN);
+	data = luat_heap_malloc(sizeof(data_node_t) + PAYLOAD_MAX_LEN);
 	if (!data) return -ERR_MEM;
 	memcpy(data->data, &p->tot_len, 2);
 	pos = 2;
@@ -135,7 +135,7 @@ __USER_FUNC_IN_RAM__ void spi_netif_input(void *param)
 	uint8_t end = 0;
 	uint8_t *pp;
 	struct pbuf p = {0};
-	p.bIgnorFree = 1;
+	p.bIgnorluat_heap_free = 1;
 	p.type = PBUF_ROM;
 
 	uint32_t cr;
@@ -170,7 +170,7 @@ __USER_FUNC_IN_RAM__ void spi_netif_input(void *param)
 				ip_input(&p, &g_s_spi_netif.netif);
 			}
 			if (pos != data->len) {LUAT_DEBUG_PRINT("ERROR %d,%d", pos, data->len);}
-			free(data);
+			luat_heap_free(data);
 		}
 	}
 
@@ -178,7 +178,7 @@ __USER_FUNC_IN_RAM__ void spi_netif_input(void *param)
 
 static void spi_netif_rx(uint8_t *data, uint32_t len)
 {
-	data_node_t *node = malloc(sizeof(data_node_t) + len);
+	data_node_t *node = luat_heap_malloc(sizeof(data_node_t) + len);
 	if (!node)
 	{
 		LUAT_DEBUG_PRINT("NO MEM for spi netif rx!!!");
@@ -268,7 +268,7 @@ static void *find_next_spi_packet(void)
 void netif_master_task(void *param)
 {
 	luat_debug_set_fault_mode(LUAT_DEBUG_FAULT_HANG);
-	uint8_t *temp_buf = malloc(PACKET_MAX_LEN);
+	uint8_t *temp_buf = luat_heap_malloc(PACKET_MAX_LEN);
 	spinet_head_t m_head = {0};
 	spinet_head_t s_head = {0};
 	luat_event_t event;
@@ -285,8 +285,8 @@ void netif_master_task(void *param)
 	hw_init();
 	trans.spi_id = SPI_ID;
 	trans.cs_pin = CS_PIN;
-	trans.tx_buf = malloc(PACKET_MAX_LEN);
-	trans.rx_buf = malloc(PACKET_MAX_LEN);
+	trans.tx_buf = luat_heap_malloc(PACKET_MAX_LEN);
+	trans.rx_buf = luat_heap_malloc(PACKET_MAX_LEN);
 	trans.buf_len = PACKET_MAX_LEN;
 	luat_mobile_set_flymode(0, 1);
 	luat_rtos_task_sleep(5000);
@@ -337,7 +337,7 @@ void netif_master_task(void *param)
 					m_head.cmd = data->cmd;
 					m_head.sn++;
 					tx_len = pack_spinet_packet(&m_head, data->data, data->len, temp_buf);
-					free(data);
+					luat_heap_free(data);
 					data = NULL;
 				}
 				else
@@ -385,7 +385,7 @@ void netif_master_task(void *param)
 								m_head.cmd = data->cmd;
 								m_head.sn++;
 								tx_len = pack_spinet_packet(&m_head, data->data, data->len, temp_buf);
-								free(data);
+								luat_heap_free(data);
 								data = NULL;
 							}
 							else

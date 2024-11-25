@@ -381,9 +381,9 @@ void netif_slave_task(void *param)
 	luat_mobile_data_ip_mode(0xa7);	//IPV4包全部透传给主机，且不给本地LWIP。如果从机也要能收发，需要改成0x01，且主机使用的端口 >= 100, < 50000
 	g_s_spi_netif.state.rf_power_on = 1;
 	luat_event_t event;
-	g_s_spi_netif.spi_tx_buf = calloc(1, PACKET_MAX_LEN);
-	g_s_spi_netif.spi_rx_buf = calloc(1, PACKET_MAX_LEN);
-	g_s_spi_netif.spi_data_buf = calloc(1, PACKET_MAX_LEN);
+	g_s_spi_netif.spi_tx_buf = luat_heap_calloc(1, PACKET_MAX_LEN);
+	g_s_spi_netif.spi_rx_buf = luat_heap_calloc(1, PACKET_MAX_LEN);
+	g_s_spi_netif.spi_data_buf = luat_heap_calloc(1, PACKET_MAX_LEN);
 	uint32_t i;
 	luat_rtos_task_handle handle = luat_rtos_get_current_handle();
 	luat_ip_addr_t ip;

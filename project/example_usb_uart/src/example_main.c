@@ -27,10 +27,10 @@
 static luat_rtos_task_handle uart_task_handle;
 
 void luat_usb_recv_cb(int uart_id, uint32_t data_len){
-    char* data_buff = malloc(data_len);
+    char* data_buff = luat_heap_malloc(data_len);
     luat_uart_read(uart_id, data_buff, data_len);
     LUAT_DEBUG_PRINT("luat_uart_cb uart_id:%d data:%.*s data_len:%d",uart_id, data_len, data_buff,data_len);
-    free(data_buff);
+    luat_heap_free(data_buff);
 }
 
 static void task_test_uart(void *param)

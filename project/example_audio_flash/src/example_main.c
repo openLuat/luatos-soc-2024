@@ -167,7 +167,7 @@ static void demo_task(void *arg)
     }
 #else
 	 //校验数据
-	 uint8_t *tmp = malloc(4096);
+	 uint8_t *tmp = luat_heap_malloc(4096);
 	 for (size_t i = 0; i < 719278; i+=4096)
 	 {
 	 	 sfud_read(flash, i+FLASH_TTS_ADDR, 4096, tmp);

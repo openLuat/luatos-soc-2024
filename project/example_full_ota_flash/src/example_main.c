@@ -171,7 +171,7 @@ static void luatos_http_cb(int status, void *data, uint32_t len, void *param)
 	case HTTP_STATE_GET_BODY:
 		if (data)
 		{
-			ota_data = malloc(len);
+			ota_data = luat_heap_malloc(len);
 			memcpy(ota_data, data, len);
 			luat_rtos_event_send(param, OTA_HTTP_GET_DATA, (uint32_t)ota_data, len, 0, 0);
 		}

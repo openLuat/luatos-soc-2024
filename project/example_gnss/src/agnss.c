@@ -380,7 +380,7 @@ static void luatos_http_cb(int status, void *data, uint32_t len, void *param)
     case HTTP_STATE_GET_BODY:
         if (data)
         {
-            eph_data = malloc(len);
+            eph_data = luat_heap_malloc(len);
             memcpy(eph_data, data, len);
             luat_rtos_event_send(param, EPH_HTTP_GET_DATA, eph_data, len, 0, 0);
         }
@@ -493,7 +493,7 @@ static void ephemeris_get_task(void *param)
                 case EPH_HTTP_GET_DATA:
                     done_len += event.param2;
                     luat_fs_fwrite((uint8_t *)event.param1, event.param2, 1, fp1);
-                    free(event.param1);
+                    luat_heap_free(event.param1);
                     break;
                 case EPH_HTTP_GET_DATA_DONE:
                     eph_download_end = 1;

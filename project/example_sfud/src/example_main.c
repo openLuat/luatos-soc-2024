@@ -127,8 +127,8 @@ void exmaple_fs_luat_file(void) {
         return;
     }
     // 产生随机数据, 模拟业务写入
-    LUAT_DEBUG_PRINT("call malloc and rngGenRandom");
-    buff = malloc(24 * 100);
+    LUAT_DEBUG_PRINT("call luat_heap_malloc and rngGenRandom");
+    buff = luat_heap_malloc(24 * 100);
     if (buff == NULL) {
         LUAT_DEBUG_PRINT("out of memory ?");
         luat_fs_fclose(fp);
@@ -221,7 +221,7 @@ void exmaple_fs_luat_file(void) {
     // 演示完毕, 清理资源
     exit:
         if (buff != NULL) {
-            free(buff);
+            luat_heap_free(buff);
         }
         LUAT_DEBUG_PRINT("file example exited");
         return;

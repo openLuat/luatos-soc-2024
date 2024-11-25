@@ -157,10 +157,10 @@ static void lcd_camera_start_run(void)
 #ifdef USB_UART_ENABLE
 static void luat_usb_recv_cb(int uart_id, uint32_t data_len)
 {
-    char* data_buff = malloc(data_len);
+    char* data_buff = luat_heap_malloc(data_len);
     luat_uart_read(uart_id, data_buff, data_len);
     LUAT_DEBUG_PRINT("luat_uart_cb uart_id:%d data_len:%d",uart_id, data_len);
-    free(data_buff);
+    luat_heap_free(data_buff);
 }
 #endif
 
@@ -613,7 +613,7 @@ static void luat_camera_task(void *param)
 
 
     HANDLE JPEGEncodeHandle = NULL;
-    uint8_t *ycb_cache = malloc(g_s_camera_app.image_w * 8 * 3);
+    uint8_t *ycb_cache = luat_heap_malloc(g_s_camera_app.image_w * 8 * 3);
     uint8_t *file_data;
     uint8_t *p_cache;
     uint32_t i,j,k;
@@ -679,7 +679,7 @@ static void luat_camera_task(void *param)
 			}
 
 			jpeg_encode_end(JPEGEncodeHandle);
-			free(JPEGEncodeHandle);
+			luat_heap_free(JPEGEncodeHandle);
 #endif
 			LUAT_DEBUG_PRINT("转JPEG完成，大小%ubyte", g_s_camera_app.jpeg_data_point);
 			luat_uart_write(LUAT_VUART_ID_0, g_s_camera_app.p_cache[1], g_s_camera_app.jpeg_data_point);

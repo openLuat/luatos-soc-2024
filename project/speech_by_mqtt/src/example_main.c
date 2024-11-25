@@ -79,7 +79,7 @@ void log_on(void)
 	AecConfig_t    MwNvmAudioSphTxAEC;
 	ecAudioCfgTlvStore *pMwNvmAudioCfg = NULL;
 	AudioParaCfgLogControl_t MwNvmAudioLogCtrl;
-	pMwNvmAudioCfg  = (ecAudioCfgTlvStore *)malloc(sizeof(ecAudioCfgTlvStore)+ sizeof(AudioParaSphEQBiquard_t)*EC_ADCFG_SPEECH_EQ_BIQUARD_NUMB*EC_ADCFG_SPEECH_TX_NUMB
+	pMwNvmAudioCfg  = (ecAudioCfgTlvStore *)luat_heap_malloc(sizeof(ecAudioCfgTlvStore)+ sizeof(AudioParaSphEQBiquard_t)*EC_ADCFG_SPEECH_EQ_BIQUARD_NUMB*EC_ADCFG_SPEECH_TX_NUMB
 					+ sizeof(AudioParaSphEQBiquard_t)*EC_ADCFG_SPEECH_EQ_BIQUARD_NUMB*EC_ADCFG_SPEECH_RX_NUMB + sizeof(UINT16)*EC_ADCFG_SPEECH_ANS_EQ_BAND_NUMB*EC_ADCFG_SPEECH_RX_NUMB
 					 + sizeof(UINT16)*EC_ADCFG_SPEECH_ANS_EQ_BAND_NUMB*EC_ADCFG_SPEECH_TX_NUMB);
 
@@ -111,7 +111,7 @@ void log_on(void)
 	audioLogCfg.RxBeforeDecoder = 1;
 	audioLogCfg.TxAfterEncoder = 1;
 	ShareInfoAPSetCPAudioLogCtrl(audioLogCfg);
-	free(pMwNvmAudioCfg);
+	luat_heap_free(pMwNvmAudioCfg);
 }
 
 
@@ -220,7 +220,7 @@ static void luat_mqtt_cb(luat_mqtt_ctrl_t *luat_mqtt_ctrl, uint16_t event){
 		len = mqtt_parse_pub_msg_ptr(luat_mqtt_ctrl->mqtt_packet_buffer, &ptr);
 		if (len)
 		{
-			payload = malloc(len);
+			payload = luat_heap_malloc(len);
 			memcpy(payload, ptr, len);
 		}
 		luat_rtos_event_send(speechc.mqtt_task_handle, EVENT_MQTT_DOWNLINK_DATA, (uint32_t)topic, (uint32_t)payload, len, 0);
@@ -417,8 +417,8 @@ static void mqtt_task(void *param)
 				}
 			}
 RX_DATA_DONE:
-			free((char *)event.param1);
-			free((char *)event.param2);
+			luat_heap_free((char *)event.param1);
+			luat_heap_free((char *)event.param2);
 			break;
 		case EVENT_MQTT_CHECK_DOWNLINK:
 			play_block_check_cnt_start++;
@@ -552,7 +552,7 @@ static void speech_task(void *arg)
 	uint64_t amr_times = 0;
 	luat_debug_set_fault_mode(LUAT_DEBUG_FAULT_HANG);
 	OS_InitFifo(&speechc.downlink_buffer, luat_heap_malloc(1 << 14), 14);
-	speechc.play_data_buffer = malloc(AMR_ONE_FRAME_LEN * PCM_ONE_FRAME_BLOCK_NUM * PCM_PLAY_FRAME_CNT);
+	speechc.play_data_buffer = luat_heap_malloc(AMR_ONE_FRAME_LEN * PCM_ONE_FRAME_BLOCK_NUM * PCM_PLAY_FRAME_CNT);
 	luat_audio_play_global_init(NULL, NULL, NULL, NULL, NULL);
 	luat_i2s_setup(&luat_i2s_conf_es8311);
 	luat_i2s_set_user_data(TEST_I2S_ID, &speechc);

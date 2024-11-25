@@ -45,10 +45,10 @@ static void task1(void *param)
     luat_rtos_task_sleep(10000);//如果有luatools，会自动提取flashdump
     if (ecFlashDumpOccuredCheck())
     {
-    	uint8_t *data = malloc(0x4000);
+    	uint8_t *data = luat_heap_malloc(0x4000);
     	soc_get_flash_dump(data);
     	luat_uart_write(uart.id, data, 0x4000);
-    	free(data);
+    	luat_heap_free(data);
     	soc_flash_dump_clear();
     	luat_rtos_task_sleep(10000);//串口工具接收并且能处理完
     }
