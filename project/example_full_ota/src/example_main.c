@@ -20,13 +20,13 @@
  */
 
 /**
- * 如果使用全量升级，必须是718P，必须在项目的xmake.lua里设置AP_FLASH_LOAD_SIZE，AP_PKGIMG_LIMIT_SIZE，FULL_OTA_SAVE_ADDR。
+ * 如果使用全量升级，必须是Air780EP(V,S,T...),Air780EQ等等总FLASH不小于4MB的模块，必须在项目的xmake.lua里设置AP_FLASH_LOAD_SIZE，AP_PKGIMG_LIMIT_SIZE，FULL_OTA_SAVE_ADDR。
  * AP_FLASH_LOAD_SIZE必须减小到能放下代码，同时有剩余空间能放下OTA包，这里的剩余空间包括了原本的DFOTA区域
  * AP_PKGIMG_LIMIT_SIZE必须和AP_FLASH_LOAD_SIZE一致，FULL_OTA_SAVE_ADDR必须在实际AP占用空间之后，OTA保存空间长度=FLASH_FS_REGION_START-FULL_OTA_SAVE_ADDR
  * 如果不清楚的，直接参考本demo的xmake.lua配置
  * luatools需要2.2.15及以上版本，进入选项及工具->SOC差分/整包升级包制作工具，新版固件选择要升级的SOC包(SOC包，SOC包，重要的事情说3遍，不是binpkg)
  * 用户标识可以填版本号，也可以不填，看自己的代码对升级版本是否有控制，如果用合宙IOT升级服务，则必须填写版本号！！！
- * 选好输出路径，点生成，在输出目录下生成相应的xxx.sota文件为升级包，放在服务器上下载即可升级
+ * 选好输出路径，点生成，在输出目录下生成相应的xxx.sota文件为升级包（使用合宙IOT升级服务的，受网页上文件识别规则限制，后缀改为.bin即可），放在服务器上下载即可升级
  *
  * PS：和差分升级代码是一样的，只是项目的配置，ota包生成有区别
 */
