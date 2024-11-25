@@ -23,6 +23,7 @@
 #include "luat_debug.h"
 
 #include "luat_uart.h"
+#include "luat_mem.h"
 
 static luat_rtos_task_handle uart_task_handle;
 
