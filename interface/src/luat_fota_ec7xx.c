@@ -296,8 +296,8 @@ static int luat_fota_write_spi_flash(uint32_t address, uint8_t *data, uint32_t l
 
 static void luat_fota_cal_spi_flash_data_md5(unsigned char output[16])
 {
-	uint8_t *tx = malloc(4096);
-	uint8_t *rx = malloc(4096);
+	uint8_t *tx = luat_heap_malloc(4096);
+	uint8_t *rx = luat_heap_malloc(4096);
 	MD5_START(g_s_fota.md5_ctx);
 	luat_gpio_set(g_s_fota.cs_pin, 0);
 	uint8_t cmd[4] = {0};
@@ -317,8 +317,8 @@ static void luat_fota_cal_spi_flash_data_md5(unsigned char output[16])
 //	MD5_UPDATE(g_s_fota.md5_ctx, rx, 4096);
 	luat_gpio_set(g_s_fota.cs_pin, 1);
 	MD5_FINISH(g_s_fota.md5_ctx, output);
-	free(tx);
-	free(rx);
+	luat_heap_free(tx);
+	luat_heap_free(rx);
 }
 
 int luat_fota_init(uint32_t start_address, uint32_t len, luat_spi_device_t* spi_device, const char *path, uint32_t pathlen)

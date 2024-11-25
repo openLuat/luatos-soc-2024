@@ -829,9 +829,9 @@ void luat_audio_inter_amr_init(uint8_t is_wb, uint8_t quality)
     eng->wait_flag = HAL_VOICE_CODEC_CONFIG_CNF;
     if (eng->audioCfg)
     {
-    	free(eng->audioCfg);
+    	luat_heap_free(eng->audioCfg);
     }
-    eng->audioCfg = malloc(sizeof(AudioConfig_t));
+    eng->audioCfg = luat_heap_malloc(sizeof(AudioConfig_t));
     if (eng->audioCfg )
     {
     	mwNvmGetAudioCfgForCP((AudioConfig_t *)eng->audioCfg, 0, 0, 0);
@@ -863,7 +863,7 @@ void luat_audio_inter_amr_deinit(void)
 	luat_audio_inter_amr_wait(eng);
     if (eng->audioCfg)
     {
-    	free(eng->audioCfg);
+    	luat_heap_free(eng->audioCfg);
     }
     eng->audioCfg = NULL;
 	eng->is_init = 0;

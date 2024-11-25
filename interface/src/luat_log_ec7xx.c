@@ -97,7 +97,7 @@ void luat_log_log(int level, const char* tag, const char* _fmt, ...) {
     if (luat_log_level_cur > level) return;
     va_list args;
     va_start(args, _fmt);
-    char *fmt = malloc(strlen(_fmt) + strlen(tag) + 4);
+    char *fmt = luat_heap_malloc(strlen(_fmt) + strlen(tag) + 4);
     if (fmt)
     {
 		switch (level)
@@ -119,7 +119,7 @@ void luat_log_log(int level, const char* tag, const char* _fmt, ...) {
 			break;
 		}
 		soc_vsprintf(0, fmt, args);
-		free(fmt);
+		luat_heap_free(fmt);
     }
     else
     {

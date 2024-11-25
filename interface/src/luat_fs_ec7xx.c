@@ -27,7 +27,7 @@
 #include "lfs_port.h"
 #include "luat_rtos.h"
 #include "luat_debug.h"
-
+#include "luat_mem.h"
 #define LUAT_LOG_TAG "fs"
 #include "luat_log.h"
 
@@ -134,7 +134,7 @@ int luat_vfs_ec7xx_fclose(__attribute__((unused))void* userdata, FILE* stream) {
     if (stream == NULL)
         return 0;
     LFS_fileClose((lfs_file_t *)stream);
-    free(stream);
+    luat_heap_free(stream);
     return 0;
 }
 int luat_vfs_ec7xx_feof(__attribute__((unused))void* userdata, FILE* stream) {

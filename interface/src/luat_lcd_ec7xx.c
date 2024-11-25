@@ -272,7 +272,7 @@ int luat_lcd_IF_draw(luat_lcd_conf_t* conf, int16_t x1, int16_t y1, int16_t x2, 
 		}
 		else
 		{
-			dummy.pu8 = (uint8_t *)malloc(size + 4);
+			dummy.pu8 = (uint8_t *)luat_heap_malloc(size + 4);
 			for(i = 0; i < points; i++)
 			{
 				dummy.pu16[i] = __SWAP_RB(color[i]);
@@ -280,7 +280,7 @@ int luat_lcd_IF_draw(luat_lcd_conf_t* conf, int16_t x1, int16_t y1, int16_t x2, 
 			GPIO_Output(conf->lcd_cs_pin, 0);
 			LSPI_WriteImageData(USP_ID2, w, h, dummy.u32, size, 1);
 			GPIO_Output(conf->lcd_cs_pin, 1);
-			free(dummy.p);
+			luat_heap_free(dummy.p);
 		}
 	}
 	else
@@ -310,7 +310,7 @@ int luat_lcd_show_camera_in_service(void *camera_info, camera_cut_info_t *cut_in
 	uPV.u16[1] = start_y;
 	if (cut_info)
 	{
-		camera_cut_info_t *cut = malloc(sizeof(camera_cut_info_t));
+		camera_cut_info_t *cut = luat_heap_malloc(sizeof(camera_cut_info_t));
 		memcpy(cut, cut_info, sizeof(camera_cut_info_t));
 		return send_event_to_task(g_s_lcd.task_handle, NULL, SERVICE_LCD_SHOW_CAMERA, (uint32_t)camera_info, (uint32_t)cut, uPV.u32, 0);
 	}

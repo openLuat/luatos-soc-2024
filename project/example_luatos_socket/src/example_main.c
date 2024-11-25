@@ -5,6 +5,7 @@
 #include "luat_mcu.h"
 #include "luat_mobile.h"
 #include "net_lwip.h"
+#include "csdk.h"
 
 
 

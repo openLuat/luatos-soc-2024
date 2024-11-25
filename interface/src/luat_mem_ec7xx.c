@@ -134,6 +134,10 @@ void* luat_heap_malloc(size_t len) {
     return malloc(len);
 }
 
+void* luat_heap_zalloc(size_t _size) {
+	return calloc(1, _size);
+}
+
 void luat_heap_free(void* ptr) {
 //	if ((uint32_t)ptr > sys_heap_start && (uint32_t)ptr <= sys_heap_end) {
 	//先做简单判断，如果有问题，再做严格判断

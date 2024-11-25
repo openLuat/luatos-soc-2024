@@ -574,9 +574,9 @@ int luat_camera_capture(int id, uint8_t quality, const char *path)
 			luat_camera_app.buff = NULL;
 			if (luat_camera_app.save_path)
 			{
-				free(luat_camera_app.save_path);
+				luat_heap_free(luat_camera_app.save_path);
 			}
-			luat_camera_app.save_path = calloc(1, strlen(path) + 1);
+			luat_camera_app.save_path = luat_heap_calloc(1, strlen(path) + 1);
 			strcpy(luat_camera_app.save_path, path);
 			DBG("save file in %s", luat_camera_app.save_path);
 		}

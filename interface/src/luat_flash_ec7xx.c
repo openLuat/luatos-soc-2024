@@ -88,14 +88,14 @@ int luat_flash_write(char* buff, size_t addr, size_t len) {
     }
     else {
         // 超过128字节的常量数据, 应该是不存在的吧, 下面的逻辑主要是防御代码.
-        tmp = malloc(len);
+        tmp = luat_heap_malloc(len);
         if (tmp == NULL) {
-            LUAT_DEBUG_PRINT("out of memory when malloc flash write buff");
+            LUAT_DEBUG_PRINT("out of memory when luat_heap_malloc flash write buff");
             return -1;
         }
         memcpy(tmp, buff, len);
         ret = FLASH_writeSafe((uint8_t *)tmp, addr, len);
-        free(tmp);
+        luat_heap_free(tmp);
     }
     return ret == 0 ? len : -1;
 }

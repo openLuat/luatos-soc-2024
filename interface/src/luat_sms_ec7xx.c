@@ -277,7 +277,7 @@ static CmsRetId luat_sms_msg_encode_user_data(PsilMsgCodingType  coding_scheme,
                         return CMS_FAIL;
                     }
 
-                    pSrc = (UINT8 *)malloc(p_send_info->inputOffset/4);
+                    pSrc = (UINT8 *)luat_heap_malloc(p_send_info->inputOffset/4);
 
                     msgLen = smsUcs2ToAscii(p_send_info->input, p_send_info->inputOffset, pSrc, p_send_info->inputOffset/4);
                 }
@@ -323,7 +323,7 @@ static CmsRetId luat_sms_msg_encode_user_data(PsilMsgCodingType  coding_scheme,
                 //LUAT_SMS_INFO("length is %d", length);
                 if (charSet == PSIL_SMS_CHAR_SET_UCS2)
                 {
-                    free(pSrc);
+                    luat_heap_free(pSrc);
                 }
                 break;
             case PSIL_MSG_CODING_8BIT:
@@ -750,7 +750,7 @@ static CmsRetId luat_sms_send_pdu_sms(PsilSmsSendInfo *p_send_info)
     INT32   scAddrDigitLen = 0;
     INT32   hexOffset = 0;
 
-    pAtHexPdu = (UINT8 *)malloc((p_send_info->inputOffset >> 1) + 1);
+    pAtHexPdu = (UINT8 *)luat_heap_malloc((p_send_info->inputOffset >> 1) + 1);
 
     /* hex string -> hex */
     atHexLen = cmsHexStrToHex(pAtHexPdu, ((p_send_info->inputOffset >> 1) + 1),
@@ -836,7 +836,7 @@ static CmsRetId luat_sms_send_pdu_sms(PsilSmsSendInfo *p_send_info)
 
     cmsNonBlockApiCall(luat_send_msg_call_cb, sizeof(CmiSmsSendMsgReq), &cmi_msg_req);
 
-    free(pAtHexPdu);
+    luat_heap_free(pAtHexPdu);
 
     return CMS_RET_SUCC;
 }
@@ -850,7 +850,7 @@ int luat_sms_send_msg(uint8_t *p_input, char *p_des, bool is_pdu, int input_pdu_
 
     if (luat_p_sms_send_info == PNULL)
     {
-        luat_p_sms_send_info = (PsilSmsSendInfo*)malloc(sizeof(PsilSmsSendInfo));
+        luat_p_sms_send_info = (PsilSmsSendInfo*)luat_heap_malloc(sizeof(PsilSmsSendInfo));
         memset(luat_p_sms_send_info, 0, sizeof(PsilSmsSendInfo));
     }
 
@@ -958,7 +958,7 @@ int luat_sms_send_msg(uint8_t *p_input, char *p_des, bool is_pdu, int input_pdu_
         cmsRet = luat_sms_send_pdu_sms(luat_p_sms_send_info);
     }
 
-    free(luat_p_sms_send_info);
+    luat_heap_free(luat_p_sms_send_info);
     luat_p_sms_send_info = PNULL;
     return cmsRet;
 }
@@ -977,9 +977,9 @@ void luat_sms_nw_report_urc(CmiSmsNewMsgInd *p_cmi_msg_ind)
     {
         if (message_format == PSIL_SMS_FORMAT_PDU_MODE)
         {
-            char *rsp_buf = (char*)malloc(rsp_buf_pdu_max_len);
-            char *p_pdu_buf = (CHAR *)malloc(p_cmi_msg_ind->pdu.pduLength * 2 + 10);
-            LUAT_SMS_RECV_MSG_T *recv_msg_info = (LUAT_SMS_RECV_MSG_T *)malloc(sizeof(LUAT_SMS_RECV_MSG_T));
+            char *rsp_buf = (char*)luat_heap_malloc(rsp_buf_pdu_max_len);
+            char *p_pdu_buf = (CHAR *)luat_heap_malloc(p_cmi_msg_ind->pdu.pduLength * 2 + 10);
+            LUAT_SMS_RECV_MSG_T *recv_msg_info = (LUAT_SMS_RECV_MSG_T *)luat_heap_malloc(sizeof(LUAT_SMS_RECV_MSG_T));
             memset(sms_cBuf, 0x00, sizeof(sms_cBuf));
             memset(rsp_buf, 0x00, rsp_buf_pdu_max_len);
             memset(recv_msg_info, 0x00, sizeof(LUAT_SMS_RECV_MSG_T));
@@ -1087,9 +1087,9 @@ void luat_sms_nw_report_urc(CmiSmsNewMsgInd *p_cmi_msg_ind)
                 luat_sms_cfg.cb(p_cmi_msg_ind->smsType, recv_msg_info);
             }
             //释放内存
-            free(rsp_buf);
-            free(p_pdu_buf);
-            free(recv_msg_info);
+            luat_heap_free(rsp_buf);
+            luat_heap_free(p_pdu_buf);
+            luat_heap_free(recv_msg_info);
         }
     }
 }

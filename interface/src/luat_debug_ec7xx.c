@@ -81,7 +81,7 @@ void luat_debug_print_onoff(unsigned char onoff)
 void luat_debug_dump(uint8_t *data, uint32_t len)
 {
 	if (!len) return;
-	char *uart_buf = malloc(len * 3);
+	char *uart_buf = luat_heap_malloc(len * 3);
 	if (uart_buf)
 	{
 		uint32_t i,j = 0;
@@ -91,6 +91,6 @@ void luat_debug_dump(uint8_t *data, uint32_t len)
 			uart_buf[j++] = ' ';
 	    }
 	    soc_debug_out(uart_buf, len * 3);
-		free(uart_buf);
+		luat_heap_free(uart_buf);
 	}
 }
