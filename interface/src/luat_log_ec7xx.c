@@ -7,7 +7,7 @@
 #include "luat_log.h"
 #include "luat_uart.h"
 #include "printf.h"
-
+#include "luat_mem.h"
 #ifdef LUAT_USE_SHELL
 #include "luat_cmux.h"
 extern luat_cmux_t cmux_ctx;

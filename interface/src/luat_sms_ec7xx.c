@@ -32,6 +32,7 @@
 #include "luat_debug.h"
 #include "luat_mobile.h"
 #include "luat_sms.h"
+#include "luat_mem.h"
 
 #define LUAT_SMS_INFO(X,Y...) LUAT_DEBUG_PRINT("[DIO %d]: "X, __LINE__, ##Y)
 

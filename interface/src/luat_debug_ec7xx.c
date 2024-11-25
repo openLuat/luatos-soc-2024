@@ -23,6 +23,8 @@
 #include "common_api.h"
 #include "plat_config.h"
 #include "reset.h"
+#include "luat_mem.h"
+
 static unsigned char g_s_debug_onoff = 1;
 extern const uint8_t ByteToAsciiTable[];
 extern void soc_assert(const char *fun_name, uint32_t line_no, const char *fmt, va_list ap);
