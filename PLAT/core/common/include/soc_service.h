@@ -264,4 +264,7 @@ void soc_task_record_on_off(uint8_t on_off);
 uint16_t soc_task_record_get(TaskRunTimeRecord_t *record, uint16_t max_cnt);
 void *soc_get_clat_netif(void);
 int soc_run_function_in_work(CBDataFun_t CB, void *user_param, uint32_t user_param_len);
+void soc_save_rtc_tamp_u32(uint32_t utc);
+void soc_save_rtc_tamp_u32_with_tz(uint32_t utc, int8_t tz);
+void soc_set_rtc_time_u32_with_tz(uint16_t year, uint8_t mon, uint8_t day, uint8_t h, uint8_t m, uint8_t s, int8_t tz);
 #endif /* CORE_INCLUDE_SOC_SERVICE_H_ */

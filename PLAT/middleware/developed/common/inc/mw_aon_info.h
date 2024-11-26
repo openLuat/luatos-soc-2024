@@ -223,7 +223,13 @@ typedef struct MidWareAonInfo_Tag
     */
     MWAonNetParamCfg        mwNetParamCfgAonInfo;
 
-
+#ifdef __USER_CODE__
+    uint32_t utc_tamp;
+    uint32_t rtc_tamp;
+    int8_t tz;
+    uint8_t unused;
+    uint16_t crc16;
+#else
     /*
     * mw aon ppp param cfg
     */
@@ -233,7 +239,7 @@ typedef struct MidWareAonInfo_Tag
     * mw aon urc cache param cfg
     */
     MWAonUrcCacheParamCfg   mwUrcCacheParamCfgAonInfo;
-
+#endif
     /*
     * mw SIM STK cfg param
     */

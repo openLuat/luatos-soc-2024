@@ -243,4 +243,6 @@ enum
 #endif
 #define __CORE_FUNC_IN_RAM__ PLAT_FM_RAMCODE
 #define __USER_FUNC_IN_RAM__ PLAT_FM_RAMCODE
+
+#define __USER_DATA_IN_OPT_RAM__
 #endif

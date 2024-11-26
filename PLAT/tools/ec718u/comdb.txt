@@ -1,8 +1,8 @@
 DbVersion
-608727291,100
+1856192727,100
 <end>
 BuildInfo
-The current data file was built by the Application Ver. 2.2.81.216, Mon Nov 18 20:22:44 2024
+The current data file was built by the Application Ver. 2.2.81.216, Tue Nov 26 10:06:30 2024
 <end>
 EnumVals
 0,0,0,0,PHY_ONLINE,PHY_ICS_MODULE,PhyIcsMeasMainEntrance_0,P_INFO,swLogPrintf("ICS MEAS of euArfcn %d will be started ");
@@ -4843,48 +4843,47 @@ c9b5d99f6262cfa9521e693b9f65083f47d9eb22503d8804c1a9a66903479a3c0ea8394e8a8f2df6
 317440,650162432,0,0,PLAT_AP,PLA_MIDWARE,mwNvmCfgSaveParam_update_w_1,P_WARNING,swLogPrintf("MW NVM CFG , can ' t update / add paramId : %d into NVM buf , retErr : %d ");
 317440,650164480,0,0,PLAT_AP,PLA_MIDWARE,mwNvmCfgSaveParam_write_w_1,P_WARNING,swLogPrintf("MW NVM CFG , can ' t write paramId : %d into NVM file , retErr : %d ");
 317440,650168319,0,0,PLAT_AP,PLA_MIDWARE,mwNvmCfgInit_e_1,P_ERROR,swLogPrintf("MW NVM CFG , can ' t create mutex ");
-317440,650168320,0,0,PLAT_AP,PLA_MIDWARE,mwNvmCfgSaveAtChanConfig_e_1,P_ERROR,swLogPrintf("MW NVM CFG , invalid AT chanId : %d , can ' t update AtChanCfg into NVM ");
-317440,650171136,0,0,PLAT_AP,PLA_MIDWARE,mwNvmCfgGetCsmpConfig_1,P_INFO,swLogPrintf("MW NVM CFG , Read CSMP param from NVM , FO : %d , VP : %d , PID : %d , DCS : %d ");
-317440,650172928,0,0,PLAT_AP,PLA_MIDWARE,mwNvmCfgGetCpmsConfig_1,P_INFO,swLogPrintf("MW NVM CFG , Read CPMS param , mem1 : %d , mem2 : %d , mem3 : %d ");
-317440,650174976,0,0,PLAT_AP,PLA_MIDWARE,mwNvmCfgGetCscaConfig_1,P_INFO,swLogPrintf("MW NVM CFG , Read CSCA param , SC address present : %d , Type : %d , Address Len : %d ");
-317440,650177536,0,0,PLAT_AP,PLA_MIDWARE,mwNvmCfgGetCnmiConfig_1,P_INFO,swLogPrintf("MW NVM CFG , Read CNMI param from NVM , mode : %d , mt : %d , bm : %d , ds : %d , bfr : %d ");
-317440,650178560,0,0,PLAT_AP,PLA_MIDWARE,mwNvmCfgSetAndSavePowerOnCfun_e_1,P_ERROR,swLogPrintf("MW NVM CFG , invalid power on CFUN : %d , can ' t set ");
-317440,650180609,0,0,PLAT_AP,PLA_MIDWARE,mwNvmInfoRead_w_1,P_WARNING,swLogPrintf("MW NVM INFO , NVM file : %s , can ' t read , using default value ");
-317440,650183681,0,0,PLAT_AP,PLA_MIDWARE,mwNvmInfoRead_w_2,P_WARNING,swLogPrintf("MW NVM INFO , NVM file : %s , file size not right : %d / %d , or version not right : %d / %d , using default value ");
-317440,650186751,0,0,PLAT_AP,PLA_MIDWARE,mwNvmInfoGetPhyDebugAtCmdInfo_w_1,P_WARNING,swLogPrintf("MW NVM INFO , can ' t get PHY debug AT info , as NVM not read ");
-317440,650187264,0,0,PLAT_AP,PLA_MIDWARE,mwNvmInfoSetPhyDebugAtCmdInfo_w_1,P_WARNING,swLogPrintf("MW NVM INFO , PHY AY debug info size : %d > bufSize : %d , only could write : %d into NVM ");
-317440,650190847,0,0,PLAT_AP,PLA_MIDWARE,mwNvmInfoSetPhyDebugAtCmdInfo_w_2,P_WARNING,swLogPrintf("MW NVM INFO , can ' t set PHY debug AT info , as NVM not read ");
-317440,650192895,0,0,PLAT_AP,PLA_MIDWARE,mwNvmInfoGetSimEdrxValue_1,P_WARNING,swLogPrintf("MW NVM INFO , can ' t get PHY edrx info , as NVM not read ");
-317440,650194943,0,0,PLAT_AP,PLA_MIDWARE,mwNvmInfoSetSimEdrxValue_2,P_WARNING,swLogPrintf("MW NVM INFO , can ' t set PHY edrx info , as NVM not read ");
-317440,650194945,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsRead_1,P_DEBUG,swLogPrintf("MW NVM SMS , NVM file : %s , can ' t read , using default value ");
-317440,650198017,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsRead_2,P_DEBUG,swLogPrintf("MW NVM INFO , NVM file : %s , file size not right : %d / %d , or version not right : %d / %d , using default value ");
-317440,650199040,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsGetRecByIndex_1,P_WARNING,swLogPrintf("MW NVM SMS , input invalid index : %d , can ' t get SMS record from NVM ");
-317440,650203135,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsGetRecByIndex_3,P_WARNING,swLogPrintf("MW NVM SMS , Read SMS Storage memory failure! ");
-317440,650203392,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsGetRecByIndex_4,P_WARNING,swLogPrintf("MW NVM SMS , index : %d , stored number : %d , there is no SMS message. ");
-317440,650205184,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsUpdateAndSaveRecByIndex_1,P_WARNING,swLogPrintf("MW NVM SMS , input invalid index : %d , can ' t update SMS record ");
-317440,650209279,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsUpdateAndSaveRecByIndex_3,P_WARNING,swLogPrintf("MW NVM SMS , read SMS Storage memory fail! ");
-317440,650209536,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsUpdateAndSaveRecByIndex_4,P_WARNING,swLogPrintf("MW NVM SMS , index : %d , stored number : %d , the specificed stored SMS message record is NULL. ");
-317440,650211328,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsUpdateAndSaveRecByIndex_5,P_INFO,swLogPrintf("MW NVM SMS , Updated SMS Record with the index ( %d ) Done and Saved to NVRAM ");
-317440,650215423,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsAddAndSaveRec_2,P_WARNING,swLogPrintf("MW NVM SMS , Read SMS Storage memory failure , try again ! ");
-317440,650217471,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsAddAndSaveRec_3,P_WARNING,swLogPrintf("MW NVM SMS , Read SMS Storage memory failure ! ");
-317440,650219519,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsAddAndSaveRec_4,P_WARNING,swLogPrintf("MW NVM SMS , SMS Record Box is full , can ' t add SMS record to NVM ");
-317440,650221567,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsAddAndSaveRec_5,P_WARNING,swLogPrintf("MW NVM SMS , SMS Record Box is full , can ' t add SMS record to NVM ");
-317440,650221824,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsAddAndSaveRec_6,P_INFO,swLogPrintf("MW NVM SMS , added SMS success , index : %d , stored Counter : %d ");
-317440,650223616,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsDelAndSaveRecByIndex_1,P_WARNING,swLogPrintf("MW NVM SMS , input invalid index : %d , can ' t delete SMS record from NVM ");
-317440,650227711,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsDelAndSaveRecByIndex_3,P_WARNING,swLogPrintf("MW NVM SMS , read SMS Storage memory failure ! ");
-317440,650227712,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsDelAndSaveRecByIndex_4,P_INFO,swLogPrintf("MW NVM SMS , the specificed index : %d SMS record has been Deleted! ");
-317440,650230016,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsDelAndSaveRecByIndex_5,P_INFO,swLogPrintf("MW NVM SMS , deleted SMS specified index ( %d ) success , SMS stored number : %d ");
-317440,650231808,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsDelRecByStatus_1,P_WARNING,swLogPrintf("MW NVM SMS , input invalid Status : %d , can ' t delete SMS records from NVM ");
-317440,650233856,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsDelRecByStatus_2,P_INFO,swLogPrintf("MW NVM SMS , No need to Deleted : %d , SMS records list is NULL ");
-317440,650236160,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsDelRecByStatus_3,P_INFO,swLogPrintf("MW NVM SMS , Deleted the specified Status SMS done , delete Statu : %d success , remaining SMS number : %d ");
-317440,650237952,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsDelAndSaveRecByStatus_1,P_WARNING,swLogPrintf("MW NVM SMS , input invalid Status : %d , can ' t delete SMS records from NVM ");
-317440,650242047,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsDelAndSaveRecByStatus_3,P_WARNING,swLogPrintf("MW NVM SMS , Read SMS Storage memory failure ! ");
-317440,650244095,0,0,PLAT_AP,PLA_MIDWARE,npiLoadNvmConfig_1,P_ERROR,swLogPrintf("Can ' t open NVM : ' npiconfig.nvm ' , use the defult value ");
-317440,650246143,0,0,PLAT_AP,PLA_MIDWARE,npiLoadNvmConfig_2,P_ERROR,swLogPrintf("NPI NVM : ' npiconfig.nvm ' , can ' t read header , use the defult value ");
-317440,650246656,0,0,PLAT_AP,PLA_MIDWARE,npiLoadNvmConfig_3,P_ERROR,swLogPrintf("' npiconfig.nvm ' version : %d file body size not right : ( %u / %u ) , use the defult value ");
-317440,650250239,0,0,PLAT_AP,PLA_MIDWARE,npiSaveNvmConfig_1,P_ERROR,swLogPrintf("NPI NVM , can ' t open / create NVM : ' npiconfig.nvm ' , save NVM failed ");
-317440,650252287,0,0,PLAT_AP,PLA_MIDWARE,npiSaveNvmConfig_2,P_ERROR,swLogPrintf("NPI NVM : ' npiconfig.nvm ' , write the file header failed ");
-317440,650254335,0,0,PLAT_AP,PLA_MIDWARE,npiSaveNvmConfig_3,P_ERROR,swLogPrintf("NPI NVM : ' npiconfig.nvm ' , write the file body failed ");
+317440,650169088,0,0,PLAT_AP,PLA_MIDWARE,mwNvmCfgGetCsmpConfig_1,P_INFO,swLogPrintf("MW NVM CFG , Read CSMP param from NVM , FO : %d , VP : %d , PID : %d , DCS : %d ");
+317440,650170880,0,0,PLAT_AP,PLA_MIDWARE,mwNvmCfgGetCpmsConfig_1,P_INFO,swLogPrintf("MW NVM CFG , Read CPMS param , mem1 : %d , mem2 : %d , mem3 : %d ");
+317440,650172928,0,0,PLAT_AP,PLA_MIDWARE,mwNvmCfgGetCscaConfig_1,P_INFO,swLogPrintf("MW NVM CFG , Read CSCA param , SC address present : %d , Type : %d , Address Len : %d ");
+317440,650175488,0,0,PLAT_AP,PLA_MIDWARE,mwNvmCfgGetCnmiConfig_1,P_INFO,swLogPrintf("MW NVM CFG , Read CNMI param from NVM , mode : %d , mt : %d , bm : %d , ds : %d , bfr : %d ");
+317440,650176512,0,0,PLAT_AP,PLA_MIDWARE,mwNvmCfgSetAndSavePowerOnCfun_e_1,P_ERROR,swLogPrintf("MW NVM CFG , invalid power on CFUN : %d , can ' t set ");
+317440,650178561,0,0,PLAT_AP,PLA_MIDWARE,mwNvmInfoRead_w_1,P_WARNING,swLogPrintf("MW NVM INFO , NVM file : %s , can ' t read , using default value ");
+317440,650181633,0,0,PLAT_AP,PLA_MIDWARE,mwNvmInfoRead_w_2,P_WARNING,swLogPrintf("MW NVM INFO , NVM file : %s , file size not right : %d / %d , or version not right : %d / %d , using default value ");
+317440,650184703,0,0,PLAT_AP,PLA_MIDWARE,mwNvmInfoGetPhyDebugAtCmdInfo_w_1,P_WARNING,swLogPrintf("MW NVM INFO , can ' t get PHY debug AT info , as NVM not read ");
+317440,650185216,0,0,PLAT_AP,PLA_MIDWARE,mwNvmInfoSetPhyDebugAtCmdInfo_w_1,P_WARNING,swLogPrintf("MW NVM INFO , PHY AY debug info size : %d > bufSize : %d , only could write : %d into NVM ");
+317440,650188799,0,0,PLAT_AP,PLA_MIDWARE,mwNvmInfoSetPhyDebugAtCmdInfo_w_2,P_WARNING,swLogPrintf("MW NVM INFO , can ' t set PHY debug AT info , as NVM not read ");
+317440,650190847,0,0,PLAT_AP,PLA_MIDWARE,mwNvmInfoGetSimEdrxValue_1,P_WARNING,swLogPrintf("MW NVM INFO , can ' t get PHY edrx info , as NVM not read ");
+317440,650192895,0,0,PLAT_AP,PLA_MIDWARE,mwNvmInfoSetSimEdrxValue_2,P_WARNING,swLogPrintf("MW NVM INFO , can ' t set PHY edrx info , as NVM not read ");
+317440,650192897,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsRead_1,P_DEBUG,swLogPrintf("MW NVM SMS , NVM file : %s , can ' t read , using default value ");
+317440,650195969,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsRead_2,P_DEBUG,swLogPrintf("MW NVM INFO , NVM file : %s , file size not right : %d / %d , or version not right : %d / %d , using default value ");
+317440,650196992,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsGetRecByIndex_1,P_WARNING,swLogPrintf("MW NVM SMS , input invalid index : %d , can ' t get SMS record from NVM ");
+317440,650201087,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsGetRecByIndex_3,P_WARNING,swLogPrintf("MW NVM SMS , Read SMS Storage memory failure! ");
+317440,650201344,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsGetRecByIndex_4,P_WARNING,swLogPrintf("MW NVM SMS , index : %d , stored number : %d , there is no SMS message. ");
+317440,650203136,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsUpdateAndSaveRecByIndex_1,P_WARNING,swLogPrintf("MW NVM SMS , input invalid index : %d , can ' t update SMS record ");
+317440,650207231,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsUpdateAndSaveRecByIndex_3,P_WARNING,swLogPrintf("MW NVM SMS , read SMS Storage memory fail! ");
+317440,650207488,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsUpdateAndSaveRecByIndex_4,P_WARNING,swLogPrintf("MW NVM SMS , index : %d , stored number : %d , the specificed stored SMS message record is NULL. ");
+317440,650209280,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsUpdateAndSaveRecByIndex_5,P_INFO,swLogPrintf("MW NVM SMS , Updated SMS Record with the index ( %d ) Done and Saved to NVRAM ");
+317440,650213375,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsAddAndSaveRec_2,P_WARNING,swLogPrintf("MW NVM SMS , Read SMS Storage memory failure , try again ! ");
+317440,650215423,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsAddAndSaveRec_3,P_WARNING,swLogPrintf("MW NVM SMS , Read SMS Storage memory failure ! ");
+317440,650217471,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsAddAndSaveRec_4,P_WARNING,swLogPrintf("MW NVM SMS , SMS Record Box is full , can ' t add SMS record to NVM ");
+317440,650219519,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsAddAndSaveRec_5,P_WARNING,swLogPrintf("MW NVM SMS , SMS Record Box is full , can ' t add SMS record to NVM ");
+317440,650219776,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsAddAndSaveRec_6,P_INFO,swLogPrintf("MW NVM SMS , added SMS success , index : %d , stored Counter : %d ");
+317440,650221568,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsDelAndSaveRecByIndex_1,P_WARNING,swLogPrintf("MW NVM SMS , input invalid index : %d , can ' t delete SMS record from NVM ");
+317440,650225663,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsDelAndSaveRecByIndex_3,P_WARNING,swLogPrintf("MW NVM SMS , read SMS Storage memory failure ! ");
+317440,650225664,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsDelAndSaveRecByIndex_4,P_INFO,swLogPrintf("MW NVM SMS , the specificed index : %d SMS record has been Deleted! ");
+317440,650227968,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsDelAndSaveRecByIndex_5,P_INFO,swLogPrintf("MW NVM SMS , deleted SMS specified index ( %d ) success , SMS stored number : %d ");
+317440,650229760,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsDelRecByStatus_1,P_WARNING,swLogPrintf("MW NVM SMS , input invalid Status : %d , can ' t delete SMS records from NVM ");
+317440,650231808,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsDelRecByStatus_2,P_INFO,swLogPrintf("MW NVM SMS , No need to Deleted : %d , SMS records list is NULL ");
+317440,650234112,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsDelRecByStatus_3,P_INFO,swLogPrintf("MW NVM SMS , Deleted the specified Status SMS done , delete Statu : %d success , remaining SMS number : %d ");
+317440,650235904,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsDelAndSaveRecByStatus_1,P_WARNING,swLogPrintf("MW NVM SMS , input invalid Status : %d , can ' t delete SMS records from NVM ");
+317440,650239999,0,0,PLAT_AP,PLA_MIDWARE,mwNvmSmsDelAndSaveRecByStatus_3,P_WARNING,swLogPrintf("MW NVM SMS , Read SMS Storage memory failure ! ");
+317440,650242047,0,0,PLAT_AP,PLA_MIDWARE,npiLoadNvmConfig_1,P_ERROR,swLogPrintf("Can ' t open NVM : ' npiconfig.nvm ' , use the defult value ");
+317440,650244095,0,0,PLAT_AP,PLA_MIDWARE,npiLoadNvmConfig_2,P_ERROR,swLogPrintf("NPI NVM : ' npiconfig.nvm ' , can ' t read header , use the defult value ");
+317440,650244608,0,0,PLAT_AP,PLA_MIDWARE,npiLoadNvmConfig_3,P_ERROR,swLogPrintf("' npiconfig.nvm ' version : %d file body size not right : ( %u / %u ) , use the defult value ");
+317440,650248191,0,0,PLAT_AP,PLA_MIDWARE,npiSaveNvmConfig_1,P_ERROR,swLogPrintf("NPI NVM , can ' t open / create NVM : ' npiconfig.nvm ' , save NVM failed ");
+317440,650250239,0,0,PLAT_AP,PLA_MIDWARE,npiSaveNvmConfig_2,P_ERROR,swLogPrintf("NPI NVM : ' npiconfig.nvm ' , write the file header failed ");
+317440,650252287,0,0,PLAT_AP,PLA_MIDWARE,npiSaveNvmConfig_3,P_ERROR,swLogPrintf("NPI NVM : ' npiconfig.nvm ' , write the file body failed ");
 318464,652214272,0,0,PLAT_AP,PLA_APP,CpStatusTask_0,P_VALUE,swLogPrintf("AP : Test task loop-%d ");
 318464,652216320,0,0,PLAT_AP,PLA_APP,funcTestGetPinValue_0,P_VALUE,swLogPrintf("WakeupPinValue = %d ");
 318464,652220415,0,0,PLAT_AP,PLA_APP,appInit_0,P_VALUE,swLogPrintf("AP : CP Power Off ");
@@ -4895,13 +4894,12 @@ c9b5d99f6262cfa9521e693b9f65083f47d9eb22503d8804c1a9a66903479a3c0ea8394e8a8f2df6
 318464,652230655,0,0,PLAT_AP,NAS_PLMN,CePlmnCurPlmnSearchDone_5,P_WARNING,swLogPrintf("PLMN , no valid PLMN found , since PLMN is currently blocked ");
 318464,652232703,0,0,PLAT_AP,NAS_PLMN,CePlmnDelPhyCellId_1,P_VALUE,swLogPrintf("CE PLMN , cell locked , can ' t delete the PHY cell id ");
 318464,652234751,0,0,PLAT_AP,NAS_PLMN,CePlmnDelPhyCellId_2,P_VALUE,swLogPrintf("CE PLMN , delete the PHY cell id ");
-318464,652236799,0,0,PLAT_AP,PLA_APP,synctime100,P_INFO,swLogPrintf("sync NITZ time fail ");
-318464,652238847,0,0,PLAT_AP,PLA_APP,enter_NMI_handler,P_ERROR,swLogPrintf("WDT timeout!!! Enter NMI Handler!!! ");
-318464,652239360,0,0,PLAT_AP,PLA_APP,appSetPinOperationSync_1,P_INFO,swLogPrintf("PIN oper mode %d , pinStrLen %d , newPinStrLen %d ");
-318464,652241152,0,0,PLAT_AP,PLA_APP,appSetTxPowerSetting_warn1,P_WARNING,swLogPrintf("The maxPower ( %d ) should not less than minPower ( %d ) ");
-318464,652244991,0,0,PLAT_AP,PLA_APP,appSetTxPowerSetting_warn2,P_WARNING,swLogPrintf("appGetUeExtStatusInfoSync return error!!! ");
-318464,652247039,0,0,PLAT_AP,PLA_APP,appSetTxPowerSetting_warn3,P_WARNING,swLogPrintf("The Tx Power Setting should be restricted in RRC Connection state ");
-318464,652249087,0,0,PLAT_AP,PLA_APP,appSetTxPowerSetting_warn4,P_WARNING,swLogPrintf("Wrong TX power type setting ! ");
+318464,652236799,0,0,PLAT_AP,PLA_APP,enter_NMI_handler,P_ERROR,swLogPrintf("WDT timeout!!! Enter NMI Handler!!! ");
+318464,652237312,0,0,PLAT_AP,PLA_APP,appSetPinOperationSync_1,P_INFO,swLogPrintf("PIN oper mode %d , pinStrLen %d , newPinStrLen %d ");
+318464,652239104,0,0,PLAT_AP,PLA_APP,appSetTxPowerSetting_warn1,P_WARNING,swLogPrintf("The maxPower ( %d ) should not less than minPower ( %d ) ");
+318464,652242943,0,0,PLAT_AP,PLA_APP,appSetTxPowerSetting_warn2,P_WARNING,swLogPrintf("appGetUeExtStatusInfoSync return error!!! ");
+318464,652244991,0,0,PLAT_AP,PLA_APP,appSetTxPowerSetting_warn3,P_WARNING,swLogPrintf("The Tx Power Setting should be restricted in RRC Connection state ");
+318464,652247039,0,0,PLAT_AP,PLA_APP,appSetTxPowerSetting_warn4,P_WARNING,swLogPrintf("Wrong TX power type setting ! ");
 323584,662700032,0,0,PLAT_AP,UICC,UiccCtrlHandleCardInserted_0,P_WARNING,swLogPrintf("read abnormal tpLen %d from NVM , use default value and save ");
 323584,662702080,0,0,PLAT_AP,UICC,HandleUiccCtrlRecoveryState_abTP,P_WARNING,swLogPrintf("read abnormal tpLen %d from NVM , use default value and save ");
 323584,662704128,0,0,PLAT_AP,UICC,DecodeSms_1,P_INFO,swLogPrintf("invalid sms status %d , set as free space ");
@@ -9879,5 +9877,5 @@ MW_INFO_PHY_EDRX_PARAM,midWareNvmInfoPhyEdrxParam
 plat_config,plat_config_fs_t
 <end>
 OptionalSegment
-optional_sk_01,91FA117D911E2E20BA9EECD22B729E54FB6F4CEBF3C8984FDACF8508D27A5CC1
+optional_sk_01,5100590F32206E0B2B0C773659200D5ED0D88699CAEF4F70C01B6C80A95F7114
 <end>
