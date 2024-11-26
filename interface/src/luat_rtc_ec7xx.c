@@ -83,7 +83,17 @@ int luat_rtc_get_timezone(void)
 
 
 void luat_rtc_set_tamp32(uint32_t tamp) {
-	soc_save_rtc_tamp_u32(tamp);
+	int8_t tz = 32;
+	if (pMwAonInfo)
+	{
+		uint32_t cr = OS_EnterCritical();
+		if (pMwAonInfo->crc16 == CRC16Cal(&pMwAonInfo->utc_tamp, 9, CRC16_CCITT_SEED, CRC16_CCITT_GEN, 0))
+		{
+			tz = pMwAonInfo->tz;
+		}
+		OS_ExitCritical(cr);
+	}
+	soc_save_rtc_tamp_u32_with_tz(tamp, tz);
 }
 #ifdef __LUATOS__
 int luat_rtc_timer_start(int id, struct tm *tblock){
