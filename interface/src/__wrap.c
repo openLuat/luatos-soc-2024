@@ -1,7 +1,8 @@
 #include "common_api.h"
 #include "time.h"
 #include "osasys.h"
-
+#include "mw_aon_info.h"
+extern MidWareAonInfo      *pMwAonInfo;
 //static void RTC_GetDateTime(Date_UserDataStruct *pDate, Time_UserDataStruct *pTime)
 //{
 //	PV_Union uPV;
@@ -24,19 +25,33 @@ __attribute__((used)) struct tm * __wrap_localtime (const time_t *_timer)
 {
 	Time_UserDataStruct Time;
 	Date_UserDataStruct Date;
-	int64_t Sec;
-	utc_timer_value_t *timeUtc = OsaSystemTimeReadRamUtc();
+	uint64_t Sec = 1732535217;
+	int64_t tz = 32;
+
+	if (pMwAonInfo)
+	{
+		uint32_t tick = slpManGet6P25HZGlobalCnt();
+		uint32_t cr = OS_EnterCritical();
+		if (pMwAonInfo->crc16 == CRC16Cal(&pMwAonInfo->utc_tamp, 9, CRC16_CCITT_SEED, CRC16_CCITT_GEN, 0))
+		{
+			Sec = pMwAonInfo->utc_tamp;
+			uint64_t diff = (tick - pMwAonInfo->rtc_tamp);
+			Sec += diff * 4 / 25;
+			tz = pMwAonInfo->tz;
+		}
+		else
+		{
+			DBG("rtc record error!");
+		}
+		OS_ExitCritical(cr);
+	}
+
 	if (_timer)
 	{
 		Sec = *_timer;
-		Tamp2UTC(Sec + timeUtc->timeZone * 900, &Date, &Time, 0);
 	}
-	else
-	{
-//		RTC_GetDateTime(&Date, &Time);
-//		int64_t tamp = UTC2Tamp(&Date, &Time);
-		Tamp2UTC(timeUtc->UTCsecs + timeUtc->timeZone * 900, &Date, &Time, 0);
-	}
+
+	Tamp2UTC(Sec + tz * 900, &Date, &Time, 0);
 	prvTM.tm_year = Date.Year - 1900;
 	prvTM.tm_mon = Date.Mon - 1;
 	prvTM.tm_mday = Date.Day;
@@ -56,15 +71,29 @@ __attribute__((used)) struct tm * __wrap_gmtime (const time_t *_timer)
 	int64_t Sec;
 	if (_timer)
 	{
-		Sec = *_timer;
-		Tamp2UTC(Sec, &Date, &Time, 0);
+		Tamp2UTC(*_timer, &Date, &Time, 0);
 	}
 	else
 	{
-		utc_timer_value_t *timeUtc = OsaSystemTimeReadRamUtc();
-//		RTC_GetDateTime(&Date, &Time);
-//		int64_t tamp = UTC2Tamp(&Date, &Time);
-		Tamp2UTC(timeUtc->UTCsecs, &Date, &Time, 0);
+
+		uint64_t Sec = 1732535217;
+		if (pMwAonInfo)
+		{
+			uint32_t tick = slpManGet6P25HZGlobalCnt();
+			uint32_t cr = OS_EnterCritical();
+			if (pMwAonInfo->crc16 == CRC16Cal(&pMwAonInfo->utc_tamp, 9, CRC16_CCITT_SEED, CRC16_CCITT_GEN, 0))
+			{
+				Sec = pMwAonInfo->utc_tamp;
+				uint64_t diff = (tick - pMwAonInfo->rtc_tamp);
+				Sec += diff * 4 / 25;
+			}
+			else
+			{
+				DBG("rtc record error!");
+			}
+			OS_ExitCritical(cr);
+		}
+		Tamp2UTC(Sec, &Date, &Time, 0);
 	}
 	prvTM.tm_year = Date.Year - 1900;
 	prvTM.tm_mon = Date.Mon - 1;
@@ -85,11 +114,27 @@ __attribute__((used)) clock_t __wrap_clock (void)
 
 __attribute__((used)) time_t __wrap_time (time_t *_Time)
 {
-  utc_timer_value_t *timeUtc = OsaSystemTimeReadRamUtc();
-  if (_Time != NULL) {
-    *_Time = timeUtc->UTCsecs;
-  }
-  return timeUtc->UTCsecs;
+	time_t Sec = 1732535217;
+	if (pMwAonInfo)
+	{
+		uint32_t tick = slpManGet6P25HZGlobalCnt();
+		uint32_t cr = OS_EnterCritical();
+		if (pMwAonInfo->crc16 == CRC16Cal(&pMwAonInfo->utc_tamp, 9, CRC16_CCITT_SEED, CRC16_CCITT_GEN, 0))
+		{
+			Sec = pMwAonInfo->utc_tamp;
+			time_t diff = (tick - pMwAonInfo->rtc_tamp);
+			Sec += diff * 4 / 25;
+		}
+		else
+		{
+			DBG("rtc record error!");
+		}
+		OS_ExitCritical(cr);
+	}
+	  if (_Time != NULL) {
+	    *_Time = Sec;
+	  }
+	  return Sec;
 }
 
 #include "bsp.h"
