@@ -29,35 +29,6 @@
 #include "soc_service.h"
 extern MidWareAonInfo      *pMwAonInfo;
 
-int luat_rtc_set(struct tm *tblock){
-	int8_t tz = 32;
-	if (pMwAonInfo)
-	{
-		uint32_t cr = OS_EnterCritical();
-		if (pMwAonInfo->crc16 == CRC16Cal(&pMwAonInfo->utc_tamp, 9, CRC16_CCITT_SEED, CRC16_CCITT_GEN, 0))
-		{
-			tz = pMwAonInfo->tz;
-		}
-		OS_ExitCritical(cr);
-	}
-	Date_UserDataStruct Date;
-	Time_UserDataStruct Time;
-	Date.Year = tblock->tm_year+1900;
-	Date.Mon = tblock->tm_mon+1;
-	Date.Day = tblock->tm_mday;
-	Time.Hour = tblock->tm_hour;
-	Time.Min = tblock->tm_min;
-	Time.Sec = tblock->tm_sec;
-	soc_save_rtc_tamp_u32_with_tz(UTC2Tamp(&Date, &Time), tz);
-    return 0;
-}
-
-int luat_rtc_get(struct tm *tblock){
-    struct tm *t = gmtime(NULL);
-    memcpy(tblock,t,sizeof(struct tm));
-    return 0;
-}
-
 void luat_rtc_set_timezone(int zone)
 {
 	soc_save_tz(zone);
@@ -78,23 +49,31 @@ int luat_rtc_get_timezone(void)
 	return tz;
 }
 
+int luat_rtc_set(struct tm *tblock){
+	int8_t tz = luat_rtc_get_timezone();
+	Date_UserDataStruct Date;
+	Time_UserDataStruct Time;
+	Date.Year = tblock->tm_year+1900;
+	Date.Mon = tblock->tm_mon+1;
+	Date.Day = tblock->tm_mday;
+	Time.Hour = tblock->tm_hour;
+	Time.Min = tblock->tm_min;
+	Time.Sec = tblock->tm_sec;
+	soc_save_rtc_tamp_u32_with_tz(UTC2Tamp(&Date, &Time), tz);
+    return 0;
+}
 
-
-
+int luat_rtc_get(struct tm *tblock){
+    struct tm *t = gmtime(NULL);
+    memcpy(tblock,t,sizeof(struct tm));
+    return 0;
+}
 
 void luat_rtc_set_tamp32(uint32_t tamp) {
-	int8_t tz = 32;
-	if (pMwAonInfo)
-	{
-		uint32_t cr = OS_EnterCritical();
-		if (pMwAonInfo->crc16 == CRC16Cal(&pMwAonInfo->utc_tamp, 9, CRC16_CCITT_SEED, CRC16_CCITT_GEN, 0))
-		{
-			tz = pMwAonInfo->tz;
-		}
-		OS_ExitCritical(cr);
-	}
+	int8_t tz = luat_rtc_get_timezone();
 	soc_save_rtc_tamp_u32_with_tz(tamp, tz);
 }
+
 #ifdef __LUATOS__
 int luat_rtc_timer_start(int id, struct tm *tblock){
     (void)id;
