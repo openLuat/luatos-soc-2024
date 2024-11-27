@@ -25,7 +25,7 @@ __attribute__((used)) struct tm * __wrap_localtime (const time_t *_timer)
 {
 	Time_UserDataStruct Time;
 	Date_UserDataStruct Date;
-	uint64_t Sec = 1732535217;
+	int64_t Sec = 0;
 	int64_t tz = 32;
 
 	if (pMwAonInfo)
@@ -39,10 +39,6 @@ __attribute__((used)) struct tm * __wrap_localtime (const time_t *_timer)
 			Sec += diff * 4 / 25;
 			tz = pMwAonInfo->tz;
 		}
-		else
-		{
-			DBG("rtc record error!");
-		}
 		OS_ExitCritical(cr);
 	}
 
@@ -51,7 +47,12 @@ __attribute__((used)) struct tm * __wrap_localtime (const time_t *_timer)
 		Sec = *_timer;
 	}
 
-	Tamp2UTC(Sec + tz * 900, &Date, &Time, 0);
+	Sec += tz * 900;
+	if (Sec < 0)
+	{
+		Sec = 0;
+	}
+	Tamp2UTC(Sec, &Date, &Time, 0);
 	prvTM.tm_year = Date.Year - 1900;
 	prvTM.tm_mon = Date.Mon - 1;
 	prvTM.tm_mday = Date.Day;
@@ -68,7 +69,6 @@ __attribute__((used)) struct tm * __wrap_gmtime (const time_t *_timer)
 {
 	Time_UserDataStruct Time;
 	Date_UserDataStruct Date;
-	int64_t Sec;
 	if (_timer)
 	{
 		Tamp2UTC(*_timer, &Date, &Time, 0);
@@ -76,7 +76,7 @@ __attribute__((used)) struct tm * __wrap_gmtime (const time_t *_timer)
 	else
 	{
 
-		uint64_t Sec = 1732535217;
+		uint64_t Sec = 0;
 		if (pMwAonInfo)
 		{
 			uint32_t tick = slpManGet6P25HZGlobalCnt();
@@ -86,10 +86,6 @@ __attribute__((used)) struct tm * __wrap_gmtime (const time_t *_timer)
 				Sec = pMwAonInfo->utc_tamp;
 				uint64_t diff = (tick - pMwAonInfo->rtc_tamp);
 				Sec += diff * 4 / 25;
-			}
-			else
-			{
-				DBG("rtc record error!");
 			}
 			OS_ExitCritical(cr);
 		}
@@ -114,7 +110,7 @@ __attribute__((used)) clock_t __wrap_clock (void)
 
 __attribute__((used)) time_t __wrap_time (time_t *_Time)
 {
-	time_t Sec = 1732535217;
+	time_t Sec = 0;
 	if (pMwAonInfo)
 	{
 		uint32_t tick = slpManGet6P25HZGlobalCnt();
@@ -124,10 +120,6 @@ __attribute__((used)) time_t __wrap_time (time_t *_Time)
 			Sec = pMwAonInfo->utc_tamp;
 			time_t diff = (tick - pMwAonInfo->rtc_tamp);
 			Sec += diff * 4 / 25;
-		}
-		else
-		{
-			DBG("rtc record error!");
 		}
 		OS_ExitCritical(cr);
 	}
