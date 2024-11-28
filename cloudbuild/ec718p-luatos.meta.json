@@ -171,6 +171,13 @@
                         "rsize": 0,
                         "fsize": 1024,
                         "dft": false
+                    },
+                    {
+                        "name": "@rev_release_v2002",
+                        "content": "选用V2001发行版的代码进行编译, 发布日期 2024.11.20",
+                        "rsize": 0,
+                        "fsize": 1024,
+                        "dft": false
                     }
                 ]
             },
