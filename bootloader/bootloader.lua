@@ -65,8 +65,6 @@ target("ap_bootloader.elf",function()
     set_targetdir(project_dir.."/build/ap_bootloader")
     add_deps("driver")
     
-    local chip_target = nil
-    if has_config("chip_target") then chip_target = get_config("chip_target") end
     if chip_target and lib_ps_plat then
 
         if chip_target=="ec718u" and lib_ps_plat=="ims" then
