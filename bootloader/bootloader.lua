@@ -71,22 +71,35 @@ target("ap_bootloader.elf",function()
 
         if chip_target=="ec718u" and lib_ps_plat=="ims" then
             add_linkdirs(csdk_root.."/PLAT/libs/ec718u-ims/bootloader")
+        elseif chip_target=="ec718um" and lib_ps_plat=="ims" then
+            add_linkdirs(csdk_root.."/PLAT/libs/ec718um-ims/bootloader")
         else
             add_linkdirs(csdk_root.."/PLAT/libs/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(lib_ps_plat=="mid"and"-mid"or"").."/bootloader")
         end
-        add_linkdirs(csdk_root.."/PLAT/prebuild/PLAT/lib/gcc/"..(chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6).."/"..lib_ps_plat)
-        
-    end
+        add_linkdirs(csdk_root.."/PLAT/prebuild/PLAT/lib/gcc/"..((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6)).."/"..lib_ps_plat)
 
+    end
+    
     add_linkdirs(csdk_root.."/lib/")
     add_linkgroups("driver","startup","core_airm2m","lzma","driver_private_bl","bootloader","usbbl_priv",
-                    "osa","middleware_ec","middleware_ec_private","ccio","fota","deltapatch2","ffota_eflash", {whole = true})
+                    "osa","middleware_ec","middleware_ec_private","ccio","fota","deltapatch2","ffota_eflash", 
+                    {whole = true},{group = true})
 
-    add_ldflags("-T"..csdk_root.."/PLAT/core/ld/ec7xx_0h00_flash_bl.ld","-Wl,-Map,"..project_dir.."/build/ap_bootloader/ap_bootloader_debug.map",{force = true})
-    
+    if chip_target then
+        if chip_target=="ec718um" then
+            add_ldflags("-T"..csdk_root.."/PLAT/core/ld/ec718xm/ec7xx_0h00_flash_bl.ld","-Wl,-Map,"..project_dir.."/build/ap_bootloader/ap_bootloader_debug.map",{force = true})
+        else
+            add_ldflags("-T"..csdk_root.."/PLAT/core/ld/ec7xx_0h00_flash_bl.ld","-Wl,-Map,"..project_dir.."/build/ap_bootloader/ap_bootloader_debug.map",{force = true})
+        end
+    end
+
+
     local toolchains = nil
     local ld_parameter = nil 
     before_link(function(target)
+        local chip_target = nil
+        if has_config("chip_target") then chip_target = get_config("chip_target") end
+        
         local project_dir = target:values("project_dir")
         local csdk_root = target:values("csdk_root")
         toolchains = target:tool("cc"):match('.+\\bin') or target:tool("cc"):match('.+/bin')
@@ -109,7 +122,26 @@ target("ap_bootloader.elf",function()
             end
         end
 
-        os.execv(toolchains .. "/arm-none-eabi-gcc",table.join(ld_parameter,user_mem_map, {"-I",csdk_root .. "/PLAT/device/target/board/ec7xx_0h00/common/pkginc"},{"-I",csdk_root .. "/PLAT/device/target/board/ec7xx_0h00/common/inc"},{"-I",csdk_root .. "/PLAT/core/ld"},{"-o",csdk_root .. "/PLAT/core/ld/ec7xx_0h00_flash_bl.ld","-"}),{stdin = csdk_root .. "/PLAT/core/ld/ec7xx_0h00_flash_bl.c"})
+        if chip_target then
+            if chip_target=="ec718um" then
+                os.execv(toolchains .. "/arm-none-eabi-gcc",
+                table.join(ld_parameter,user_mem_map, 
+                            {"-I",csdk_root .. "/PLAT/device/target/board/ec7xx_0h00/common/pkginc"},
+                            {"-I",csdk_root .. "/PLAT/device/target/board/ec7xx_0h00/common/inc"},
+                            {"-I",csdk_root .. "/PLAT/core/ld"},
+                            {"-o",csdk_root .. "/PLAT/core/ld/ec718xm/ec7xx_0h00_flash_bl.ld","-"}),
+                            {stdin = csdk_root .. "/PLAT/core/ld/ec718xm/ec7xx_0h00_flash_bl.c"})
+            else
+                os.execv(toolchains .. "/arm-none-eabi-gcc",
+                table.join(ld_parameter,user_mem_map, 
+                            {"-I",csdk_root .. "/PLAT/device/target/board/ec7xx_0h00/common/pkginc"},
+                            {"-I",csdk_root .. "/PLAT/device/target/board/ec7xx_0h00/common/inc"},
+                            {"-I",csdk_root .. "/PLAT/core/ld"},
+                            {"-o",csdk_root .. "/PLAT/core/ld/ec7xx_0h00_flash_bl.ld","-"}),
+                            {stdin = csdk_root .. "/PLAT/core/ld/ec7xx_0h00_flash_bl.c"})
+            end
+        end
+
     end)
     after_build(function(target)
         local project_dir = target:values("project_dir")
@@ -129,13 +161,20 @@ target("ap_bootloader.elf",function()
         io.writefile(project_dir.."/build/ap_bootloader/ap_bootloader.size", os.iorun(toolchains .. "/arm-none-eabi-objdump -h "..project_dir.."/build/ap_bootloader/ap_bootloader.elf"))
         local size_file = io.open(project_dir.."/build/ap_bootloader/ap_bootloader.size", "a")
         size_file:write(os.iorun(toolchains .. "/arm-none-eabi-size -G "..project_dir.."/build/ap_bootloader/ap_bootloader.elf"))
-        if (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6) == "ec718p" then size_file:write(os.iorun(toolchains .. "/arm-none-eabi-size -t -G "..csdk_root.."/lib/libffota_eflash.a")) end
+        if ((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6)) == "ec718p" or 
+            ((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6)) == "ec718u" or 
+            ((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6)) == "ec718um" then 
+            size_file:write(os.iorun(toolchains .. "/arm-none-eabi-size -t -G "..csdk_root.."/lib/libffota_eflash.a")) 
+        end
         size_file:write(os.iorun(toolchains .. "/arm-none-eabi-size -t -G "..project_dir.."/build/bootloader_libdriver/libdriver.a"))
         for _, filepath in ipairs(os.files(csdk_root.."/PLAT/libs/"..(chip_target=="ec718e"and"ec718p"or chip_target).."/bootloader/*.a")) do
             size_file:write(os.iorun(toolchains .. "/arm-none-eabi-size -t -G " .. filepath))
         end
         size_file:close()
-        os.exec(csdk_root .. (is_plat("windows") and "/PLAT/tools/fcelf.exe " or "/PLAT/tools/fcelf ").."-C -bin "..project_dir.."/build/ap_bootloader/ap_bootloader_unZip.bin".. " -cfg ".. csdk_root.."/PLAT/project/ec7xx_0h00/ap/apps/bootloader/GCC/sectionInfo_"..(chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6)..".json".. " -map "..project_dir.."/build/ap_bootloader/ap_bootloader_debug.map".." -out "..project_dir.."/build/ap_bootloader/ap_bootloader.bin")
+        os.exec(csdk_root .. (is_plat("windows") and "/PLAT/tools/fcelf.exe " or "/PLAT/tools/fcelf ")..
+                "-C -bin "..project_dir.."/build/ap_bootloader/ap_bootloader_unZip.bin".. 
+                " -cfg ".. csdk_root.."/PLAT/project/ec7xx_0h00/ap/apps/bootloader/GCC/sectionInfo_"..((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6))..".json".. 
+                " -map "..project_dir.."/build/ap_bootloader/ap_bootloader_debug.map".." -out "..project_dir.."/build/ap_bootloader/ap_bootloader.bin")
     end)
 end)
 

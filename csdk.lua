@@ -43,7 +43,9 @@ function description_common()
     set_values("csdk_root", csdk_root)
     set_values("luatos_root", luatos_root)
 
-	option("chip_target", {default = "ec718p", showmenu = true, values={"ec716e","ec716s","ec718s","ec718e","ec718p","ec718pv","ec718u"},description = "chip target"})
+	option("chip_target", {default = "ec718p", showmenu = true, 
+            values={"ec716e","ec716s","ec718s","ec718e","ec718p","ec718pv","ec718u","ec718um"},
+            description = "chip target"})
     add_options("chip_target")
     if has_config("chip_target") then chip_target = get_config("chip_target") end
 
@@ -53,7 +55,7 @@ function description_common()
 		set_showmenu(true)
         chip_target = get_config("chip_target")
         -- 先统一显示出来,后面支持动态显示在调整
-        set_description("lspd mode. 716s/ec718s disable get sms,wifi,hib, enable get rndis. 718p/718e/716e/ enable get more memory. ec718pv ec718u always enable")
+        set_description("lspd mode. 716s/ec718s disable get sms,wifi,hib, enable get rndis. 718p/718e/716e/ enable get more memory. ec718pv ec718u ec718um always enable")
 
 		-- if chip_target ~= "ec718p" and chip_target ~= "ec718pv" and chip_target ~= "ec718e" then
 		-- 	set_description("lspd mode. enable can get sms,wifi,hib power mode, disable can get rndis")
@@ -71,7 +73,7 @@ function description_common()
 		set_default(false)
 		set_showmenu(true)
         chip_target = get_config("chip_target")
-        set_description("denoise mode. enable can use amr encode to support noise reduction. only ec718p need config. ec718u always enable ,other always disable, no need config ")
+        set_description("denoise mode. enable can use amr encode to support noise reduction. only ec718p need config. ec718u ec718um always enable ,other always disable, no need config ")
         -- after_check(function (option)
         --     if get_config("chip_target") ~= "ec718p" then
         --         option:enable(false)
@@ -95,9 +97,13 @@ function description_common()
             add_defines("CHIP_EC716","TYPE_EC716E")
         elseif chip_target == "ec718u" then
             add_defines("CHIP_EC718","TYPE_EC718U")
+        elseif chip_target == "ec718um" then
+            add_defines("CHIP_EC718","TYPE_EC718M","TYPE_EC718UM")
         end
 
-        if (chip_target == "ec718p" or chip_target == "ec718e") and has_config("lspd_mode") or chip_target == "ec718u" or chip_target == "ec718pv" or chip_target == "ec716s" or chip_target == "ec716e" or chip_target == "ec718s" then
+        if (chip_target == "ec718p" or chip_target == "ec718e") and has_config("lspd_mode") or 
+            chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718pv" or 
+            chip_target == "ec716s" or chip_target == "ec716e" or chip_target == "ec718s" then
             add_defines("OPEN_CPU_MODE")
         end
         add_includedirs(csdk_root.."/PLAT/driver/hal/ec7xx/ap/inc/"..CHIP,
@@ -109,7 +115,8 @@ function description_common()
         lib_ps_plat = "full"
         lib_fw = "oc"
         if has_config("lspd_mode") then
-            if (chip_target == "ec718p" and has_config("denoise_force")) or (chip_target == "ec718u" and has_config("denoise_force"))then
+            if (chip_target == "ec718p" and has_config("denoise_force")) or 
+                (chip_target == "ec718u" or chip_target == "ec718um" and has_config("denoise_force"))then
                 lib_fw = "audio"
                 lib_ps_plat = "oc"
                 add_defines("FEATURE_AMR_CP_ENABLE","FEATURE_VEM_CP_ENABLE")
@@ -117,7 +124,7 @@ function description_common()
                 lib_fw = "audio"
                 lib_ps_plat = "ims"
                 add_defines("FEATURE_AMR_CP_ENABLE","FEATURE_VEM_CP_ENABLE")
-            elseif chip_target == "ec718u" then
+            elseif chip_target == "ec718u" or chip_target == "ec718um" then
                 lib_ps_plat = "oc"
             elseif chip_target == "ec716e" then
                 lib_fw = "ram"
@@ -129,7 +136,7 @@ function description_common()
             if (chip_target == "ec718p" and has_config("denoise_force")) or (chip_target == "ec718e" and has_config("denoise_force")) then
                 lib_fw = "audio"
                 add_defines("FEATURE_AMR_CP_ENABLE","FEATURE_VEM_CP_ENABLE")
-            elseif chip_target == "ec718u" or chip_target == "ec718pv" then
+            elseif chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718pv" then
                 lib_fw = "audio"
                 lib_ps_plat = "ims"
                 add_defines("FEATURE_AMR_CP_ENABLE","FEATURE_VEM_CP_ENABLE")
@@ -274,7 +281,7 @@ function description_common()
 
         local csdk_root = target:values("csdk_root")
         local chip_target = get_config("chip_target")
-        assert (chip_target == "ec718u" or chip_target == "ec718e" or chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718s" or chip_target == "ec716s" or chip_target == "ec716e" ,"target only support ec718u/ec718e/ec718p/ec718pv/ec718s/ec716s/ec716e")
+        assert (chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718e" or chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718s" or chip_target == "ec716s" or chip_target == "ec716e" ,"target only support ec718u/ec718um/ec718e/ec718p/ec718pv/ec718s/ec716s/ec716e")
         
         if target:name()== target:values("project_name") then
             cprint(format("${cyan}CPU : ${red}%s",os.cpuinfo("model_name")))
@@ -306,12 +313,14 @@ function description_common()
                 error("csdk_root should not contain special characters")
             end
         end
-
+        -----------------------------------------------------------------
         assert(os.isdir(target:values("luatos_root")),"luatos_root:"..target:values("luatos_root").." not exist")
         local plat_url = "http://xmake.vue2.cn/xmake/libs/%s/%s.7z"
         local libs_plat = (chip_target=="ec718e"and"ec718p"or chip_target)..(target:values("lib_ps_plat")=="mid"and"-mid"or"")
         if chip_target=="ec718u" and target:values("lib_ps_plat")=="ims" then
             libs_plat = "ec718u-ims"
+        elseif chip_target=="ec718um" and target:values("lib_ps_plat")=="ims" then
+            libs_plat = "ec718um-ims"
         end
         -- print("libs_plat:",libs_plat)
         local libs_plat_dir = csdk_root.."/PLAT/libs/"..libs_plat
@@ -359,7 +368,7 @@ function description_common()
             print("<-- 解压完成", prebuild_sha1)
             io.open(libs_prebuild_dir.."FW".."/"..prebuild_sha1, "w"):close()
         end
-
+        -----------------------------------------------------------------
         for _, filepath in ipairs(os.files(target:values("project_dir").."/**/mem_map_7xx.h")) do
             if target:name()== target:values("project_name") then
                 print("mem_map_7xx.h found in ",filepath)
