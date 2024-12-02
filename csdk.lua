@@ -116,7 +116,7 @@ function description_common()
         lib_fw = "oc"
         if has_config("lspd_mode") then
             if (chip_target == "ec718p" and has_config("denoise_force")) or 
-                (chip_target == "ec718u" or chip_target == "ec718um" and has_config("denoise_force"))then
+                ((chip_target == "ec718u" or chip_target == "ec718um") and has_config("denoise_force"))then
                 lib_fw = "audio"
                 lib_ps_plat = "oc"
                 add_defines("FEATURE_AMR_CP_ENABLE","FEATURE_VEM_CP_ENABLE")
@@ -281,7 +281,8 @@ function description_common()
 
         local csdk_root = target:values("csdk_root")
         local chip_target = get_config("chip_target")
-        assert (chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718e" or chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718s" or chip_target == "ec716s" or chip_target == "ec716e" ,"target only support ec718u/ec718um/ec718e/ec718p/ec718pv/ec718s/ec716s/ec716e")
+        assert (chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718e" or chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718s" or chip_target == "ec716s" or chip_target == "ec716e" ,
+                "target only support ec718u/ec718um/ec718e/ec718p/ec718pv/ec718s/ec716s/ec716e")
         
         if target:name()== target:values("project_name") then
             cprint(format("${cyan}CPU : ${red}%s",os.cpuinfo("model_name")))

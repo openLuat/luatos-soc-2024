@@ -14,7 +14,7 @@ function description_csdk()
             --add_defines("FEATURE_EXCEPTION_FLASH_DUMP_ENABLE")
         end
 
-        if chip_target == "ec718u" or chip_target == "ec718um" and lib_ps_plat == "ims" or chip_target == "ec718pv" then
+        if (chip_target == "ec718u" or chip_target == "ec718um") and lib_ps_plat == "ims" or chip_target == "ec718pv" then
             add_defines("FEATURE_IMS_ENABLE",
                         "FEATURE_IMS_CC_ENABLE",
                         "FEATURE_IMS_SMS_ENABLE",
@@ -43,7 +43,7 @@ function description_csdk()
         else 
             add_defines("DHCPD_ENABLE_DEFINE=1")
         end
-        if chip_target=="ec718u" or chip_target=="ec718um" and lib_ps_plat == "ims" then
+        if (chip_target=="ec718u" or chip_target=="ec718um") and lib_ps_plat == "ims" then
             add_includedirs(csdk_root.."/PLAT/tools/"..(chip_target)..("-ims"))
         else
             add_includedirs(csdk_root.."/PLAT/tools/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(lib_ps_plat=="mid"and"-mid"or""))
@@ -262,12 +262,12 @@ target(project_name..".elf",function()
         add_linkdirs(csdk_root.."/PLAT/prebuild/PS/lib/gcc/"..((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6)).."/"..lib_ps_plat)
         add_linkdirs(csdk_root.."/PLAT/prebuild/PLAT/lib/gcc/"..((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6)).."/"..lib_ps_plat)
         
-        if chip_target=="ec718u" or chip_target=="ec718um" and lib_ps_plat=="ims" then
+        if (chip_target=="ec718u" or chip_target=="ec718um") and lib_ps_plat=="ims" then
             add_linkdirs(csdk_root.."/PLAT/libs/"..(chip_target)..("-ims"))
         else
             add_linkdirs(csdk_root.."/PLAT/libs/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(lib_ps_plat=="mid"and"-mid"or""))
         end
-        if chip_target=="ec718u" or chip_target=="ec718um" and lib_ps_plat=="ims" or chip_target=="ec718pv" then
+        if (chip_target=="ec718u" or chip_target=="ec718um") and lib_ps_plat=="ims" or chip_target=="ec718pv" then
             add_linkgroups("imsnv","ims","imsxml", {whole = true})
         end
     end
