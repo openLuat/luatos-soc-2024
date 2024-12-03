@@ -81,7 +81,7 @@ target("ap_bootloader.elf",function()
     add_linkdirs(csdk_root.."/lib/")
     add_linkgroups("driver","startup","core_airm2m","lzma","driver_private_bl","bootloader","usbbl_priv",
                     "osa","middleware_ec","middleware_ec_private","ccio","fota","deltapatch2","ffota_eflash", 
-                    {whole = true},{group = true})
+                    {whole = true, group = true})
 
     if chip_target then
         if chip_target=="ec718um" then
