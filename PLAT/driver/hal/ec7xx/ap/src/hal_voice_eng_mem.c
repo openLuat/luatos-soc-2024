@@ -54,7 +54,7 @@ __ALIGNED(4) PS_FM_VOICE_NOINIT UINT8  halRtpAmrFrameBuf[HAL_RTP_AMR_FRAME_BUFF_
 /**
  * HalVMemMgr,
 */
-HalVMemMgr      gHalVMemMgr = {0};
+AP_PLAT_COMMON_BSS HalVMemMgr      gHalVMemMgr = {0};
 
 
 /******************************************************************************

@@ -1,9 +1,9 @@
 {
   "version": "1.0",
-  "update_time": "2024-11-26 10:34:35.630995",
+  "update_time": "2024-12-03 11:42:47.578349",
   "libs": {},
   "prebuild": {
-    "sha1": "5804618e146b479aae3ef656d0a71202e2f75795",
-    "size": 34564937
+    "sha1": "ea7f47042ec3d6bfe36a0a753d3dcc3b9e458edd",
+    "size": 56598593
   }
 }

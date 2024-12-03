@@ -98,7 +98,7 @@ extern int currRecordNumb;
 extern void TMU_APTimeReadOpen(UINT32 *sysTime);
 
 
-char over_buf[64];
+AP_PLAT_COMMON_BSS char over_buf[64];
 
 void vApplicationStackOverflowHook (TaskHandle_t xTask, signed char *pcTaskName)
 {

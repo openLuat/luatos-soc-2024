@@ -138,6 +138,10 @@ typedef enum
     RST_PCLK_TRNG         = CONSTRUCT_CLOCK_RESET_ID(APB_GPR_APB_GP_PRST_REQ_REG_INDEX, 9),           /**< Trng APB reset                   */
     RST_PCLK_USBP         = CONSTRUCT_CLOCK_RESET_ID(APB_GPR_APB_GP_PRST_REQ_REG_INDEX, 10),          /**< Usbp APB reset                   */
 
+#if defined TYPE_EC718M
+    RST_PCLK_APM          = CONSTRUCT_CLOCK_RESET_ID(APB_GPR_APB_GP_PRST_REQ_REG_INDEX, 11),          /**< APM APB reset                   */
+#endif
+
     /*                   APB MP Reset                                              */
     RST_PCLK_UART0        = CONSTRUCT_CLOCK_RESET_ID(APB_GPR_APB_MP_PRST_REQ_REG_INDEX, 0),           /**< Uart0 APB reset                  */
     RST_PCLK_UART1        = CONSTRUCT_CLOCK_RESET_ID(APB_GPR_APB_MP_PRST_REQ_REG_INDEX, 1),           /**< Uart1 APB reset                  */
@@ -150,6 +154,9 @@ typedef enum
     RST_PCLK_USP0         = CONSTRUCT_CLOCK_RESET_ID(APB_GPR_APB_MP_PRST_REQ_REG_INDEX, 8),           /**< Usp 0 APB reset                  */
     RST_PCLK_USP1         = CONSTRUCT_CLOCK_RESET_ID(APB_GPR_APB_MP_PRST_REQ_REG_INDEX, 9),           /**< Usp 1 APB reset                  */
     RST_PCLK_USP2         = CONSTRUCT_CLOCK_RESET_ID(APB_GPR_APB_MP_PRST_REQ_REG_INDEX, 10),          /**< Usp 2 APB reset                  */
+#if defined TYPE_EC718M
+    RST_PCLK_CAN0         = CONSTRUCT_CLOCK_RESET_ID(APB_GPR_APB_MP_PRST_REQ_REG_INDEX, 11),          /**< CAN 0 APB reset                  */
+#endif
 
     /*                   APB AP Reset                                              */
     RST_PCLK_WDG          = CONSTRUCT_CLOCK_RESET_ID(APB_GPR_APB_AP_PRST_REQ_REG_INDEX, 0),           /**< WDG APB reset                    */
@@ -179,6 +186,9 @@ typedef enum
     RST_FCLK_USP0        = CONSTRUCT_CLOCK_RESET_ID(APB_GPR_APB_MP_FRST_REQ_REG_INDEX, 8),            /**< USP0 Func reset                  */
     RST_FCLK_USP1        = CONSTRUCT_CLOCK_RESET_ID(APB_GPR_APB_MP_FRST_REQ_REG_INDEX, 9),            /**< USP1 Func reset                  */
     RST_FCLK_USP2        = CONSTRUCT_CLOCK_RESET_ID(APB_GPR_APB_MP_FRST_REQ_REG_INDEX, 10),           /**< USP2 Func reset                  */
+#if defined TYPE_EC718M
+    RST_FCLK_CAN0        = CONSTRUCT_CLOCK_RESET_ID(APB_GPR_APB_MP_FRST_REQ_REG_INDEX, 11),           /**< CAN0 Func reset                  */
+#endif
 
     /*                   APB AP Func Reset                                         */
     RST_FCLK_WDG         = CONSTRUCT_CLOCK_RESET_ID(APB_GPR_APB_AP_FRST_REQ_REG_INDEX, 0),           /**< WDG Func reset                    */
@@ -191,6 +201,9 @@ typedef enum
     RST_FCLK_USIM0       = CONSTRUCT_CLOCK_RESET_ID(APB_GPR_APB_AP_FRST_REQ_REG_INDEX, 7),           /**< USIM0 Func reset                  */
     RST_FCLK_USIM1       = CONSTRUCT_CLOCK_RESET_ID(APB_GPR_APB_AP_FRST_REQ_REG_INDEX, 8),           /**< USIM1 Func reset                  */
     RST_FCLK_KPC         = CONSTRUCT_CLOCK_RESET_ID(APB_GPR_APB_AP_FRST_REQ_REG_INDEX, 9),           /**< KPC Func reset                    */
+#if defined TYPE_EC718M
+    RST_FCLK_GPIO        = CONSTRUCT_CLOCK_RESET_ID(APB_GPR_APB_AP_FRST_REQ_REG_INDEX, 10),           /**< KPC Func reset                    */
+#endif
 
     /*                   RMI TOP Reset                                             */
     RST_TOP_PBRG_HCLK    = CONSTRUCT_CLOCK_RESET_ID(RMI_GPR_TOP_RSTREQ_REG_INDEX, 0),                /**< DMA AHB domain reset              */

@@ -17,6 +17,13 @@
 #define MM_TRACE_MAX            128
 #endif
 
+#ifdef __USER_CODE__
+#ifdef TYPE_EC718M
+#undef MM_TRACE_MAX
+#define MM_TRACE_MAX	1024
+#endif
+#endif
+
 #define MM_TRACE_HASH_SIZE      32
 
 typedef struct mm_trace_node

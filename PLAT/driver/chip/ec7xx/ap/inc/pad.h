@@ -80,12 +80,15 @@ typedef enum
 } PadPullConfig_e;
 
 #if defined CHIP_EC718
+
+#if defined TYPE_EC718M
 /** \brief Configures slew rate feature */
 typedef enum
 {
     PAD_SLEW_RATE_LOW   = 0U,  /**< Slew rate is set to low */
     PAD_SLEW_RATE_HIGH  = 1U,  /**< Slew rate is set to high */
 } PadSlewRate_e;
+#endif
 
 /** \brief Drive strength configuration */
 typedef enum
@@ -108,7 +111,11 @@ typedef struct
     uint32_t         inputControl               : 1;   /**< Input enable, 'force' on or controlled by muxed alt function signal, i.e. I2C SCL */
     uint32_t         outputControl              : 1;   /**< Output enable, 'force' on or controlled by muxed alt function signal, i.e. I2C SCL */
     uint32_t         outputForceDisable         : 1;   /**< Force to disable output or not, if true, output path is cut off, otherwise, it's controlled by outputControl bit */
+#if defined TYPE_EC718M
+    uint32_t         slewRate                   : 1;   /**< Slew rate setting */
+#else
     uint32_t                                    : 1;
+#endif
     uint32_t         driveStrength              : 1;
     uint32_t                                    : 12;
     uint32_t         swOutputValue              : 1;
@@ -233,11 +240,20 @@ void PAD_setPinMux(uint32_t paddr, PadMux_e mux);
 void PAD_setPinPullConfig(uint32_t paddr, PadPullConfig_e config);
 /**
   \fn    void PAD_setInputOutputDisable(uint32_t paddr);
-  
+
   \brief set specific pad as no input and no output
   \param pin       PAD pin number
  */
 void PAD_setInputOutputDisable(uint32_t paddr);
+
+#if defined TYPE_EC718M
+/**
+  \fn    void PAD_setDefaultDrvStrength0(void);
+
+  \brief EC718M set all pad drive strength = 0
+ */
+void PAD_setDefaultDrvStrength0(void);
+#endif
 
 /** \} */
 

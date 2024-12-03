@@ -35,20 +35,21 @@ extern tpDrvPra_t   cst816Pra;
 extern tpDrvFunc_t  gt911Drv;
 extern tpDrvPra_t   gt911Pra;
 #endif 
+#include "sctdef.h"
 
-static tpDev_t tpDevList[SUPPORT_TP_NUM] ;
-static tpObj_t tpObjList[SUPPORT_TP_NUM] = 
+AP_PLAT_COMMON_BSS static tpDev_t tpDevList[SUPPORT_TP_NUM] ;
+AP_PLAT_COMMON_DATA static tpObj_t tpObjList[SUPPORT_TP_NUM] = 
 {
     {"ft6336",  0x6336},
     {"cst816",  0x816},
     {"gt911",   0x911},
 };
 
-int16_t xy_pos[4]={0};
-int16_t last_xy_pos[4]={0};
-static bool is_pressed = false;
+AP_PLAT_COMMON_BSS int16_t xy_pos[4]={0};
+AP_PLAT_COMMON_BSS int16_t last_xy_pos[4]={0};
+AP_PLAT_COMMON_BSS static bool is_pressed = false;
 #ifndef FEATURE_SUBSYS_INPUT_ENABLE
-static osSemaphoreId_t    tpSemaphore	= NULL;
+AP_PLAT_COMMON_BSS static osSemaphoreId_t    tpSemaphore	= NULL;
 #endif
 
 #define TP_TRACE(subId, argLen, format,  ...)  \

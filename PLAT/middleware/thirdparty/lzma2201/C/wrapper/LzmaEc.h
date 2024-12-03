@@ -29,7 +29,11 @@
 
 
 #define APCP_HASH_MSMB_MEM_START_ADDR      0x400000 
+#if defined TYPE_EC718M
+#define APCP_HASH_MSMB_MEM_END_ADDR        0x0c400000 
+#else
 #define APCP_HASH_MSMB_MEM_END_ADDR        0x53FFFF 
+#endif
 #define APCP_HASH_OUT_MAX_LEN              32 
 #define APCP_HASH_ALIGN_LEN                64 
 #define APCP_HASH_ONCE_MAX_LEN             0x8000//32*1024 

@@ -21,6 +21,12 @@
 #ifdef CORE_IS_AP
     extern UINT32 start_up_buffer;
     extern UINT32 end_ap_data;
+#ifdef __USER_CODE__
+#ifdef TYPE_EC718M
+    extern UINT32 heap_endAddr_psram;
+    extern UINT32 end_ap_data_psram;
+#endif
+#endif
 #endif
 
 
@@ -33,7 +39,15 @@
 #else
     //static uint8_t ucHeap[ configTOTAL_HEAP_SIZE ];
     #ifdef CORE_IS_AP
-    uint8_t * ucHeap=(uint8_t *)&( end_ap_data );
+#ifdef __USER_CODE__
+#ifdef TYPE_EC718M
+    AP_PLAT_COMMON_DATA uint8_t * ucHeap=(uint8_t *)&( end_ap_data_psram );
+#else
+    AP_PLAT_COMMON_DATA uint8_t * ucHeap=(uint8_t *)&( end_ap_data );
+#endif
+#else
+    AP_PLAT_COMMON_DATA uint8_t * ucHeap=(uint8_t *)&( end_ap_data );
+#endif
     #if MM_TRACE_ON == 2
     #define TLSF_AP_HEAP_MAX  (128*1024)        // worse case of heap size
     #else
@@ -44,7 +58,7 @@
     #endif
 
     //dynamic heap size, caculate per compilation
-    UINT32 gTotalHeapSize=0;
+AP_PLAT_COMMON_BSS UINT32 gTotalHeapSize=0;
 
 #endif /* configAPPLICATION_ALLOCATED_HEAP */
 
@@ -55,7 +69,7 @@
  */
 static void prvHeapInit( void );
 
-static tlsf_t    pxTlsf = NULL;
+AP_PLAT_COMMON_BSS static tlsf_t    pxTlsf = NULL;
 
 FREERTOS_HEAP6_TEXT_SECTION void *pvPortZeroMalloc( size_t xWantedSize)
 {
@@ -340,17 +354,22 @@ FREERTOS_HEAP6_TEXT_SECTION bool vPortGetHeapInfo(uint8_t type, int *mem_range)
 
 FREERTOS_HEAP6_TEXT_SECTION static void prvHeapInit( void )
 {
+#ifdef __USER_CODE__
+#ifdef TYPE_EC718M
+	gTotalHeapSize = (UINT32)&(heap_endAddr_psram) - (UINT32)&(end_ap_data_psram);
+#else
+	gTotalHeapSize = (UINT32)&(start_up_buffer) - (UINT32)&(end_ap_data);
+#endif
+#else
 #ifdef CORE_IS_AP
     gTotalHeapSize = (UINT32)&(start_up_buffer) - (UINT32)&(end_ap_data);
-#ifdef __USER_CODE__
-#else
     gTotalHeapSize = (gTotalHeapSize>TLSF_AP_HEAP_MAX) ? TLSF_AP_HEAP_MAX : gTotalHeapSize;
-#endif
 #else
     gTotalHeapSize = configTOTAL_HEAP_SIZE;
 #endif
-
+#endif
     pxTlsf = tlsf_create_with_pool(ucHeap, gTotalHeapSize);
+
 }
 
 #ifdef __USER_CODE__

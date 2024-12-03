@@ -21,6 +21,8 @@
  *----------------------------------------------------------------------------*/
 #include "usbd_func_cconf.h"
 #include "ccid_desc.h"
+#include "sctdef.h"
+
 /*----------------------------------------------------------------------------*
  *                    MACROS                                                  *
  *----------------------------------------------------------------------------*/
@@ -62,7 +64,7 @@ const usbd_ccid_desc_st usbd_ccid_other_config_desc;
 
 /*   USB smart card device Configuration Descriptor */
 /*   Configuration, Interface, Endpoint, Class, Vendor */
-usbd_ccid_desc_st usbd_ccid_config_desc =
+AP_PLAT_COMMON_DATA usbd_ccid_desc_st usbd_ccid_config_desc =
 {
   /********************configuration ********************/
     .cfg_desc = {
@@ -205,7 +207,7 @@ usbd_ccid_desc_st usbd_ccid_config_desc =
 
 /*   USB smart card device Configuration Descriptor */
 /*   Configuration, Interface, Endpoint, Class, Vendor */
-usbd_ccid_desc_st usbd_ccid_other_config_desc =
+AP_PLAT_COMMON_DATA usbd_ccid_desc_st usbd_ccid_other_config_desc =
 {
    /********************configuration ********************/
     .cfg_desc = {

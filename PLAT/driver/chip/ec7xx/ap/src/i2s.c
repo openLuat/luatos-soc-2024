@@ -8,6 +8,8 @@
   ****************************************************************************/
 #include "i2s.h"
 #include "slpman.h"
+#include "sctdef.h"
+
 
 #ifdef FEATURE_OS_ENABLE
 #include DEBUG_LOG_HEADER_FILE
@@ -17,18 +19,18 @@
 // I2S Setting field Start
 // All the I2S's parameters that need user to set are all put here
 //////////////////////////////////////////////////////////////////////////////////////////////
-static DmaTransferConfig_t g_dmaTxConfig =
+AP_PLAT_COMMON_DATA static DmaTransferConfig_t g_dmaTxConfig =
 {
     NULL,
     NULL,
     DMA_FLOW_CONTROL_TARGET,
     DMA_ADDRESS_INCREMENT_SOURCE,
     DMA_DATA_WIDTH_FOUR_BYTES,
-    DMA_BURST_32_BYTES, 
+    DMA_BURST_8_BYTES, 
     0
 };
 
-static DmaTransferConfig_t g_dmaRxConfig =
+AP_PLAT_COMMON_DATA static DmaTransferConfig_t g_dmaRxConfig =
 {
     NULL,
     NULL,
@@ -41,17 +43,17 @@ static DmaTransferConfig_t g_dmaRxConfig =
 
 
 #if (RTE_I2S0)
-static PIN i2s0PinMCLK  = {RTE_I2S0_MCLK_PAD_ADDR,   RTE_I2S0_MCLK_FUNC};
-static PIN i2s0PinBCLK  = {RTE_I2S0_BCLK_PAD_ADDR,   RTE_I2S0_BCLK_FUNC};
-static PIN i2s0PinLRCK  = {RTE_I2S0_LRCK_PAD_ADDR,   RTE_I2S0_LRCK_FUNC};
-static PIN i2s0PinDin   = {RTE_I2S0_DIN_PAD_ADDR,    RTE_I2S0_DIN_FUNC};
-static PIN i2s0PinDout  = {RTE_I2S0_DOUT_PAD_ADDR,   RTE_I2S0_DOUT_FUNC};
+AP_PLAT_COMMON_DATA static PIN i2s0PinMCLK  = {RTE_I2S0_MCLK_PAD_ADDR,   RTE_I2S0_MCLK_FUNC};
+AP_PLAT_COMMON_DATA static PIN i2s0PinBCLK  = {RTE_I2S0_BCLK_PAD_ADDR,   RTE_I2S0_BCLK_FUNC};
+AP_PLAT_COMMON_DATA static PIN i2s0PinLRCK  = {RTE_I2S0_LRCK_PAD_ADDR,   RTE_I2S0_LRCK_FUNC};
+AP_PLAT_COMMON_DATA static PIN i2s0PinDin   = {RTE_I2S0_DIN_PAD_ADDR,    RTE_I2S0_DIN_FUNC};
+AP_PLAT_COMMON_DATA static PIN i2s0PinDout  = {RTE_I2S0_DOUT_PAD_ADDR,   RTE_I2S0_DOUT_FUNC};
 #elif (RTE_I2S1)
-static PIN i2s1PinMCLK  = {RTE_I2S1_MCLK_PAD_ADDR,   RTE_I2S1_MCLK_FUNC};
-static PIN i2s1PinBCLK  = {RTE_I2S1_BCLK_PAD_ADDR,   RTE_I2S1_BCLK_FUNC};
-static PIN i2s1PinLRCK  = {RTE_I2S1_LRCK_PAD_ADDR,   RTE_I2S1_LRCK_FUNC};
-static PIN i2s1PinDin   = {RTE_I2S1_DIN_PAD_ADDR,    RTE_I2S1_DIN_FUNC};
-static PIN i2s1PinDout  = {RTE_I2S1_DOUT_PAD_ADDR,   RTE_I2S1_DOUT_FUNC};
+AP_PLAT_COMMON_DATA static PIN i2s1PinMCLK  = {RTE_I2S1_MCLK_PAD_ADDR,   RTE_I2S1_MCLK_FUNC};
+AP_PLAT_COMMON_DATA static PIN i2s1PinBCLK  = {RTE_I2S1_BCLK_PAD_ADDR,   RTE_I2S1_BCLK_FUNC};
+AP_PLAT_COMMON_DATA static PIN i2s1PinLRCK  = {RTE_I2S1_LRCK_PAD_ADDR,   RTE_I2S1_LRCK_FUNC};
+AP_PLAT_COMMON_DATA static PIN i2s1PinDin   = {RTE_I2S1_DIN_PAD_ADDR,    RTE_I2S1_DIN_FUNC};
+AP_PLAT_COMMON_DATA static PIN i2s1PinDout  = {RTE_I2S1_DOUT_PAD_ADDR,   RTE_I2S1_DOUT_FUNC};
 #endif
 
 
@@ -70,7 +72,7 @@ const uint32_t i2sSampleRateTbl[][4] =
 
 
 // Data Format 
-I2sDataFmt_t i2sDataFmt = 
+AP_PLAT_COMMON_DATA I2sDataFmt_t i2sDataFmt = 
 {
     .slaveModeEn            = 0x1, // 0:Master; 1:Slave mode
     .slotSize               = 0xf, // Slot size
@@ -87,14 +89,14 @@ I2sDataFmt_t i2sDataFmt =
 };
 
 // Slot Control 
-I2sSlotCtrl_t i2sSlotCtrl = 
+AP_PLAT_COMMON_DATA I2sSlotCtrl_t i2sSlotCtrl = 
 {
     .slotEn                 = 0x1,  // Total 8 channels
     .slotNum                = 0x1   // For I2S, this value should be 1; For PCM, it can change
 };
 
 // BclkFs Control 
-I2sBclkFsCtrl_t i2sBclkFsCtrl = 
+AP_PLAT_COMMON_DATA I2sBclkFsCtrl_t i2sBclkFsCtrl = 
 {
     .bclkPolarity           = 1,    // 0: Rising edge send, falling edge sample; 1: falling edge send, rising edge sample 
     .fsPolarity             = 0,    // 0: rising edge start; 1: falling edge start
@@ -102,13 +104,13 @@ I2sBclkFsCtrl_t i2sBclkFsCtrl =
 };
 
 // I2S Control 
-I2sCtrl_t i2sCtrl = 
+AP_PLAT_COMMON_BSS I2sCtrl_t i2sCtrl = 
 {
 	.i2sMode                = 0,    // 0: disable; 1: Only send; 2: Only receive; 3: Send and Receive
 };
 
 // I2S INT Control 
-I2sIntCtrl_t i2sIntCtrl = 
+AP_PLAT_COMMON_DATA I2sIntCtrl_t i2sIntCtrl = 
 {
     .txUnderRunIntEn        = 0,
     .txDmaErrIntEn          = 0,
@@ -127,7 +129,7 @@ I2sIntCtrl_t i2sIntCtrl =
 
 
 // DMA Control
-I2sDmaCtrl_t i2sDmaCtrl = 
+AP_PLAT_COMMON_DATA I2sDmaCtrl_t i2sDmaCtrl = 
 {
     .rxDmaReqEn             = 1,    // rx dma enable
     .txDmaReqEn             = 1,    // tx dma enable
@@ -136,23 +138,23 @@ I2sDmaCtrl_t i2sDmaCtrl =
     .rxDmaBurstSizeSub1     = 7,    // rx dma burst size -1
     .txDmaBurstSizeSub1     = 7,    // tx dma burst size -1
     .rxDmaThreadHold        = 7,    // rx dma threshold
-    .txDmaThreadHold        = 7,    // tx dma threshold
+    .txDmaThreadHold        = 1,    // tx dma threshold
     .rxFifoFlush            = 0,    // flush rx fifo
     .txFifoFlush            = 0     // flush tx fifo
 };
 
-
+AP_PLAT_COMMON_BSS static bool isDmaChannelStop = false;
 //////////////////////////////////////////////////////////////////////////////////////////////
 // I2S Setting field End
 //////////////////////////////////////////////////////////////////////////////////////////////
 #if (RTE_I2S0)
-static I2sInfo_t  i2s0Info = {0};
+AP_PLAT_COMMON_BSS static I2sInfo_t  i2s0Info = {0};
 void i2s0DmaRxEvent(uint32_t event);
 void i2s0DmaTxEvent(uint32_t event);
-DmaDescriptor_t __ALIGNED(16) i2s0DmaTxDesc[I2S_DMA_TX_DESCRIPTOR_CHAIN_NUM];
-DmaDescriptor_t __ALIGNED(16) i2s0DmaRxDesc[I2S_DMA_RX_DESCRIPTOR_CHAIN_NUM];
+PLAT_FM_ZI DmaDescriptor_t __ALIGNED(16) i2s0DmaTxDesc[I2S_DMA_TX_DESCRIPTOR_CHAIN_NUM];
+PLAT_FM_ZI DmaDescriptor_t __ALIGNED(16) i2s0DmaRxDesc[I2S_DMA_RX_DESCRIPTOR_CHAIN_NUM];
 
-static I2sDma_t i2s0Dma =
+AP_PLAT_COMMON_DATA static I2sDma_t i2s0Dma =
 {
     DMA_INSTANCE_MP,
     -1,
@@ -167,7 +169,7 @@ static I2sDma_t i2s0Dma =
     i2s0DmaRxDesc,
 };
 
-static I2sResources_t i2s0Res = {
+AP_PLAT_COMMON_DATA static I2sResources_t i2s0Res = {
     I2S0,
     {
         &i2s0PinMCLK,
@@ -183,13 +185,13 @@ static I2sResources_t i2s0Res = {
 
 #if (RTE_I2S1)
 
-static I2sInfo_t i2s1Info = {0};
+AP_PLAT_COMMON_BSS static I2sInfo_t i2s1Info = {0};
 void i2s1DmaRxEvent(uint32_t event);
 void i2s1DmaTxEvent(uint32_t event);
-DmaDescriptor_t __ALIGNED(16) i2s1DmaTxDesc[I2S_DMA_TX_DESCRIPTOR_CHAIN_NUM];
-DmaDescriptor_t __ALIGNED(16) i2s1DmaRxDesc[I2S_DMA_RX_DESCRIPTOR_CHAIN_NUM];
+PLAT_FM_ZI DmaDescriptor_t __ALIGNED(16) i2s1DmaTxDesc[I2S_DMA_TX_DESCRIPTOR_CHAIN_NUM];
+PLAT_FM_ZI DmaDescriptor_t __ALIGNED(16) i2s1DmaRxDesc[I2S_DMA_RX_DESCRIPTOR_CHAIN_NUM];
 
-static I2sDma_t i2s1Dma =
+AP_PLAT_COMMON_DATA static I2sDma_t i2s1Dma =
 {
     DMA_INSTANCE_MP,
     -1,
@@ -204,7 +206,7 @@ static I2sDma_t i2s1Dma =
     i2s1DmaRxDesc,
 };
 
-static I2sResources_t i2s1Res = {
+AP_PLAT_COMMON_DATA static I2sResources_t i2s1Res = {
     I2S1,
     {
         &i2s1PinMCLK,
@@ -219,9 +221,9 @@ static I2sResources_t i2s1Res = {
 #endif
 
 
-static I2S_TypeDef* const i2sInstance[I2S_INSTANCE_NUM] = {I2S0, I2S1};
+AP_PLAT_COMMON_DATA static I2S_TypeDef* const i2sInstance[I2S_INSTANCE_NUM] = {I2S0, I2S1};
 
-static ClockId_e i2sClk[I2S_INSTANCE_NUM * 2] =
+AP_PLAT_COMMON_DATA static ClockId_e i2sClk[I2S_INSTANCE_NUM * 2] =
 {
     PCLK_USP0,
     FCLK_USP0,
@@ -230,20 +232,22 @@ static ClockId_e i2sClk[I2S_INSTANCE_NUM * 2] =
 };
 
 #ifdef PM_FEATURE_ENABLE
-static ClockId_e i2sMClk[I2S_INSTANCE_NUM] = 
+AP_PLAT_COMMON_DATA static ClockId_e i2sMClk[I2S_INSTANCE_NUM] = 
 {
     MCLK0,
     MCLK1,
 };
 #endif
-static ClockResetId_e i2sRstClk[I2S_INSTANCE_NUM * 2] =
+
+#if 0
+AP_PLAT_COMMON_DATA static ClockResetId_e i2sRstClk[I2S_INSTANCE_NUM * 2] =
 {
     RST_PCLK_USP0,
     RST_FCLK_USP0,
     RST_PCLK_USP1,
     RST_FCLK_USP1
 };
-
+#endif
 
 #ifdef PM_FEATURE_ENABLE
 
@@ -268,18 +272,18 @@ typedef struct
     }regsBackup;
 } I2sDataBase_t;
 
-static I2sDataBase_t i2sDataBase[I2S_INSTANCE_NUM] = {0};
+AP_PLAT_COMMON_BSS static I2sDataBase_t i2sDataBase[I2S_INSTANCE_NUM] = {0};
 /**
   \brief i2s initialization counter, for lower power callback register/de-register
  */
-static uint32_t i2sInitCnt = 0;
+AP_PLAT_COMMON_BSS static uint32_t i2sInitCnt = 0;
 
 /**
   \brief Bitmap of I2S working status, each instance is assigned 2 bits representing tx and rx status,
          when all I2S instances are not working, we can vote to enter to low power state.
  */
 
-volatile uint32_t i2sWorkingStats = 0;
+AP_PLAT_COMMON_BSS volatile uint32_t i2sWorkingStats = 0;
 
 
 /**
@@ -452,6 +456,8 @@ int32_t i2sInit(i2sCbEvent_fn txCbEvent, i2sCbEvent_fn rxCbEvent, I2sResources_t
 
         DMA_setChannelRequestSource(i2s->dma->rxInstance, i2s->dma->rxCh, (DmaRequestSource_e)i2s->dma->rxReq);
         DMA_rigisterChannelCallback(i2s->dma->rxInstance, i2s->dma->rxCh, i2s->dma->rxCb);
+
+        isDmaChannelStop = false;
     }
 
 #ifdef PM_FEATURE_ENABLE
@@ -502,9 +508,9 @@ int32_t i2sPowerCtrl(I2sPowerState_e state, I2sResources_t *i2s)
     {
         // when need to enter sleep, do not call this api. PMU will manage all the clocks by default.
         case I2S_POWER_OFF:
-            if(i2s->dma)
+            if(i2s->dma && !isDmaChannelStop)
             {
-                DMA_stopChannel(i2s->dma->txInstance, i2s->dma->txCh, false);
+                DMA_stopChannel(i2s->dma->txInstance, i2s->dma->txCh, true);
             }
 
             // Reset register values
@@ -528,13 +534,14 @@ int32_t i2sPowerCtrl(I2sPowerState_e state, I2sResources_t *i2s)
             }
 
             // Disable I2S fclk and pclk
-            CLOCK_clockDisable(i2sClk[instance*2]);
-            CLOCK_clockDisable(i2sClk[instance*2+1]); 
+            CLOCK_clockDisable(i2sClk[instance*2]);   // dis pclk
+            CLOCK_clockDisable(i2sClk[instance*2+1]); // dis fclk
+
             break;
 
         case I2S_POWER_FULL:
-            GPR_swReset(i2sRstClk[instance*2]);    // pclk
-            GPR_swReset(i2sRstClk[instance*2+1]);  // fclk
+            //GPR_swReset(i2sRstClk[instance*2]);    // pclk
+            //GPR_swReset(i2sRstClk[instance*2+1]);  // fclk
 
             // Enable I2S clock            
             CLOCK_clockEnable(i2sClk[instance*2]);   // pclk
@@ -896,6 +903,12 @@ uint32_t i2sGetCtrlReg(I2sResources_t *i2s)
 	return i2s->reg->I2SCTL;
 }
 
+PLAT_PA_RAMCODE void i2sStopDmaChannel(I2sResources_t *i2s)
+{
+    DMA_stopChannel(i2s->dma->txInstance, i2s->dma->txCh, true);
+    isDmaChannelStop = true;
+}
+
 
 #if (RTE_I2S0)
 
@@ -952,8 +965,13 @@ uint32_t i2s0GetCtrlReg()
     return i2sGetCtrlReg(&i2s0Res);
 }
 
+void i2s0StopDmaChannel()
+{
+    return i2sStopDmaChannel(&i2s0Res);
+}
+
 // I2S0 Driver Control Block
-I2sDrvInterface_t i2sDrvInterface0 = 
+AP_PLAT_COMMON_DATA I2sDrvInterface_t i2sDrvInterface0 = 
 {
     i2s0Init,
     i2s0Deinit,
@@ -964,6 +982,7 @@ I2sDrvInterface_t i2sDrvInterface0 =
     i2s0GetTotalCnt,
     i2s0GetTrunkCnt,
     i2s0GetCtrlReg,
+    i2s0StopDmaChannel,
 };
 #endif
 
@@ -1022,8 +1041,14 @@ uint32_t i2s1GetCtrlReg()
     return i2sGetCtrlReg(&i2s1Res);
 }
 
+void i2s1StopDmaChannel()
+{
+    return i2sStopDmaChannel(&i2s1Res);
+}
+
+
 // I2S1 Driver Control Block
-I2sDrvInterface_t i2sDrvInterface1 = 
+AP_PLAT_COMMON_DATA I2sDrvInterface_t i2sDrvInterface1 = 
 {
     i2s1Init,
     i2s1Deinit,
@@ -1034,6 +1059,7 @@ I2sDrvInterface_t i2sDrvInterface1 =
 	i2s1GetTotalCnt,
     i2s1GetTrunkCnt,
     i2s1GetCtrlReg,
+    i2s1StopDmaChannel,
 };
 #endif
 

@@ -138,6 +138,9 @@
 #define ATC_ECSIMCFG_1_SIMSLOT_VAL_MIN                  0
 #define ATC_ECSIMCFG_1_SIMSLOT_VAL_MAX                  1
 #define ATC_ECSIMCFG_1_SIMSLOT_VAL_DEFAULT              0
+#define ATC_ECSIMCFG_1_ISIMDISABLE_VAL_MIN                  0
+#define ATC_ECSIMCFG_1_ISIMDISABLE_VAL_MAX                  1
+#define ATC_ECSIMCFG_1_ISIMDISABLE_VAL_DEFAULT              0
 
 
 /* AT+CPOL */

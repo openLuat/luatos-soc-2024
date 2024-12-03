@@ -69,6 +69,15 @@ typedef enum
     TIMER_PWM_STOP_HOLD     = 2U,  /**< Hold current output level when stopped */
 } TimerPwmStopOption_e;
 
+#if defined(TIMER_IP_VERSION_B1)
+/** \brief List of PWM duty cycle update mode */
+typedef enum
+{
+    TIMER_PWM_DC_IMMEDIATE_UPDATE      = 0U,  /**< Duty cycle value is updated immediate */
+    TIMER_PWM_DC_DEFERRED_UPDATE       = 1U,  /**< Duty cycle value is buffered and updated at the end of PWM period which brings out smoother pwm waveform */
+} TimerPwmDutyCycleUpdateMode_e;
+#endif
+
 /** \brief PWM configuration structure */
 typedef struct
 {
@@ -76,6 +85,9 @@ typedef struct
     uint32_t srcClock_HZ;            /**< TIMER counter clock in HZ */
     uint32_t dutyCyclePercent;       /**< PWM pulse width, the valid range is 0 to 100 */
     TimerPwmStopOption_e stopOption; /**< PWM stop option, controls pwm output level(high,low or holds current level) when stopped */
+#if defined(TIMER_IP_VERSION_B1)
+    TimerPwmDutyCycleUpdateMode_e dutyCycleUpdateMode; /**< PWM duty cycle update mode */
+#endif
 } TimerPwmConfig_t;
 
 /** \brief TIMER configuration structure */

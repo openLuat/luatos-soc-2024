@@ -6,13 +6,14 @@
 #ifdef FEATURE_SUBSYS_SYSLOG_ENABLE
 #include "syslog.h"
 #endif
+#include "sctdef.h"
 
 extern void lcdDrvDelay(uint32_t us);
 extern void lspiCmdSend(uint8_t cmd,uint8_t *data,uint8_t allbytes);
-static lspiDrvInterface_t *lcdDrv1  = &lspiDrvInterface2; 
-static lspiErrCb lspiErrStatsFunc;
+AP_PLAT_COMMON_DATA static lspiDrvInterface_t *lcdDrv1  = &lspiDrvInterface2; 
+AP_PLAT_COMMON_BSS static lspiErrCb lspiErrStatsFunc;
 
-lcdDrvFunc_t* lcdDrvList[] = 
+AP_PLAT_COMMON_DATA lcdDrvFunc_t* lcdDrvList[] = 
 {
 #if (LCD_ST7789_ENABLE == 1)
     &st7789Drv,
@@ -28,6 +29,8 @@ lcdDrvFunc_t* lcdDrvList[] =
     &gc9307Drv,
 #elif (LCD_AXS15231_ENABLE == 1)
     &axs15231Drv,
+#elif (LCD_CO5300_ENABLE == 1)
+    &co5300Drv,    
 #endif
 };
 
@@ -256,6 +259,213 @@ void imageRotateGray(uint8_t* src, uint32_t width, uint32_t height, uint8_t* dst
 	}
 }
 
+#define RANGE_LIMIT(x) (x > 255 ? 255 : (x < 0 ? 0 : x))
+void yuv422ToRgb565_2(const void* inbuf, void* outbuf, int width, int height)
+{
+	int rows, cols;
+	int y, u, v, r, g, b;
+	unsigned char *yuv_buf;
+	unsigned short *rgb_buf;
+	int y_pos,u_pos,v_pos;
 
+	yuv_buf = (unsigned char *)inbuf;
+	rgb_buf = (unsigned short *)outbuf;
+
+	y_pos = 0;
+	u_pos = 1;
+	v_pos = 3;
+
+	for (rows = 0; rows < height; rows++)
+	{
+		for (cols = 0; cols < width; cols++) 
+		{
+			y = yuv_buf[y_pos];
+			u = yuv_buf[u_pos] - 128;
+			v = yuv_buf[v_pos] - 128;
+
+			// R = Y + 1.402*(V-128)
+			// G = Y - 0.34414*(U-128)
+			// B = Y + 1.772*(U-128)
+			r = RANGE_LIMIT(y + v + ((v * 103) >> 8));
+			g = RANGE_LIMIT(y - ((u * 88) >> 8) - ((v * 183) >> 8));
+			b = RANGE_LIMIT(y + u + ((u * 198) >> 8));
+
+			*rgb_buf++ = (((r & 0xf8) << 8) | ((g & 0xfc) << 3) | ((b & 0xf8) >> 3));
+
+			y_pos += 2;
+
+			if (cols & 0x01) 
+			{
+				u_pos += 4;
+				v_pos += 4;
+			}
+		}
+	}
+}
+
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
+void calTe(uint32_t totalBytes, uint16_t sy)
+{   
+    //uint32_t timeStampApp= 0;
+    uint32_t teRunTimeMs = 0;
+    uint16_t yte = 0;
+    //uint32_t controllerBytesPerMs = 480*320*2/28;
+    uint16_t waitTimeMs = 0;
+    
+    // cal te
+#if 0
+    timeStampApp = TIMER_getCount(0);
+    
+    if (timeStampApp < timeStampTe)
+    {
+        teRunTimeMs = (26000 - timeStampTe + timeStampApp) / 1000;
+    }
+    else
+    {
+        teRunTimeMs = (timeStampApp - timeStampTe) / 1000;
+    }
+#else
+#if (BK_USE_PWM == 1)
+        teRunTimeMs = millis();
+#endif        
+#endif
+    if (teRunTimeMs > 16)
+    {
+        teRunTimeMs = 0;
+    }
+    
+    yte = teRunTimeMs * 40 - 1;
+
+    
+
+    if (teRunTimeMs > 6)
+    {
+        if (sy > yte)
+        {
+            waitTimeMs = (sy-yte)/40;
+            if (waitTimeMs == 0)
+            {
+                waitTimeMs = 1; // at least 1ms
+            }
+            
+#ifdef FEATURE_OS_ENABLE
+            osDelay(waitTimeMs);
+#endif            
+            dmaStartStop(true);
+        }
+        else
+        {
+            if (sy >= (480/2))
+            {
+                dmaStartStop(true);
+            }
+            else
+            {
+                waitTimeMs = 16 - teRunTimeMs + sy/40; // +1
+#ifdef FEATURE_OS_ENABLE                
+                osDelay(waitTimeMs);
+#endif                
+                dmaStartStop(true);
+            }
+        }
+    }
+    else
+    {
+        if (sy > yte)
+        {
+            waitTimeMs = (sy-yte)/40;           
+            if (waitTimeMs == 0)
+            {
+                waitTimeMs = 1; // at least 1ms
+            }
+
+#ifdef FEATURE_OS_ENABLE            
+            osDelay(waitTimeMs);
+#endif            
+            dmaStartStop(true);
+        }
+        else
+        {
+            if (totalBytes > ((16-teRunTimeMs+12)*40*320*2))
+            {
+                // must wait te irq
+                //osDelay(16-teRunTimeMs);
+                //osEventFlagsWait(lcdEvtHandle, 0x4, osFlagsWaitAll, osWaitForever); // in te gpio isr release
+                dmaStartStop(true);
+            }
+            else
+            {
+                dmaStartStop(true);
+            }
+        }
+    }
+}
+
+#else // chip 719
+void calTe(teEdgeSel_e teEdge, uint16_t xs, uint16_t ys, uint16_t xe, uint16_t ye)
+{
+	uint32_t tlspi=0, te=0, tw=0, tlcd=0, ta=0, tgaps=0, tgape=0, pos0=0, pos1=0;
+	xs += LCD_X_OFFSET;
+	xe += LCD_X_OFFSET;
+	ys += LCD_Y_OFFSET;
+	ye += LCD_Y_OFFSET;
+
+	// if lspi speed=51MHZ, pic is 320x240, lspi need 28ms transfer done
+#if (LCD_INTERFACE_SPI == 1)	
+	tlspi = 24 * (LCD_FREQ / (51*1024*1024)) * (LCD_PIXEL / (320*240)) * 1000; // us
+#elif (LCD_INTERFACE_MSPI == 1)
+	if (LCD_FREQ == 51*1024*1024)
+	{
+		tlspi = 16600; // 51M, 16.6ms
+	}
+	else if (LCD_FREQ == 6*1024*1024)
+	{
+		tlspi = 148000; // 6M, 148ms
+	}
+#elif (LCD_INTERFACE_8080 == 1)	
+
+#endif
+
+	te 	  = LCD_TE_CYCLE;
+	tw 	  = LCD_TE_WAIT_TIME;
+	tlcd  = te - tw;
+	ta	  = (ye - ys + 1) * (xe - xs + 1) / LCD_PIXEL * tlspi ;
+	tgaps = ys * tlcd / LCD_HEIGHT;
+	tgape = ye * tlcd / LCD_HEIGHT;
+
+	if (ta < (tgape - tgaps))
+	{
+		pos1 = tgaps;
+		pos0 = tgape - ta;
+	}
+	else if (((tgape - tgaps) <= ta) && (ta <= tgape))
+	{
+		pos1 = tgape - ta;
+		pos0 = tgaps;
+	}
+	else if ((tgape < ta) && (ta <= tgape + tw))
+	{
+		pos1 = 0;
+		pos0 = tgaps;
+	}
+	else if (((tgape + tw) < ta) && (ta <= (tgape + tw + tlcd - tgaps)))
+	{
+		pos0 = tgaps;
+		pos1 = tlcd + tgape + tw - ta;
+	}
+	else if	(ta > (tgape + tw + tlcd - tgaps))
+	{
+		// error
+		EC_ASSERT(0,0,0,0);
+	}
+
+	lspiTeParam0.lspiTeEn 		= 1;
+	lspiTeParam0.lspiTeEdgeSel 	= teEdge;
+	lspiTeParam0.lspiTePos0     = pos0*LCD_FREQ/1000000;
+	lspiTeParam1.lspiTePos1     = pos1*LCD_FREQ/1000000;
+    lcdDrv1->ctrl(LSPI_TE_CTRL, 0);
+	
+}
+#endif
 
 

@@ -10,6 +10,8 @@
 #define     ST77903_TIME_OF_FRAME    (149356) // us
 #define     ST77903_TE_CYCLE         (16742) // us
 #define     ST77903_TE_WAIT_TIME     (623)   // us
+#define     ST77903_X_OFFSET		 (0)
+#define     ST77903_Y_OFFSET		 (0)
 
 #if (ST77903_INTERFACE == MSPI_4W_II)
 #if (LCD_INTERFACE_MSPI != 1)
@@ -25,6 +27,9 @@
 #define     DEFAULT_INST         (0xde)
 #define     LCD_BPP_USE          (ST77903_BPP)
 #define     LCD_INTERFACE        (ST77903_INTERFACE)
+#define     LCD_FREQ			 (ST77903_FREQ)
+#define     LCD_X_OFFSET		 (ST77903_X_OFFSET)
+#define     LCD_Y_OFFSET		 (ST77903_Y_OFFSET)
 
 #define     LCD_PIXEL            (LCD_HEIGHT*LCD_WIDTH)
 #define     LCD_TIME_OF_FRAME    (ST77903_TIME_OF_FRAME) // us

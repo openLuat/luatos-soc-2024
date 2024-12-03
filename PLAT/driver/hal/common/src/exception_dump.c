@@ -25,6 +25,7 @@
 #endif
 
 #ifdef CORE_IS_AP
+extern UINT32 Image$$LOAD_AP_PS_FIRAM_MSMB$$Base;
 
 #ifdef FEATURE_UART_HELP_DUMP_ENABLE
 EXCEP_DUMP_DATA int *excepStepDump = (int *)0x404008;
@@ -53,9 +54,17 @@ EXCEP_DUMP_DATA uint32_t tDataInfoCell [][2]=
     {EC_EXCEPTION_AP_RAM_BASE,      EC_EXCEPTION_AP_RAM_LEN},
     {EC_EXCEPTION_CP_RAM_BASE,      EC_EXCEPTION_CP_RAM_LEN},
     {EC_EXCEPTION_APCP_RAM_BASE,    EC_EXCEPTION_APCP_RAM_LEN},
-#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+    #if (PSRAM_EXIST==1)
+    #ifdef TYPE_EC718M
+    {EC_EXCEPTION_PSRAM0_RAM_BASE,   EC_EXCEPTION_PSRAM0_RAM_LEN},
+    {EC_EXCEPTION_PSRAM1_RAM_BASE,   EC_EXCEPTION_PSRAM1_RAM_LEN},
+    #ifdef SDK_REL_BUILD
+    {EC_EXCEPTION_PSRAM2_RAM_BASE,   EC_EXCEPTION_PSRAM2_RAM_LEN},
+    #endif
+    #else
     {EC_EXCEPTION_PSRAM_RAM_BASE,   EC_EXCEPTION_PSRAM_RAM_LEN},
-#endif
+    #endif
+    #endif
 };
 
 extern void delay_us(uint32_t us);
@@ -80,6 +89,7 @@ uint32_t EcDumpCheckIfNeedRetry(uint32_t cmdType, PtrDumpReqWrap dumpReqWrap, Pt
 {
     ReadDataReqCell * ptrReadDataReqCell;
     ReadDataReqCell * ptrReadDataReqCellTemp;
+    uint32_t *copAddr = NULL;
 
     switch(cmdType)
     {
@@ -104,9 +114,16 @@ uint32_t EcDumpCheckIfNeedRetry(uint32_t cmdType, PtrDumpReqWrap dumpReqWrap, Pt
             if(dumpRetryReadCount >= DUMP_RETRY_COUNT_MAX)
             {
                 ptrReadDataReqCell = (ReadDataReqCell*)(&dumpReqWrap->Data);
-                memset((void *)DUMP_RETRY_ADDR, 0, ptrReadDataReqCell->ReadLen);
-                memcpy((void *)DUMP_RETRY_ADDR, (void *)ptrReadDataReqCell->ReadDataAddr, ptrReadDataReqCell->ReadLen);
-                ptrReadDataReqCell->ReadDataAddr = DUMP_RETRY_ADDR;
+
+                #ifdef TYPE_EC718M
+                copAddr    = &(Image$$LOAD_AP_PS_FIRAM_MSMB$$Base);
+                #else
+                copAddr    = (uint32_t *)DUMP_RETRY_ADDR;
+                #endif
+
+                memset((void *)copAddr, 0, ptrReadDataReqCell->ReadLen);
+                memcpy((void *)copAddr, (void *)ptrReadDataReqCell->ReadDataAddr, ptrReadDataReqCell->ReadLen);
+                ptrReadDataReqCell->ReadDataAddr = (uint32_t)copAddr;
             }
             break;
     }
@@ -381,10 +398,17 @@ uint32_t EcDumpHandleGetData(PtrDumpReqWrap ptrDumpReqWrap)
         }
         else
         {
+#ifdef TYPE_EC718M
+            memcpy(dataAndCrcBuf, (uint8_t*)(DataBuff), sendDataLen);
+            memcpy(&dataAndCrcBuf[sendDataLen], (uint8_t *)(&tDumpRspWrap.FCS), CMD_FCS_LEN);
+
+            RetValue = eehDumpMediaSend(instance, (uint8_t*)(dataAndCrcBuf), (sendDataLen+CMD_FCS_LEN),5000);
+#else
             memcpy(dataAndCrcBuf, (uint8_t*)(DataBuff), READ_ONECE_DATA_LEN);
             memcpy(&dataAndCrcBuf[READ_ONECE_DATA_LEN], (uint8_t *)(&tDumpRspWrap.FCS), CMD_FCS_LEN);
 
             RetValue = eehDumpMediaSend(instance, (uint8_t*)(dataAndCrcBuf), (READ_ONECE_DATA_LEN+CMD_FCS_LEN), 5000);
+#endif
         }
         //excepDelay(1000);
 
@@ -429,6 +453,19 @@ uint32_t EcDumpHandleGetInfo(PtrDumpReqWrap ptrDumpReqWrap)
 
     tDumpRspWrap.Status = ACK;
     tDumpRspWrap.Length = sizeof(tDataInfoCell);
+
+#ifdef TYPE_EC718M
+    /* 
+        718M doesn't have a fixed boundary between AP PSRAM P0 and PSRAM P1,
+        and the boundary info can get from 'ap_psram_p0_boundary' in LD file,
+        So it have to assign the right address and length value to 'tDataInfoCell'.
+    */
+    extern UINT32 ap_psram_p0_boundary;
+    tDataInfoCell[3][0] = PSRAM_START_ADDR | PSRAM_PCACHE0_BASE;
+    tDataInfoCell[3][1] = ((UINT32)&ap_psram_p0_boundary) - PSRAM_START_ADDR;
+    tDataInfoCell[4][0] = ((UINT32)&ap_psram_p0_boundary) | PSRAM_PCACHE1_BASE;
+    tDataInfoCell[4][1] = PSRAM_P2_START_ADDR - ((UINT32)&ap_psram_p0_boundary);
+#endif
 
     memcpy(infoCmdBuf, &tDumpRspWrap.Command, PROTOCOL_RSP_FIX_LEN);
 

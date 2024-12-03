@@ -8,7 +8,7 @@
  ****************************************************************************/
 
 #include "es8374.h"
-
+#include "sctdef.h"
 
 /*----------------------------------------------------------------------------*
  *                    MACROS                                                  *
@@ -72,7 +72,7 @@
  *----------------------------------------------------------------------------*/
 
 // 8374 func list
-HalCodecFuncList_t es8374DefaultHandle = 
+AP_PLAT_COMMON_DATA HalCodecFuncList_t es8374DefaultHandle = 
 {
     .codecType                  = ES8374,
     .halCodecInitFunc           = es8374Init,
@@ -96,10 +96,10 @@ HalCodecFuncList_t es8374DefaultHandle =
  *                      PRIVATE VARIABLES                                     *
  *----------------------------------------------------------------------------*/
 
-static uint8_t dacVolBak, adcVolBak;
-static bool isHasPA;
-static uint8_t adcInput  = 2;
-static uint8_t dacOutput = 0;
+AP_PLAT_COMMON_BSS static uint8_t dacVolBak, adcVolBak;
+AP_PLAT_COMMON_BSS static bool isHasPA;
+AP_PLAT_COMMON_DATA static uint8_t adcInput  = 2;
+AP_PLAT_COMMON_BSS static uint8_t dacOutput = 0;
 
 /*----------------------------------------------------------------------------*
  *                      PRIVATE FUNCS                                      *

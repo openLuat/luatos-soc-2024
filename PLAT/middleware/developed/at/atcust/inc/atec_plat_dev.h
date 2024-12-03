@@ -339,7 +339,8 @@
 
 /* AT+ECIDLEP */
 #define ATC_ECIDLEP_VAL_MIN                          0
-#define ATC_ECIDLEP_VAL_MAX                          1
+#define ATC_ECIDLEP_APM_VAL_MAX                      7
+#define ATC_ECIDLEP_VAL_MAX                          6
 #define ATC_ECIDLEP_VAL_DEFAULT                      0
 
 

@@ -47,8 +47,9 @@ typedef struct
 
 typedef enum
 {
-	CAM_8W		= 10, ///< 8w use 10 dma descriptor chain
-	CAM_30W		= 80, ///< 30w use 80 dma descriptor chain
+	CAM_8W				= 10, ///< 8w only y use 10 dma descriptor chain
+	CAM_8W_COLOR		= 20, ///< 8w color use 20 dma descriptor chain
+	CAM_30W				= 80, ///< 30w use 80 dma descriptor chain
 }camResolution_e;
 
 typedef enum

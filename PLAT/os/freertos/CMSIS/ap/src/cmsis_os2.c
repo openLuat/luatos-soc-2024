@@ -104,7 +104,7 @@ typedef struct {
 } TimerCallback_t;
 
 /* Kernel initialization state */
-static osKernelState_t KernelState;
+AP_PLAT_COMMON_BSS static osKernelState_t KernelState;
 
 /* Heap region definition used by heap_5 variant */
 #if defined(RTE_RTOS_FreeRTOS_HEAP_5)
@@ -115,10 +115,10 @@ static osKernelState_t KernelState;
 */
   extern uint8_t ucHeap[configTOTAL_HEAP_SIZE];
 #else
-  static uint8_t ucHeap[configTOTAL_HEAP_SIZE];
+AP_PLAT_COMMON_BSS  static uint8_t ucHeap[configTOTAL_HEAP_SIZE];
 #endif /* configAPPLICATION_ALLOCATED_HEAP */
 
-static HeapRegion_t xHeapRegions[] = {
+AP_PLAT_COMMON_DATA static HeapRegion_t xHeapRegions[] = {
   { ucHeap, configTOTAL_HEAP_SIZE },
   { NULL,   0                     }
 };
@@ -1987,12 +1987,11 @@ extern void vApplicationGetIdleTaskMemory  (StaticTask_t **ppxIdleTaskTCBBuffer,
 extern void vApplicationGetTimerTaskMemory (StaticTask_t **ppxTimerTaskTCBBuffer, StackType_t **ppxTimerTaskStackBuffer, uint32_t *pulTimerTaskStackSize);
 
 /* Idle task control block and stack */
-static StaticTask_t Idle_TCB;
-static StackType_t  Idle_Stack[configIDLE_TASK_STACK_DEPTH];
-
+AP_PLAT_COMMON_BSS static StaticTask_t Idle_TCB;
+AP_PLAT_COMMON_BSS static StackType_t  Idle_Stack[configIDLE_TASK_STACK_DEPTH];
 /* Timer task control block and stack */
-static StaticTask_t Timer_TCB;
-static StackType_t  Timer_Stack[configTIMER_TASK_STACK_DEPTH];
+AP_PLAT_COMMON_BSS static StaticTask_t Timer_TCB;
+AP_PLAT_COMMON_BSS static StackType_t  Timer_Stack[configTIMER_TASK_STACK_DEPTH];
 
 /*
   vApplicationGetIdleTaskMemory gets called when configSUPPORT_STATIC_ALLOCATION

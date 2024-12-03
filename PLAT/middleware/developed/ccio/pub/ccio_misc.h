@@ -39,6 +39,14 @@ extern "C" {
 /* the overhead of spi frame */
 #define SPI_FRAME_HDR_SIZE       4
 
+/* the min frame size for rndis, not including ethernet FCS field */
+#define CCIO_RNDIS_PKT_HDR_LEN   44
+/* the min frame size for eth(ecm or eos), not including ethernet FCS field */
+#define CCIO_ETH_FRAME_MINSIZE   60
+
+/* the min frame size for rndis */
+#define CCIO_RNDIS_FRAME_MINSIZE (CCIO_RNDIS_PKT_HDR_LEN + CCIO_ETH_FRAME_MINSIZE)
+
 /* ip net MTU of data */
 #define CCIO_IPNET_DATA_MTU      1500
 

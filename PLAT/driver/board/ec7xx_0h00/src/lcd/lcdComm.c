@@ -15,15 +15,16 @@
 #include "osasys.h"
 #include "cmsis_os2.h"
 #endif
+#include "sctdef.h"
 
 
 extern void slpManAONIOPowerOn(void);
-lspiDrvInterface_t *lcdDrv  = &lspiDrvInterface2; 
-int32_t lcdDmaTxCh          = 0;
-static lcdUspCb userUspCb   = NULL;
-static lcdUspCb userDmaCb   = NULL;
-DmaDescriptor_t __ALIGNED(16) lcdDmaTxDesc[DMA_DESC_MAX];
-DmaTransferConfig_t lcdDmaTxCfg =
+AP_PLAT_COMMON_DATA lspiDrvInterface_t *lcdDrv  = &lspiDrvInterface2; 
+AP_PLAT_COMMON_BSS int32_t lcdDmaTxCh          = 0;
+AP_PLAT_COMMON_BSS static lcdUspCb userUspCb   = NULL;
+AP_PLAT_COMMON_BSS static lcdUspCb userDmaCb   = NULL;
+PLAT_FM_ZI DmaDescriptor_t __ALIGNED(16) lcdDmaTxDesc[DMA_DESC_MAX];
+AP_PLAT_COMMON_DATA DmaTransferConfig_t lcdDmaTxCfg =
 {
     NULL,
     (void *)&(LSPI2->TFIFO),
@@ -129,7 +130,8 @@ void lcdEnable()
     lcdDrv->ctrl(LSPI_CTRL_CTRL, 0);
 }
 
-#if defined CHIP_EC719
+
+#if defined TYPE_EC718M
 
 void lcdMspiSet(uint8_t enable, uint8_t addrLane, uint8_t dataLane, uint8_t instruction)
 {
@@ -167,7 +169,7 @@ void lcdCsnHighCycleMin(uint8_t lspiDiv)
 
 void lcdInterfaceType(uint8_t type)
 {   
-#if defined CHIP_EC718
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
     switch(type)
     {
         case SPI_3W_I:
@@ -242,7 +244,6 @@ void lcdInterfaceType(uint8_t type)
 
 int lspiDefaultCfg(lcdDrvFunc_t *lcd, lcdUspCb cb, uint32_t freq, uint8_t bpp)
 {
-    lcdDrv->deInit();
     lcdDrv->init();
     lcdDrv->powerCtrl(LSPI_POWER_FULL);
 
@@ -272,7 +273,7 @@ int lspiDefaultCfg(lcdDrvFunc_t *lcd, lcdUspCb cb, uint32_t freq, uint8_t bpp)
         }
         break;
 
-#if defined CHIP_EC719
+#if defined TYPE_EC718M
         case 24: // rgb888
         {
             lspiCtrl.colorModeIn  = 4;   // RGB888
@@ -295,7 +296,7 @@ int lspiDefaultCfg(lcdDrvFunc_t *lcd, lcdUspCb cb, uint32_t freq, uint8_t bpp)
     }
 
     lcdDrv->ctrl(LSPI_CTRL_CTRL, 0);
-#if defined CHIP_EC719
+#if defined TYPE_EC718M
     lcdDrv->ctrl(LSPI_PRE_PARA0_CTRL, 0);
     lcdDrv->ctrl(LSPI_POST_PARA0_CTRL, 0);
 #endif    
@@ -322,12 +323,10 @@ int lspiDefaultCfg(lcdDrvFunc_t *lcd, lcdUspCb cb, uint32_t freq, uint8_t bpp)
     return 0;
 }
 
-
 int lcdDmaTrans(lcdDrvFunc_t *lcd, void *sourceAddress, uint32_t totalLength)
 {
-    uint32_t res = 0, patch = 0, tmp = 0;
+    uint32_t res = 0, patch = 0;
     int dmaChainCnt = 0, ret = 0;
-    uint8_t version = *(uint32_t*)0x4d0420f4;
 
     if(lcd == NULL || sourceAddress == NULL) 
     {
@@ -347,53 +346,50 @@ int lcdDmaTrans(lcdDrvFunc_t *lcd, void *sourceAddress, uint32_t totalLength)
     lcdDrv->ctrl(LSPI_CTRL_DMA_CTRL, 0);
     lspiCmdCtrl.wrRdn               = 1; // 1: wr   0: rd
     lspiCmdCtrl.ramWr               = 1; // start ramwr    
-#if defined CHIP_EC719 // CHIP 719
+#if (defined TYPE_EC718M)
     lspiCmdCtrl.ramWrHaltMode       = 1; // maintain cs as low between cmd and data
 #endif
 
-    if (version != 0xb2)
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
+	uint32_t tmp = 0;
+
+    #if (SPI_2_DATA_LANE == 1)
+    tmp = res/2;
+    #endif
+    
+    if (tmp >= 0x3ffff)
+    {
+        lspiCmdCtrl.dataLen = 0x3ffff; // infinate
+    }
+    else
     {
         #if (SPI_2_DATA_LANE == 1)
-        tmp = res/2;
+        lspiCmdCtrl.dataLen = res/2;
+        #else
+        lspiCmdCtrl.dataLen = res;
         #endif
-        
-        if (tmp >= 0x3ffff)
-        {
-            lspiCmdCtrl.dataLen = 0x3ffff; // infinate
-        }
-        else
-        {
-            #if (SPI_2_DATA_LANE == 1)
-            lspiCmdCtrl.dataLen = res/2;
-            #else
-            lspiCmdCtrl.dataLen = res;
-            #endif
-        }
     }
-    else // 0xb2, B2 chip
-    {
-#if defined CHIP_EC719
-        if (totalLength >= 0x3fffff)
-        {
-            lspiCmdCtrl.dataLen = 0x3fffff; // infinate
-        }
-        else
-        {
-            #if (SPI_2_DATA_LANE == 1)
-            lspiCmdCtrl.dataLen = res/2;
-            #else
-            if (lcd->bpp == 24)
-            {
-                lspiCmdCtrl.dataLen = res/(lcd->bpp/8+1);
-            }
-            else
-            {
-                lspiCmdCtrl.dataLen = res/(lcd->bpp/8);
-            }
-            #endif
-        }
-#endif        
-    }
+#elif (defined TYPE_EC718M)
+	if (totalLength >= 0x3fffff)
+	{
+		lspiCmdCtrl.dataLen = 0x3fffff; // infinate
+	}
+	else
+	{
+		#if (SPI_2_DATA_LANE == 1)
+		lspiCmdCtrl.dataLen = res/2;
+		#else
+		if (lcd->bpp == 24)
+		{
+			lspiCmdCtrl.dataLen = res/(lcd->bpp/8+1);
+		}
+		else
+		{
+			lspiCmdCtrl.dataLen = res/(lcd->bpp/8);
+		}
+		#endif
+	}
+#endif       
 
     lcdDrv->ctrl(LSPI_CTRL_CMD_CTRL, 0);
     
@@ -454,6 +450,7 @@ void lspiFifoWrite(uint32_t data)
     }
 }
 
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
 static void leftShift1Bit(uint8_t *data, uint8_t dataLen)
 {        
     #define READ_REG_MSB 0x80
@@ -469,145 +466,138 @@ static void leftShift1Bit(uint8_t *data, uint8_t dataLen)
         }
     }
 }
+#endif
 
 // dataLen includes dummyLen
 void lspiReadReg(uint8_t addr, uint8_t *data, uint16_t dataLen, uint8_t dummyCycleLen)
 {
     if( data == NULL) return;
+
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
     uint8_t index=0, remainder=0, outputLen=dataLen, tmp1[20]={0};
 
+	#if (LCD_AXS15231_ENABLE == 1)
+    PadConfig_t config1;
+    // config gpio36
+    PAD_getDefaultConfig(&config1);
+    config1.mux = RTE_USP2_DIN_FUNC;
+    PAD_setPinConfig(RTE_USP2_DIN_PAD_ADDR, &config1);
+    lspiCtrl.busType            = 1; // 0: type1, sda inout;   1:type2, sda input, sdo output
+	#endif
 
-    uint8_t version = *(uint32_t*)0x4d0420f4;
-
-    if (version != 0xb2) // b1 chip
+    lspiCmdAddr.addr            = addr;
+    lspiCmdCtrl.wrRdn           = 0;      // 1: wr   0: rd
+    lspiCmdCtrl.dataLen         = dataLen;
+    lcdDrv->ctrl(LSPI_CTRL_CMD_ADDR, 0);
+    lcdDrv->ctrl(LSPI_CTRL_CMD_CTRL, 0);
+    lcdDrv->ctrl(LSPI_CTRL_CTRL, 0);
+    while (!LSPI2->LSPI_STAT);
+   
+    for (int i = 0; i < dataLen; i++)
     {
-#if (LCD_AXS15231_ENABLE == 1)
-        PadConfig_t config1;
-        // config gpio36
-        PAD_getDefaultConfig(&config1);
-        config1.mux = RTE_USP2_DIN_FUNC;
-        PAD_setPinConfig(RTE_USP2_DIN_PAD_ADDR, &config1);
-        lspiCtrl.busType            = 1; // 0: type1, sda inout;   1:type2, sda input, sdo output
-#endif
+        tmp1[i] = LSPI2->RFIFO;
+    }
+
+    if (dummyCycleLen > 0)
+    {
+        index       = dummyCycleLen / 8;
+        remainder   = dummyCycleLen % 8;
+        outputLen   = dataLen - (index + ((remainder > 0)? 1 : 0));
+        
+        memcpy(&tmp1[0], &tmp1[index], outputLen + ((remainder > 0)? 1 : 0));
+        
+        for (int j = 0; j < remainder; j++)
+        {
+            leftShift1Bit(tmp1, outputLen+1);
+        }
+    }
+
+    memcpy(data, tmp1, outputLen);   
+	
+#elif (defined TYPE_EC718M)
+    uint32_t dummyRead;
     
+    if (LCD_INTERFACE == MSPI_4W_II)
+    {
+        #if (LCD_INTERFACE_MSPI == 1)
+        // read test
+        lcdMspiSet(1, 0, 0, 0x03); // 1wire read: 0x03
+        
+        // config gpio36
+        //PadConfig_t config;
+        PadConfig_t config2;
+        PAD_getDefaultConfig(&config2);
+        config2.mux = RTE_USP2_SDI_FUNC;
+        PAD_setPinConfig(RTE_USP2_SDI_PAD_ADDR, &config2);
+        
         lspiCmdAddr.addr            = addr;
+        //lspiCmdAddr.busType         = 1;
         lspiCmdCtrl.wrRdn           = 0;      // 1: wr   0: rd
-        lspiCmdCtrl.dataLen         = dataLen;
+        lspiCmdCtrl.rdatDummyCycle  = dummyCycleLen;
+        lspiCmdCtrl.dataLen         = 1;
         lcdDrv->ctrl(LSPI_CTRL_CMD_ADDR, 0);
         lcdDrv->ctrl(LSPI_CTRL_CMD_CTRL, 0);
-        lcdDrv->ctrl(LSPI_CTRL_CTRL, 0);
-        while (!LSPI2->LSPI_STAT);
-       
+
+        while ((LSPI2->LSPI_STAT & LSPI_STATS_RX_FIFO_LEVEL_Msk) == 0);
+
+        for (int j = 0; j < dummyCycleLen/8; j++)
+        {
+            dummyRead = LSPI2->RFIFO;
+            (void)dummyRead;
+        }
+
         for (int i = 0; i < dataLen; i++)
         {
-            tmp1[i] = LSPI2->RFIFO;
+            data[i] = LSPI2->RFIFO;
         }
-
-        if (dummyCycleLen > 0)
-        {
-            index       = dummyCycleLen / 8;
-            remainder   = dummyCycleLen % 8;
-            outputLen   = dataLen - (index + ((remainder > 0)? 1 : 0));
-            
-            memcpy(&tmp1[0], &tmp1[index], outputLen + ((remainder > 0)? 1 : 0));
-            
-            for (int j = 0; j < remainder; j++)
-            {
-                leftShift1Bit(tmp1, outputLen+1);
-            }
-        }
-
-        memcpy(data, tmp1, outputLen);        
+        #endif
     }
-    else // b2 chip
+    else
     {
-        uint32_t dummyRead;
-        
-        if (LCD_INTERFACE == MSPI_4W_II)
+        lspiCmdAddr.addr            = addr;
+        lspiCmdCtrl.wrRdn           = 0;      // 1: wr   0: rd
+        lspiCmdCtrl.rdatDummyCycle  = dummyCycleLen;
+        lspiCmdCtrl.dataLen         = dataLen;            
+        lcdDrv->ctrl(LSPI_CTRL_CMD_ADDR, 0);
+        lcdDrv->ctrl(LSPI_CTRL_CMD_CTRL, 0);
+        while (!LSPI2->LSPI_STAT);
+
+        for (int j = 0; j < dummyCycleLen/8; j++)
         {
-            #if (LCD_INTERFACE_MSPI == 1)
-            // read test
-            lcdMspiSet(1, 0, 0, 0x03); // 1wire read: 0x03
-            
-            // config gpio36
-            //PadConfig_t config;
-            PadConfig_t config2;
-            PAD_getDefaultConfig(&config2);
-            config2.mux = RTE_USP2_SDI_FUNC;
-            PAD_setPinConfig(RTE_USP2_SDI_PAD_ADDR, &config2);
-            
-            lspiCmdAddr.addr            = addr;
-            //lspiCmdAddr.busType         = 1;
-            lspiCmdCtrl.wrRdn           = 0;      // 1: wr   0: rd
-            lspiCmdCtrl.rdatDummyCycle  = dummyCycleLen;
-            lspiCmdCtrl.dataLen         = 1;
-            lcdDrv->ctrl(LSPI_CTRL_CMD_ADDR, 0);
-            lcdDrv->ctrl(LSPI_CTRL_CMD_CTRL, 0);
-
-            while ((LSPI2->LSPI_STAT & LSPI_STATS_RX_FIFO_LEVEL_Msk) == 0);
-
-            for (int j = 0; j < dummyCycleLen/8; j++)
-            {
-                dummyRead = LSPI2->RFIFO;
-                (void)dummyRead;
-            }
-
-            for (int i = 0; i < dataLen; i++)
-            {
-                data[i] = LSPI2->RFIFO;
-            }
-            #endif
+            dummyRead = LSPI2->RFIFO;
+            (void)dummyRead;
         }
-        else
+        
+        for (int i = 0; i < dataLen; i++)
         {
-            lspiCmdAddr.addr            = addr;
-            lspiCmdCtrl.wrRdn           = 0;      // 1: wr   0: rd
-            lspiCmdCtrl.rdatDummyCycle  = dummyCycleLen;
-            lspiCmdCtrl.dataLen         = dataLen;            
-            lcdDrv->ctrl(LSPI_CTRL_CMD_ADDR, 0);
-            lcdDrv->ctrl(LSPI_CTRL_CMD_CTRL, 0);
-            while (!LSPI2->LSPI_STAT);
-
-            for (int j = 0; j < dummyCycleLen/8; j++)
-            {
-                dummyRead = LSPI2->RFIFO;
-                (void)dummyRead;
-            }
-            
-            for (int i = 0; i < dataLen; i++)
-            {
-                data[i] = LSPI2->RFIFO;
-            }
+            data[i] = LSPI2->RFIFO;
         }
     }
+#endif		
 }   
 
 void lspiReadRam(uint32_t *data, uint32_t dataLen)
 {
     if (data == NULL) return;
 
-    uint8_t version = *(uint32_t*)0x4d0420f4;
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
 
-    if (version != 0xb2)
+    lspiCmdAddr.addr            = 0x3E; // RDMEMC
+    lspiCmdCtrl.wrRdn           = 0;    
+    lspiCmdCtrl.rdatDummyCycle  = 1;
+    lspiCmdCtrl.dataLen         = dataLen+1;        
+    lcdDrv->ctrl(LSPI_CTRL_CMD_ADDR, 0);
+    lcdDrv->ctrl(LSPI_CTRL_CMD_CTRL, 0);
+    while (!LSPI2->LSPI_STAT);
+    uint32_t dummy = LSPI2->RFIFO;
+    (void)dummy;
+    for (int i = 0; i < dataLen; i++)
     {
-        lspiCmdAddr.addr            = 0x3E; // RDMEMC
-        lspiCmdCtrl.wrRdn           = 0;    
-        lspiCmdCtrl.rdatDummyCycle  = 1;
-        lspiCmdCtrl.dataLen         = dataLen+1;        
-        lcdDrv->ctrl(LSPI_CTRL_CMD_ADDR, 0);
-        lcdDrv->ctrl(LSPI_CTRL_CMD_CTRL, 0);
-        while (!LSPI2->LSPI_STAT);
-        uint32_t dummy = LSPI2->RFIFO;
-        (void)dummy;
-        for (int i = 0; i < dataLen; i++)
-        {
-            data[i] = LSPI2->RFIFO;
-        }
+        data[i] = LSPI2->RFIFO;
     }
-    else // b2 chip
-    {
-        
-    }
+#elif (defined TYPE_EC718M)    
+
+#endif
 }
 
 void lcdWriteData(uint8_t data)
@@ -658,8 +648,8 @@ void lcdGpioBkLevel(uint8_t level)
 #endif
 
 #if (BK_USE_PWM == 1)
-volatile static uint32_t gpwmCnt = 0;
-static bool isPwmOn = false;
+AP_PLAT_COMMON_BSS volatile static uint32_t gpwmCnt = 0;
+AP_PLAT_COMMON_BSS static bool isPwmOn = false;
 
 uint32_t millis(void)
 {
@@ -740,108 +730,6 @@ void lcdPwmBkDeInit(void)
 
 #endif
 
-#if defined CHIP_EC718
-void calTe(uint32_t totalBytes, uint16_t sy)
-{   
-    //uint32_t timeStampApp= 0;
-    uint32_t teRunTimeMs = 0;
-    uint16_t yte = 0;
-    //uint32_t controllerBytesPerMs = 480*320*2/28;
-    uint16_t waitTimeMs = 0;
-    
-    // cal te
-#if 0
-    timeStampApp = TIMER_getCount(0);
-    
-    if (timeStampApp < timeStampTe)
-    {
-        teRunTimeMs = (26000 - timeStampTe + timeStampApp) / 1000;
-    }
-    else
-    {
-        teRunTimeMs = (timeStampApp - timeStampTe) / 1000;
-    }
-#else
-#if (BK_USE_PWM == 1)
-        teRunTimeMs = millis();
-#endif        
-#endif
-    if (teRunTimeMs > 16)
-    {
-        teRunTimeMs = 0;
-    }
-    
-    yte = teRunTimeMs * 40 - 1;
-
-    
-
-    if (teRunTimeMs > 6)
-    {
-        if (sy > yte)
-        {
-            waitTimeMs = (sy-yte)/40;
-            if (waitTimeMs == 0)
-            {
-                waitTimeMs = 1; // at least 1ms
-            }
-            
-#ifdef FEATURE_OS_ENABLE
-            osDelay(waitTimeMs);
-#endif            
-            dmaStartStop(true);
-        }
-        else
-        {
-            if (sy >= (480/2))
-            {
-                dmaStartStop(true);
-            }
-            else
-            {
-                waitTimeMs = 16 - teRunTimeMs + sy/40; // +1
-#ifdef FEATURE_OS_ENABLE                
-                osDelay(waitTimeMs);
-#endif                
-                dmaStartStop(true);
-            }
-        }
-    }
-    else
-    {
-        if (sy > yte)
-        {
-            waitTimeMs = (sy-yte)/40;           
-            if (waitTimeMs == 0)
-            {
-                waitTimeMs = 1; // at least 1ms
-            }
-
-#ifdef FEATURE_OS_ENABLE            
-            osDelay(waitTimeMs);
-#endif            
-            dmaStartStop(true);
-        }
-        else
-        {
-            if (totalBytes > ((16-teRunTimeMs+12)*40*320*2))
-            {
-                // must wait te irq
-                //osDelay(16-teRunTimeMs);
-                //osEventFlagsWait(lcdEvtHandle, 0x4, osFlagsWaitAll, osWaitForever); // in te gpio isr release
-                dmaStartStop(true);
-            }
-            else
-            {
-                dmaStartStop(true);
-            }
-        }
-    }
-}
-
-#else // chip 719
-
-#endif
-
 
 void lcdIoInit(bool isAonIO)
 {   
@@ -882,9 +770,8 @@ void lcdIoInit(bool isAonIO)
 #endif    
 
     // 4. te init
-#if defined CHIP_EC718
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
     // 4.1 718 te init
-    
 #else
     // 4.2 719 te init
     config.mux = LCD_TE_PAD_ALT_FUNC;

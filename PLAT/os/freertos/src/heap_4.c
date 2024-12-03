@@ -79,14 +79,14 @@ task.h is included from an application file. */
 #else
     //static uint8_t ucHeap[ configTOTAL_HEAP_SIZE ];
     #ifdef CORE_IS_AP
-    uint8_t * ucHeap=(uint8_t *)&( Image$$LOAD_DRAM_SHARED$$ZI$$Limit);
+    AP_PLAT_COMMON_DATA uint8_t * ucHeap=(uint8_t *)&( Image$$LOAD_DRAM_SHARED$$ZI$$Limit);
     #else
     static uint8_t ucHeap[ configTOTAL_HEAP_SIZE ];//cp still use fix length array
     #endif
 
 
 //dynamic heap size, caculate per compilation
-UINT32 gTotalHeapSize=0;
+AP_PLAT_COMMON_BSS UINT32 gTotalHeapSize=0;
 
 #endif /* configAPPLICATION_ALLOCATED_HEAP */
 
@@ -125,23 +125,23 @@ block must by correctly byte aligned. */
 static const size_t xHeapStructSize = ( sizeof( BlockLink_t ) + ( ( size_t ) ( portBYTE_ALIGNMENT - 1 ) ) ) & ~( ( size_t ) portBYTE_ALIGNMENT_MASK );
 
 /* Create a couple of list links to mark the start and end of the list. */
-static BlockLink_t xStart, *pxEnd = NULL;
+AP_PLAT_COMMON_BSS static BlockLink_t xStart, *pxEnd = NULL;
 
 /* Keeps track of the number of free bytes remaining, but says nothing about
 fragmentation. */
-static size_t xFreeBytesRemaining = 0U;
-static size_t xMinimumEverFreeBytesRemaining = 0U;
+AP_PLAT_COMMON_BSS static size_t xFreeBytesRemaining = 0U;
+AP_PLAT_COMMON_BSS static size_t xMinimumEverFreeBytesRemaining = 0U;
 
 /* Gets set to the top bit of an size_t type.  When this bit in the xBlockSize
 member of an BlockLink_t structure is set then the block belongs to the
 application.  When the bit is free the block is still part of the free heap
 space. */
-static size_t xBlockAllocatedBit = 0;
+AP_PLAT_COMMON_BSS static size_t xBlockAllocatedBit = 0;
 
 
 #ifdef HEAP_MEM_DEBUG
-void *recThreadId[50];
-int thIdx = 0;
+AP_PLAT_COMMON_BSS void *recThreadId[50];
+AP_PLAT_COMMON_BSS int thIdx = 0;
 extern void * osThreadGetId (void);
 /*-----------------------------------------------------------*/
 #endif

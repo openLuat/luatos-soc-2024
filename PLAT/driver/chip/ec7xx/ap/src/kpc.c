@@ -11,6 +11,68 @@
 #include "ic.h"
 #include "clock.h"
 #include "slpman.h"
+#include "sctdef.h"
+
+#if defined(KPC_IP_VERSION_B1)
+
+#define KPC_ROW_NUM         (8U)
+#define KPC_ROW_NUM_MASK    (0x7U)
+#define KPC_ROW_BITMAP_MASK (0xFFU)
+
+#define KPC_COL_NUM         (8U)
+#define KPC_COL_NUM_MASK    (0x7U)
+#define KPC_COL_NUM_BITS    (3U)
+#define KPC_COL_BITMAP_MASK (0xFFU)
+
+typedef struct
+{
+    uint32_t map[2];
+} KpcBitMap_t;
+
+static void KPC_bitMapAND(KpcBitMap_t* input0, KpcBitMap_t* input1, KpcBitMap_t* output)
+{
+    output->map[0] = input0->map[0] & input1->map[0];
+    output->map[1] = input0->map[1] & input1->map[1];
+}
+
+static void KPC_bitMapXOR(KpcBitMap_t* input0, KpcBitMap_t* input1, KpcBitMap_t* output)
+{
+    output->map[0] = input0->map[0] ^ input1->map[0];
+    output->map[1] = input0->map[1] ^ input1->map[1];
+}
+
+static void KPC_bitMapClear(KpcBitMap_t* output)
+{
+    output->map[0] = 0;
+    output->map[1] = 0;
+}
+
+
+static __FORCEINLINE uint32_t KPC_findFirstSet(uint32_t value)
+{
+    return __CLZ(__RBIT(value));
+}
+
+static uint32_t KPC_bitMapfindFirstSet(KpcBitMap_t* input)
+{
+    return (input->map[0] == 0) ? 32 + KPC_findFirstSet(input->map[1]) : KPC_findFirstSet(input->map[0]);
+}
+
+static uint32_t KPC_bitMapIsZero(KpcBitMap_t* input)
+{
+    return (input->map[0] == 0) && (input->map[1] == 0);
+}
+
+static uint32_t KPC_bitMapBitValue(KpcBitMap_t* input, uint32_t pos)
+{
+    return (pos >= 32) ? (input->map[1] & (1 << (pos - 32))) : (input->map[0] & (1 << pos));
+}
+
+
+#else
+#define KPC_ROW_BITMAP_MASK (0x1FU)
+#define KPC_COL_BITMAP_MASK (0x1FU)
+#endif
 
 //#define KPC_DEBUG
 
@@ -26,9 +88,13 @@ typedef struct
     uint8_t                            autoRepeatPeriod;              /**< autorepeat event period */
     uint32_t                           autoRepeatCount;               /**< counter for autorepeat */
 
+#if defined(KPC_IP_VERSION_B1)
+    KpcBitMap_t                        keyEnableMask;                 /**< Bitmap of enabled keys */
+    KpcBitMap_t                        keyState;                      /**< Bitmap of key state, 0-release, 1-press */
+#else
     uint32_t                           keyEnableMask;                 /**< Bitmap of enabled keys */
     uint32_t                           keyState;                      /**< Bitmap of key state, 0-release, 1-press */
-
+#endif
     struct
     {
         uint32_t DEBCTL;                           /**< Debounce Control Register */
@@ -41,7 +107,11 @@ typedef struct
     kpc_callback_t                  eventCallback;                 /**< Callback function passed in by application */
 } KpcDataBase_t;
 
-static KpcDataBase_t gKpcDataBase = {0};
+#if defined(KPC_IP_VERSION_B1)
+AP_PLAT_COMMON_BSS static KpcDataBase_t __ALIGNED(4) gKpcDataBase = {0};
+#else
+AP_PLAT_COMMON_BSS static KpcDataBase_t gKpcDataBase = {0};
+#endif
 
 
 #ifdef PM_FEATURE_ENABLE
@@ -104,6 +174,138 @@ void KPC_exitLowPowerStateRestore(void* pdata, slpManLpState state)
 }
 #endif
 
+#if defined(KPC_IP_VERSION_B1)
+/**
+  construct key enable bitmap
+
+    39              32 31              24 23              16 15               8 7                 0
+   +------------------+------------------+------------------+------------------+------------------+
+   |  row 4, col[7:0] |  row 3, col[7:0] |  row 2, col[7:0] |  row 1,col[7:0]  |  row 0, col[7:0] |
+   +------------------+------------------+------------------+------------------+------------------+
+
+ */
+static void KPC_setKeyMask(uint32_t rowMask, uint32_t colMask, KpcBitMap_t* keyEnableMask, uint32_t* rowCounts)
+{
+    KPC_bitMapClear(keyEnableMask);
+    uint32_t rowIndex = 0;
+    uint32_t cnt = 0;
+
+    uint32_t rowMaskLowNibble = (rowMask & KPC_ROW_BITMAP_MASK) & 0xFU;
+    uint32_t rowMaskHighNibble = ((rowMask & KPC_ROW_BITMAP_MASK) >> 4) & 0xFU;
+
+    colMask &= KPC_COL_BITMAP_MASK;
+
+    while(rowMaskLowNibble)
+    {
+        rowIndex = KPC_findFirstSet(rowMaskLowNibble);
+
+
+        keyEnableMask->map[0] |= (colMask << (rowIndex * KPC_COL_NUM));
+
+        rowMaskLowNibble &= (rowMaskLowNibble - 1);
+        cnt++;
+    }
+
+    while(rowMaskHighNibble)
+    {
+        rowIndex = KPC_findFirstSet(rowMaskHighNibble);
+
+        keyEnableMask->map[1] |= (colMask << ((rowIndex) * KPC_COL_NUM));
+
+        rowMaskHighNibble &= (rowMaskHighNibble - 1);
+        cnt++;
+    }
+
+    *rowCounts = cnt;
+}
+
+static void KPC_eventReport(void)
+{
+    uint32_t lsb, report = 0;
+
+    KpcBitMap_t keyScanResult, keyScanResultBackup, changed;
+
+    KpcReportEvent_t event;
+
+    // Get current key scan result
+    KPC_bitMapAND((KpcBitMap_t *)&KPC->KPSTAT[0], &gKpcDataBase.keyEnableMask, &keyScanResult);
+
+    //keyScanResult = KPC->KPSTAT & gKpcDataBase.keyEnableMask;
+
+    keyScanResultBackup =  keyScanResult;
+
+    // Find out changed key
+    KPC_bitMapXOR(&keyScanResult, &gKpcDataBase.keyState, &changed);
+
+    //changed = keyScanResult ^ gKpcDataBase.keyState;
+
+#ifdef KPC_DEBUG
+    printf("report: [%x-%x]-[%x-%x]-[%x-%x]-[%x]\r\n", keyScanResult.map[1], keyScanResult.map[0], gKpcDataBase.keyState.map[1], gKpcDataBase.keyState.map[0],
+                                                       changed.map[1], changed.map[0], KPC->KPENCTL);
+#endif
+
+    // First to handle key release
+    if(!KPC_bitMapIsZero(&changed))
+    {
+        lsb = KPC_bitMapfindFirstSet(&changed);
+
+        // Check key released during two consecutive rounds of scan
+        //if((keyScanResultBackup & ( 1 << lsb)) == 0)
+        if(KPC_bitMapBitValue(&keyScanResultBackup, lsb) == 0)
+        {
+            event.row = lsb >> KPC_COL_NUM_BITS; // => lsb / 8
+            event.column = lsb & KPC_COL_NUM_MASK; // => lsb % 8
+            event.value = KPC_REPORT_KEY_RELEASE;
+
+            gKpcDataBase.autoRepeatCount = 0;
+
+            if(gKpcDataBase.eventCallback)
+            {
+                gKpcDataBase.eventCallback(event);
+            }
+
+        }
+    }
+
+    // Check key press
+    if(!KPC_bitMapIsZero(&keyScanResult))
+    {
+        lsb = KPC_bitMapfindFirstSet(&keyScanResult);
+
+        // repeat key?
+        //if((gKpcDataBase.keyState & (1 << lsb)) && (gKpcDataBase.enableAutoRepeat == 1))
+        if(KPC_bitMapBitValue(&gKpcDataBase.keyState, lsb) && (gKpcDataBase.enableAutoRepeat == 1))
+        {
+            gKpcDataBase.autoRepeatCount++;
+
+            if((gKpcDataBase.autoRepeatCount >= gKpcDataBase.autoRepeatDelay) && ((gKpcDataBase.autoRepeatCount - gKpcDataBase.autoRepeatDelay) % gKpcDataBase.autoRepeatPeriod == 0))
+            {
+                event.row = lsb >> KPC_COL_NUM_BITS;
+                event.column = lsb & KPC_COL_NUM_MASK;
+                event.value = KPC_REPORT_KEY_REPEAT;
+                report = 1;
+            }
+        }
+        else
+        {
+            event.row = lsb >> KPC_COL_NUM_BITS;
+            event.column = lsb & KPC_COL_NUM_MASK;
+            event.value = KPC_REPORT_KEY_PRESS;
+            gKpcDataBase.autoRepeatCount = 0;
+            report = 1;
+        }
+
+        if(gKpcDataBase.eventCallback && report)
+        {
+            gKpcDataBase.eventCallback(event);
+        }
+    }
+
+    // save current result
+    gKpcDataBase.keyState = keyScanResultBackup;
+}
+
+#else
 
 static __FORCEINLINE uint32_t KPC_findFirstSet(uint32_t value)
 {
@@ -218,12 +420,18 @@ static void KPC_eventReport(void)
     gKpcDataBase.keyState = keyScanResultBackup;
 }
 
+#endif
+
 static void KPC_keyPadModeIsr(void)
 {
     KPC_eventReport();
 
     // Check if all keys are released
+#if defined(KPC_IP_VERSION_B1)
+    if((KPC->KPSTAT[0] == 0) && (KPC->KPSTAT[1] == 0))
+#else
     if(KPC->KPSTAT == 0)
+#endif
     {
         // If all keys are released, change back to hw controlled scan mode(trigger irq when any key is pressed)
         KPC->KPENCTL = KPC_CTRL_MASK;
@@ -298,8 +506,8 @@ int32_t KPC_init(const KpcConfig_t *config, kpc_callback_t callback)
                   EIGEN_VAL2FLD(KPC_DEBCTL_DEBOUNCER_TO_MCLK_RATIO, config->debounceConfig.debounceClkDivRatio);
 
     KPC->KPCTL = EIGEN_VAL2FLD(KPC_KPCTL_POLARITY, config->scanPolarity) | \
-                 EIGEN_VAL2FLD(KPC_KPCTL_ROW_VLD_BITMAP, config->validRowMask & 0x1FU) | \
-                 EIGEN_VAL2FLD(KPC_KPCTL_COL_VLD_BITMAP, config->validColumnMask & 0x1FU) | \
+                 EIGEN_VAL2FLD(KPC_KPCTL_ROW_VLD_BITMAP, config->validRowMask & KPC_ROW_BITMAP_MASK) | \
+                 EIGEN_VAL2FLD(KPC_KPCTL_COL_VLD_BITMAP, config->validColumnMask & KPC_COL_BITMAP_MASK) | \
                  EIGEN_VAL2FLD(KPC_KPCTL_SCAN_TO_DEBOUNCE_RATIO, config->scanDivRatio);
 
     KPC->AUTOCG = KPC_AUTOCG_ENABLE_Msk;

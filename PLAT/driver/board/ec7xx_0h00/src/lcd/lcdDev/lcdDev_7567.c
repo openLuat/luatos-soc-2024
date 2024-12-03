@@ -1,11 +1,12 @@
 #include "lcdDev_7567.h"
+#include "sctdef.h"
 
 extern lspiDrvInterface_t lspiDrvInterface2;
-lspiDrvInterface_t *lspiDrv7567 = &lspiDrvInterface2; // We use lspi2 by default
+AP_PLAT_COMMON_DATA lspiDrvInterface_t *lspiDrv7567 = &lspiDrvInterface2; // We use lspi2 by default
 
-DmaDescriptor_t __ALIGNED(16) lcdDmaTxDesc7567[HEIGHT_7567];
-int8_t lcdDmaTxCh7567; // dma tx channel
-DmaTransferConfig_t lcdDmaTxCfg7567 =
+AP_PLAT_COMMON_BSS DmaDescriptor_t __ALIGNED(16) lcdDmaTxDesc7567[HEIGHT_7567];
+AP_PLAT_COMMON_BSS int8_t lcdDmaTxCh7567; // dma tx channel
+AP_PLAT_COMMON_DATA DmaTransferConfig_t lcdDmaTxCfg7567 =
 {
     NULL,
     (void *)&(LSPI2->TFIFO),
@@ -220,7 +221,7 @@ void st7567StartStop(lcdDev_t* lcd, bool startOrStop)
 
 }
 
-uint8_t check321 = 0;
+AP_PLAT_COMMON_BSS uint8_t check321 = 0;
 void st7567Clear(lcdDev_t* lcd, uint8_t* buf, uint16_t lcdHeight, uint16_t lcdWidth, uint32_t dmaTrunkLength)
 {
     uint32_t bk1=0,bk2=0,bk3=0,bk4=0,bk5=0,bk6=0, bk7=0,bk8, bk9, bk10;
@@ -299,7 +300,7 @@ void st7567Clear(lcdDev_t* lcd, uint8_t* buf, uint16_t lcdHeight, uint16_t lcdWi
 
 
 
-lcdDrvFunc_t st7567Drv = 
+AP_PLAT_COMMON_DATA lcdDrvFunc_t st7567Drv = 
 {
     .id             = 0x7567,
 

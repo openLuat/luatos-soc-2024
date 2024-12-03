@@ -29,7 +29,7 @@
 #define ATC_ECADCFG_DIRECT_VAL_RX                   1
 
 #define ATC_ECADCFG_0_MODE_VAL_MIN                   0
-#define ATC_ECADCFG_0_MODE_VAL_MAX                   1
+#define ATC_ECADCFG_0_MODE_VAL_MAX                   2
 #define ATC_ECADCFG_0_MODE_VAL_DEF                   0
 
 #define ATC_ECADCFG_1_DIR_VAL_MIN                   0

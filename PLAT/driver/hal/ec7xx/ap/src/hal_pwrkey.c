@@ -28,6 +28,7 @@
 #include "reset.h"
 #include "apmu_external.h"
 #include "slpman.h"
+#include "sctdef.h"
 
 #include DEBUG_LOG_HEADER_FILE
 
@@ -63,13 +64,13 @@ static void pwrKeyLongPressTimerExp(void *argument);
 /*----------------------------------------------------------------------------*
  *                      GLOBAL VARIABLES                                      *
  *----------------------------------------------------------------------------*/
-pwrKeyInfo_t gPwrKeyInfo;
-static uint8_t pwrKeyLongPressTimerId = 0;
-static uint8_t pwrKeyRepeatTimerId = 0;
-static osMessageQueueId_t pwrKeyEventQueueHandle;
-osTimerId_t pwrKeyLongPressTimer;
-osTimerId_t pwrKeyRepeatTimer;
-pwrKeyIsrCb pwrKeyIsrCallback = NULL;
+AP_PLAT_COMMON_BSS pwrKeyInfo_t gPwrKeyInfo;
+AP_PLAT_COMMON_BSS static uint8_t pwrKeyLongPressTimerId = 0;
+AP_PLAT_COMMON_BSS static uint8_t pwrKeyRepeatTimerId = 0;
+AP_PLAT_COMMON_BSS static osMessageQueueId_t pwrKeyEventQueueHandle;
+AP_PLAT_COMMON_BSS osTimerId_t pwrKeyLongPressTimer;
+AP_PLAT_COMMON_BSS osTimerId_t pwrKeyRepeatTimer;
+AP_PLAT_COMMON_BSS pwrKeyIsrCb pwrKeyIsrCallback = NULL;
 
 
 

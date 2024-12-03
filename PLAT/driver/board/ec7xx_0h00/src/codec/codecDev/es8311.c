@@ -9,7 +9,7 @@
 
 #include "es8311.h"
 #include "mw_nvm_audio.h"
-
+#include "sctdef.h"
 
 /*----------------------------------------------------------------------------*
  *                    MACROS                                                  *
@@ -65,7 +65,7 @@ struct _coeffDiv
  *----------------------------------------------------------------------------*/
 
 // 8311 func list
-HalCodecFuncList_t es8311DefaultHandle = 
+AP_PLAT_COMMON_DATA HalCodecFuncList_t es8311DefaultHandle = 
 {
     .codecType                  = ES8311,
     .halCodecInitFunc           = es8311Init,
@@ -84,11 +84,11 @@ HalCodecFuncList_t es8311DefaultHandle =
 };
 
 #if (USE_NV_VOLUME)
-AudioParaCfgCodec_t  mwNvmAudioCodec1;
-MWNvmCfgUsrSetCodecVolumn usrCodecVolumn;
-MWNvmCfgUsrSetCodecVolumn usrCodecVolumn2;
-MWNvmCfgVolumnSetFlag     volumeSetFlag;
-MWNvmCfgVolumnSetFlag     volumeSetFlag2;
+AP_PLAT_COMMON_BSS AudioParaCfgCodec_t  mwNvmAudioCodec1;
+AP_PLAT_COMMON_BSS MWNvmCfgUsrSetCodecVolumn usrCodecVolumn;
+AP_PLAT_COMMON_BSS MWNvmCfgUsrSetCodecVolumn usrCodecVolumn2;
+AP_PLAT_COMMON_BSS MWNvmCfgVolumnSetFlag     volumeSetFlag;
+AP_PLAT_COMMON_BSS MWNvmCfgVolumnSetFlag     volumeSetFlag2;
 #endif
 extern void mwNvmCfgGetUsrCodecVolumn(MWNvmCfgUsrSetCodecVolumn *pUsrCodecVolumn);
 extern void mwNvmCfgGetVolumnSetFlag(MWNvmCfgVolumnSetFlag *pVolumnSetFlag);
@@ -165,9 +165,9 @@ static const struct _coeffDiv coeffDiv[] =
     {1536000 , 96000, 0x01,    0x08, 0x01,   0x01,   0x01,   0x00, 0x7f, 0x02, 0x10,    0x10},
 };
 
-static uint8_t dacVolBak, adcVolBak;
-static uint8_t micVolGainBak;
-static bool isHasPA;
+AP_PLAT_COMMON_BSS static uint8_t dacVolBak, adcVolBak;
+AP_PLAT_COMMON_BSS static uint8_t micVolGainBak;
+AP_PLAT_COMMON_BSS static bool isHasPA;
 //static int slope, offset;
 //static int gain0 = -955, gain100 = 320; // mul or divide 10 to a integer
 
@@ -716,6 +716,7 @@ HalCodecSts_e es8311Init(HalCodecCfg_t *codecCfg)
 
 void es8311DeInit()
 {
+    DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311DeInit_1, P_DEBUG, "ES8311 deinit");
     //es8311PwrDown();
     halI2cDeInit(true);
 }

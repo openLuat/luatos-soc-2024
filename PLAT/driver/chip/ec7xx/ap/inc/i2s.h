@@ -199,6 +199,7 @@ typedef struct
     uint32_t (*getTotalCnt)(void);
     uint32_t (*getTrunkCnt)(void);
     uint32_t (*getCtrlReg) (void);
+    void     (*stopDmaChannel) (void);
 } const I2sDrvInterface_t;
 
 typedef struct

@@ -2,16 +2,17 @@
 #include "lcdDrv.h"
 #include "lcdComm.h"
 #include "lcdDev_15231.h"
+#include "sctdef.h"
 
 #define LCD_MADCTL  0x36
 
 
 extern lspiDrvInterface_t *lcdDrv;
 //static uint8_t s_MADCTL = 0x0; 
-static uint16_t previewWidth;
-static uint16_t previewHeight;
+AP_PLAT_COMMON_BSS static uint16_t previewWidth;
+AP_PLAT_COMMON_BSS static uint16_t previewHeight;
 
-static initLine_t initTable15231[] = 
+AP_PLAT_COMMON_DATA static initLine_t initTable15231[] = 
 {
 #if 1
     {0xBB, 8,  {0x00,0x00,0x00,0x00,0x00,0x00,0x5A,0xA5}},
@@ -453,7 +454,7 @@ static int axs15231Close(lcdDrvFunc_t *lcd)
     return 0;
 }
 
-lcdDrvFunc_t axs15231Drv = 
+AP_PLAT_COMMON_DATA lcdDrvFunc_t axs15231Drv = 
 {
     .id                 = 0x15231,
     .width              = AXS15231_WIDTH,

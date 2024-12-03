@@ -2,13 +2,14 @@
 #include "lcdDrv.h"
 #include "lcdComm.h"
 #include "lcdDev_7789.h"
+#include "sctdef.h"
 
 #define LCD_MADCTL  0x36
 
 extern lspiDrvInterface_t *lcdDrv;
 //static uint8_t s_MADCTL = 0x0; 
 
-static  initLine_t initTable7789[] = 
+AP_PLAT_COMMON_DATA static  initLine_t initTable7789[] = 
 {
     {0x11, 1, {0}},
     {0xff, 1, {120}},
@@ -198,14 +199,94 @@ static void st7789CamPreviewStartStop(lcdDrvFunc_t *lcd, camPreviewStartStop_e p
     st7789UnRegisterUspIrqCb(lcd, cbForFill);
     st7789RegisterUspIrqCb(lcd, cbForCam);
 
-#if defined CHIP_EC719
+#if defined TYPE_EC718M
     if (previewStartStop)
     {
 #if (CAMERA_ENABLE_BF30A2)
 
 #elif (CAMERA_ENABLE_GC032A)
+		// preview
+		lcdWriteCmd(0x36);
+		// lcdWriteData(0x00);// 0: normal;   0x20: reverse, mirror image	0x40: x mirror
+		lcdWriteData(0xa0);
+		lcdDrv->send(NULL, 0);
 
-#elif (CAMERA_ENABLE_GC6153)
+		st7789AddrSet(lcd, 0, 0, lcd->height-1, lcd->width-1); // height=320, width=240
+
+		lspiDataFmt.wordSize = 7;
+		lspiDataFmt.txPack = 0;
+		lcdDrv->ctrl(LSPI_CTRL_DATA_FORMAT, 0);
+
+		lspiDmaCtrl.txDmaReqEn			= 0; // preview close
+		lcdDrv->ctrl(LSPI_CTRL_DMA_CTRL, 0);
+
+		// lcd size
+		lspiInfo.frameHeight			= PIC_SRC_HEIGHT; // frame input height
+		lspiInfo.frameWidth 			= PIC_SRC_WIDTH;  // frame input width
+		lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO, 0);
+
+		lspiFrameInfoOut.frameHeightOut = lcd->height;	  // frame output height
+		lspiFrameInfoOut.frameWidthOut	= lcd->width;	  // frame output width
+		lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO_OUT, 0);
+
+		lspiScaleInfo.rowScaleFrac		= 64;
+		lspiScaleInfo.colScaleFrac		= 64;
+		lcdDrv->ctrl(LSPI_CTRL_SCALE_INFO, 0);
+
+		lspiTailorInfo.tailorLeft		= 0; // frame output height
+		lspiTailorInfo.tailorRight		= 0; // frame output width
+		lcdDrv->ctrl(LSPI_CTRL_TAILOR_INFO, 0);
+
+		lspiCtrl.enable 				= 1;
+		lspiCtrl.datSrc 				= 0; // 0: data from camera; 1: data from memory
+		lspiCtrl.colorModeIn			= 0; // YUV422, every item is 8bit
+		lspiCtrl.colorModeOut			= 1; // RGB565
+		lcdDrv->ctrl(LSPI_CTRL_CTRL, 0);
+
+		lspiCmdCtrl.wrRdn				= 1; // 1: wr	0: rd
+		lspiCmdCtrl.ramWr				= 1; // start ramwr
+		lspiCmdCtrl.dataLen 			= 0x3fffff; // infinite data, used in camera to lspi
+		lcdDrv->ctrl(LSPI_CTRL_CMD_CTRL, 0);
+
+#elif (CAMERA_ENABLE_GC6153 || CAMERA_ENABLE_GC6133)
+		// preview
+        lcdWriteCmd(0x36);
+        lcdWriteData(0x00);// 0: normal;   0x20: reverse, mirror image   0x40: x mirror
+        lcdDrv->send(NULL, 0);
+        
+        st7789AddrSet(lcd, 0, 0, lcd->width-1, lcd->height-1);
+
+        lspiDataFmt.wordSize            = 7;
+        lspiDataFmt.txPack              = 0;
+        lcdDrv->ctrl(LSPI_CTRL_DATA_FORMAT, 0);
+
+        lspiDmaCtrl.txDmaReqEn          = 0; // preview close
+        lcdDrv->ctrl(LSPI_CTRL_DMA_CTRL, 0);
+        
+        // lcd size
+        lspiInfo.frameHeight            = PIC_SRC_HEIGHT; // frame input height
+        lspiInfo.frameWidth             = PIC_SRC_WIDTH;  // frame input width
+        lspiFrameInfoOut.frameHeightOut = lcd->height;    // frame output height,320
+        lspiFrameInfoOut.frameWidthOut  = lcd->width;     // frame output width,240
+        lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO, 0);
+        lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO_OUT, 0);
+
+        lspiScaleInfo.rowScaleFrac      = 0;
+        lspiScaleInfo.colScaleFrac      = 0;
+        lspiTailorInfo.tailorLeft       = 0;
+        lspiTailorInfo.tailorRight      = 0;
+        lcdDrv->ctrl(LSPI_CTRL_SCALE_INFO, 0);
+        lcdDrv->ctrl(LSPI_CTRL_TAILOR_INFO, 0);
+
+        lspiCtrl.datSrc                 = 0; // 0: data from camera; 1: data from memory
+        lspiCtrl.colorModeIn            = 0; // YUV422, every item is 8bit
+        lspiCtrl.colorModeOut           = 1; // RGB565
+        lcdDrv->ctrl(LSPI_CTRL_CTRL, 0);
+
+        lspiCmdCtrl.wrRdn               = 1; // 1: wr   0: rd
+        lspiCmdCtrl.ramWr               = 1; // start ramwr
+        lspiCmdCtrl.dataLen             = 0x3fffff; // infinite data, used in camera to lspi
+        lcdDrv->ctrl(LSPI_CTRL_CMD_CTRL, 0);
 
 #endif
 
@@ -366,7 +447,7 @@ static int st7789Close(lcdDrvFunc_t *lcd)
     return 0;
 }
 
-lcdDrvFunc_t st7789Drv = 
+AP_PLAT_COMMON_DATA lcdDrvFunc_t st7789Drv = 
 {
     .id                 = 0x7789,
     .width              = ST7789_WIDTH,

@@ -1,6 +1,7 @@
 #include "cameraDrv.h"
+#include "sctdef.h"
 
-camI2cCfg_t sp0821_2sdrRegInfo[] = 
+AP_PLAT_COMMON_DATA camI2cCfg_t sp0821_2sdrRegInfo[] = 
 {
 	{0x30,0x01},
 	{0x32,0x00},
@@ -166,7 +167,7 @@ camI2cCfg_t sp0821_2sdrRegInfo[] =
 
 };
 
-camI2cCfg_t sp0821_1sdrRegInfo[] = 
+AP_PLAT_COMMON_DATA camI2cCfg_t sp0821_1sdrRegInfo[] = 
 {
 	{0x30,0x01},
 	{0x32,0x00},

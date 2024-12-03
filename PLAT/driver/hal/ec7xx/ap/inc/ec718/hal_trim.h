@@ -258,6 +258,30 @@ void trimVadjVbatSenseSetGolbalVar( void );
  */
 uint8_t trimGetVadjVbatSense( void );
 
+#if (defined TYPE_EC718M)
+    
+/**
+  \fn        trimLdoPsram( void )
+  \brief     used to read trim value from efuse, then write into psram trim reg
+  \param[in] N/A
+  \note      called in bootloader and should before psram init
+             should be flash code and not access psram
+ */
+void trimLdoPsram( void );
+
+
+
+/**
+  \fn        void trimGetPsramType( uint8_t *ftVer , uint8_t *psramVendor , uint8_t *psramUpVer)
+  \brief     used to read psram type related info from efuse
+  \param[in] N/A
+  \note      called in bootloader and should before psram init
+             should be flash code and not access psram
+ */
+void trimGetPsramType( uint8_t *ftVer , uint8_t *psramVendor , uint8_t *psramUpVer);
+
+
+#endif
 
 
 

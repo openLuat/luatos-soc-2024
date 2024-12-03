@@ -312,12 +312,13 @@ PLAT_BL_UNCOMP_FLASH_TEXT int lzmaEncodeEc(unsigned char *outStreamData, unsigne
 *===========================================================================*/
 PLAT_BL_UNCOMP_FLASH_TEXT void lzma_APTimeRead(ecSysTime *sysTime, ecBcTimeType timeType)
 {
-    #ifdef CORE_IS_AP
-    ecTmuBcRd* bcRd = (ecTmuBcRd* )(0x4F000000+0x0070); //APB_GP_PERIPH_BASE
-    #endif
-    #ifdef CORE_IS_CP
-    ecTmuBcRd* bcRd = (ecTmuBcRd* )(0x5F000000+0x0070); //APB_GP_PERIPH_BASE
-    #endif
+	#ifdef CORE_IS_AP
+	ecTmuBcRd* bcRd = (ecTmuBcRd* )(0x4F070000+0x0070); //APB_GP_PERIPH_BASE  HW_TmuBcRd
+	#endif
+	#ifdef CORE_IS_CP
+	ecTmuBcRd* bcRd = (ecTmuBcRd* )(0x5F070000+0x0070); //APB_GP_PERIPH_BASE  HW_TmuBcRd
+	#endif
+
     UINT32 mask;
     UINT32 ofnHfnSfnSbn1, ofnHfnSfnSbn2, spn = 0;
 

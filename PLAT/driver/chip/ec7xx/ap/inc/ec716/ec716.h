@@ -91,6 +91,8 @@ typedef enum IRQn
     APXIC2_Normal_IRQn              =   15,     /**< AP XIC2 Interrupt */
     APXIC3_Normal_IRQn              =   16,     /**< AP XIC3 Interrupt */
 
+    XIC_Start_IRQn                  =   32,
+
     /* AP XIC0 for IPC/APB  */
     PXIC0_OVF_IRQn                  =   32,     /**< SW or HW Error Interrupt */
     PXIC0_USP2_IRQn                 =   33,     /**< USP2 Interrupt */
@@ -160,6 +162,7 @@ typedef enum IRQn
     PXIC1_THM_HI_IRQn               =   94,     /**< THM HI Interrupt */
     PXIC1_AUXADC_IRQn               =   95,     /**< AUXADC Interrupt */
 
+    XIC_End_IRQn                    =   159,
 } IRQn_Type;
 
 #endif

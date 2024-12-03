@@ -7,6 +7,8 @@
 #include "usbd_func_cconf.h"
 #include "usbd_func_cc.h"
 #include "usbd_multi_usrcfg_common.h"
+#include "sctdef.h"
+
 #define CC_CUSTP2_CMDEP_MPS 16
 
 const usbd_cdc_desc_custp2_st t_usbd_cdc_desc_custp2 = {
@@ -422,7 +424,7 @@ const  ccinst_setting_base_st t_vcom_custp2_base_setting =
     ccinst_setting_vcom_subtp2_3ep        
 };
 
-ccinst_cdc_setting_st t_vcom_custp2_setting_arr[VCOM_CCINST_SUBTP2_3EP_CNT] ={
+AP_PLAT_COMMON_DATA ccinst_cdc_setting_st t_vcom_custp2_setting_arr[VCOM_CCINST_SUBTP2_3EP_CNT] ={
 //[0]
     {
     .bs_set = t_vcom_custp2_base_setting,
@@ -444,7 +446,7 @@ ccinst_cdc_setting_st t_vcom_custp2_setting_arr[VCOM_CCINST_SUBTP2_3EP_CNT] ={
 };
 
 
-usb_func_ccinst_st t_vcom_func_custp2_arr[VCOM_CCINST_SUBTP2_3EP_CNT] ={
+AP_PLAT_COMMON_DATA usb_func_ccinst_st t_vcom_func_custp2_arr[VCOM_CCINST_SUBTP2_3EP_CNT] ={
 //[0]
     {
     .p_cc_setting = &t_vcom_custp2_setting_arr[0],

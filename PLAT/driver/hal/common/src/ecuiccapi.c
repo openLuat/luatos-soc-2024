@@ -42,7 +42,7 @@ History:        - 09/20/2022, Originated by xlhu
  * bSoftSIMTaskCreate
  * Whether the SoftSIM task created.
 */
-BOOL    bSoftSIMTaskCreate = FALSE;
+AP_PLAT_COMMON_BSS BOOL    bSoftSIMTaskCreate = FALSE;
 /******************************************************************************
  * Types
 *******************************************************************************/
@@ -100,7 +100,6 @@ __attribute__((weak))  void SoftSimReset(UINT16 *atrLen, UINT8 *atrData)
     * 3> process signal/msg on softsim task, then retrun paramters and release sem on softsim task
     */
 
-
     /*
      * wait for sem 2sec
     */
@@ -150,7 +149,6 @@ __attribute__((weak))  void SoftSimApduReq(UINT16 txDataLen, UINT8 *txData, UINT
     /*
     * 3> process signal/msg on softsim task, then retrun paramters and release sem on softsim task
     */
-
 
     /*
      * wait for sem 2sec
@@ -202,4 +200,17 @@ __attribute__((weak))  void SoftSimInit(void)
 
 }
 
+/******************************************************************************
+ * SoftSimIsSimplyApduTrans
+ * Description: return value indicated whether SoftSIM only support simply APDU transmission without TPDU.
+ *        e.g. terminal -> SoftSIM: 00 A4 08 04 02 2F E2
+ *           SoftSIM -> teriminal: 62 17 82 02 41 21 83 02 2F E2 8A 01 05 8B 03 2F 06 03 80 02 00 0A 88 01 10 90 00
+ * input: void
+ * output: BOOL
+ * Comment: This api called by modem/uiccdrv task.
+******************************************************************************/
+__attribute__((weak))  BOOL SoftSimIsSimplyApduTrans(void)
+{
+    return FALSE;//softsim vender changed it here if required
+}
 

@@ -15,6 +15,8 @@
 #ifdef FEATURE_SUBSYS_SYSLOG_ENABLE
 #include "syslog.h"
 #endif
+#include "sctdef.h"
+
 /**
   \fn          
   \brief    
@@ -75,7 +77,7 @@ static int tp_ft6336_init(void* cb)
   \brief    
   \return
 */
-tpDrvFunc_t ft6336Drv = 
+AP_PLAT_COMMON_DATA tpDrvFunc_t ft6336Drv = 
 {
     .init           = tp_ft6336_init,
     .send           = tp_ft6336_send,
@@ -87,7 +89,7 @@ tpDrvFunc_t ft6336Drv =
   \brief    
   \return
 */
-tpDrvPra_t ft6336Pra = 
+AP_PLAT_COMMON_DATA tpDrvPra_t ft6336Pra = 
 {
     .id     = 0x6336,
     .width  = 240,

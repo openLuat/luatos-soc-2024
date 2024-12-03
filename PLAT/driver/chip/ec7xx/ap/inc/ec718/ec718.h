@@ -90,6 +90,11 @@ typedef enum IRQn
     APXIC1_Normal_IRQn              =   14,     /**< AP XIC1 Interrupt */
     APXIC2_Normal_IRQn              =   15,     /**< AP XIC2 Interrupt */
     APXIC3_Normal_IRQn              =   16,     /**< AP XIC3 Interrupt */
+#ifdef TYPE_EC718M
+    APXIC4_Normal_IRQn              =   17,     /**< AP XIC4 Interrupt */
+#endif
+
+    XIC_Start_IRQn                  =   32,
 
     /* AP XIC0 for IPC/APB  */
     PXIC0_OVF_IRQn                  =   32,     /**< SW or HW Error Interrupt */
@@ -159,7 +164,10 @@ typedef enum IRQn
     PXIC1_ULOG_IRQn                 =   93,     /**< ULOG Interrupt */
     PXIC1_THM_HI_IRQn               =   94,     /**< THM HI Interrupt */
     PXIC1_AUXADC_IRQn               =   95,     /**< AUXADC Interrupt */
-
+#ifdef TYPE_EC718M
+    PXIC4_CAN0_IRQn                 =   162,    /**< CAN0 Interrupt */
+#endif
+    XIC_End_IRQn                    =   191,
 } IRQn_Type;
 
 #endif
@@ -206,6 +214,7 @@ typedef enum IRQn
 #define APXIC1_BASE_ADDR                         (APXIC_BASE_ADDR+0x1000)           /**< APXIC1(manage AHB/APB interupt) base address */
 #define APXIC2_BASE_ADDR                         (APXIC_BASE_ADDR+0x2000)           /**< APXIC2(manage ULDP interupt) base address */
 #define APXIC3_BASE_ADDR                         (APXIC_BASE_ADDR+0x3000)           /**< APXIC3(manage USB interupt) base address */
+#define APXIC4_BASE_ADDR                         (APXIC_BASE_ADDR+0x4000)           /**< APXIC4 base address */
 
 /**
   * @brief AP APB base address
@@ -443,6 +452,32 @@ typedef struct {
   * @brief GPIO register layout typedef
   *
   */
+#if defined(GPIO_IP_VERSION_B1)
+typedef struct {
+    __IO uint32_t DATA;                          /**< Data Input Register,                offset: 0x0 */
+    __IO uint32_t DATAOUT;                       /**< Data Output Register,               offset: 0x4 */
+         uint32_t RESERVED_0[2];
+    __IO uint32_t OUTENSET;                      /**< Output Enable Set Register,         offset: 0x10 */
+    __IO uint32_t OUTENCLR;                      /**< Output Enable Clear Register,       offset: 0x14 */
+         uint32_t RESERVED_1[2];
+    __IO uint32_t INTENSET;                      /**< Interrupt Enable Set Register,      offset: 0x20 */
+    __IO uint32_t INTENCLR;                      /**< Interrupt Enable Clear Register,    offset: 0x24 */
+    __IO uint32_t INTTYPESET;                    /**< Interrupt Type set Register,        offset: 0x28 */
+    __IO uint32_t INTTYPECLR;                    /**< Interrupt Type Clear Register,      offset: 0x2C */
+    __IO uint32_t INTPOLSET;                     /**< Interrupt Polarity Set Register,    offset: 0x30 */
+    __IO uint32_t INTPOLCLR;                     /**< Interrupt Polarity Clear Register,  offset: 0x34 */
+    __I  uint32_t INTSTATUS;                     /**< Interrupt Status Register,          offset: 0x38 */
+    __IO uint32_t INTEDGESET;                    /**< Interrupt Edge Set Register,        offset: 0x3C */
+    __IO uint32_t INTEDGECLR;                    /**< Interrupt Edge Clear Register,      offset: 0x40 */
+    __IO uint32_t INTCLRMAP;                     /**< Interrupt Clear Map Register,       offset: 0x44 */
+    __IO uint32_t INTCLR;                        /**< Interrupt Clear Register,           offset: 0x48 */
+    __IO uint32_t INTLATCH;                      /**< Interrupt Latch Register,           offset: 0x4C */
+    __IO uint32_t FCLKEN;                        /**< FCLK Enable Register,               offset: 0x50 */
+         uint32_t RESERVED_3[235];
+    __IO uint32_t MASKLOWBYTE[256];              /**< Lower Eight Bits Masked Access Register, array offset: 0x400, array step: 0x4 */
+    __IO uint32_t MASKHIGHBYTE[256];             /**< Higher Eight Bits Masked Access Register, array offset: 0x800, array step: 0x4 */
+} GPIO_TypeDef;
+#else
 typedef struct {
     __IO uint32_t DATA;                          /**< Data Input Register,                offset: 0x0 */
     __IO uint32_t DATAOUT;                       /**< Data Output Register,               offset: 0x4 */
@@ -463,7 +498,7 @@ typedef struct {
     __IO uint32_t MASKLOWBYTE[256];              /**< Lower Eight Bits Masked Access Register, array offset: 0x400, array step: 0x4 */
     __IO uint32_t MASKHIGHBYTE[256];             /**< Higher Eight Bits Masked Access Register, array offset: 0x800, array step: 0x4 */
 } GPIO_TypeDef;
-
+#endif
 /** @name DATA - GPIO_DATA register */
 /** @{ */
 #define GPIO_DATA_DVAL_Pos                       (0)
@@ -542,6 +577,33 @@ typedef struct {
 #define GPIO_INTEDGECLR_INEDGECLR_Msk            (0xFFFFUL << GPIO_INTEDGECLR_INEDGECLR_Pos)
 /** @} */
 
+#if defined(GPIO_IP_VERSION_B1)
+/** @name INTCLRMAP - GPIO_INTCLRMAP register */
+/** @{ */
+#define GPIO_INTCLRMAP_MAP_Pos                   (0)
+#define GPIO_INTCLRMAP_MAP_Msk                   (0xFFFFUL << GPIO_INTCLRMAP_MAP_Pos)
+/** @} */
+
+/** @name INTCLR - GPIO_INTCLR register */
+/** @{ */
+#define GPIO_INTCLR_CLR_Pos                      (0)
+#define GPIO_INTCLR_CLR_Msk                      (0x1UL << GPIO_INTCLR_CLR_Pos)
+/** @} */
+
+/** @name INTLATCH - GPIO_INTLATCH register */
+/** @{ */
+#define GPIO_INTLATCH_LATCH_Pos                  (0)
+#define GPIO_INTLATCH_LATCH_Msk                  (0x1UL << GPIO_INTLATCH_LATCH_Pos)
+/** @} */
+
+/** @name FCLKEN - GPIO_FCLKEN register */
+/** @{ */
+#define GPIO_FCLKEN_EN_Pos                       (0)
+#define GPIO_FCLKEN_EN_Msk                       (0x1UL << GPIO_FCLKEN_EN_Pos)
+/** @} */
+
+
+#endif
 /** @name MASKLOWBYTE - GPIO_MASKLOWBYTE N register */
 /** @{ */
 #define GPIO_MASKLOWBYTE_MASK_Pos                (0)
@@ -980,15 +1042,15 @@ typedef struct {
     __IO uint32_t RFIFO;                          /**< Rx Buffer Register,                  offset: 0x1c */
     __IO uint32_t TFIFO;                          /**< Tx Buffer Register,                  offset: 0x20 */
     __IO uint32_t I2SCTL;                         /**< I2S Control Register,                offset: 0x24 */
-#if defined CHIP_EC718
+#if (defined CHIP_EC718) && !(defined TYPE_EC718M)
          uint32_t RESERVED_1[46];
     __IO uint32_t I2SBUSSEL;                      /**< i2s bus select                       offset: 0xe0 */
-#else    
+#else
          uint32_t RESERVED_1[47];
     __IO uint32_t I2SBUSSEL;                      /**< i2s bus select                       offset: 0xe4 */
          uint32_t RESERVED_2[3];
     __IO uint32_t USPVERSION;                     /**< usp version                          offset: 0xf4 */
-#endif    
+#endif
 } I2S_TypeDef;
 
 /** @name DFMT - I2S_DFMT register */
@@ -1207,7 +1269,6 @@ typedef struct {
 
 /** @name STATS - I2S/CSPI/LSPI status register */
 /** @{ */
-#if defined CHIP_EC718
 
 #define ICL_STATS_TX_UNDERRUN_RUN_Pos           (0)
 #define ICL_STATS_TX_UNDERRUN_RUN_Msk           (0x1UL << ICL_STATS_TX_UNDERRUN_RUN_Pos)
@@ -1267,9 +1328,7 @@ typedef struct {
 #define ICL_STATS_LSPI_RAM_WR_END_Msk           (0x1UL << ICL_STATS_LSPI_RAM_WR_END_Pos)
 
 
-#elif defined CHIP_EC719
 
-#endif
 /** @} */
 
 
@@ -1325,7 +1384,7 @@ typedef struct {
     __IO uint32_t CSPIPROCLSPI;                   /**< Cspi frame proc lspi                 offset: 0x50 */
     __IO uint32_t CSPIQUARTILE;                   /**< Cspi OTSU quartile                   offset: 0x54 */
     __IO uint32_t CSPIYADJ;                       /**< Cspi y Adjustment                    offset: 0x58 */
-#if defined CHIP_EC718
+#if (defined CHIP_EC718) && !(defined TYPE_EC718M)
     __IO uint32_t RSVD2;
     __IO uint32_t RSVD3[18];                      /**< For lspi                                          */
     __IO uint32_t RSVD4[10];                      /**< Reserved                                          */
@@ -1704,7 +1763,7 @@ typedef struct {
   * @brief LSPI register layout typedef
   *
   */
-#if defined CHIP_EC718
+#if (defined CHIP_EC718) && !(defined TYPE_EC718M)
 /**
   * @brief LSPI register layout typedef
   *
@@ -1809,7 +1868,6 @@ typedef struct {
 
   /** @name STATS_CTRL -CSPI_STATS_CTRL register */
   /** @{ */
-
 #define LSPI_STATS_RAM_WR_BREAK_Pos                 (26)
 #define LSPI_STATS_RAM_WR_BREAK_Msk                 (0x1UL << LSPI_STATS_RAM_WR_BREAK_Pos)
 
@@ -2406,7 +2464,7 @@ typedef struct {
 #define LSPI_YUV2RGB_INFO1_YUV2RGB_C4_Msk           (0x3FFUL << LSPI_YUV2RGB_INFO1_YUV2RGB_C4_Pos)
   /** @} */
 #endif
-  
+
 
   /** @name BUS_SEL - I2S_BUS_SEL register */
   /** @{ */
@@ -2445,6 +2503,21 @@ typedef struct {
   * @brief KPC register layout typedef
   *
   */
+#if defined(KPC_IP_VERSION_B1)
+typedef struct {
+    __IO uint32_t DEBCTL;                           /**< Debounce Control Register,              offset: 0x0 */
+    __IO uint32_t KPCTL;                            /**< Keypad Control Register,                offset: 0x4 */
+    __IO uint32_t DICTL;                            /**< Direct Input Control Register,          offset: 0x8 */
+    __IO uint32_t KPENCTL;                          /**< Keypad Enable Register,                 offset: 0xC */
+    __IO uint32_t KPRDEN[2];                        /**< Keypad Release Detect Enable Register,    array offset: 0x10, array step: 0x4 */
+    __IO uint32_t DIENCTL;                          /**< Direct Input Enable Register,           offset: 0x18 */
+    __IO uint32_t AUTOCG;                           /**< Auto Gate Enable Register,              offset: 0x1C */
+    __IO uint32_t CLRCTL;                           /**< Direct Input Clear Control Register,    offset: 0x20 */
+    __I  uint32_t KPSTAT[2];                        /**< Keypad Status Register,   array offset: 0x24, array step: 0x4 */
+    __I  uint32_t DISTAT0;                          /**< Direct Input Status Register 0,         offset: 0x2C */
+    __I  uint32_t DISTAT1;                          /**< Direct Input Status Register 1,         offset: 0x30 */
+} KPC_TypeDef;
+#else
 typedef struct {
     __IO uint32_t DEBCTL;                           /**< Debounce Control Register,              offset: 0x0 */
     __IO uint32_t KPCTL;                            /**< Keypad Control Register,                offset: 0x4 */
@@ -2456,7 +2529,7 @@ typedef struct {
     __I  uint32_t KPSTAT;                           /**< Keypad Status Register,                 offset: 0x1C */
     __I  uint32_t DISTAT;                           /**< Direct Input Status Register,           offset: 0x20 */
 } KPC_TypeDef;
-
+#endif
 /** @name DEBCTL - KPC_DEBCTL register */
 /** @{ */
 #define KPC_DEBCTL_DEBOUNCER_DEPTH_Pos           (0)
@@ -2471,6 +2544,24 @@ typedef struct {
 #define KPC_DEBCTL_DEBOUNCER_TO_MCLK_RATIO_Pos   (12)
 #define KPC_DEBCTL_DEBOUNCER_TO_MCLK_RATIO_Msk   (0xFUL << KPC_DEBCTL_DEBOUNCER_TO_MCLK_RATIO_Pos)
 /** @} */
+
+#if defined(KPC_IP_VERSION_B1)
+
+/** @name KPCTL - KPC_KPCTL register */
+/** @{ */
+#define KPC_KPCTL_POLARITY_Pos                   (0)
+#define KPC_KPCTL_POLARITY_Msk                   (0x1UL << KPC_KPCTL_POLARITY_Pos)
+
+#define KPC_KPCTL_ROW_VLD_BITMAP_Pos             (1)
+#define KPC_KPCTL_ROW_VLD_BITMAP_Msk             (0xFFUL << KPC_KPCTL_ROW_VLD_BITMAP_Pos)
+
+#define KPC_KPCTL_COL_VLD_BITMAP_Pos             (9)
+#define KPC_KPCTL_COL_VLD_BITMAP_Msk             (0xFFUL << KPC_KPCTL_COL_VLD_BITMAP_Pos)
+
+#define KPC_KPCTL_SCAN_TO_DEBOUNCE_RATIO_Pos     (17)
+#define KPC_KPCTL_SCAN_TO_DEBOUNCE_RATIO_Msk     (0x7UL << KPC_KPCTL_SCAN_TO_DEBOUNCE_RATIO_Pos)
+/** @} */
+#else
 
 /** @name KPCTL - KPC_KPCTL register */
 /** @{ */
@@ -2487,6 +2578,7 @@ typedef struct {
 #define KPC_KPCTL_SCAN_TO_DEBOUNCE_RATIO_Msk     (0x7UL << KPC_KPCTL_SCAN_TO_DEBOUNCE_RATIO_Pos)
 /** @} */
 
+#endif
 /** @name DICTL - KPC_DICTL register */
 /** @{ */
 #define KPC_DICTL_INT_MODE_Pos                   (0)
@@ -2495,6 +2587,22 @@ typedef struct {
 #define KPC_DICTL_INT_EN_Pos                     (2)
 #define KPC_DICTL_INT_EN_Msk                     (0x3FFUL << KPC_DICTL_INT_EN_Pos)
 /** @} */
+
+#if defined(KPC_IP_VERSION_B1)
+
+/** @name KPENCTL - KPC_KPENCTL register */
+/** @{ */
+#define KPC_KPENCTL_ENABLE_Pos                   (0)
+#define KPC_KPENCTL_ENABLE_Msk                   (0x1UL << KPC_KPENCTL_ENABLE_Pos)
+
+#define KPC_KPENCTL_PULL_EN_Pos                  (26)
+#define KPC_KPENCTL_PULL_EN_Msk                  (0x1UL << KPC_KPENCTL_PULL_EN_Pos)
+
+#define KPC_KPENCTL_WORK_MODE_Pos                (27)
+#define KPC_KPENCTL_WORK_MODE_Msk                (0x1UL << KPC_KPENCTL_WORK_MODE_Pos)
+/** @} */
+
+#else
 
 /** @name KPENCTL - KPC_KPENCTL register */
 /** @{ */
@@ -2511,11 +2619,24 @@ typedef struct {
 #define KPC_KPENCTL_WORK_MODE_Msk                (0x1UL << KPC_KPENCTL_WORK_MODE_Pos)
 /** @} */
 
+#endif
+
 /** @name DIENCTL - KPC_DIENCTL register */
 /** @{ */
 #define KPC_DIENCTL_ENABLE_Pos                   (0)
 #define KPC_DIENCTL_ENABLE_Msk                   (0x1UL << KPC_DIENCTL_ENABLE_Pos)
 /** @} */
+
+
+#if defined(KPC_IP_VERSION_B1)
+
+/** @name KPRDEN - KPC_KPRDEN N register */
+/** @{ */
+#define KPC_KPRDEN_ENABLE_Pos                    (0)
+#define KPC_KPRDEN_ENABLE_Msk                    (0xFFFFFFFFUL << KPC_KPRDEN_ENABLE_Pos)
+/** @} */
+
+#endif
 
 /** @name AUTOCG - KPC_AUTOCG register */
 /** @{ */
@@ -2531,6 +2652,31 @@ typedef struct {
 #define KPC_CLRCTL_DEBOUNCER_CLR_Pos             (10)
 #define KPC_CLRCTL_DEBOUNCER_CLR_Msk             (0x3FFUL << KPC_CLRCTL_DEBOUNCER_CLR_Pos)
 /** @} */
+
+#if defined(KPC_IP_VERSION_B1)
+
+/** @name KPSTAT - KPC_KPSTAT N register */
+/** @{ */
+#define KPC_KPSTAT_STATUS_Pos                    (0)
+#define KPC_KPSTAT_STATUS_Msk                    (0xFFFFFFFFUL << KPC_KPSTAT_STATUS_Pos)
+/** @} */
+
+/** @name DISTAT0 - KPC_DISTAT0 register */
+/** @{ */
+#define KPC_DISTAT0_INPUT_STATUS_Pos             (0)
+#define KPC_DISTAT0_INPUT_STATUS_Msk             (0xFFFFUL << KPC_DISTAT0_INPUT_STATUS_Pos)
+/** @} */
+
+/** @name DISTAT1 - KPC_DISTAT1 register */
+/** @{ */
+#define KPC_DISTAT1_INPUT_INT_NEG_STATUS_Pos     (0)
+#define KPC_DISTAT1_INPUT_INT_NEG_STATUS_Msk     (0xFFFFUL << KPC_DISTAT1_INPUT_INT_NEG_STATUS_Pos)
+
+#define KPC_DISTAT1_INPUT_INT_POS_STATUS_Pos     (16)
+#define KPC_DISTAT1_INPUT_INT_POS_STATUS_Msk     (0xFFFFUL << KPC_DISTAT1_INPUT_INT_POS_STATUS_Pos)
+/** @} */
+
+#else
 
 /** @name KPSTAT - KPC_KPSTAT register */
 /** @{ */
@@ -2550,6 +2696,7 @@ typedef struct {
 #define KPC_DISTAT_INPUT_STATUS_Msk              (0x3FFUL << KPC_DISTAT_INPUT_STATUS_Pos)
 /** @} */
 
+#endif
 /** Peripheral KPC base pointer */
 #define KPC                                      ((KPC_TypeDef *) AP_KPC_BASE_ADDR)
 
@@ -2904,8 +3051,12 @@ typedef struct {
   * @{
   */
 
+#if defined TYPE_EC718M
+#define PAD_ADDR_MAX_NUM                          (73U)
+#else
 /** max number of addr in PAD */
 #define PAD_ADDR_MAX_NUM                          (66U)
+#endif
 
 /**
   * @brief PAD register layout typedef
@@ -2975,6 +3126,17 @@ typedef struct {
     __IO uint32_t RPTCR;                         /**< Rx Path Timeout Register,               offset: 0x34 */
     __IO uint32_t SRLR;                          /**< SW request level register,              offset: 0x38 */
     __IO uint32_t MPSR;                          /**< Master RXD phase sel register,          offset: 0x3C */
+#if defined(SPI_IP_VERSION_B2)
+    __IO uint32_t CER;                           /**< Compress Enable register,               offset: 0x40 */
+    __IO uint32_t WBSR;                          /**< Write Bytes Strobe register,            offset: 0x44 */
+    __I  uint32_t RBSR;                          /**< Read Bytes Strobe register,             offset: 0x48 */
+    __IO uint32_t RBLR;                          /**< Receive Bytes Length register,          offset: 0x4C */
+    __IO uint32_t RCCR;                          /**< Receive Bytes Counter Clear register,   offset: 0x50 */
+    __I  uint32_t RBCR;                          /**< Read Bytes Counter register,            offset: 0x54 */
+    __IO uint32_t FFR;                           /**< Fifo Flush register,                    offset: 0x58 */
+    __IO uint32_t TRCR;                          /**< TXRX Control register,                  offset: 0x5C */
+    __IO uint32_t ROMR;                          /**< RX Only Mode register,                  offset: 0x60 */
+#endif
 } SPI_TypeDef;
 
 /** @name CR0 - SPI_CR0 register */
@@ -3032,6 +3194,16 @@ typedef struct {
 
 #define SPI_SR_BSY_Pos                           (4)
 #define SPI_SR_BSY_Msk                           (0x1UL << SPI_SR_BSY_Pos)
+
+#if defined(SPI_IP_VERSION_B2)
+
+#define SPI_SR_RX_WL_Pos                         (8)
+#define SPI_SR_RX_WL_Msk                         (0xFFUL << SPI_SR_RX_WL_Pos)
+
+#define SPI_SR_TX_WL_Pos                         (16)
+#define SPI_SR_TX_WL_Msk                         (0xFFUL << SPI_SR_TX_WL_Pos)
+
+#endif
 /** @} */
 
 /** @name CPSR - SPI_CPSR register */
@@ -3101,7 +3273,145 @@ typedef struct {
 
 #define SPI_DMACR_TXDMAE_Pos                     (1)
 #define SPI_DMACR_TXDMAE_Msk                     (0x1UL << SPI_DMACR_TXDMAE_Pos)
+
+#if defined(SPI_IP_VERSION_B2)
+
+#define SPI_DMACR_RXDMAE_SSE_MASK_Pos            (2)
+#define SPI_DMACR_RXDMAE_SSE_MASK_Msk            (0x1UL << SPI_DMACR_RXDMAE_SSE_MASK_Pos)
+
+#define SPI_DMACR_TXDMAE_SSE_MASK_Pos            (3)
+#define SPI_DMACR_TXDMAE_SSE_MASK_Msk            (0x1UL << SPI_DMACR_TXDMAE_SSE_MASK_Pos)
+
+#endif
 /** @} */
+
+#if defined(SPI_IP_VERSION_B2)
+
+/** @name DRLR - SPI_DRLR register */
+/** @{ */
+#define SPI_DRLR_RX_REQ_LVL_Pos                  (0)
+#define SPI_DRLR_RX_REQ_LVL_Msk                  (0xFFUL << SPI_DRLR_RX_REQ_LVL_Pos)
+
+#define SPI_DRLR_TX_REQ_LVL_Pos                  (8)
+#define SPI_DRLR_TX_REQ_LVL_Msk                  (0xFFUL << SPI_DRLR_TX_REQ_LVL_Pos)
+/** @} */
+
+/** @name DRRCR - SPI_DRRCR register */
+/** @{ */
+#define SPI_DRRCR_RX_REQ_MODE_Pos                (0)
+#define SPI_DRRCR_RX_REQ_MODE_Msk                (0x1UL << SPI_DRRCR_RX_REQ_MODE_Pos)
+
+#define SPI_DRRCR_RX_TO_REQ_EN_Pos               (1)
+#define SPI_DRRCR_RX_TO_REQ_EN_Msk               (0x1UL << SPI_DRRCR_RX_TO_REQ_EN_Pos)
+
+#define SPI_DRRCR_RX_EOR_MODE_Pos                (2)
+#define SPI_DRRCR_RX_EOR_MODE_Msk                (0x1UL << SPI_DRRCR_RX_EOR_MODE_Pos)
+
+#define SPI_DRRCR_RX_WAIT_CYCLE_Pos              (3)
+#define SPI_DRRCR_RX_WAIT_CYCLE_Msk              (0x1FUL << SPI_DRRCR_RX_WAIT_CYCLE_Pos)
+
+#define SPI_DRRCR_READ_DEPTH_ONE_BURST_Pos       (8)
+#define SPI_DRRCR_READ_DEPTH_ONE_BURST_Msk       (0x7FUL << SPI_DRRCR_READ_DEPTH_ONE_BURST_Pos)
+/** @} */
+
+/** @name DTRCR - SPI_DTRCR register */
+/** @{ */
+#define SPI_DTRCR_TX_REQ_MODE_Pos                (0)
+#define SPI_DTRCR_TX_REQ_MODE_Msk                (0x1UL << SPI_DTRCR_TX_REQ_MODE_Pos)
+
+#define SPI_DTRCR_TX_WAIT_CYCLE_Pos              (1)
+#define SPI_DTRCR_TX_WAIT_CYCLE_Msk              (0x1FUL << SPI_DTRCR_TX_WAIT_CYCLE_Pos)
+
+#define SPI_DTRCR_WRITE_DEPTH_ONE_BURST_Pos      (8)
+#define SPI_DTRCR_WRITE_DEPTH_ONE_BURST_Msk      (0x7FUL << SPI_DTRCR_WRITE_DEPTH_ONE_BURST_Pos)
+/** @} */
+
+/** @name RPTCR - SPI_RPTCR register */
+/** @{ */
+#define SPI_RPTCR_VALUE_Pos                      (0)
+#define SPI_RPTCR_VALUE_Msk                      (0xFFUL << SPI_RPTCR_VALUE_Pos)
+/** @} */
+
+/** @name SRLR - SPI_SRLR register */
+/** @{ */
+#define SPI_SRLR_RX_REQ_LVL_Pos                  (0)
+#define SPI_SRLR_RX_REQ_LVL_Msk                  (0xFFUL << SPI_SRLR_RX_REQ_LVL_Pos)
+
+#define SPI_SRLR_TX_REQ_LVL_Pos                  (8)
+#define SPI_SRLR_TX_REQ_LVL_Msk                  (0xFFUL << SPI_SRLR_TX_REQ_LVL_Pos)
+/** @} */
+
+/** @name MPSR - SPI_MPSR register */
+/** @{ */
+#define SPI_MPSR_MRX_PHA_SEL_Pos                 (0)
+#define SPI_MPSR_MRX_PHA_SEL_Msk                 (0x3UL << SPI_MPSR_MRX_PHA_SEL_Pos)
+
+#define SPI_MPSR_STX_PHA_SEL_Pos                 (2)
+#define SPI_MPSR_STX_PHA_SEL_Msk                 (0x1UL << SPI_MPSR_STX_PHA_SEL_Pos)
+/** @} */
+
+/** @name CER - SPI_CER register */
+/** @{ */
+#define SPI_CER_TX_COMPRESS_EN_Pos               (0)
+#define SPI_CER_TX_COMPRESS_EN_Msk               (0x1UL << SPI_CER_TX_COMPRESS_EN_Pos)
+
+#define SPI_CER_RX_COMPRESS_EN_Pos               (1)
+#define SPI_CER_RX_COMPRESS_EN_Msk               (0x1UL << SPI_CER_RX_COMPRESS_EN_Pos)
+/** @} */
+
+/** @name WBSR - SPI_WBSR register */
+/** @{ */
+#define SPI_WBSR_STROBE_Pos                      (0)
+#define SPI_WBSR_STROBE_Msk                      (0xFUL << SPI_WBSR_STROBE_Pos)
+/** @} */
+
+/** @name RBSR - SPI_RBSR register */
+/** @{ */
+#define SPI_RBSR_STROBE_Pos                      (0)
+#define SPI_RBSR_STROBE_Msk                      (0xFUL << SPI_RBSR_STROBE_Pos)
+/** @} */
+
+/** @name RCCR - SPI_RCCR register */
+/** @{ */
+#define SPI_RCCR_CLR_Pos                         (0)
+#define SPI_RCCR_CLR_Msk                         (0x1UL << SPI_RCCR_CLR_Pos)
+/** @} */
+
+/** @name RBCR - SPI_RBCR register */
+/** @{ */
+#define SPI_RBCR_CNT_Pos                         (0)
+#define SPI_RBCR_CNT_Msk                         (0xFFFFFFUL << SPI_RBCR_CNT_Pos)
+/** @} */
+
+/** @name FFR - SPI_FFR register */
+/** @{ */
+#define SPI_FFR_TX_FLUSH_Pos                     (0)
+#define SPI_FFR_TX_FLUSH_Msk                     (0x1UL << SPI_FFR_TX_FLUSH_Pos)
+
+#define SPI_FFR_RX_FLUSH_Pos                     (1)
+#define SPI_FFR_RX_FLUSH_Msk                     (0x1UL << SPI_FFR_RX_FLUSH_Pos)
+/** @} */
+
+/** @name TRCR - SPI_TRCR register */
+/** @{ */
+#define SPI_TRCR_MAS_RX_STOP_LEVEL_Pos           (0)
+#define SPI_TRCR_MAS_RX_STOP_LEVEL_Msk           (0xFFUL << SPI_TRCR_MAS_RX_STOP_LEVEL_Pos)
+
+#define SPI_TRCR_TX_DEFAULT_VALUE_Pos            (16)
+#define SPI_TRCR_TX_DEFAULT_VALUE_Msk            (0xFFFFUL << SPI_TRCR_TX_DEFAULT_VALUE_Pos)
+/** @} */
+
+/** @name ROMR - SPI_ROMR register */
+/** @{ */
+#define SPI_ROMR_MAS_RXONLY_Pos                  (0)
+#define SPI_ROMR_MAS_RXONLY_Msk                  (0x1UL << SPI_ROMR_MAS_RXONLY_Pos)
+
+#define SPI_ROMR_MAS_RXONLY_LEN_Pos              (8)
+#define SPI_ROMR_MAS_RXONLY_LEN_Msk              (0xFFFFFFUL << SPI_ROMR_MAS_RXONLY_LEN_Pos)
+/** @} */
+
+
+#else
 
 /** @name DRLR - SPI_DRLR register */
 /** @{ */
@@ -3163,6 +3473,7 @@ typedef struct {
 #define SPI_MPSR_VALUE_Msk                       (0x1UL << SPI_MPSR_VALUE_Pos)
 /** @} */
 
+#endif
 
 /** Peripheral SPI0 base pointer */
 #define SPI0                                     ((SPI_TypeDef *)MP_SSP0_BASE_ADDR)
@@ -3199,6 +3510,12 @@ typedef struct {
     __I  uint32_t TACR;                          /**< Timer Actual value of Counter Register       offset: 0x24 */
     __I  uint32_t TCVR;                          /**< Timer Capture Value Register                 offset: 0x28 */
     __I  uint32_t TCER;                          /**< Timer Capture Edge Register                  offset: 0x2C */
+#if defined(TIMER_IP_VERSION_B1)
+    __IO uint32_t TCUMR;                         /**< Timer Compare value Update Mode Register,    offset: 0x30 */
+    __IO uint32_t TCUR;                          /**< Timer Compare value Update Register,         offset: 0x34 */
+    __I  uint32_t TCCUR;                         /**< Timer Compare value Current Used Register,   offset: 0x38 */
+    __I  uint32_t TVID;                          /**< Timer Version ID Resigter,                   offset: 0x3C */
+#endif
 } TIMER_TypeDef;
 
 /** @name TCCR - TIMER_TCCR register */
@@ -3284,27 +3601,43 @@ typedef struct {
 
 /** @name TCLR - TIMER_TCLR register */
 /** @{ */
-#define TIMER_TCLR_LATCH_Pos                      (0)
-#define TIMER_TCLR_LATCH_Msk                      (0x1UL << TIMER_TCLR_LATCH_Pos)
+#define TIMER_TCLR_LATCH_Pos                     (0)
+#define TIMER_TCLR_LATCH_Msk                     (0x1UL << TIMER_TCLR_LATCH_Pos)
 /** @} */
 
 /** @name TACR - TIMER_TACR register */
 /** @{ */
-#define TIMER_TACR_VALUE_Pos                      (0)
-#define TIMER_TACR_VALUE_Msk                      (0xFFFFFFFFUL << TIMER_TACR_VALUE_Pos)
+#define TIMER_TACR_VALUE_Pos                     (0)
+#define TIMER_TACR_VALUE_Msk                     (0xFFFFFFFFUL << TIMER_TACR_VALUE_Pos)
 /** @} */
 
 /** @name TCVR - TIMER_TCVR register */
 /** @{ */
-#define TIMER_TCVR_VALUE_Pos                      (0)
-#define TIMER_TCVR_VALUE_Msk                      (0xFFFFFFFFUL << TIMER_TCVR_VALUE_Pos)
+#define TIMER_TCVR_VALUE_Pos                     (0)
+#define TIMER_TCVR_VALUE_Msk                     (0xFFFFFFFFUL << TIMER_TCVR_VALUE_Pos)
 /** @} */
 
 /** @name TCER - TIMER_TCER register */
 /** @{ */
-#define TIMER_TCER_VALUE_Pos                      (0)
-#define TIMER_TCER_VALUE_Msk                      (0xFFFFFFFFUL << TIMER_TCER_VALUE_Pos)
+#define TIMER_TCER_VALUE_Pos                     (0)
+#define TIMER_TCER_VALUE_Msk                     (0xFFFFFFFFUL << TIMER_TCER_VALUE_Pos)
 /** @} */
+
+#if defined(TIMER_IP_VERSION_B1)
+
+/** @name TCUMR - TIMER_TCUMR register */
+/** @{ */
+#define TIMER_TCUMR_MODE_Pos                     (0)
+#define TIMER_TCUMR_MODE_Msk                     (0x1UL << TIMER_TCUMR_MODE_Pos)
+/** @} */
+
+/** @name TCUR - TIMER_TCUR register */
+/** @{ */
+#define TIMER_TCUR_UPDATE_Pos                    (0)
+#define TIMER_TCUR_UPDATE_Msk                    (0x1UL << TIMER_TCUR_UPDATE_Pos)
+/** @} */
+
+#endif
 
 /** @brief TIMER peripheral instance number */
 #define TIMER_INSTANCE_NUM                       (6)
@@ -4114,6 +4447,8 @@ typedef struct {
 /** AP USB XIC_3 base pointer */
 #define APXIC_3                                    ((XIC_TypeDef *)APXIC3_BASE_ADDR)
 
+/** AP USB XIC_3 base pointer */
+#define APXIC_4                                    ((XIC_TypeDef *)APXIC4_BASE_ADDR)
 
 /**
   * @}

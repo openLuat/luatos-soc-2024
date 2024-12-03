@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "usbd_multi_clstype.h"
-
+#include "sctdef.h"
 
 
 #define  USB_DEV_QUALIFIER_DESC_ARR_SIZE                     0x0A
@@ -33,11 +33,11 @@
 #define  USB_DESC_TYPE_OTHER_SPEED_CONFIGURATION           7
 
 
-uint32_t udev_last_err  = 0;
+AP_PLAT_COMMON_BSS uint32_t udev_last_err  = 0;
 
 
 
-uint8_t usbd_dev_desc_arr[USB_SIZ_DEVICE_DESC] =
+AP_PLAT_COMMON_DATA uint8_t usbd_dev_desc_arr[USB_SIZ_DEVICE_DESC] =
 {
     0x12,						/* bLength */
     USB_DEVICE_DESCRIPTOR_TYPE,	/* bDescriptorType */
@@ -69,7 +69,7 @@ uint8_t usbd_dev_desc_arr[USB_SIZ_DEVICE_DESC] =
 
 
 /* USB Standard Device Descriptor */
-uint8_t usbd_dev_qualifier_desc_arr[USB_DEV_QUALIFIER_DESC_ARR_SIZE] =
+AP_PLAT_COMMON_DATA uint8_t usbd_dev_qualifier_desc_arr[USB_DEV_QUALIFIER_DESC_ARR_SIZE] =
 {
     USB_DEV_QUALIFIER_DESC_ARR_SIZE,
     USB_DESC_TYPE_DEVICE_QUALIFIER,
@@ -84,7 +84,7 @@ uint8_t usbd_dev_qualifier_desc_arr[USB_DEV_QUALIFIER_DESC_ARR_SIZE] =
 };
 
 /* USB Standard Device Descriptor */
-uint8_t usbd_dev_langid_desc[USB_SIZ_STRING_LANGID] =
+AP_PLAT_COMMON_DATA uint8_t usbd_dev_langid_desc[USB_SIZ_STRING_LANGID] =
 {
      USB_SIZ_STRING_LANGID,         
      USB_DESC_TYPE_STRING,       

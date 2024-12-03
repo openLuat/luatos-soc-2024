@@ -66,7 +66,7 @@ typedef struct
  *----------------------------------------------------------------------------*/
 
 
-static ExStoZoneMan_t   gExStoZoneMan;
+AP_PLAT_COMMON_BSS static ExStoZoneMan_t   gExStoZoneMan;
 
 
 /*----------------------------------------------------------------------------*

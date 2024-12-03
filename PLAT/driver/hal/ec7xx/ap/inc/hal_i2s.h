@@ -249,6 +249,8 @@ uint32_t halI2sGetTrunkNum();
 
 void halI2sRegisterUspCb(i2sUspFunc_fn cb);
 void ctrlErrStatsBit(uint32_t errStats, bool enableErrInt);
+int getMclkFromPin(uint8_t padAddr, PadMux_e padMux, uint32_t freq, FracDivRootClk_e clkSrc);
+void halI2sStopDma();
 
 
 

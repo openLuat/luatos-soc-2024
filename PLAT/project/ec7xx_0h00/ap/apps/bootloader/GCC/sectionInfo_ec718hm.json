@@ -1,0 +1,29 @@
+{
+  "memfile":"mem_map.txt",
+  "flashloadAddr": "BOOTLOADER_FLASH_LOAD_ADDR",
+  "flashloadSize": "BOOTLOADER_FLASH_LOAD_SIZE",
+  "flashxipEnding": "flashXIPLimit",
+  "sectGrp":[
+    {
+      "grpId":0,
+      "grpSize":65536,
+      "sect":[
+        {
+          "secname":"load_asmb_shared_data",
+          "sectype":"SECTIONBL_LOAD_ASMB_SHARED",
+          "isCompressed":true
+        },
+        {
+          "secname":"load_airam_other",
+          "sectype":"SECTIONBL_LOAD_AIRAM_OTHER_RAMCODE",
+          "isCompressed":true
+        },
+        {
+          "secname":"load_ciram",
+          "sectype":"SECTIONBL_LOAD_CIRAM_RAMCODE",
+          "isCompressed":true
+        }
+      ]
+    }
+  ]
+}

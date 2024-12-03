@@ -44,11 +44,7 @@ void    lcdMspiSet(uint8_t enable, uint8_t addrLane, uint8_t dataLane, uint8_t i
 void    lcdMspiHsyncSet(uint8_t hsyncAddr, uint8_t hsyncInst, uint16_t vbpNum, uint16_t vfpNum);
 void    lcdMspiVsyncSet(uint8_t vsyncEnable, uint8_t vsyncInst, uint8_t lspiDiv);
 void    lcdCsnHighCycleMin(uint8_t lspiDiv);
-#if defined CHIP_EC718
-void    calTe(uint32_t totalBytes, uint16_t sy);
-#else // 719
 
-#endif
 
 #ifdef __cplusplus
 }

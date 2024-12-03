@@ -4,6 +4,7 @@
 #include "usbd_clscdc.h"
 #include "usbd_func_cc.h"
 #include "usbd_multi_usrcfg_common.h"
+#include "sctdef.h"
 
 #ifndef USB_DRV_SMALL_IMAGE
 #include "plat_config.h"
@@ -48,7 +49,7 @@ typedef struct {
 
 }usbd_multidev_ccinst_res_st;
 
-usbd_multidev_ccinst_res_st t_usbd_multidev_ccinst_res =
+AP_PLAT_COMMON_DATA usbd_multidev_ccinst_res_st t_usbd_multidev_ccinst_res =
 {
     .vcom_ccinst_subtp0_inhrnt_cnt = VCOM_CCINST_SUBTP0_INHERENT_CNT,
     .vcom_ccinst_subtp1_2ep_cnt = VCOM_CCINST_SUBTP1_2EP_CNT,
@@ -116,7 +117,7 @@ const uint8_t epout_remap_custom_tbl[EP_REMAP_CUSTOM_CNT] = {
 };
 
 
-static multidev_custom_info_st t_multidev_custom_info = {
+AP_PLAT_COMMON_DATA static multidev_custom_info_st t_multidev_custom_info = {
     .elem_cnt = 3,
     #if 1
     .elem_arr[0]  =
@@ -159,7 +160,7 @@ const uint8_t epout_remap_custom_tbl[EP_REMAP_CUSTOM_CNT] = {
 };
 
 
-static multidev_custom_info_st t_multidev_custom_info = {
+AP_PLAT_COMMON_DATA static multidev_custom_info_st t_multidev_custom_info = {
     .elem_cnt = 5,
     .elem_arr[0]  =
     {
@@ -216,7 +217,7 @@ const uint8_t epout_remap_custom_tbl[EP_REMAP_CUSTOM_CNT] = {
     0, 12,9,11,10,5,6,7,8,1,4,3,2
 };
 
-static multidev_custom_info_st t_multidev_custom_info = {
+AP_PLAT_COMMON_DATA static multidev_custom_info_st t_multidev_custom_info = {
     .elem_cnt = 2,
 
     .elem_arr[0]  =
@@ -249,7 +250,7 @@ const uint8_t epout_remap_custom_tbl[EP_REMAP_CUSTOM_CNT] = {
 #if (VCOM_CCINST_CASE_SEL==VCOM_CCINST_ORG_CASE)
 
 #if ((defined MID_FEATURE_MODE) || (defined FEATURE_MOREROM_ENABLE))
-    static multidev_custom_info_st t_multidev_custom_info = {
+AP_PLAT_COMMON_DATA static multidev_custom_info_st t_multidev_custom_info = {
         .elem_cnt = 2,
         .elem_arr[0]  =
         {
@@ -269,7 +270,7 @@ const uint8_t epout_remap_custom_tbl[EP_REMAP_CUSTOM_CNT] = {
 #elif (defined FEATURE_MORERAM_ENABLE)
 
 #ifdef TYPE_EC716E
-    static multidev_custom_info_st t_multidev_custom_info = {
+AP_PLAT_COMMON_DATA static multidev_custom_info_st t_multidev_custom_info = {
         .elem_cnt = 4,
         .elem_arr[0]  =
         {
@@ -301,7 +302,7 @@ const uint8_t epout_remap_custom_tbl[EP_REMAP_CUSTOM_CNT] = {
         },
     };
 #else
-    static multidev_custom_info_st t_multidev_custom_info = {
+AP_PLAT_COMMON_DATA static multidev_custom_info_st t_multidev_custom_info = {
         .elem_cnt = 2,
         .elem_arr[0]  =
         {
@@ -321,7 +322,7 @@ const uint8_t epout_remap_custom_tbl[EP_REMAP_CUSTOM_CNT] = {
 #endif
 
 #else
-    static multidev_custom_info_st t_multidev_custom_info = {
+AP_PLAT_COMMON_DATA static multidev_custom_info_st t_multidev_custom_info = {
         .elem_cnt = 4,
         .elem_arr[0]  =
         {
@@ -357,7 +358,7 @@ const uint8_t epout_remap_custom_tbl[EP_REMAP_CUSTOM_CNT] = {
 
 #else
 
-    static multidev_custom_info_st t_multidev_custom_info = {
+AP_PLAT_COMMON_DATA static multidev_custom_info_st t_multidev_custom_info = {
         .elem_cnt = 2,
         .elem_arr[0]  =
         {
@@ -409,7 +410,7 @@ const uint8_t epout_remap_custom_tbl[EP_REMAP_CUSTOM_CNT] = {
 #endif
 
 #if (VCOM_CCINST_CASE_SEL==VCOM_CCINST_ORG_CASE)
-static multidev_custom_info_st t_multidev_custom_info = {
+AP_PLAT_COMMON_DATA static multidev_custom_info_st t_multidev_custom_info = {
     .elem_cnt = 5,
     .elem_arr[0]  =
     {
@@ -452,7 +453,7 @@ static multidev_custom_info_st t_multidev_custom_info = {
 #endif
 
 #if (VCOM_CCINST_CASE_SEL==VCOM_CCINST_CUST_CASE)
-static multidev_custom_info_st t_multidev_custom_info = {
+AP_PLAT_COMMON_DATA static multidev_custom_info_st t_multidev_custom_info = {
     .elem_cnt = 5,
     .elem_arr[0]  =
     {
@@ -509,7 +510,7 @@ const uint8_t epout_remap_custom_tbl[EP_REMAP_CUSTOM_CNT] = {
     0, 1,2,3,4,5,6,7,8,9,10,11,12
 };
 
-static multidev_custom_info_st t_multidev_custom_info = {
+AP_PLAT_COMMON_DATA static multidev_custom_info_st t_multidev_custom_info = {
     .elem_cnt = 5,
     .elem_arr[0]  =
     {
@@ -561,7 +562,7 @@ const uint8_t epout_remap_custom_tbl[EP_REMAP_CUSTOM_CNT] = {
     0, 1,2,3,4,5,6,7,8,9,10,11,12
 };
 
-static multidev_custom_info_st t_multidev_custom_info = {
+AP_PLAT_COMMON_DATA static multidev_custom_info_st t_multidev_custom_info = {
     .elem_cnt = 6,
     .elem_arr[0]  =
     {
@@ -619,7 +620,7 @@ const uint8_t epout_remap_custom_tbl[EP_REMAP_CUSTOM_CNT] = {
     0, 1,2,3,4,5,6,7,8,9,10,11,12
 };
 
-static multidev_custom_info_st t_multidev_custom_info = {
+AP_PLAT_COMMON_DATA static multidev_custom_info_st t_multidev_custom_info = {
     .elem_cnt = 4,
     .elem_arr[0]  =
     {
@@ -671,7 +672,7 @@ const uint8_t epout_remap_custom_tbl[EP_REMAP_CUSTOM_CNT] = {
     0, 1,2,3,4,5,6,7,8,9,10,11,12
 };
 
-static multidev_custom_info_st t_multidev_custom_info = {
+AP_PLAT_COMMON_DATA static multidev_custom_info_st t_multidev_custom_info = {
     .elem_cnt = 3,
     .elem_arr[0]  =
     {
@@ -715,7 +716,7 @@ const uint8_t epout_remap_custom_tbl[EP_REMAP_CUSTOM_CNT] = {
 };
 
 
-static multidev_custom_info_st t_multidev_custom_info = {
+AP_PLAT_COMMON_DATA static multidev_custom_info_st t_multidev_custom_info = {
     .elem_cnt = 5,
     .elem_arr[0]  =
     {
@@ -1247,7 +1248,24 @@ uint8_t usbcustom_multidev_ctrl_proc(usbcust_md_ctrl_st* p_usbcust_md_ctrl)
 
 void usblpw_innophy_enh_drv_strenth(void)
 {
+#ifdef TYPE_EC718M
+
     volatile uint32_t* addr = (volatile uint32_t*)0x4f0a0030;
+
+* addr = (* addr &~ (0x7<<0)) | (0x5<<0);
+
+ addr = (volatile uint32_t*)0x4f0a0040;
+* addr = (* addr &~ (0x7<<3)) | (0x4<<3);
+
+ addr = (volatile uint32_t*)0x4f0a0064;
+* addr = (* addr &~ (0xf<<3)) | (0x6<<3);
+
+addr = (volatile uint32_t*)0x4f0a0124;
+* addr = (* addr &~ (0x7<<2)) | (0x5<<2);
+
+#else
+    volatile uint32_t* addr = (volatile uint32_t*)0x4f0a0030;
+
     * addr = (* addr &~ (0x7<<0)) | (0x5<<0);
 
      addr = (volatile uint32_t*)0x4f0a0040;
@@ -1258,6 +1276,7 @@ void usblpw_innophy_enh_drv_strenth(void)
 
     addr = (volatile uint32_t*)0x4f0a0124;
     * addr = (* addr &~ (0x7<<2)) | (0x5<<2);
+#endif    
 
 }
 

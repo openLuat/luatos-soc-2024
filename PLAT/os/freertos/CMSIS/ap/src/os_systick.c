@@ -26,7 +26,7 @@
 
 #include "RTE_Components.h"
 #include CMSIS_device_header
-
+#include "sctdef.h"
 
 #ifdef  SysTick
 
@@ -34,7 +34,7 @@
 #define SYSTICK_IRQ_PRIORITY    0xFFU
 #endif
 
-static uint8_t PendST;
+AP_PLAT_COMMON_BSS static uint8_t PendST;
 
 // Setup OS Tick.
 __WEAK int32_t  OS_Tick_Setup (uint32_t freq, IRQHandler_t handler) {

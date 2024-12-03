@@ -11,6 +11,17 @@
 #include "cmsis_compiler.h"
 #include "tlsf.h"
 #include "mem_map.h"
+#include "sctdef.h"
+
+#ifdef TYPE_EC718M
+#define CUST_HEAP_6_RAMCODE CUST_FPSRAM_P2_RAMCODE
+#define CUST_HEAP_6_DATA    CUST_FPSRAM_P2_DATA
+#define CUST_HEAP_6_ZI      CUST_FPSRAM_P2_BSS
+#else
+#define CUST_HEAP_6_RAMCODE PLAT_PSRAM_HEAP6_RAMCODE
+#define CUST_HEAP_6_DATA
+#define CUST_HEAP_6_ZI      PLAT_FPSRAM_HEAP6_ZI
+#endif
 
 #if( configSUPPORT_DYNAMIC_ALLOCATION == 0 )
     #error This file must not be used if configSUPPORT_DYNAMIC_ALLOCATION is 0
@@ -28,22 +39,22 @@ extern uint8_t gucPoolGroupSel;
     /* The application writer has already defined the array used for the RTOS
      * heap - probably so it can be placed in a special segment or address.
      */
-    PLAT_FPSRAM_HEAP6_ZI uint8_t ucHeap_psram[ configTOTAL_HEAP_SIZE ];
+    CUST_HEAP_6_ZI uint8_t ucHeap_psram[ configTOTAL_HEAP_SIZE ];
 #else
     //static uint8_t ucHeap[ configTOTAL_HEAP_SIZE ];
     #ifdef CORE_IS_AP
-    uint8_t * ucHeap_psram=(uint8_t *)&( end_ap_data_psram );
+    CUST_HEAP_6_DATA uint8_t * ucHeap_psram=(uint8_t *)&( end_ap_data_psram );
     #if MM_TRACE_ON == 2
     #define TLSF_AP_HEAP_PSRAM_MAX  (128*1024)        // worse case of heap size
     #else
     #define TLSF_AP_HEAP_PSRAM_MAX  tlsf_block_size_max()
     #endif
     #else
-    static PLAT_FPSRAM_HEAP6_ZI uint8_t ucHeap_psram[ configTOTAL_HEAP_SIZE ];//cp still use fix length array
+    static CUST_HEAP_6_ZI uint8_t ucHeap_psram[ configTOTAL_HEAP_SIZE ];//cp still use fix length array
     #endif
 
     //dynamic heap size, caculate per compilation
-    UINT32 gTotalHeapSize_psram=0;
+    CUST_HEAP_6_ZI UINT32 gTotalHeapSize_psram=0;
 
 #endif /* configAPPLICATION_ALLOCATED_HEAP */
 
@@ -52,22 +63,28 @@ extern uint8_t gucPoolGroupSel;
  * Called automatically to setup the required heap structures the first time
  * pvPortMalloc() is called.
  */
-static PLAT_FPSRAM_ZI tlsf_t    pxTlsf_psram = NULL;
+static void prvHeapInit_Psram( void );
 
-PLAT_PSRAM_HEAP6_RAMCODE void *pvPortZeroMalloc_Psram( size_t xWantedSize)
+#ifdef TYPE_EC718M
+static tlsf_t    pxTlsf_psram = NULL;
+#else
+PLAT_FPSRAM_ZI static tlsf_t    pxTlsf_psram = NULL;
+#endif
+CUST_HEAP_6_RAMCODE void *pvPortZeroMalloc_Psram( size_t xWantedSize)
 {
     void *ptr = pvPortMallocEC_Psram(xWantedSize, (unsigned int)__GET_RETURN_ADDRESS());
     return ptr ? memset(ptr, 0, xWantedSize), ptr : ptr;
 }
 
-PLAT_PSRAM_HEAP6_RAMCODE void *pvPortAssertMalloc_Psram( size_t xWantedSize)
+CUST_HEAP_6_RAMCODE void *pvPortAssertMalloc_Psram( size_t xWantedSize)
 {
     void *ptr = pvPortMallocEC_Psram(xWantedSize, (unsigned int)__GET_RETURN_ADDRESS());
     configASSERT(ptr != 0);
     return ptr;
 }
 
-PLAT_PSRAM_HEAP6_RAMCODE void *pvPortZeroAssertMalloc_Psram( size_t xWantedSize)
+
+CUST_HEAP_6_RAMCODE void *pvPortZeroAssertMalloc_Psram( size_t xWantedSize)
 {
     void *ptr = pvPortMallocEC_Psram(xWantedSize, (unsigned int)__GET_RETURN_ADDRESS());
     configASSERT(ptr != 0);
@@ -75,7 +92,7 @@ PLAT_PSRAM_HEAP6_RAMCODE void *pvPortZeroAssertMalloc_Psram( size_t xWantedSize)
     return ptr;
 }
 
-PLAT_PSRAM_HEAP6_RAMCODE void *pvPortMallocEC_Psram( size_t xWantedSize, unsigned int funcPtr )
+CUST_HEAP_6_RAMCODE void *pvPortMallocEC_Psram( size_t xWantedSize, unsigned int funcPtr )
 {
     void *pvReturn = NULL;
 
@@ -118,7 +135,7 @@ PLAT_PSRAM_HEAP6_RAMCODE void *pvPortMallocEC_Psram( size_t xWantedSize, unsigne
     return pvReturn;
 }
 
-PLAT_PSRAM_HEAP6_RAMCODE void *pvPortReallocEC_Psram( void *pv, size_t xWantedSize,  unsigned int funcPtr )
+CUST_HEAP_6_RAMCODE void *pvPortReallocEC_Psram( void *pv, size_t xWantedSize,  unsigned int funcPtr )
 {
     void *pvReturn = NULL;
 
@@ -158,7 +175,7 @@ PLAT_PSRAM_HEAP6_RAMCODE void *pvPortReallocEC_Psram( void *pv, size_t xWantedSi
     return pvReturn;
 }
 
-PLAT_PSRAM_HEAP6_RAMCODE void  vPortFree_Psram( void *pv )
+CUST_HEAP_6_RAMCODE void  vPortFree_Psram( void *pv )
 {
     configASSERT(__get_IPSR() == 0 && "no invokation by IPSR!");
 
@@ -176,12 +193,12 @@ PLAT_PSRAM_HEAP6_RAMCODE void  vPortFree_Psram( void *pv )
     xTaskResumeAll();
 }
 
-PLAT_PSRAM_HEAP6_RAMCODE size_t xPortGetTotalHeapSize_Psram( void )
+CUST_HEAP_6_RAMCODE size_t xPortGetTotalHeapSize_Psram( void )
 {
     return gTotalHeapSize_psram;
 }
 
-PLAT_PSRAM_HEAP6_RAMCODE size_t xPortGetFreeHeapSize_Psram( void )
+CUST_HEAP_6_RAMCODE size_t xPortGetFreeHeapSize_Psram( void )
 {
     if(!pxTlsf_psram) return 0;
 
@@ -194,14 +211,14 @@ PLAT_PSRAM_HEAP6_RAMCODE size_t xPortGetFreeHeapSize_Psram( void )
     return size;
 }
 
-PLAT_PSRAM_HEAP6_RAMCODE uint8_t xPortGetFreeHeapPct_Psram( void )
+CUST_HEAP_6_RAMCODE uint8_t xPortGetFreeHeapPct_Psram( void )
 {
     if(!pxTlsf_psram) return 0;
 
     return (uint8_t)((xPortGetFreeHeapSize_Psram() * 100) / xPortGetTotalHeapSize_Psram());
 }
 
-PLAT_PSRAM_HEAP6_RAMCODE size_t xPortGetMaximumFreeBlockSize_Psram( void )
+CUST_HEAP_6_RAMCODE size_t xPortGetMaximumFreeBlockSize_Psram( void )
 {
     if(!pxTlsf_psram) return 0;
 
@@ -216,13 +233,14 @@ PLAT_PSRAM_HEAP6_RAMCODE size_t xPortGetMaximumFreeBlockSize_Psram( void )
 
 #define portHEAP_TOTAL_FREE_ALERT_PCT_PSRAM   30
 #define portHEAP_FREE_BLOCK_ALERT_SIZE_PSRAM  8192
-PLAT_PSRAM_HEAP6_RAMCODE uint8_t xPortIsFreeHeapOnAlert_Psram( void )
+
+CUST_HEAP_6_RAMCODE uint8_t xPortIsFreeHeapOnAlert_Psram( void )
 {
     return ((xPortGetFreeHeapPct_Psram() <= portHEAP_TOTAL_FREE_ALERT_PCT_PSRAM) || \
             (xPortGetMaximumFreeBlockSize_Psram() <= portHEAP_FREE_BLOCK_ALERT_SIZE_PSRAM)) ? 1 : 0;
 }
 
-PLAT_PSRAM_HEAP6_RAMCODE size_t xPortGetMinimumEverFreeHeapSize_Psram( void )
+CUST_HEAP_6_RAMCODE size_t xPortGetMinimumEverFreeHeapSize_Psram( void )
 {
     if(!pxTlsf_psram) return 0;
 
@@ -235,7 +253,7 @@ PLAT_PSRAM_HEAP6_RAMCODE size_t xPortGetMinimumEverFreeHeapSize_Psram( void )
     return size;
 }
 
-PLAT_PSRAM_HEAP6_RAMCODE void  vPortShowMemRecord_Psram( void )
+CUST_HEAP_6_RAMCODE void  vPortShowMemRecord_Psram( void )
 {
     if(!pxTlsf_psram)
     {
@@ -246,7 +264,7 @@ PLAT_PSRAM_HEAP6_RAMCODE void  vPortShowMemRecord_Psram( void )
     gucPoolGroupSel = 0;
 }
 
-PLAT_PSRAM_HEAP6_RAMCODE void  vPortClearMemRecord_Psram( void )
+CUST_HEAP_6_RAMCODE void  vPortClearMemRecord_Psram( void )
 {
     if(!pxTlsf_psram)
     {
@@ -255,7 +273,7 @@ PLAT_PSRAM_HEAP6_RAMCODE void  vPortClearMemRecord_Psram( void )
     tlsf_clear_mem_record(pxTlsf_psram);
 }
 
-PLAT_PSRAM_HEAP6_RAMCODE void  vPortShowPhysMemBlock_Psram(void *callback, int type, int *mem_range)
+CUST_HEAP_6_RAMCODE void  vPortShowPhysMemBlock_Psram(void *callback, int type, int *mem_range)
 {
     int block_type;
     if(pxTlsf_psram)
@@ -272,7 +290,7 @@ PLAT_PSRAM_HEAP6_RAMCODE void  vPortShowPhysMemBlock_Psram(void *callback, int t
     }
 }
 
-PLAT_PSRAM_HEAP6_RAMCODE bool vPortGetHeapInfo_Psram(uint8_t type, int *mem_range)
+CUST_HEAP_6_RAMCODE bool vPortGetHeapInfo_Psram(uint8_t type, int *mem_range)
 {
     if(pxTlsf_psram != NULL)
     {
@@ -290,7 +308,7 @@ PLAT_PSRAM_HEAP6_RAMCODE bool vPortGetHeapInfo_Psram(uint8_t type, int *mem_rang
     return false;
 }
 
-PLAT_PSRAM_HEAP6_RAMCODE void prvHeapInit_Psram( void )
+CUST_HEAP_6_RAMCODE static void prvHeapInit_Psram( void )
 {
 #ifdef CORE_IS_AP
     gTotalHeapSize_psram = (UINT32)&(heap_endAddr_psram) - (UINT32)&(end_ap_data_psram);

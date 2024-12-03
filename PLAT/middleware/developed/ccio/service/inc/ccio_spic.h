@@ -186,7 +186,7 @@ typedef union
 /*----------------------------------------------------------------------------*
  *                    GLOBAL FUNCTIONS DECLEARATION                           *
  *----------------------------------------------------------------------------*/
-int32_t  spiFrameHdrDecap(UlPduBlock_t **ulpdu, uint16_t *frameLen);
+int32_t  spiFrameHdrDecap(UlPduBlock_t **ulpdu, uint16_t *frameLen, void *extras);
 
 int32_t  spicMsgFilter(UlPduBlock_t **ulpdu, uint8_t isSubx, void *extras);
 int32_t  spicMsgSend(CcioDevice_t *chdev, SpicMsgType_t type, SpicStatus_t status, void *args);

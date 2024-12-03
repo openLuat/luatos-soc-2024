@@ -110,7 +110,7 @@ debugger. */
 
 /* Each task maintains its own interrupt status in the critical nesting
 variable. */
-static UBaseType_t uxCriticalNesting = 0;       //0xaaaaaaaa;
+AP_PLAT_COMMON_BSS static UBaseType_t uxCriticalNesting = 0;       //0xaaaaaaaa;
 
 /*
  * Setup the timer to generate the tick interrupts.  The implementation in this
@@ -141,7 +141,7 @@ static void prvTaskExitError( void );
  * The number of SysTick increments that make up one tick period.
  */
 #if configUSE_TICKLESS_IDLE == 1
-	static uint32_t ulTimerCountsForOneTick = 0;
+AP_PLAT_COMMON_BSS static uint32_t ulTimerCountsForOneTick = 0;
 #endif /* configUSE_TICKLESS_IDLE */
 
 /*
@@ -149,7 +149,7 @@ static void prvTaskExitError( void );
  * 24 bit resolution of the SysTick timer.
  */
 #if configUSE_TICKLESS_IDLE == 1
-	static uint32_t xMaximumPossibleSuppressedTicks = 0;
+AP_PLAT_COMMON_BSS static uint32_t xMaximumPossibleSuppressedTicks = 0;
 #endif /* configUSE_TICKLESS_IDLE */
 
 /*
@@ -157,7 +157,7 @@ static void prvTaskExitError( void );
  * power functionality only.
  */
 #if configUSE_TICKLESS_IDLE == 1
-	static uint32_t ulStoppedTimerCompensation = 0;
+AP_PLAT_COMMON_BSS static uint32_t ulStoppedTimerCompensation = 0;
 #endif /* configUSE_TICKLESS_IDLE */
 
 /*
@@ -166,9 +166,9 @@ static void prvTaskExitError( void );
  * a priority above configMAX_SYSCALL_INTERRUPT_PRIORITY.
  */
 #if ( configASSERT_DEFINED == 1 )
-	 static uint8_t ucMaxSysCallPriority = 0;
-	 static uint32_t ulMaxPRIGROUPValue = 0;
-	 static const volatile uint8_t * const pcInterruptPriorityRegisters = ( const volatile uint8_t * const ) portNVIC_IP_REGISTERS_OFFSET_16;
+AP_PLAT_COMMON_BSS static uint8_t ucMaxSysCallPriority = 0;
+AP_PLAT_COMMON_BSS static uint32_t ulMaxPRIGROUPValue = 0;
+static const volatile uint8_t * const pcInterruptPriorityRegisters = ( const volatile uint8_t * const ) portNVIC_IP_REGISTERS_OFFSET_16;
 #endif /* configASSERT_DEFINED */
 
 /*-----------------------------------------------------------*/
@@ -436,7 +436,7 @@ FREERTOS_PORT_TEXT_SECTION void prvStopTickInterruptTimer(void)
 
 FREERTOS_PORT_TEXT_SECTION void prvStartTickInterruptTimer(void)
 {
-#if (!defined CORE_IS_CP)  || (defined FPGA_TEST) || (defined CP_SYSTICK)
+#if (!defined CORE_IS_CP)  || (defined FPGA_TEST) || (defined SOC_TEST) || (defined CP_SYSTICK)
 #ifndef CORE_IS_CP
     extern void GPR_switchSystickClk(void);
     GPR_switchSystickClk();
@@ -651,7 +651,7 @@ FREERTOS_PORT_TEXT_SECTION __attribute__(( weak )) void vPortSetupTimerInterrupt
 
 FREERTOS_PORT_TEXT_SECTION __attribute__(( weak )) void vPortSetupTimerInterrupt( void )
 {
-#if (!defined CORE_IS_CP) || ( defined FPGA_TEST) || (defined CP_SYSTICK)
+#if (!defined CORE_IS_CP) || ( defined FPGA_TEST) || (defined SOC_TEST) || (defined CP_SYSTICK)
 #ifndef CORE_IS_CP
     extern void GPR_switchSystickClk(void);
     GPR_switchSystickClk();

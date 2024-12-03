@@ -294,15 +294,15 @@ void DMA_buildDescriptor(DmaDescriptor_t* descriptor, const DmaTransferConfig_t*
   \param[in]  chainCnt     The count of descriptor chain
   \param[in]  needStop     Need cycling transfer data or not
   \param[in]  needIrq      Need irq or not for the last descriptor
-  \param[in]  needChain    If need chain, last descriptor should points to first one. 
-                           If during building chain, should set this param false, 
+  \param[in]  needChain    If need chain, last descriptor should points to first one.
+                           If during building chain, should set this param false,
                            when building the last descriptor, should set TRUE.
   \note       descriptor shall be retaining(global variable) for it will be used again after exit from low power
  */
 
-void DMA_buildDescriptorChain(DmaDescriptor_t* descriptorArray, const DmaTransferConfig_t* config, 
-                                const uint16_t chainCnt, 
-                                bool needStop, 
+void DMA_buildDescriptorChain(DmaDescriptor_t* descriptorArray, const DmaTransferConfig_t* config,
+                                const uint16_t chainCnt,
+                                bool needStop,
                                 bool needIrq,
                                 bool needChain);
 
@@ -343,6 +343,15 @@ bool DMA_getMPActiveStateExceptUnilog(void);
              false: deactive failed
  */
 bool DMA_tryDeactiveExceptUnilog(void);
+
+#ifdef TYPE_EC718M
+/**
+  \fn        bool DMA_resumeAllExceptUnilog(void)
+  \brief     resume all dma channel except unilog
+  \return    NULL
+ */
+void DMA_resumeAllExceptUnilog(void);
+#endif
 
 /**
   \fn        void DMA_getMPRunFlag(uint32_t *runAll, uint32_t *actAll);

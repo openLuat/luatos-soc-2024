@@ -24,8 +24,6 @@ SECTIONS
   
   .unload_uncompress_flashcode :
   {
-    Load$$LOAD_UNCOMPRESS_CODE$$Base = LOADADDR(.unload_uncompress_flashcode);
-    Image$$LOAD_UNCOMPRESS_CODE$$Base = .;  
     *startup_ec7xx_gcc.o(.text* .rodata*)
     *(.sect_bl_uncompress_flash_text.*)    
     *(.sect_bl_uncompress_flash_rodata.*)
@@ -33,7 +31,6 @@ SECTIONS
     *(.sect_cache_rodata.*) 
 	*(.text.memset)
   } >FLASH_AREA
-  Image$$LOAD_UNCOMPRESS_CODE$$Length = SIZEOF(.unload_uncompress_flashcode);
      
   .load_airam_pre1 ASMB_START_ADDR :
   {

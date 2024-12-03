@@ -87,20 +87,20 @@ FLASH_FOTA_REGION_END        |---------------------------------|
 #define FOTA_NVM_DELTA_BACKUP_SIZE     (FOTA_BUF_SIZE_32K)
 #endif
 //4m flash csdk use full 96K space
-#if defined TYPE_EC718P || defined TYPE_EC716E || defined TYPE_EC718U
+#if defined TYPE_EC718P || defined TYPE_EC716E || defined TYPE_EC718U || defined TYPE_EC718M
 #undef FOTA_NVM_DELTA_BACKUP_SIZE
 #define FOTA_NVM_DELTA_BACKUP_SIZE		(FOTA_BUF_SIZE_1K * 96)
 #endif
 
 #define FOTA_NVM_REAL_BACKUP_ADDR      (FOTA_NVM_DELTA_BACKUP_ADDR)
 #define FOTA_NVM_REAL_BACKUP_SIZE      (FOTA_NVM_DELTA_BACKUP_SIZE + FOTA_NVM_BACKUP_MUX_SIZE)
-#if defined CHIP_EC718 || defined CHIP_EC716  || defined CHIP_EC626
+#if defined CHIP_EC718 || defined CHIP_EC716  || defined CHIP_EC626 || defined TYPE_EC718M
 #define FOTA_NVM_BACKUP_MUX_SIZE       (NVRAM_PHYSICAL_SIZE)
 #else /* defined CHIP_EC616 || defined CHIP_EC616_Z0 || defined CHIP_EC616S || CHIP_EC618 */
 #define FOTA_NVM_BACKUP_MUX_SIZE       0
 #endif
 //4m flash csdk no need NVRAM_PHYSICAL
-#if defined TYPE_EC718P || defined TYPE_EC716E || defined TYPE_EC718U
+#if defined TYPE_EC718P || defined TYPE_EC716E || defined TYPE_EC718U || defined TYPE_EC718M
 #undef FOTA_NVM_BACKUP_MUX_SIZE
 #define FOTA_NVM_BACKUP_MUX_SIZE		0
 #endif
@@ -109,7 +109,7 @@ FLASH_FOTA_REGION_END        |---------------------------------|
 #define FOTA_NVM_A2AP_XIP_ADDR         (AP_FLASH_XIP_ADDR)
 #if defined CHIP_EC618 || defined CHIP_EC618_Z0
 #define FOTA_NVM_A2CP_XIP_ADDR         (AP_VIEW_CPFLASH_XIP_ADDR)
-#elif defined CHIP_EC718 || defined CHIP_EC716
+#elif defined CHIP_EC718 || defined CHIP_EC716 || defined TYPE_EC718M
 #ifdef TYPE_EC718H
 #define FOTA_NVM_A2CP_XIP_ADDR         (AP_VIEW_CPFLASH_XIP_ADDR)
 #else
@@ -171,10 +171,17 @@ extern bool apmuIsCpSleeped(void);
  *                      GLOBAL VARIABLES                                      *
  *----------------------------------------------------------------------------*/
 
+#ifdef TYPE_EC718M
+AP_PLAT_COMMON_BSS static FotaNvmZoneMan_t   gFotaNvmZoneMan;
+
+/* sha256 hash */
+AP_PLAT_COMMON_BSS uint8_t  gFotaHash[FOTA_SHA256_HASH_LEN];
+#else
 static FotaNvmZoneMan_t   gFotaNvmZoneMan;
 
 /* sha256 hash */
 FOTA_PLAT_SCT_ZI uint8_t  gFotaHash[FOTA_SHA256_HASH_LEN];
+#endif
 
 /*----------------------------------------------------------------------------*
  *                      PRIVATE FUNCTIONS                                     *
@@ -1269,3 +1276,8 @@ uint8_t  BSP_QSPI_Erase_Sector(uint32_t SectorAddress)
 
 uint32_t BL_OTAInfoAddress(void) {return (BOOTLOADER_FLASH_LOAD_ADDR + BOOTLOADER_FLASH_LOAD_SIZE);}
 uint32_t BL_DFotaAddress(void) {return (FLASH_FOTA_REGION_START);}
+#ifdef TYPE_EC718M
+uint32_t BL_MemAddress(void) {return (PSRAM_P2_START_ADDR);}
+#else
+uint32_t BL_MemAddress(void) {return (MSMB_START_ADDR);}
+#endif

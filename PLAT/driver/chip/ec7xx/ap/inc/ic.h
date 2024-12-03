@@ -21,12 +21,18 @@
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-
+#ifdef TYPE_EC718M
+#define NUM_APXIC_MODULE                        (5U)      /**< number of XIC module */
+#else
 #define NUM_APXIC_MODULE                        (4U)      /**< number of XIC module */
+#endif
+
 #define NUM_APXIC0_INT                          (32U)     /**< number of interrupts in XIC0 */
 #define NUM_APXIC1_INT                          (32U)     /**< number of interrupts in XIC1 */
 #define NUM_APXIC2_INT                          (32U)     /**< number of interrupts in XIC2 */
 #define NUM_APXIC3_INT                          (32U)     /**< number of interrupts in XIC3 */
+#define NUM_APXIC4_INT                          (32U)     /**< number of interrupts in XIC4 */
+#define MAX_NUM_XIC_INT                         (32U)     /**< maximum number of interrupts in XIC */
 
 /** ISR function type define */
 typedef void ( *ISRFunc_T )(void);

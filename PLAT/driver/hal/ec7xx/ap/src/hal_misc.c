@@ -143,7 +143,7 @@ PLAT_DLY_CODE_IN_RAM void delay_us(uint32_t us)
 {
     uint32_t ticks;
 
-    // cpu frequency ranges from 26MHz to 204.8MHz
+    // cpu frequency ranges from 26MHz to 306MHz
     // first divide 0.1M to get rid of multiply overflow
     // considering 3 cpu cycles are taken to execute one loop operation(sub and branch) in delay_cycles function(includ one pre read assembly),
     // and 0.1M in first step, so we shall divide another 30 before passing the result to delay_cycles function
@@ -153,6 +153,23 @@ PLAT_DLY_CODE_IN_RAM void delay_us(uint32_t us)
 
     delay_cycles(ticks);
 }
+
+__attribute__((used)) PLAT_DLY_CODE_IN_RAM void delay_100ns(uint32_t n100ns)
+{
+    uint32_t ticks;
+
+    // cpu frequency ranges from 26MHz to 306MHz
+    // first divide 0.1M to get rid of multiply overflow
+    // considering 3 cpu cycles are taken to execute one loop operation(sub and branch) in delay_cycles function(includ one pre read assembly),
+    // and 0.1M in first step, so we shall divide another 300 before passing the result to delay_cycles function
+    // if the delay us is short, it may not be accurate
+    ticks = SystemCoreClock / 100000U;
+    ticks = ticks * n100ns / 300U;
+
+    delay_cycles(ticks);
+}
+
+
 
 /**
   \fn        apmuBootDbgGPIOSet(bool level)

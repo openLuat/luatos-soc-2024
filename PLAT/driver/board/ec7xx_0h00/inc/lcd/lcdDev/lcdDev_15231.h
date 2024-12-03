@@ -9,6 +9,8 @@
 #define     AXS15231_TIME_OF_FRAME    (149356) // us
 #define     AXS15231_TE_CYCLE         (16742) // us
 #define     AXS15231_TE_WAIT_TIME     (623)   // us
+#define     AXS15231_X_OFFSET		  (0)
+#define     AXS15231_Y_OFFSET		  (0)
 
 #if (LCD_INTERFACE_8080 == 1)
 #if (AXS15231_INTERFACE != INTERFACE_8080)
@@ -27,6 +29,9 @@
 #define     LCD_WIDTH            (AXS15231_WIDTH)
 #define     LCD_BPP_USE          (AXS15231_BPP)
 #define     LCD_INTERFACE        (AXS15231_INTERFACE)
+#define     LCD_FREQ			 (AXS15231_FREQ)
+#define     LCD_X_OFFSET		 (AXS15231_X_OFFSET)
+#define     LCD_Y_OFFSET		 (AXS15231_Y_OFFSET)
 
 #define     LCD_PIXEL            (LCD_HEIGHT*LCD_WIDTH)
 #define     LCD_TIME_OF_FRAME    (AXS15231_TIME_OF_FRAME) // us

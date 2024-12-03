@@ -26,6 +26,14 @@ extern "C" {
 #define CHIP_TYPE      "EC718P"
 #elif (defined TYPE_EC718U)
 #define CHIP_TYPE      "EC718U"
+#elif (defined TYPE_EC718PM)
+#define CHIP_TYPE      "EC718PM"
+#elif (defined TYPE_EC718UM)
+#define CHIP_TYPE      "EC718UM"
+#elif (defined TYPE_EC718SM)
+#define CHIP_TYPE      "EC718SM"
+#elif (defined TYPE_EC718HM)
+#define CHIP_TYPE      "EC718HM"
 #elif (defined TYPE_EC716S)
 #define CHIP_TYPE      "EC716S"
 #elif (defined TYPE_EC716E)

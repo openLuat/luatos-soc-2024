@@ -4,6 +4,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "sctdef.h"
 
 #define MW_SHA_MODE_HW
 #ifdef MW_SHA_MODE_HW

@@ -1,5 +1,6 @@
 #include "cameraDrv.h"
 #include "hal_i2c.h"
+#include "sctdef.h"
 
 extern cspiDrvInterface_t   cspiDrvInterface0;
 extern cspiDrvInterface_t   cspiDrvInterface1;
@@ -16,7 +17,7 @@ extern cspiDataFmt_t        cspiDataFmt;
 extern cspiFrameProcLspi_t  cspiFrameProcLspi;
 
 #define EIGEN_CSPI(n)             ((CSPI_TypeDef *) (MP_USP0_BASE_ADDR + 0x1000*n))
-static camErrCb             camErrStatsFunc;
+AP_PLAT_COMMON_BSS static camErrCb             camErrStatsFunc;
 
 
 #if (CAMERA_ENABLE_SP0A39)
@@ -66,14 +67,14 @@ static camErrCb             camErrStatsFunc;
  #endif  
 #endif
 
-static uint8_t      slaveAddr;
-static uint16_t     regCnt;
-static camI2cCfg_t* regInfo = NULL;
+AP_PLAT_COMMON_BSS static uint8_t      slaveAddr;
+AP_PLAT_COMMON_BSS static uint16_t     regCnt;
+AP_PLAT_COMMON_BSS static camI2cCfg_t* regInfo = NULL;
 
 #if (RTE_CSPI1 == 1)
-static cspiDrvInterface_t   *cspiDrv        = &CREATE_SYMBOL(cspiDrvInterface, 1);
+AP_PLAT_COMMON_DATA static cspiDrvInterface_t   *cspiDrv        = &CREATE_SYMBOL(cspiDrvInterface, 1);
 #else
-static cspiDrvInterface_t   *cspiDrv        = &CREATE_SYMBOL(cspiDrvInterface, 0);
+AP_PLAT_COMMON_DATA static cspiDrvInterface_t   *cspiDrv        = &CREATE_SYMBOL(cspiDrvInterface, 0);
 #endif
 extern void delay_us(uint32_t us);
 
@@ -353,10 +354,21 @@ void camInit(void* dataAddr, cspiCbEvent_fn cb)
  #endif
 
     // recv 8w pic into memory
-    camParamCfg.yOnly               = 1;
-    camParamCfg.rowScaleRatio       = 1;
-    camParamCfg.colScaleRatio       = 1;
-    camParamCfg.scaleBytes          = 1;
+    if (CAM_CHAIN_COUNT == 20)
+    {    
+	    camParamCfg.yOnly               = 0;
+	    camParamCfg.rowScaleRatio       = 1;
+	    camParamCfg.colScaleRatio       = 1;
+	    camParamCfg.scaleBytes          = 3;
+	}
+	else if (CAM_CHAIN_COUNT == 10)
+	{
+		camParamCfg.yOnly				= 1;
+		camParamCfg.rowScaleRatio		= 1;
+		camParamCfg.colScaleRatio		= 1;
+		camParamCfg.scaleBytes			= 1;
+	}
+
 #elif (CAMERA_ENABLE_BF30A2)
  #if (BF30A2_1SDR)
  	camParamCfg.wireNum  	= WIRE_1;
@@ -537,4 +549,55 @@ void camCheckErrStats()
 
     return;    
 }
+
+void camGpioPulseCfg(uint8_t padAddr, uint8_t pinInstance, uint8_t pinNum)
+{
+    PadConfig_t padConfig;
+    PAD_getDefaultConfig(&padConfig);
+
+    padConfig.mux = PAD_MUX_ALT0;
+    PAD_setPinConfig(padAddr, &padConfig);
+
+    GpioPinConfig_t config;
+    config.pinDirection = GPIO_DIRECTION_OUTPUT;
+    config.misc.initOutput = 0;
+
+    GPIO_pinConfig(pinInstance, pinNum, &config);
+}
+
+void camGpioPulse(uint8_t pinInstance, uint8_t pinNum, uint32_t pulseDurationUs, uint8_t initialState, bool needLoop)
+{
+    GPIO_TypeDef *gpio = (GPIO_TypeDef*)(RMI_GPIO_BASE_ADDR + 0x1000*pinInstance);
+
+	if (needLoop)
+	{	
+		// for test gpio is good or not
+		while (1)
+		{
+			gpio->DATAOUT = ((~(1<<pinNum)) << 16) | (1<<pinNum);
+			delay_us(pulseDurationUs);
+			gpio->DATAOUT = ((~(1<<pinNum)) << 16);
+			delay_us(pulseDurationUs);
+		}
+	}
+	else
+	{	
+		// inititalState: 0=low level; 1=high level
+		if (initialState == 0)
+		{
+			// pulse 0->1
+			gpio->DATAOUT = ((~(1<<pinNum)) << 16) | (1<<pinNum);
+			delay_us(pulseDurationUs);
+			gpio->DATAOUT = ((~(1<<pinNum)) << 16);
+		}
+		else
+		{
+			// pulse 1->0
+			gpio->DATAOUT = ((~(1<<pinNum)) << 16);
+			delay_us(pulseDurationUs);
+			gpio->DATAOUT = ((~(1<<pinNum)) << 16) | (1<<pinNum);
+		}
+	}
+}
+
 

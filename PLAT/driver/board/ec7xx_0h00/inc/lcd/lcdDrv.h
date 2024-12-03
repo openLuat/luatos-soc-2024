@@ -53,6 +53,12 @@ typedef enum
     cbForFill       = 1,
 }uspCbRole_e;
 
+typedef enum
+{
+	TE_RISE_EDGE	= 0,
+	TE_FALL_EDGE	= 1,
+}teEdgeSel_e;
+
 
 typedef enum 
 {
@@ -168,6 +174,10 @@ extern lcdDrvFunc_t gc9307Drv;
 #elif (LCD_AXS15231_ENABLE == 1)
 #include "lcdDev_15231.h"
 extern lcdDrvFunc_t axs15231Drv;
+#elif (LCD_CO5300_ENABLE == 1)
+#include "lcdDev_5300.h"
+extern lcdDrvFunc_t co5300Drv;
+
 #endif
 
 
@@ -185,6 +195,12 @@ void            lspiRegisterErrStatsCb(lspiErrCb errCb);
 void            lspiCheckErrStats();
 void 			imageRotateColor(uint8_t* src, uint32_t width, uint32_t height, uint8_t* dst, uint8_t bpp);
 void 			imageRotateGray(uint8_t* src, uint32_t width, uint32_t height, uint8_t* dst);
+void 			yuv422ToRgb565_2(const void* inbuf, void* outbuf, int width, int height);
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
+void    calTe(uint32_t totalBytes, uint16_t sy);
+#else // 719
+void calTe(teEdgeSel_e teEdge, uint16_t xs, uint16_t ys, uint16_t xe, uint16_t ye);
+#endif
 
 #ifdef __cplusplus
 }

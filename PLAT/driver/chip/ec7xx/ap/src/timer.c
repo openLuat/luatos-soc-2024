@@ -10,6 +10,8 @@
 #include "timer.h"
 #include "clock.h"
 #include "slpman.h"
+#include "sctdef.h"
+
 #include DEBUG_LOG_HEADER_FILE
 
 
@@ -355,6 +357,17 @@ int32_t TIMER_setupPwm(uint32_t instance, const TimerPwmConfig_t *config)
                                     EIGEN_VAL2FLD(TIMER_TCTLR_PWM_STOP_VALUE, config->stopOption) | \
                                     EIGEN_VAL2FLD(TIMER_TCTLR_MCS, 2U) | TIMER_TCTLR_PWMOUT_Msk;
 
+#if defined(TIMER_IP_VERSION_B1)
+
+    EIGEN_TIMER(instance)->TCUMR = config->dutyCycleUpdateMode;
+
+    if((EIGEN_TIMER(instance)->TCUMR) & TIMER_TCUMR_MODE_Msk)
+    {
+        EIGEN_TIMER(instance)->TCUR = TIMER_TCUR_UPDATE_Msk;
+    }
+
+#endif
+
 #ifdef PM_FEATURE_ENABLE
     gTimerDataBase[instance].isInited = true;
 #endif
@@ -380,6 +393,12 @@ void TIMER_updatePwmDutyCycle(uint32_t instance, uint32_t dutyCyclePercent)
         EIGEN_TIMER(instance)->TMR[0] = ((uint64_t)EIGEN_TIMER(instance)->TMR[1] + 1) * (100U - dutyCyclePercent) / 100U - 1;
     }
 
+#if defined(TIMER_IP_VERSION_B1)
+    if((EIGEN_TIMER(instance)->TCUMR) & TIMER_TCUMR_MODE_Msk)
+    {
+        EIGEN_TIMER(instance)->TCUR = TIMER_TCUR_UPDATE_Msk;
+    }
+#endif
 }
 
 void TIMER_interruptConfig(uint32_t instance, TimerInterruptSource_e source, TimerInterruptConfig_e config)
@@ -504,7 +523,7 @@ void TIMER_clearInterruptFlags(uint32_t instance, uint32_t mask)
 }
 
 
-static uint8_t gNetLightInstance = 0xff;
+TIMER_DATA_SECTION static uint8_t gNetLightInstance = 0xff;
 void TIMER_netlightEnable(uint8_t instance)        // call by user in bsp_custom.c
 {
     gNetLightInstance = instance;
@@ -515,7 +534,7 @@ void TIMER_netlightPWM(uint8_t mode)
 {
     extern void delay_us(uint32_t us);
     uint8_t instance = gNetLightInstance;
-    static uint8_t curMode;
+TIMER_BSS_SECTION static uint8_t curMode;
 
 #ifdef PM_FEATURE_ENABLE
     uint32_t mask;

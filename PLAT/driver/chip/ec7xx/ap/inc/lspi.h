@@ -101,7 +101,7 @@ typedef enum
     LSPI_POWER_FULL                                 // Power on: full operation at maximum performance
 } lspiPowerState_e;
 
-#if defined CHIP_EC718
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
 typedef struct
 {
     uint32_t slaveModeEn            : 1;            // 718 Slave Mode Enable
@@ -592,13 +592,26 @@ typedef struct
 
 typedef struct
 {
-    uint32_t lspiCmd0PostEn          : 1;            // 719 Lspi cmd0 pre en
-    uint32_t lspiCmd1PostEn          : 1;            // 719 Lspi cmd1 pre en
-    uint32_t lspiCmd0PostParaLen     : 3;            // 719 Lspi cmd0 pre param len
-    uint32_t lspiCmd1PostParaLen     : 3;            // 719 Lspi cmd1 pre param len
-    uint32_t lspiCmdPostMspiAddrLane : 2;            // 719 Lspi cmd pre mspi addr lane
-    uint32_t lspiCmdPostMspiDataLane : 2;            // 719 Lspi cmd pre mspi data lane
+    uint32_t lspiCmd0PostEn           : 1;            // 719 Lspi cmd0 pre en
+    uint32_t lspiCmd1PostEn           : 1;            // 719 Lspi cmd1 pre en
+    uint32_t lspiCmd0PostParaLen      : 3;            // 719 Lspi cmd0 pre param len
+    uint32_t lspiCmd1PostParaLen      : 3;            // 719 Lspi cmd1 pre param len
+    uint32_t lspiCmdPostMspiAddrLane  : 2;            // 719 Lspi cmd pre mspi addr lane
+    uint32_t lspiCmdPostMspiDataLane  : 2;            // 719 Lspi cmd pre mspi data lane
 }lspiCmdPostParam0_t;
+
+typedef struct
+{
+    uint32_t lspiTeEn          		  : 1;            // 719 Lspi te en
+    uint32_t lspiTeEdgeSel            : 1;            // 719 Lspi te edge sel: 0->te rise edge; 1->te fall edge
+    uint32_t rsvd					  : 2;
+    uint32_t lspiTePos0		          : 26;           // 719 Lspi te pos0
+}lspiTeParam0_t;
+
+typedef struct
+{
+    uint32_t lspiTePos1		          : 26;            // 719 Lspi te pos1
+}lspiTeParam1_t;
 
 
 typedef struct
@@ -618,18 +631,6 @@ typedef struct
 {
     uint32_t lspiCmd1PostPara          : 32;          // 719 Lspi cmd1 post para
 }lspiCmdPostParam3_t;
-
-typedef struct
-{
-    uint32_t lspiTeEn                  : 1;           // 719 Lspi te en
-    uint32_t lspiTeEdgeSel             : 1;           // 719 Lspi te edge sel
-    uint32_t lspiTePos0                : 26;          // 719 Lspi te pos0
-}lspiTeParam0_t;
-
-typedef struct
-{
-    uint32_t lspiTePos1                : 26;          // 719 Lspi te pos1
-}lspiTeParam1_t;
 
 typedef struct
 {
@@ -657,7 +658,12 @@ extern lspiQuartileCtrl_t lspiQuartileCtrl;
 extern lspiGrayPageCmd0_t lspiGrayPageCmd0;
 extern lspiGrayPageCmd1_t lspiGrayPageCmd1;
 extern lspiFrameInfoOut_t lspiFrameInfoOut;
-extern uint8_t lspiDiv;
+extern lspiTeParam0_t 	  lspiTeParam0;
+extern lspiTeParam1_t 	  lspiTeParam1;
+extern lspiCmdPreParam0_t lspiPreParam0;
+extern lspiCmdPreParam2_t lspiPreParam2;
+extern lspiCmdPreParam3_t lspiPreParam3;
+extern uint8_t 			  lspiDiv;
 #endif
 
 
@@ -696,6 +702,7 @@ extern uint8_t lspiDiv;
 #define LSPI_POST_PARA1_CTRL                (1UL << 27)    // LSPI post para1 control
 #define LSPI_POST_PARA2_CTRL                (1UL << 28)    // LSPI post para2 control
 #define LSPI_POST_PARA3_CTRL                (1UL << 29)    // LSPI post para3 control
+#define LSPI_TE_CTRL                		(1UL << 30)    // LSPI te control
 
 
 

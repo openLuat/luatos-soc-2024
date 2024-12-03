@@ -77,6 +77,36 @@ typedef enum
     KPC_SCAN_DIV_RATIO_128                = 7U,   /**< KPC scan frequence divider ratio set as 128 */
 } KpcScanDivRatio_t;
 
+#if defined(KPC_IP_VERSION_B1)
+/** \brief List of debounce width */
+typedef enum
+{
+    KPC_ROW_0                             = 1U,   /**< KPC row0 enable mask */
+    KPC_ROW_1                             = 2U,   /**< KPC row1 enable mask */
+    KPC_ROW_2                             = 4U,   /**< KPC row2 enable mask */
+    KPC_ROW_3                             = 8U,   /**< KPC row3 enable mask */
+    KPC_ROW_4                             = 16U,  /**< KPC row4 enable mask */
+    KPC_ROW_5                             = 32U,  /**< KPC row5 enable mask */
+    KPC_ROW_6                             = 64U,  /**< KPC row6 enable mask */
+    KPC_ROW_7                             = 128U, /**< KPC row7 enable mask */
+    KPC_ROW_ALL                           = 0xFFU /**< KPC all rows enable mask */
+} KpcRow_t;
+
+/** \brief List of debounce width */
+typedef enum
+{
+    KPC_COLUMN_0                          = 1U,   /**< KPC column0 enable mask */
+    KPC_COLUMN_1                          = 2U,   /**< KPC column1 enable mask */
+    KPC_COLUMN_2                          = 4U,   /**< KPC column2 enable mask */
+    KPC_COLUMN_3                          = 8U,   /**< KPC column3 enable mask */
+    KPC_COLUMN_4                          = 16U,  /**< KPC column4 enable mask */
+    KPC_COLUMN_5                          = 32U,  /**< KPC column5 enable mask */
+    KPC_COLUMN_6                          = 64U,  /**< KPC column6 enable mask */
+    KPC_COLUMN_7                          = 128U, /**< KPC column7 enable mask */
+    KPC_COLUMN_ALL                        = 0xFFU /**< KPC all columns enable mask */
+} KpcColumn_t;
+
+#else
 /** \brief List of debounce width */
 typedef enum
 {
@@ -98,6 +128,7 @@ typedef enum
     KPC_COLUMN_4                          = 16U,  /**< KPC column4 enable mask */
     KPC_COLUMN_ALL                        = 0x1FU /**< KPC all columns enable mask */
 } KpcColumn_t;
+#endif
 
 /** \brief KPC debounce configuration, decounce exits when consecutive debounceWidth scans give the same result */
 typedef struct

@@ -150,8 +150,8 @@ extern void GPR_apSetCPSWDEnable(bool en);
 //-----------------------------------------------------------------------------
 // Variables Declarations
 //-----------------------------------------------------------------------------
-volatile uint32_t io_word;
-volatile uint8_t io_byte;
+AP_PLAT_COMMON_BSS volatile uint32_t io_word;
+AP_PLAT_COMMON_BSS volatile uint8_t io_byte;
 
 // Even parity lookup table, holds even parity result for a 4-bit value.
 const uint8_t even_parity[] =

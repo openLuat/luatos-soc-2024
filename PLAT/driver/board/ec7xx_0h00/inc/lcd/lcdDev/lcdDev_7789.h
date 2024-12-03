@@ -9,6 +9,8 @@
 #define     ST7789_TIME_OF_FRAME    (149356) // us
 #define     ST7789_TE_CYCLE         (16742) // us
 #define     ST7789_TE_WAIT_TIME     (623)   // us
+#define     ST7789_X_OFFSET		 	(0)
+#define     ST7789_Y_OFFSET		 	(0)
 
 #if (LCD_INTERFACE_8080 == 1)
 #if (ST7789_INTERFACE != INTERFACE_8080)
@@ -27,8 +29,12 @@
 #define     LCD_WIDTH            (ST7789_WIDTH)
 #define     LCD_BPP_USE          (ST7789_BPP)
 #define     LCD_INTERFACE        (ST7789_INTERFACE)
+#define     LCD_FREQ			 (ST7789_FREQ)
+#define     LCD_X_OFFSET		 (ST7789_X_OFFSET)
+#define     LCD_Y_OFFSET		 (ST7789_Y_OFFSET)
 
 #define     LCD_PIXEL            (LCD_HEIGHT*LCD_WIDTH)
+#define     LCD_FREQ			 (ST7789_FREQ)
 #define     LCD_TIME_OF_FRAME    (ST7789_TIME_OF_FRAME) // us
 #define     LCD_TE_CYCLE         (ST7789_TE_CYCLE)      // us
 #define     LCD_TE_WAIT_TIME     (ST7789_TE_WAIT_TIME)  // us

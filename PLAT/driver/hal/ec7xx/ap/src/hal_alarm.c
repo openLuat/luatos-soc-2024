@@ -324,12 +324,20 @@ void alarmThmHighDeinit(void)
 void alarmFuncInit(void)        // this function also call in paging
 {
     alarmParamCfg_t cfg;
+    #if defined TYPE_EC718M  
+    cfg.voltEnable = true;
+    cfg.voltThd = VOLT_THRESHOLD_2059;
+    cfg.thermEnable = true;
+    cfg.thermThd = THM_THRESHOLD_130;
+    cfg.hysterThd = THM_HYSTERESIS_40;
+    #else
     cfg.voltEnable = true;
     cfg.voltThd = VOLT_THRESHOLD_2200;
     cfg.thermEnable = true;
     cfg.thermThd = THM_THRESHOLD_LEVEL3;
     cfg.hysterThd = THM_HYSTERESIS_40;
-
+    #endif
+    
     ECPLAT_PRINTF(UNILOG_PLA_DRIVER, alarmFuncInit_1, P_VALUE, "Alarm Func Init: %d,%e<alarmVoltThd> - %d,%e<alarmThmThd>,%e<alarmHysteresisRange>", cfg.voltEnable, cfg.voltThd, cfg.thermEnable, cfg.thermThd, cfg.hysterThd);
 
     if(cfg.voltEnable)

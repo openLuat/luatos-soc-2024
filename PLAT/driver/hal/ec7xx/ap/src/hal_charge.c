@@ -25,6 +25,7 @@
 #include "cmsis_os2.h"
 #include DEBUG_LOG_HEADER_FILE
 #include "cmsis_os2.h"
+#include "sctdef.h"
 
 
 
@@ -45,9 +46,9 @@
 /*----------------------------------------------------------------------------*
  *                      GLOBAL VARIABLES                                      *
  *----------------------------------------------------------------------------*/
-osTimerId_t chargeMonTimer;
-static uint8_t chargeMonTimerId = 0;
-chargeStatusCb chargeStatusCbFunc;
+AP_PLAT_COMMON_BSS osTimerId_t chargeMonTimer;
+AP_PLAT_COMMON_BSS static uint8_t chargeMonTimerId = 0;
+AP_PLAT_COMMON_BSS chargeStatusCb chargeStatusCbFunc;
 
 /*----------------------------------------------------------------------------*
  *                      PRIVATE FUNCTIONS                                     *

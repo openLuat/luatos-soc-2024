@@ -57,6 +57,49 @@ typedef struct
     uint8_t value;
 }alarmInfo;
 
+#if defined TYPE_EC718M
+typedef enum _EPAT_alarmVoltThd
+{
+    VOLT_THRESHOLD_1573 = 0,
+    VOLT_THRESHOLD_1654,
+    VOLT_THRESHOLD_1735,
+    VOLT_THRESHOLD_1816,
+    VOLT_THRESHOLD_1897,
+    VOLT_THRESHOLD_1978,
+    VOLT_THRESHOLD_2059,
+    VOLT_THRESHOLD_2140,
+    VOLT_THRESHOLD_2221,
+    VOLT_THRESHOLD_2302,
+    VOLT_THRESHOLD_2381 = 10,
+    VOLT_THRESHOLD_2464,
+    VOLT_THRESHOLD_2545,
+    VOLT_THRESHOLD_2626,
+    VOLT_THRESHOLD_2707,
+    VOLT_THRESHOLD_2788,
+    VOLT_THRESHOLD_2869 = 16,
+    VOLT_THRESHOLD_2950,
+    VOLT_THRESHOLD_3031,
+    VOLT_THRESHOLD_3112,
+    VOLT_THRESHOLD_3193 = 20,
+    VOLT_THRESHOLD_3274,
+    VOLT_THRESHOLD_3355,
+    VOLT_THRESHOLD_3436 = 23,
+}alarmVoltThd;
+
+typedef enum _EPAT_alarmThmThd
+{
+    THM_THRESHOLD_70 = 0,
+    THM_THRESHOLD_80 = 1,
+    THM_THRESHOLD_90 = 2,
+    THM_THRESHOLD_100 = 3,
+    THM_THRESHOLD_110 = 4,
+    THM_THRESHOLD_120 = 5,
+    THM_THRESHOLD_130 = 6,
+    THM_THRESHOLD_140 = 7,
+}alarmThmThd;
+
+
+#else
 typedef enum _EPAT_alarmVoltThd
 {
     VOLT_THRESHOLD_2150 = 0,
@@ -92,6 +135,8 @@ typedef enum _EPAT_alarmThmThd
     THM_THRESHOLD_LEVEL2 = 2,
     THM_THRESHOLD_LEVEL3 = 3,
 }alarmThmThd;
+#endif
+
 
 typedef enum _EPAT_alarmHysteresisRange
 {

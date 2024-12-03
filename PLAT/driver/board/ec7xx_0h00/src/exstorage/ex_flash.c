@@ -24,7 +24,7 @@
 #include <stdbool.h>
 #include "bsp.h"
 #include "ex_flash.h"
-
+#include "sctdef.h"
 
 
 /*----------------------------------------------------------------------------*
@@ -47,7 +47,7 @@
 
 /** \brief driver instance declare */
 extern ARM_DRIVER_SPI Driver_SPI0;
-static ARM_DRIVER_SPI *spiMasterDrv = &CREATE_SYMBOL(Driver_SPI, 0);
+AP_PLAT_COMMON_DATA static ARM_DRIVER_SPI *spiMasterDrv = &CREATE_SYMBOL(Driver_SPI, 0);
 //volatile uint16_t gFid = 0;
 
 

@@ -9,6 +9,7 @@
 #include "usb_ext_inc.h"
 #include "usbd_errinfo.h"
 //#include "gpr.h"
+#include "sctdef.h"
 
 #if (USB_WKMON_TASK_EXIST==1)
 typedef enum {
@@ -23,13 +24,13 @@ typedef enum {
 
 }usb_wkmon_state_type;
 
-uint32_t usb_wkmon_stat = usb_wkmon_state_uninit;
+AP_PLAT_COMMON_BSS uint32_t usb_wkmon_stat = usb_wkmon_state_uninit;
 
 void usb_wkmon_setstat(usb_wkmon_state_type stat);
 
 
-osEventFlagsId_t LPUsbWkStatEvtFlags = NULL;
-osEventFlagsId_t LPUsbWkDetEvtFlags = NULL;
+AP_PLAT_COMMON_BSS osEventFlagsId_t LPUsbWkStatEvtFlags = NULL;
+AP_PLAT_COMMON_BSS osEventFlagsId_t LPUsbWkDetEvtFlags = NULL;
 
 #define USB_RETWKUP_STAT_EVT_UPD_FLAG (1UL<0)
 #define USB_RETWKUP_STAT_EVT_START_FLAG (1UL<<1)
@@ -311,7 +312,7 @@ void BSP_UsbWkIRQLog(void);
 //uint8_t BSP_UsbRetOthWkLaterRestOnly(void);
 
 
-uint8_t usbwkm_vote_handle = 0xff;
+AP_PLAT_COMMON_DATA uint8_t usbwkm_vote_handle = 0xff;
 
 //5ms
 //#define USBWKM_DET_WAIT_TIME 5
@@ -557,8 +558,8 @@ int USBMonLPWkupIRQHook(void)
 #define USBWKM_TASK_STACK_SIZE        (1024)
 //#define USB_WKMON_PRIVATE_STACK
 #ifdef USB_WKMON_PRIVATE_STACK
-static uint8_t                  usb_wkmon_task_stack[USBWKM_TASK_STACK_SIZE];
-static StaticTask_t             usb_wkmon_task_tcb;
+AP_PLAT_COMMON_BSS static uint8_t                  usb_wkmon_task_stack[USBWKM_TASK_STACK_SIZE];
+AP_PLAT_COMMON_BSS static StaticTask_t             usb_wkmon_task_tcb;
 
 uint8_t *usb_wkmon_get_stack_ptr(void)
 {
@@ -570,7 +571,7 @@ uint32_t usb_wkmon_get_stack_size(void)
     return USBWKM_TASK_STACK_SIZE;
 }
 #else
-static StaticTask_t             usb_wkmon_task_tcb;
+AP_PLAT_COMMON_BSS static StaticTask_t             usb_wkmon_task_tcb;
 
 extern uint8_t *usb_wkmon_portmon_share_stack_ptr(void);
 extern uint32_t usb_wkmon_portmon_share_stack_size(void);

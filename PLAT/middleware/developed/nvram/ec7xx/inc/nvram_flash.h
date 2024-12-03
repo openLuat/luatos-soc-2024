@@ -36,7 +36,7 @@
 
 
 
-#elif (defined TYPE_EC718S) || (defined TYPE_EC718P) || (defined TYPE_EC718U) || (defined TYPE_EC716S) || (defined TYPE_EC716E) || (defined TYPE_EC718U)
+#elif (defined TYPE_EC718S) || (defined TYPE_EC718P) || (defined TYPE_EC718U) || (defined TYPE_EC716S) || (defined TYPE_EC716E) || (defined TYPE_EC718U) || (defined TYPE_EC718M)
 #ifdef FEATURE_BOOTLOADER_PROJECT_ENABLE
 #define nvram_flash_earse(a)        FLASH_eraseSectorSafe(a)
 #define nvram_flash_write(a,b,c)    FLASH_write(a,b,c)

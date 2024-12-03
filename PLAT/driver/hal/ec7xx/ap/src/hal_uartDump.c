@@ -13,9 +13,9 @@
 #include "bsp_lpusart.h"
 #include "plat_config.h"
 #include "apmu_external.h"
-
+#include "sctdef.h"
 // Doesn't matter this variable is initialized or not since it'll be set in HAL_UartDumpPortInit
-static uint8_t gCurrentUartDumpPort = 0xFF;
+AP_PLAT_COMMON_DATA static uint8_t gCurrentUartDumpPort = 0xFF;
 
 void HAL_UartDumpPortInit(void)
 {

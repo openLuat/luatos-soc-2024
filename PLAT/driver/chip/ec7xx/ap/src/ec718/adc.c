@@ -14,6 +14,26 @@
 
 #define DCXO_CK2AUXADC_REG_ADDR         (0x4F050424)
 
+#if defined(TYPE_EC718M)
+
+#define LDO_AIO_CTRL_REG_ADDR           (0x4F020180)
+
+#define ADC_ENABLE()                    do                                                               \
+                                        {                                                                \
+                                            *(uint32_t*)(DCXO_CK2AUXADC_REG_ADDR) |= (1 << 5);           \
+                                            ADC->CTRL = ADC_CTRL_LDO_EN_Msk | ADC_CTRL_LDO_FC_Msk;       \
+                                            delay_us(5);                                                 \
+                                            ADC->CTRL = ADC_CTRL_LDO_EN_Msk;                             \
+                                            delay_us(5);                                                 \
+                                            *(uint32_t*)(LDO_AIO_CTRL_REG_ADDR) = 1;                     \
+                                        } while(0)
+
+#define ADC_DISABLE()                   do                                                               \
+                                        {                                                                \
+                                            ADC->CTRL = 0;                                               \
+                                            *(uint32_t*)(LDO_AIO_CTRL_REG_ADDR) = 0;                     \
+                                        } while(0)
+#else
 #define ADC_ENABLE()                    do                                                               \
                                         {                                                                \
                                             *(uint32_t*)(DCXO_CK2AUXADC_REG_ADDR) |= (1 << 5);           \
@@ -27,6 +47,8 @@
                                         {                                                                \
                                             ADC->CTRL = 0;                                               \
                                         } while(0)
+#endif
+
 
 #define ADC_CHANNEL_NUMBER              (6)
 

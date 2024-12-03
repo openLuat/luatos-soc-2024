@@ -39,12 +39,16 @@ extern "C" {
 #define HBURST_FORCE_OVERITE_DAT_CACHEABLE_NONBUFFABLE            (0x7F7B0000)
 #define HBURST_FORCE_OVERITE_DAT_CACHEABLE_BUFFABLE               (0x7F7F0000)
 #define HBURST_FORCE_OVERITE_DAT_CACHEABLE_BUFFABLE_NONOVERWRITE  (0X04050000)
+#define HBURST_FORCE_OVERITE_DAT_ONLY_LOOKUP_MODIFIED  			  (0X18180000)
+
 
 
 #define HBURST_FORCE_OVERITE_INS_NONCACHEABLE_NONBUFFABLE         (0x00007F03)
 #define HBURST_FORCE_OVERITE_INS_NONCACHEABLE_BUFFABLE            (0x00007F07)
 #define HBURST_FORCE_OVERITE_INS_CACHEABLE_NONBUFFABLE            (0x00007F7B)
 #define HBURST_FORCE_OVERITE_INS_CACHEABLE_BUFFABLE               (0x00007F7F)
+#define HBURST_FORCE_OVERITE_INS_ONLY_LOOKUP_MODIFIED  			  (0X00001818)
+
 
 /*----------------------------------------------------------------------------*
  *                   DATA TYPE DEFINITION                                     *
@@ -87,6 +91,35 @@ typedef struct
 /*----------------------------------------------------------------------------*
  *                    GLOBAL FUNCTIONS DECLEARATION                           *
  *----------------------------------------------------------------------------*/
+#if defined TYPE_EC718M
+int PCacheInitAllInstance(void);
+int PCacheInit(uint8_t inst);
+void PcacheSetHburstForceReg(uint8_t inst, uint8_t type, uint32_t regVal);
+void PcacheclrAllHburstForceReg(uint8_t inst);
+void PCacheEnableBitSet(uint8_t inst);
+void PCacheDisableBitSet(uint8_t inst);
+void EnablePCache(uint8_t inst);
+void EnablePCacheAllInstance(void);
+void DisablePCache(uint8_t inst);
+void DisablePCacheAllInstance(void);
+uint32_t PCacheGetHwInfo(uint8_t inst);
+void EnablePCacheForceWt(uint8_t inst);
+void EnablePCacheWB(uint8_t inst);
+BOOL IsPCacheEnabled(uint8_t inst);
+BOOL isPCacheClean(uint8_t inst);
+uint32_t PCacheGetStatus(uint8_t inst);
+BOOL PCacheCleanAll(uint8_t inst);
+BOOL PCacheInvalidateAll(uint8_t inst);
+BOOL PCacheFlushAll(uint8_t inst);
+BOOL PCacheMaintenanceAll(uint8_t inst, PCacheMaint_Type maintType);
+BOOL PCacheCleanByAddress(uint8_t inst, uint32_t address);
+BOOL PCacheInvalidateByAddress(uint8_t inst, uint32_t address);
+BOOL PCacheFlushByAddress(uint8_t inst, uint32_t address);
+void PCacheHitrateInit(uint8_t inst);
+BOOL PCacheHitrateGet(uint8_t inst, uint32_t *pHitCount, uint32_t *pMissCount);
+void PCacheSnapshotGet(uint8_t inst, uint32_t *pHitCount, uint32_t *pMissCount);
+BOOL PCacheGetCIDPID(uint8_t inst, uint8_t *cid, uint8_t *pid);
+#else
 int PCacheInit(void);
 void PcacheSetHburstForceReg(uint8_t type, uint32_t regVal);
 void PcacheclrAllHburstForceReg(void);
@@ -112,7 +145,7 @@ void PCacheHitrateInit(void);
 BOOL PCacheHitrateGet(uint32_t *pHitCount, uint32_t *pMissCount);
 void PCacheSnapshotGet(uint32_t *pHitCount, uint32_t *pMissCount);
 BOOL PCacheGetCIDPID(uint8_t *cid, uint8_t *pid);
-
+#endif
 
 #ifdef __cplusplus
 }

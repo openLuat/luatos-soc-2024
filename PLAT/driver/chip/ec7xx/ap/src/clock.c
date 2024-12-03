@@ -207,6 +207,15 @@ CLOCK_DATA_SECTION static ClkTreeElement_t g_clkTreeArray[] =
     [GET_INDEX_FROM_CLOCK_ID(CLK_HF306M_G)]   = {0, CLK_HF306M, 0, 0},
     [GET_INDEX_FROM_CLOCK_ID(CLK_CC_USBC)]    = {1, CLK_CC, 0, 0},
 
+#ifdef TYPE_EC718M
+    [GET_INDEX_FROM_CLOCK_ID(APM_RMI_HCLK)]   = {0, INVALID_CLK, 0, 0},
+    [GET_INDEX_FROM_CLOCK_ID(PCLK_APM)]       = {0, INVALID_CLK, 0, 0},
+    [GET_INDEX_FROM_CLOCK_ID(PCLK_CAN0)]       = {0, CLK_APB_MP, 0, 0},
+    [GET_INDEX_FROM_CLOCK_ID(FCLK_CAN0)]       = {0, CLK_MF_GATED, 0, 0},
+    [GET_INDEX_FROM_CLOCK_ID(FCLK_GPIO)]       = {0, CLK_MF_GATED, 0, 0},
+    [GET_INDEX_FROM_CLOCK_ID(CLK_HF408M)]       = {0, CLK_HFClk, 0, 0},
+#endif
+
 };
 
 
@@ -529,13 +538,18 @@ void CLOCK_updateClockTreeElement(ClockId_e id, ClockId_e parentId, uint8_t enab
  */
 PLAT_PA_RAMCODE void CLOCK_fpFlckCtrl(uint8_t enterExitWfi)
 {
+
+#if FPGA_TEST
+    return;
+#endif
+
     if(enterExitWfi == 0)// before enter wfi
     {
         #if (defined TYPE_EC718S) || (defined TYPE_EC716S) || (defined TYPE_EC716E)
         CLOCK_clockDisable(CLK_FLASH);
         #elif (defined TYPE_EC718H)
         CLOCK_clockDisable(CLK_FLASH);
-        #elif (defined TYPE_EC718P) || (defined TYPE_EC718U)
+        #elif (defined TYPE_EC718P) || (defined TYPE_EC718U) || (defined TYPE_EC718M)
         //only ctrl psram fclk when psram exist
         if(AonRegIsPsramExist())
             CLOCK_clockDisable(CLK_PSRAM);
@@ -551,7 +565,7 @@ PLAT_PA_RAMCODE void CLOCK_fpFlckCtrl(uint8_t enterExitWfi)
         CLOCK_clockEnable(CLK_FLASH);
         #elif (defined TYPE_EC718H)
         CLOCK_clockEnable(CLK_FLASH);
-        #elif (defined TYPE_EC718P) || (defined TYPE_EC718U)
+        #elif (defined TYPE_EC718P) || (defined TYPE_EC718U) || (defined TYPE_EC718M)
         CLOCK_clockEnable(CLK_FLASH);
         //only ctrl psram fclk when psram exist
         if(AonRegIsPsramExist())

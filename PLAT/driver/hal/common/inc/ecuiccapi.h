@@ -65,6 +65,17 @@ void SoftSimApduReq(UINT16 txDataLen, UINT8 *txData, UINT16 *rxDataLen, UINT8 *r
 ******************************************************************************/
 void SoftSimInit(void);
 
+/******************************************************************************
+ * SoftSimIsSimplyApduTrans
+ * Description: whether SoftSIM only support simply APDU transmission without TPDU.
+ *        e.g. terminal -> SoftSIM: 00 A4 08 04 02 2F E2 00
+ *           SoftSIM -> teriminal: 62 17 82 02 41 21 83 02 2F E2 8A 01 05 8B 03 2F 06 03 80 02 00 0A 88 01 10 90 00
+ * input: void
+ * output: BOOL
+ * Comment: This api called by modem/uiccdrv task.
+******************************************************************************/
+BOOL SoftSimIsSimplyApduTrans(void);
+
 #endif
 
 

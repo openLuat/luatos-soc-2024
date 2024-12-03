@@ -15,24 +15,25 @@
 #include "ostask.h"
 #include "slpman.h"
 #include "tpComm.h"
+#include "sctdef.h"
 #ifdef FEATURE_SUBSYS_SYSLOG_ENABLE
 #include "syslog.h"
 #endif
 #ifdef FEATURE_SUBSYS_OPENHAL_ENABLE
 #include "api_comm.h"
-uint32_t tp_irq_padId = 0;
-uint32_t tp_irq_PinId = 0;
-uint32_t tp_i2c_usrId = 0;
+AP_PLAT_COMMON_BSS uint32_t tp_irq_padId = 0;
+AP_PLAT_COMMON_BSS uint32_t tp_irq_PinId = 0;
+AP_PLAT_COMMON_BSS uint32_t tp_i2c_usrId = 0;
 #endif
 extern ARM_DRIVER_I2C 	Driver_I2C0;
-ARM_DRIVER_I2C	*i2cMasterDrv = &CREATE_SYMBOL(Driver_I2C, 0);
+AP_PLAT_COMMON_DATA ARM_DRIVER_I2C	*i2cMasterDrv = &CREATE_SYMBOL(Driver_I2C, 0);
 /**
   \fn          
   \brief    
   \return
 */
 #ifndef FEATURE_SUBSYS_OPENHAL_ENABLE
-static tpIsrFunc tpIsrCb = NULL;
+AP_PLAT_COMMON_BSS static tpIsrFunc tpIsrCb = NULL;
 void tpGpioIsr(uint32_t index)
 {
     uint16_t portIrqMask = GPIO_saveAndSetIrqMask(TP_IRQ_GPIO_INSTANCE);

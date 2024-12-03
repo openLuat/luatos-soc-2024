@@ -1,8 +1,9 @@
 #include "lcdDev_7571.h"
+#include "sctdef.h"
 
-DmaDescriptor_t __ALIGNED(16) lcdDmaTxDesc7571[HEIGHT_7571];
-int8_t lcdDmaTxCh7571; // dma tx channel
-DmaTransferConfig_t lcdDmaTxCfg7571 =
+AP_PLAT_COMMON_BSS DmaDescriptor_t __ALIGNED(16) lcdDmaTxDesc7571[HEIGHT_7571];
+AP_PLAT_COMMON_BSS int8_t lcdDmaTxCh7571; // dma tx channel
+AP_PLAT_COMMON_DATA DmaTransferConfig_t lcdDmaTxCfg7571 =
 {
     NULL,
     (void *)&(LSPI2->TFIFO),
@@ -99,7 +100,7 @@ void st7571Clear(lcdDev_t* lcd, uint8_t* buf, uint16_t lcdHeight, uint16_t lcdWi
 
 }
 
-lcdDrvFunc_t st7571Drv = 
+AP_PLAT_COMMON_DATA lcdDrvFunc_t st7571Drv = 
 {
     .id             = 0x7571,
 

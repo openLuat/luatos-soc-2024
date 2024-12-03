@@ -2,15 +2,16 @@
 #include "lcdDrv.h"
 #include "lcdComm.h"
 #include "lcdDev_9307.h"
+#include "sctdef.h"
 
 #define LCD_CHIPID  0x04  
 #define LCD_RDDST   0x09 
 #define LCD_MADCTL  0x36
 
 extern lspiDrvInterface_t *lcdDrv;
-static uint8_t s_MADCTL = 0x0; 
+AP_PLAT_COMMON_BSS static uint8_t s_MADCTL = 0x0; 
 
-static initLine_t initTable9307[] = 
+AP_PLAT_COMMON_DATA static initLine_t initTable9307[] = 
 {
     {0xfe, 1, {0}},
     {0xef, 1, {0}},
@@ -49,7 +50,7 @@ void st9307HandleUspIrq4Fill(lcdDrvFunc_t *lcd)
 {
 }
 
-uint8_t read9307[20] = {0x1, 0x2, 0x3};
+AP_PLAT_COMMON_DATA uint8_t read9307[20] = {0x1, 0x2, 0x3};
 static int st9307Init(lcdDrvFunc_t *lcd, void* uspCb, void *dmaCb, uint32_t freq, uint8_t bpp)
 {     
     dmaInit(dmaCb);
@@ -199,7 +200,7 @@ static void st9307CamPreviewStartStop(lcdDrvFunc_t *lcd, camPreviewStartStop_e p
     st9307UnRegisterUspIrqCb(lcd, cbForFill);
     st9307RegisterUspIrqCb(lcd, cbForCam);
 
-#if defined CHIP_EC719
+#if (defined TYPE_EC718M)
     if (previewStartStop)
     {
 #if (CAMERA_ENABLE_BF30A2)
@@ -310,7 +311,7 @@ static int st9307Close(lcdDrvFunc_t *lcd)
     return 0;
 }
 
-lcdDrvFunc_t gc9307Drv = 
+AP_PLAT_COMMON_DATA lcdDrvFunc_t gc9307Drv = 
 {
     .id                 = 0x9307,
     .width              = GC9307_WIDTH,

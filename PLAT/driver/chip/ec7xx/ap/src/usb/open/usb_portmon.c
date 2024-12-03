@@ -10,17 +10,18 @@
 #include "slpman.h"
 #include "usb_ext_inc.h"
 #include "usb_net_adapt_cust.h"
+#include "sctdef.h"
 
 #include DEBUG_LOG_HEADER_FILE
 typedef int (*pfn_PadWakeupHook)(uint32_t pad_num);
 
 
-osEventFlagsId_t vBusEvtFlags = NULL;
+AP_PLAT_COMMON_BSS osEventFlagsId_t vBusEvtFlags = NULL;
 #define USB_VBUS_EVT_FLAG 1
 //5 for module AirM2M E3 BOARD vbus pad
 //#define USB_WKUP_PAD_IDX 5
 //for module AirM2M E1 BOARD vbus pad
-uint8_t  usb_wkup_pad_idx = 1;
+AP_PLAT_COMMON_DATA uint8_t  usb_wkup_pad_idx = 1;
 #define VBUS_FILTER_MAX_SAMPLE_CNT 10
 
 extern uint8_t usbstack_clear_ctx_stat(void);
@@ -70,7 +71,7 @@ typedef enum {
     usb_portmon_state_stable = 4,
 }usb_portmon_state_type;
 
-uint32_t usb_portmon_stat = usb_portmon_state_none;
+AP_PLAT_COMMON_BSS uint32_t usb_portmon_stat = usb_portmon_state_none;
 
 usb_portmon_state_type usb_portmon_getstat(void)
 {
@@ -82,7 +83,7 @@ void usb_portmon_setstat(usb_portmon_state_type stat)
     usb_portmon_stat = stat;
 }
 
-uint8_t vbus_val_last = 0;
+AP_PLAT_COMMON_BSS uint8_t vbus_val_last = 0;
 
 int usb_portmon_init(void)
 {
@@ -129,7 +130,7 @@ int usb_portmon_deinit(void){
 }
 
 
-uint8_t usbpm_vote_handle = 0xff;
+AP_PLAT_COMMON_DATA uint8_t usbpm_vote_handle = 0xff;
 
 void usb_portmon_task(void *arg)
 {
@@ -380,9 +381,9 @@ int PadCmnWakeupHook(uint32_t pad_num)
 
 #if (RTE_USB_EN == 1)
 #define USBPORTON_TASK_STACK_SIZE        (1024)
-static uint8_t                  usb_portmon_task_stack[USBPORTON_TASK_STACK_SIZE];
+AP_PLAT_COMMON_BSS static uint8_t                  usb_portmon_task_stack[USBPORTON_TASK_STACK_SIZE];
 #if defined FEATURE_FREERTOS_ENABLE
-static StaticTask_t             usb_portmon_task_tcb;
+AP_PLAT_COMMON_BSS static StaticTask_t             usb_portmon_task_tcb;
 #endif
 //share task stack_ptr
 uint8_t *usb_wkmon_portmon_share_stack_ptr(void)

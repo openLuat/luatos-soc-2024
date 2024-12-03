@@ -93,11 +93,11 @@ extern const struct memp_desc* const memp_pools[MEMP_MAX];
  *   extern u8_t __attribute__((section(".onchip_mem"))) memp_memory_my_private_pool[];
  */
 #define LWIP_MEMPOOL_DECLARE(name,num,size,desc) \
-  LWIP_DECLARE_MEMORY_ALIGNED(memp_memory_ ## name ## _base, ((num) * (MEMP_SIZE + MEMP_ALIGN_SIZE(size)))); \
+  NET_ZI_DEF LWIP_DECLARE_MEMORY_ALIGNED(memp_memory_ ## name ## _base, ((num) * (MEMP_SIZE + MEMP_ALIGN_SIZE(size)))); \
     \
-  LWIP_MEMPOOL_DECLARE_STATS_INSTANCE(memp_stats_ ## name) \
+  NET_ZI_DEF LWIP_MEMPOOL_DECLARE_STATS_INSTANCE(memp_stats_ ## name) \
     \
-  static struct memp *memp_tab_ ## name; \
+   static NET_ZI_DEF struct memp *memp_tab_ ## name; \
     \
   const struct memp_desc memp_ ## name = { \
     DECLARE_LWIP_MEMPOOL_DESC(desc) \

@@ -1,6 +1,7 @@
 #include "cameraDrv.h"
+#include "sctdef.h"
 
-camI2cCfg_t gc032A_2ddrRegInfo[] =
+AP_PLAT_COMMON_DATA camI2cCfg_t gc032A_2ddrRegInfo[] =
 {
     /*System*/
     {0xf3, 0x83}, //ff//1f//01 data output
@@ -355,7 +356,7 @@ camI2cCfg_t gc032A_2ddrRegInfo[] =
     {0xfe, 0x00},
 };
 
-camI2cCfg_t gc032A_2sdrRegInfo[] = 
+AP_PLAT_COMMON_DATA camI2cCfg_t gc032A_2sdrRegInfo[] = 
 {
     {0xf3,0x83},
     {0xf5,0x0c},
@@ -693,7 +694,7 @@ camI2cCfg_t gc032A_2sdrRegInfo[] =
     {0xfe,0x00},
 };
 
-camI2cCfg_t gc032A_1sdrRegInfo[] = 
+AP_PLAT_COMMON_DATA camI2cCfg_t gc032A_1sdrRegInfo[] = 
 {
     {0xf3,0x83}, //sync_output_en data_output_en
 	{0xf5,0x0c},

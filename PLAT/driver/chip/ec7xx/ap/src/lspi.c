@@ -8,49 +8,51 @@
  ****************************************************************************/
 #include "lspi.h"
 #include "slpman.h"
+#include "sctdef.h"
 
 #if (RTE_LSPI2)
 #if (LCD_INTERFACE_SPI == 1)
-static PIN lspi2Ds      = {RTE_USP2_DS_PAD_ADDR,       RTE_USP2_DS_FUNC};
-static PIN lspi2Clk     = {RTE_USP2_CLK_PAD_ADDR,      RTE_USP2_CLK_FUNC};
-static PIN lspi2Cs      = {RTE_USP2_CS_PAD_ADDR,       RTE_USP2_CS_FUNC};
-static PIN lspi2Miso    = {RTE_USP2_DIN_PAD_ADDR,      RTE_USP2_DIN_FUNC};
-static PIN lspi2Mosi0   = {RTE_USP2_DOUT0_PAD_ADDR,   RTE_USP2_DOUT0_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2Ds      = {RTE_USP2_DS_PAD_ADDR,       RTE_USP2_DS_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2Clk     = {RTE_USP2_CLK_PAD_ADDR,      RTE_USP2_CLK_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2Cs      = {RTE_USP2_CS_PAD_ADDR,       RTE_USP2_CS_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2Miso    = {RTE_USP2_DIN_PAD_ADDR,      RTE_USP2_DIN_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2Mosi0   = {RTE_USP2_DOUT0_PAD_ADDR,   RTE_USP2_DOUT0_FUNC};
 #if (SPI_2_DATA_LANE == 1)
-static PIN lspi2Mosi1   = {RTE_USP2_DOUT1_PAD_ADDR,    RTE_USP2_DOUT1_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2Mosi1   = {RTE_USP2_DOUT1_PAD_ADDR,    RTE_USP2_DOUT1_FUNC};
 #endif
 
 #elif (LCD_INTERFACE_MSPI == 1)
-static PIN lspi2Scl     = {RTE_USP2_SCL_PAD_ADDR,     RTE_USP2_SCL_FUNC};
-static PIN lspi2Cs      = {RTE_USP2_CS_PAD_ADDR,      RTE_USP2_CS_FUNC};
-static PIN lspi2Sdi     = {RTE_USP2_SDI_PAD_ADDR,     RTE_USP2_SDI_FUNC};
-static PIN lspi2D0      = {RTE_USP2_D0_PAD_ADDR,      RTE_USP2_D0_FUNC};
-static PIN lspi2D1      = {RTE_USP2_D1_PAD_ADDR,      RTE_USP2_D1_FUNC};
-static PIN lspi2D2      = {RTE_USP2_D2_PAD_ADDR,      RTE_USP2_D2_FUNC};
-static PIN lspi2D3      = {RTE_USP2_D3_PAD_ADDR,      RTE_USP2_D3_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2Scl     = {RTE_USP2_SCL_PAD_ADDR,     RTE_USP2_SCL_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2Cs      = {RTE_USP2_CS_PAD_ADDR,      RTE_USP2_CS_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2Sdi     = {RTE_USP2_SDI_PAD_ADDR,     RTE_USP2_SDI_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2D0      = {RTE_USP2_D0_PAD_ADDR,      RTE_USP2_D0_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2D1      = {RTE_USP2_D1_PAD_ADDR,      RTE_USP2_D1_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2D2      = {RTE_USP2_D2_PAD_ADDR,      RTE_USP2_D2_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2D3      = {RTE_USP2_D3_PAD_ADDR,      RTE_USP2_D3_FUNC};
 
 #elif (LCD_INTERFACE_8080 == 1)
-static PIN lspi2Scl     = {RTE_USP2_SCL_PAD_ADDR,     RTE_USP2_SCL_FUNC};
-static PIN lspi2Cs      = {RTE_USP2_CS_PAD_ADDR,      RTE_USP2_CS_FUNC};
-static PIN lspi2Dcx     = {RTE_USP2_DCX_PAD_ADDR,     RTE_USP2_DCX_FUNC};
-static PIN lspi2Rclk    = {RTE_USP2_RCLK_PAD_ADDR,    RTE_USP2_RCLK_FUNC};
-static PIN lspi2D0      = {RTE_USP2_D0_PAD_ADDR,      RTE_USP2_D0_FUNC};
-static PIN lspi2D1      = {RTE_USP2_D1_PAD_ADDR,      RTE_USP2_D1_FUNC};
-static PIN lspi2D2      = {RTE_USP2_D2_PAD_ADDR,      RTE_USP2_D2_FUNC};
-static PIN lspi2D3      = {RTE_USP2_D3_PAD_ADDR,      RTE_USP2_D3_FUNC};
-static PIN lspi2D4      = {RTE_USP2_D4_PAD_ADDR,      RTE_USP2_D4_FUNC};
-static PIN lspi2D5      = {RTE_USP2_D5_PAD_ADDR,      RTE_USP2_D5_FUNC};
-static PIN lspi2D6      = {RTE_USP2_D6_PAD_ADDR,      RTE_USP2_D6_FUNC};
-static PIN lspi2D7      = {RTE_USP2_D7_PAD_ADDR,      RTE_USP2_D7_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2Scl     = {RTE_USP2_SCL_PAD_ADDR,     RTE_USP2_SCL_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2Cs      = {RTE_USP2_CS_PAD_ADDR,      RTE_USP2_CS_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2Dcx     = {RTE_USP2_DCX_PAD_ADDR,     RTE_USP2_DCX_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2Rclk    = {RTE_USP2_RCLK_PAD_ADDR,    RTE_USP2_RCLK_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2D0      = {RTE_USP2_D0_PAD_ADDR,      RTE_USP2_D0_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2D1      = {RTE_USP2_D1_PAD_ADDR,      RTE_USP2_D1_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2D2      = {RTE_USP2_D2_PAD_ADDR,      RTE_USP2_D2_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2D3      = {RTE_USP2_D3_PAD_ADDR,      RTE_USP2_D3_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2D4      = {RTE_USP2_D4_PAD_ADDR,      RTE_USP2_D4_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2D5      = {RTE_USP2_D5_PAD_ADDR,      RTE_USP2_D5_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2D6      = {RTE_USP2_D6_PAD_ADDR,      RTE_USP2_D6_FUNC};
+AP_PLAT_COMMON_DATA static PIN lspi2D7      = {RTE_USP2_D7_PAD_ADDR,      RTE_USP2_D7_FUNC};
 #endif
 #endif
 
-uint8_t lspiDiv;
+AP_PLAT_COMMON_BSS uint8_t lspiDiv;
 
-#if defined CHIP_EC718
+
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
 
 // 718 Data Format 
-lspiDataFmt_t lspiDataFmt = 
+AP_PLAT_COMMON_DATA lspiDataFmt_t lspiDataFmt = 
 {
     .slaveModeEn            = 0,
     .slotSize               = 0,
@@ -68,7 +70,7 @@ lspiDataFmt_t lspiDataFmt =
 };
 
 // 718 DMA Control
-lspiDmaCtrl_t lspiDmaCtrl =
+AP_PLAT_COMMON_DATA lspiDmaCtrl_t lspiDmaCtrl =
 {
     .rxDmaReqEn             = 0,
     .txDmaReqEn             = 0,
@@ -83,7 +85,7 @@ lspiDmaCtrl_t lspiDmaCtrl =
 };
 
 // 718 INT Control
-lspiIntCtrl_t lspiIntCtrl =
+AP_PLAT_COMMON_DATA lspiIntCtrl_t lspiIntCtrl =
 {
     .txUnderRunIntEn        = 0,
     .txDmaErrIntEn          = 0,
@@ -107,7 +109,7 @@ lspiIntCtrl_t lspiIntCtrl =
 };
 
 // 718 lspi control
-lspiCtrl_t lspiCtrl =
+AP_PLAT_COMMON_DATA lspiCtrl_t lspiCtrl =
 {
     .enable                 = 1,           ///< lspi Enable
     .data2Lane              = 0,           ///< 2 data lane enable
@@ -124,7 +126,7 @@ lspiCtrl_t lspiCtrl =
 };
 
 // 718 cmd ctrl
-lspiCmdCtrl_t lspiCmdCtrl =
+AP_PLAT_COMMON_BSS lspiCmdCtrl_t lspiCmdCtrl =
 {
     .wrRdn                  = 0,           ///< 0=rd, 1=wr
     .ramWr                  = 0,           ///< start to fill frame memory
@@ -134,41 +136,41 @@ lspiCmdCtrl_t lspiCmdCtrl =
 };
 
 // 718 cmd addr
-lspiCmdAddr_t lspiCmdAddr =
+AP_PLAT_COMMON_BSS lspiCmdAddr_t lspiCmdAddr =
 {
     .addr                   = 0,
 };
 
 // 718 lspi info
-lspiInfo_t lspiInfo =
+AP_PLAT_COMMON_BSS lspiInfo_t lspiInfo =
 {
     .frameHeight            = 0,           ///< frame height
     .frameWidth             = 0,           ///< frame width
 };
 
 // 718 tailor info0
-lspitailorInfo0_t lspiTailorInfo0 =
+AP_PLAT_COMMON_BSS lspitailorInfo0_t lspiTailorInfo0 =
 {
     .tailorBottom           = 0,           ///< cut bottom lines
     .tailorTop              = 0,           ///< cut top lines
 };
 
 // 718 tailor info
-lspitailorInfo_t lspiTailorInfo =
+AP_PLAT_COMMON_BSS lspitailorInfo_t lspiTailorInfo =
 {
     .tailorLeft             = 0,           ///< cut upper lines
     .tailorRight            = 0,
 };
 
 // 718 scale info
-lspiScaleInfo_t lspiScaleInfo =
+AP_PLAT_COMMON_BSS lspiScaleInfo_t lspiScaleInfo =
 {
     .rowScaleFrac           = 0,           ///< cut upper lines
     .colScaleFrac           = 0,
 };
 
 // 718 quartile ctrl
-lspiQuartileCtrl_t lspiQuartileCtrl =
+AP_PLAT_COMMON_BSS lspiQuartileCtrl_t lspiQuartileCtrl =
 {
     .grayCtrl               = 0,            ///< gray ctrl
     .quartileSel            = 0,            ///< quartile from cspi or sw
@@ -178,7 +180,7 @@ lspiQuartileCtrl_t lspiQuartileCtrl =
 };
 
 // 718 yadj
-lspiYAdj_t lspiYAdj =
+AP_PLAT_COMMON_BSS lspiYAdj_t lspiYAdj =
 {
     .yadjYmin               = 0,            ///< y adj min
     .yadjYmax               = 0,            ///< y adj max
@@ -187,7 +189,7 @@ lspiYAdj_t lspiYAdj =
 };
 
 // 718 gray page cmd0
-lspiGrayPageCmd0_t lspiGrayPageCmd0 =
+AP_PLAT_COMMON_BSS lspiGrayPageCmd0_t lspiGrayPageCmd0 =
 {
     .pageCmd                = 0,            ///< page cmd
     .pageCmd0               = 0,            ///< page cmd 0
@@ -195,20 +197,20 @@ lspiGrayPageCmd0_t lspiGrayPageCmd0 =
 };
 
 // 718 gray page cmd1
-lspiGrayPageCmd1_t lspiGrayPageCmd1 =
+AP_PLAT_COMMON_BSS lspiGrayPageCmd1_t lspiGrayPageCmd1 =
 {
     .pageCmd1               = 0,            ///< page cmd1
 };
 
 // 718 frame info out
-lspiFrameInfoOut_t lspiFrameInfoOut =
+AP_PLAT_COMMON_BSS lspiFrameInfoOut_t lspiFrameInfoOut =
 {
     .frameHeightOut         = 0,            ///< frame height out
     .frameWidthOut          = 0,            ///< frame width out
 };
 
 // 718 bus sel
-lspiBusSel_t lspiBusSel =
+AP_PLAT_COMMON_DATA lspiBusSel_t lspiBusSel =
 {
     .i2sBusEn               = 0,            ///< I2S bus enable
     .cspiBusEn              = 0,            ///< Cspi bus enable
@@ -219,7 +221,7 @@ lspiBusSel_t lspiBusSel =
 #else // CHIP 719
 
 // 719 Data Format 
-lspiDataFmt_t lspiDataFmt = 
+AP_PLAT_COMMON_DATA lspiDataFmt_t lspiDataFmt = 
 {
     .slaveModeEn            = 0,
     .slotSize               = 0,
@@ -237,7 +239,7 @@ lspiDataFmt_t lspiDataFmt =
 };
 
 // 719 DMA Control
-lspiDmaCtrl_t lspiDmaCtrl =
+AP_PLAT_COMMON_DATA lspiDmaCtrl_t lspiDmaCtrl =
 {
     .rxDmaReqEn             = 0,
     .txDmaReqEn             = 0,
@@ -252,7 +254,7 @@ lspiDmaCtrl_t lspiDmaCtrl =
 };
 
 // 719 INT Control
-lspiIntCtrl_t lspiIntCtrl =
+AP_PLAT_COMMON_DATA lspiIntCtrl_t lspiIntCtrl =
 {
     .txUnderRunIntEn        = 0,
     .txDmaErrIntEn          = 0,
@@ -278,7 +280,7 @@ lspiIntCtrl_t lspiIntCtrl =
 };
 
 // 719 lspi ctrl
-lspiCtrl_t lspiCtrl =
+AP_PLAT_COMMON_DATA lspiCtrl_t lspiCtrl =
 {
     .enable                 = 1,           // lspi Enable
     .dspiEn                 = 0,           // dual spi mode enable
@@ -295,7 +297,7 @@ lspiCtrl_t lspiCtrl =
 };
 
 // 719 cmd ctrl
-lspiCmdCtrl_t lspiCmdCtrl =
+AP_PLAT_COMMON_BSS lspiCmdCtrl_t lspiCmdCtrl =
 {
     .wrRdn                  = 0,           // 0=rd, 1=wr
     .ramWr                  = 0,           // start to fill frame memory
@@ -305,7 +307,7 @@ lspiCmdCtrl_t lspiCmdCtrl =
 };
 
 // 719 cmd addr
-lspiCmdAddr_t lspiCmdAddr =
+AP_PLAT_COMMON_BSS lspiCmdAddr_t lspiCmdAddr =
 {
     .addr                   = 0,
     .csnHighCycleMin        = 0,
@@ -313,35 +315,35 @@ lspiCmdAddr_t lspiCmdAddr =
 };
 
 // 719 lspi info
-lspiInfo_t lspiInfo =
+AP_PLAT_COMMON_BSS lspiInfo_t lspiInfo =
 {
     .frameHeight            = 0,           // frame height
     .frameWidth             = 0,           // frame width
 };
 
 // 719 tailor info0
-lspitailorInfo0_t lspiTailorInfo0 =
+AP_PLAT_COMMON_BSS lspitailorInfo0_t lspiTailorInfo0 =
 {
     .tailorBottom           = 0,           // cut bottom lines
     .tailorTop              = 0,           // cut top lines
 };
 
 // 719 tailor info
-lspitailorInfo_t lspiTailorInfo =
+AP_PLAT_COMMON_BSS lspitailorInfo_t lspiTailorInfo =
 {
     .tailorLeft             = 0,           // cut upper lines
     .tailorRight            = 0,
 };
 
 // 719 scale info
-lspiScaleInfo_t lspiScaleInfo =
+AP_PLAT_COMMON_BSS lspiScaleInfo_t lspiScaleInfo =
 {
     .rowScaleFrac           = 0,           // cut upper lines
     .colScaleFrac           = 0,
 };
 
 // 719 quartile ctrl
-lspiQuartileCtrl_t lspiQuartileCtrl =
+AP_PLAT_COMMON_BSS lspiQuartileCtrl_t lspiQuartileCtrl =
 {
     .grayCtrl               = 0,            // gray ctrl
     .quartileSel            = 0,            // quartile from cspi or sw
@@ -351,7 +353,7 @@ lspiQuartileCtrl_t lspiQuartileCtrl =
 };
 
 // 719 yadj
-lspiYAdj_t lspiYAdj =
+AP_PLAT_COMMON_BSS lspiYAdj_t lspiYAdj =
 {
     .yadjYmin               = 0,            // y adj min
     .yadjYmax               = 0,            // y adj max
@@ -360,7 +362,7 @@ lspiYAdj_t lspiYAdj =
 };
 
 // 719 gray page cmd0
-lspiGrayPageCmd0_t lspiGrayPageCmd0 =
+AP_PLAT_COMMON_BSS lspiGrayPageCmd0_t lspiGrayPageCmd0 =
 {
     .pageCmd                = 0,            // page cmd
     .pageCmd0               = 0,            // page cmd 0
@@ -368,20 +370,20 @@ lspiGrayPageCmd0_t lspiGrayPageCmd0 =
 };
 
 // 719 gray page cmd1
-lspiGrayPageCmd1_t lspiGrayPageCmd1 =
+AP_PLAT_COMMON_BSS lspiGrayPageCmd1_t lspiGrayPageCmd1 =
 {
     .pageCmd1               = 0,            // page cmd1
 };
 
 // 719 frame info out
-lspiFrameInfoOut_t lspiFrameInfoOut =
+AP_PLAT_COMMON_BSS lspiFrameInfoOut_t lspiFrameInfoOut =
 {
     .frameHeightOut         = 0,            // frame height out
     .frameWidthOut          = 0,            // frame width out
 };
 
 // 719 mspi ctrl
-lspiMspiCtrl_t lspiMspiCtrl = 
+AP_PLAT_COMMON_BSS lspiMspiCtrl_t lspiMspiCtrl = 
 {
     .mspiEn                 = 0,            // I2S bus enable
     .mspiAddrLane           = 0,            // Cspi bus enable
@@ -393,7 +395,7 @@ lspiMspiCtrl_t lspiMspiCtrl =
 };
 
 // 719 vsynctrl
-lspiVsyncCtrl_t lspiVsyncCtrl = 
+AP_PLAT_COMMON_BSS lspiVsyncCtrl_t lspiVsyncCtrl = 
 {
     .hsyncInst               = 0,
     .hsyncAddr               = 0,
@@ -402,14 +404,14 @@ lspiVsyncCtrl_t lspiVsyncCtrl =
 };
 
 // 719 8080 ctrl
-lspi8080Ctrl_t lspi8080Ctrl = 
+AP_PLAT_COMMON_BSS lspi8080Ctrl_t lspi8080Ctrl = 
 {
     .lspi8080En              = 0,
     .vfp                     = 0,
 };
 
 // 719 pre param0
-lspiCmdPreParam0_t lspiPreParam0 = 
+AP_PLAT_COMMON_BSS lspiCmdPreParam0_t lspiPreParam0 = 
 {
     .lspiCmd0PreEn          = 0,            // Lspi cmd0 pre en
     .lspiCmd1PreEn          = 0,            // Lspi cmd1 pre en
@@ -419,8 +421,19 @@ lspiCmdPreParam0_t lspiPreParam0 =
     .lspiCmdPreMspiDataLane = 0,            // Lspi cmd pre mspi data lane
 };
 
+AP_PLAT_COMMON_BSS lspiCmdPreParam2_t lspiPreParam2 = 
+{
+    .lspiCmd0PrePara        = 0,            // Lspi pre cmd param0
+};
+
+AP_PLAT_COMMON_BSS lspiCmdPreParam3_t lspiPreParam3 = 
+{
+    .lspiCmd1PrePara        = 0,            // Lspi pre cmd param1
+};
+
+
 // 719 post param0
-lspiCmdPostParam0_t lspiPostParam0 = 
+AP_PLAT_COMMON_BSS lspiCmdPostParam0_t lspiPostParam0 = 
 {
     .lspiCmd0PostEn          = 0,            // Lspi cmd0 Post en
     .lspiCmd1PostEn          = 0,            // Lspi cmd1 Post en
@@ -430,8 +443,22 @@ lspiCmdPostParam0_t lspiPostParam0 =
     .lspiCmdPostMspiDataLane = 0,            // Lspi cmd Post mspi data lane
 };
 
+// 719 te param0
+AP_PLAT_COMMON_BSS lspiTeParam0_t lspiTeParam0 = 
+{
+    .lspiTeEn          		 = 0,            // Lspi te en
+    .lspiTeEdgeSel           = 0,            // Lspi te edge sel
+    .lspiTePos0			     = 0,            // Lspi te pos0
+};
+
+// 719 te param1
+AP_PLAT_COMMON_BSS lspiTeParam1_t lspiTeParam1 = 
+{
+    .lspiTePos1			     = 0,            // Lspi te pos1
+};
+
 // 719 bus sel
-lspiBusSel_t lspiBusSel =
+AP_PLAT_COMMON_DATA lspiBusSel_t lspiBusSel =
 {
     .i2sBusEn               = 0,            // I2S bus enable
     .cspiBusEn              = 0,            // Cspi bus enable
@@ -445,7 +472,7 @@ lspiBusSel_t lspiBusSel =
 
 static LSPI_TypeDef* const lspiInstance[LSPI_INSTANCE_NUM] = {LSPI1, LSPI2};
 
-static ClockId_e lspiClk[LSPI_INSTANCE_NUM * 2] =
+AP_PLAT_COMMON_DATA static ClockId_e lspiClk[LSPI_INSTANCE_NUM * 2] =
 {
     PCLK_USP1,
     FCLK_USP1,
@@ -457,13 +484,13 @@ static ClockId_e lspiClk[LSPI_INSTANCE_NUM * 2] =
 /**
   \brief spi initialization counter, for lower power callback register/de-register
  */
-static uint32_t lspiInitCnt = 0;
+AP_PLAT_COMMON_BSS static uint32_t lspiInitCnt = 0;
 
 /**
   \brief Bitmap of LSPI working status, each instance is assigned 2 bits representing tx and rx status,
          when all LSPI instances are not working, we can vote to enter to low power state.
  */
-static uint32_t lspiWorkingStats = 0;
+AP_PLAT_COMMON_BSS static uint32_t lspiWorkingStats = 0;
 
 /** \brief Internal used data structure */
 typedef struct
@@ -495,7 +522,7 @@ typedef struct
 #endif
 } lspiDataBase_t;
 
-static lspiDataBase_t lspiDataBase[LSPI_INSTANCE_NUM] = {0};
+AP_PLAT_COMMON_BSS static lspiDataBase_t lspiDataBase[LSPI_INSTANCE_NUM] = {0};
 
 /**
   \fn        static void lspiEnterLowPowerStatePrepare(void* pdata, slpManLpState state)
@@ -680,12 +707,21 @@ static int32_t lspiSetBusSpeed(uint32_t bps, lspiRes_t *lspi)
     {
         lspiDiv = 12;
     }
+
   
+#if (defined CHIP_EC718)  && !(defined TYPE_EC718M) || (defined CHIP_EC716)
     CLOCK_setClockSrc(CLK_APB_MP,CLK_APB_MP_SEL_102M);
     CLOCK_clockEnable(CLK_HF102M);
     CLOCK_setClockSrc(FCLK_USP2,FCLK_USP2_SEL_102M);
     CLOCK_setClockDiv(FCLK_USP2, lspiDiv);
     CLOCK_clockEnable(FCLK_USP2);
+#else
+    CLOCK_setClockSrc(CLK_APB_MP,CLK_APB_MP_SEL_102M);
+    CLOCK_clockEnable(CLK_HF102M);
+    CLOCK_setClockSrc(FCLK_USP2,FCLK_USP2_SEL_612M);
+    CLOCK_setClockDiv(FCLK_USP2, lspiDiv*6);
+    CLOCK_clockEnable(FCLK_USP2);
+#endif
 
     return ARM_DRIVER_OK;
 }
@@ -921,7 +957,7 @@ int32_t lspiSend(void *dataOut, uint32_t num, lspiRes_t *lspi)
     lspi->reg->LSPI_CCTRL = 1 | *dataLen<<8;
 
     // wait until finish
-    while (!lspi->reg->LSPI_STAT);
+    while (!(lspi->reg->LSPI_STAT&0x1));
 
     memset(dataList, 0, *dataListIndex * 4);
     lspi->info->prePareSendInfo.dataListIndex   = 0;
@@ -1121,7 +1157,7 @@ int32_t lspiControl(uint32_t control, uint32_t arg, lspiRes_t *lspi)
             lspiInstance[instance]->I2SBUSSEL = *(uint32_t*)tmp;
             break;
         }
-#if defined CHIP_EC719
+#if (defined TYPE_EC718M)
 
         // Mspi control
         case LSPI_MSPI_CTRL:
@@ -1152,6 +1188,10 @@ int32_t lspiControl(uint32_t control, uint32_t arg, lspiRes_t *lspi)
         {
             tmp = (uint8_t*)&lspiPreParam0;
             lspiInstance[instance]->LSPICMDPREPARA0 = *(uint32_t*)tmp;
+			tmp = (uint8_t*)&lspiPreParam2;
+            lspiInstance[instance]->LSPICMDPREPARA2 = *(uint32_t*)tmp;
+			tmp = (uint8_t*)&lspiPreParam3;
+            lspiInstance[instance]->LSPICMDPREPARA3 = *(uint32_t*)tmp;
             break;
         }
 
@@ -1162,6 +1202,17 @@ int32_t lspiControl(uint32_t control, uint32_t arg, lspiRes_t *lspi)
             lspiInstance[instance]->LSPICMDPOSTPARA0 = *(uint32_t*)tmp;
             break;
         }
+
+		// te ctrl
+        case LSPI_TE_CTRL:
+        {
+            tmp = (uint8_t*)&lspiTeParam0;
+            lspiInstance[instance]->LSPITEPARA0 = *(uint32_t*)tmp;
+            tmp = (uint8_t*)&lspiTeParam1;
+            lspiInstance[instance]->LSPITEPARA1 = *(uint32_t*)tmp;
+            break;
+        }
+
 #endif
 
         default:
@@ -1210,5 +1261,3 @@ lspiDrvInterface_t lspiDrvInterface2 = {
 };
 
 #endif
-
-

@@ -10,15 +10,20 @@
 #include "gpio.h"
 #include "clock.h"
 #include "slpman.h"
+
+#if !(defined(GPIO_IP_VERSION_B1))
 #ifdef PM_FEATURE_ENABLE
 #include "apmu_external.h"
 #endif
+#endif
+#include "sctdef.h"
+
 #define EIGEN_GPIO(n)             ((GPIO_TypeDef *) (RMI_GPIO_BASE_ADDR + 0x1000*n))
 
 /**
   \brief GPIO stutas flag
  */
-static uint32_t gGpioStatus = 0;
+AP_PLAT_COMMON_BSS static uint32_t gGpioStatus = 0;
 
 #ifdef PM_FEATURE_ENABLE
 /**
@@ -47,7 +52,11 @@ void GPIO_exitLowPowerStateRestore(void* pdata, slpManLpState state)
 
             if(gGpioStatus & 0x1U)
             {
+#if defined(GPIO_IP_VERSION_B1)
+                GPR_clockEnable(FCLK_GPIO);
+#else
                 GPR_gpioClkForceOnControl(true);
+#endif
                 GPR_clockEnable(GPIO_RMI_HCLK);
             }
 
@@ -65,7 +74,13 @@ void GPIO_driverInit(void)
     if((gGpioStatus & 0x1U) == 0)
     {
 
+#if defined(GPIO_IP_VERSION_B1)
+        // For detecting input signal edge
+        CLOCK_setClockSrc(FCLK_GPIO, FCLK_GPIO_SEL_26M); // If the frequence of Input signal is far less than 40K, we can choose 40K src to save little power
+        CLOCK_clockEnable(FCLK_GPIO);
+#else
         GPR_gpioClkForceOnControl(true); // force on clock in case of sleep
+#endif
 
 #ifdef PM_FEATURE_ENABLE
         slpManRegisterPredefinedBackupCb(SLP_CALLBACK_GPIO_MODULE, GPIO_enterLowPowerStatePrepare, NULL);
@@ -85,6 +100,10 @@ void GPIO_driverDeInit(void)
 
     // disable clock
     CLOCK_clockDisable(GPIO_RMI_HCLK);
+
+#if defined(GPIO_IP_VERSION_B1)
+    CLOCK_clockDisable(FCLK_GPIO);
+#endif
 
 #ifdef PM_FEATURE_ENABLE
     apmuVoteToDozeState(PMU_DOZE_GPIO_MOD, true);
@@ -122,6 +141,9 @@ void GPIO_pinConfig(uint32_t port, uint16_t pin, const GpioPinConfig_t *config)
     {
         case GPIO_DIRECTION_INPUT:
 
+#if defined(GPIO_IP_VERSION_B1)
+            base->FCLKEN = GPIO_FCLKEN_EN_Msk;
+#endif
             base->OUTENCLR = pinMask;
 
             GPIO_interruptConfig(port, pin, config->misc.interruptConfig);
@@ -193,12 +215,15 @@ void GPIO_interruptConfig(uint32_t port, uint16_t pin, GpioInterruptConfig_e con
         default :
             break;
     }
+
+#if !(defined(GPIO_IP_VERSION_B1))
     #ifdef PM_FEATURE_ENABLE
     if(GPIO_hasPinWaitInterrupt())
         apmuVoteToDozeState(PMU_DOZE_GPIO_MOD, false);
     else
         apmuVoteToDozeState(PMU_DOZE_GPIO_MOD, true);
     #endif
+#endif
 }
 
 void GPIO_pinWrite(uint32_t port, uint16_t pinMask, uint16_t output)
@@ -219,12 +244,22 @@ uint32_t GPIO_pinRead(uint32_t port, uint16_t pin)
 
 uint16_t GPIO_getInterruptFlags(uint32_t port)
 {
+#if defined(GPIO_IP_VERSION_B1)
+    EIGEN_GPIO(port)->INTLATCH = GPIO_INTLATCH_LATCH_Msk;
+    while((EIGEN_GPIO(port)->INTLATCH) & GPIO_INTLATCH_LATCH_Msk); // Takes 3 fclk cycles
+#endif
     return EIGEN_GPIO(port)->INTSTATUS;
 }
 
 void GPIO_clearInterruptFlags(uint32_t port, uint16_t mask)
 {
+#if defined(GPIO_IP_VERSION_B1)
+    EIGEN_GPIO(port)->INTCLRMAP = mask;
+    EIGEN_GPIO(port)->INTCLR = GPIO_INTCLR_CLR_Msk;
+    while((EIGEN_GPIO(port)->INTCLR) & GPIO_INTCLR_CLR_Msk); // Takes 3 fclk cycles
+#else
     EIGEN_GPIO(port)->INTSTATUS = mask;
+#endif
 }
 
 uint16_t GPIO_saveAndSetIrqMask(uint32_t port)

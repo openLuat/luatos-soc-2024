@@ -356,7 +356,7 @@ static void cspiExitLpStateRestore(void* pdata, slpManLpState state)
 #if (RTE_CSPI0)
 static cspiInfo_t  cspi0Info = {0};
 void cspi0DmaRxEvent(uint32_t event);
-static DmaDescriptor_t __ALIGNED(16) cspi0DmaRxDesc[CAM_CHAIN_COUNT];
+PLAT_FM_ZI static DmaDescriptor_t __ALIGNED(16) cspi0DmaRxDesc[CAM_CHAIN_COUNT];
 static cspiDma_t cspi0Dma =
 {
     DMA_INSTANCE_MP,
@@ -383,7 +383,7 @@ static cspiRes_t cspi0Res = {
 #if (RTE_CSPI1)
 static cspiInfo_t cspi1Info = {0};
 void cspi1DmaRxEvent(uint32_t event);
-static DmaDescriptor_t __ALIGNED(16) cspi1DmaRxDesc[CAM_CHAIN_COUNT];
+PLAT_FM_ZI static DmaDescriptor_t __ALIGNED(16) cspi1DmaRxDesc[CAM_CHAIN_COUNT];
 static cspiDma_t cspi1Dma =
 {
     DMA_INSTANCE_MP,
@@ -690,6 +690,7 @@ int32_t cspiPowerCtrl(cspiPowerState_e state, cspiRes_t *cspi)
             // Enable CSPI clock
             CLOCK_clockEnable(cspiClk[instance*2]);
 
+#if ((defined CHIP_EC718) || (defined CHIP_EC716)) && !(defined TYPE_EC718M)
             if (instance == 0)
             {
                 CLOCK_setClockSrc(FCLK_USP0, FCLK_USP0_SEL_102M); // select USP1 102M                        
@@ -698,6 +699,18 @@ int32_t cspiPowerCtrl(cspiPowerState_e state, cspiRes_t *cspi)
             {
                 CLOCK_setClockSrc(FCLK_USP1, FCLK_USP1_SEL_102M); // select USP1 102M
             }
+#elif (defined TYPE_EC718M)
+            if (instance == 0)
+            {
+                CLOCK_setClockSrc(FCLK_USP0, FCLK_USP0_SEL_612M); // select USP0 102M      
+                CLOCK_setClockDiv(FCLK_USP0, 6);
+            }
+            else
+            {
+                CLOCK_setClockSrc(FCLK_USP1, FCLK_USP1_SEL_612M); // select USP1 102M
+                CLOCK_setClockDiv(FCLK_USP1, 6);
+            }
+#endif
             
             CLOCK_clockEnable(CLK_HF306M_G); // open cspi fclk src
             CLOCK_clockEnable(cspiClk[instance*2+1]);

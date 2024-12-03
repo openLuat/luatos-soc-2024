@@ -36,6 +36,7 @@
 
 #include "bsp_i2c.h"
 #include "slpman.h"
+#include "sctdef.h"
 
 #if 0
 #pragma GCC push_options
@@ -77,11 +78,11 @@ typedef struct _i2c_database
     } backup_registers;                                  /**< Backup registers for low power restore */
 } i2c_database_t;
 
-static i2c_database_t g_i2cDataBase[I2C_INSTANCE_NUM] = {0};
+AP_PLAT_COMMON_BSS static i2c_database_t g_i2cDataBase[I2C_INSTANCE_NUM] = {0};
 
 static I2C_TypeDef* const g_i2cBases[] = I2C_INSTANCE_ARRAY;
 
-static ClockId_e g_i2cClocks[] = I2C_CLOCK_VECTOR;
+AP_PLAT_COMMON_DATA static ClockId_e g_i2cClocks[] = I2C_CLOCK_VECTOR;
 
 static const ClockResetVector_t g_i2cResetVectors[] = I2C_RESET_VECTORS;
 
@@ -134,14 +135,14 @@ static void I2C_RestoreRegs(uint32_t instance)
 /**
   \brief i2c initialization counter, for lower power callback register/de-register
  */
-static uint32_t g_i2cInitCounter = 0;
+AP_PLAT_COMMON_BSS static uint32_t g_i2cInitCounter = 0;
 
 /**
   \brief Bitmap of I2C working status,
          when all I2C instances are not working, we can vote to enter to low power state.
  */
 
-static uint32_t g_i2cWorkingStatus = 0;
+AP_PLAT_COMMON_BSS static uint32_t g_i2cWorkingStatus = 0;
 
 /**
   \fn        static void I2C_EnterLowPowerStatePrepare(void* pdata, slpManLpState state)
@@ -244,9 +245,9 @@ static const ARM_I2C_CAPABILITIES DriverCapabilities =
 
 #if (RTE_I2C0)
 
-static I2C_CTRL I2C0_Ctrl = { 0 };
-static PIN I2C0_pin_scl  = {RTE_I2C0_SCL_BIT,   RTE_I2C0_SCL_FUNC};
-static PIN I2C0_pin_sda  = {RTE_I2C0_SDA_BIT,   RTE_I2C0_SDA_FUNC};
+AP_PLAT_COMMON_BSS static I2C_CTRL I2C0_Ctrl = { 0 };
+AP_PLAT_COMMON_DATA static PIN I2C0_pin_scl  = {RTE_I2C0_SCL_BIT,   RTE_I2C0_SCL_FUNC};
+AP_PLAT_COMMON_DATA static PIN I2C0_pin_sda  = {RTE_I2C0_SDA_BIT,   RTE_I2C0_SDA_FUNC};
 
 #if (RTE_I2C0_IO_MODE == DMA_MODE)
 #error "DMA mode is not supported"
@@ -255,14 +256,14 @@ static PIN I2C0_pin_sda  = {RTE_I2C0_SDA_BIT,   RTE_I2C0_SDA_FUNC};
 #if (RTE_I2C0_IO_MODE == IRQ_MODE)
 void I2C0_IRQHandler(void);
 
-static I2C_IRQ I2C0_IRQ = {
+AP_PLAT_COMMON_DATA static I2C_IRQ I2C0_IRQ = {
                             PXIC0_I2C0_IRQn,
                             I2C0_IRQHandler
                           };
 
 #endif
 
-static I2C_RESOURCES I2C0_Resources =
+AP_PLAT_COMMON_DATA static I2C_RESOURCES I2C0_Resources =
 {
     I2C0,
     {
@@ -282,9 +283,9 @@ static I2C_RESOURCES I2C0_Resources =
 
 #if (RTE_I2C1)
 
-static I2C_CTRL I2C1_Ctrl = { 0 };
-static PIN I2C1_pin_scl  = {RTE_I2C1_SCL_BIT,   RTE_I2C1_SCL_FUNC};
-static PIN I2C1_pin_sda  = {RTE_I2C1_SDA_BIT,   RTE_I2C1_SDA_FUNC};
+AP_PLAT_COMMON_BSS static I2C_CTRL I2C1_Ctrl = { 0 };
+AP_PLAT_COMMON_DATA static PIN I2C1_pin_scl  = {RTE_I2C1_SCL_BIT,   RTE_I2C1_SCL_FUNC};
+AP_PLAT_COMMON_DATA static PIN I2C1_pin_sda  = {RTE_I2C1_SDA_BIT,   RTE_I2C1_SDA_FUNC};
 
 #if (RTE_I2C1_IO_MODE == DMA_MODE)
 #error "DMA mode is not supported"
@@ -294,14 +295,14 @@ static PIN I2C1_pin_sda  = {RTE_I2C1_SDA_BIT,   RTE_I2C1_SDA_FUNC};
 
 void I2C1_IRQHandler(void);
 
-static I2C_IRQ I2C1_IRQ = {
+AP_PLAT_COMMON_DATA static I2C_IRQ I2C1_IRQ = {
                             PXIC0_I2C1_IRQn,
                             I2C1_IRQHandler
                           };
 
 #endif
 
-static I2C_RESOURCES I2C1_Resources =
+AP_PLAT_COMMON_DATA static I2C_RESOURCES I2C1_Resources =
 {
     I2C1,
     {
@@ -1299,7 +1300,7 @@ void I2C0_IRQHandler(void)
     I2C_IRQHandler(&I2C0_Resources);
 }
 
-ARM_DRIVER_I2C Driver_I2C0 =
+AP_PLAT_COMMON_DATA ARM_DRIVER_I2C Driver_I2C0 =
 {
     ARM_I2C_GetVersion,
     I2C_GetCapabilities,
@@ -1366,7 +1367,7 @@ void I2C1_IRQHandler(void)
 
 // End I2C Interface
 
-ARM_DRIVER_I2C Driver_I2C1 =
+AP_PLAT_COMMON_DATA ARM_DRIVER_I2C Driver_I2C1 =
 {
     ARM_I2C_GetVersion,
     I2C_GetCapabilities,

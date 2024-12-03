@@ -123,6 +123,20 @@ typedef struct tmrTimerQueueMessage
 /*lint -e956 A manual analysis and inspection has been used to determine which
 static variables must be declared volatile. */
 
+#ifdef TYPE_EC718M
+/* The list in which active timers are stored.  Timers are referenced in expire
+time order, with the nearest expiry time at the front of the list.  Only the
+timer service task is allowed to access these lists. */
+AP_PLAT_COMMON_BSS static List_t xActiveTimerList1;
+AP_PLAT_COMMON_BSS static List_t xActiveTimerList2;
+AP_PLAT_COMMON_BSS static List_t *pxCurrentTimerList;
+AP_PLAT_COMMON_BSS static List_t *pxOverflowTimerList;
+
+/* A queue that is used to send commands to the timer service task. */
+AP_PLAT_COMMON_BSS static QueueHandle_t xTimerQueue = NULL;
+AP_PLAT_COMMON_BSS static TaskHandle_t xTimerTaskHandle = NULL;
+
+#else
 /* The list in which active timers are stored.  Timers are referenced in expire
 time order, with the nearest expiry time at the front of the list.  Only the
 timer service task is allowed to access these lists. */
@@ -135,6 +149,7 @@ PRIVILEGED_DATA static List_t *pxOverflowTimerList;
 PRIVILEGED_DATA static QueueHandle_t xTimerQueue = NULL;
 PRIVILEGED_DATA static TaskHandle_t xTimerTaskHandle = NULL;
 
+#endif
 /*lint +e956 */
 
 /*-----------------------------------------------------------*/
@@ -624,7 +639,7 @@ TickType_t xNextExpireTime;
 FREERTOS_TIMERS_TEXT_SECTION static TickType_t prvSampleTimeNow( BaseType_t * const pxTimerListsWereSwitched )
 {
 TickType_t xTimeNow;
-PRIVILEGED_DATA static TickType_t xLastTime = ( TickType_t ) 0U; /*lint !e956 Variable is only accessible to one task. */
+AP_PLAT_COMMON_BSS PRIVILEGED_DATA static TickType_t xLastTime = ( TickType_t ) 0U; /*lint !e956 Variable is only accessible to one task. */
 
 	xTimeNow = xTaskGetTickCount();
 
@@ -909,9 +924,8 @@ FREERTOS_TIMERS_TEXT_SECTION static void prvCheckForValidListAndQueue( void )
 			{
 				/* The timer queue is allocated statically in case
 				configSUPPORT_DYNAMIC_ALLOCATION is 0. */
-				static StaticQueue_t xStaticTimerQueue;
-				static uint8_t ucStaticTimerQueueStorage[ configTIMER_QUEUE_LENGTH * sizeof( DaemonTaskMessage_t ) ];
-
+                AP_PLAT_COMMON_BSS static StaticQueue_t xStaticTimerQueue;
+                AP_PLAT_COMMON_BSS static uint8_t ucStaticTimerQueueStorage[ configTIMER_QUEUE_LENGTH * sizeof( DaemonTaskMessage_t ) ];
 				xTimerQueue = xQueueCreateStatic( ( UBaseType_t ) configTIMER_QUEUE_LENGTH, sizeof( DaemonTaskMessage_t ), &( ucStaticTimerQueueStorage[ 0 ] ), &xStaticTimerQueue );
 			}
 			#else

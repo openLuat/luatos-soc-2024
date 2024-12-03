@@ -450,6 +450,7 @@ typedef enum
     CCIO_EMATCHED    = -8,    /* unmatched value/item */
     CCIO_EEMPTY      = -9,    /* table/list is empty */
     CCIO_EMORE       = -10,   /* wanted more data/info */
+    CCIO_EMOREPAD    = -11,   /* wanted more padding */
 
     CCIO_STATUS_RSVD = 0x7FFFFFFF
 }CcioStatus_e;

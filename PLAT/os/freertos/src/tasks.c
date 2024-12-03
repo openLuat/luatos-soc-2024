@@ -338,6 +338,91 @@ typedef tskTCB TCB_t;
 /*lint -e956 A manual analysis and inspection has been used to determine which
 static variables must be declared volatile. */
 
+#ifdef TYPE_EC718M
+
+AP_PLAT_COMMON_BSS TCB_t * volatile pxCurrentTCB = NULL;
+
+#ifdef LTO_FEATURE_MODE
+/* Lists for ready and blocked tasks. --------------------*/
+AP_PLAT_COMMON_BSS /*static*/ List_t pxReadyTasksLists[ configMAX_PRIORITIES ];/*< Prioritised ready tasks. */
+AP_PLAT_COMMON_BSS /*static*/ List_t xDelayedTaskList1;						/*< Delayed tasks. */
+AP_PLAT_COMMON_BSS /*static*/ List_t xDelayedTaskList2;						/*< Delayed tasks (two lists are used - one for delays that have overflowed the current tick count. */
+AP_PLAT_COMMON_BSS /*static*/ List_t * volatile pxDelayedTaskList;				/*< Points to the delayed task list currently being used. */
+AP_PLAT_COMMON_BSS /*static*/ List_t * volatile pxOverflowDelayedTaskList;		/*< Points to the delayed task list currently being used to hold tasks that have overflowed the current tick count. */
+AP_PLAT_COMMON_BSS /*static*/ List_t xPendingReadyList;						/*< Tasks that have been readied while the scheduler was suspended.  They will be moved to the ready list when the scheduler is resumed. */
+#else
+/* Lists for ready and blocked tasks. --------------------*/
+AP_PLAT_COMMON_BSS static List_t pxReadyTasksLists[ configMAX_PRIORITIES ];/*< Prioritised ready tasks. */
+AP_PLAT_COMMON_BSS static List_t xDelayedTaskList1;						/*< Delayed tasks. */
+AP_PLAT_COMMON_BSS static List_t xDelayedTaskList2;						/*< Delayed tasks (two lists are used - one for delays that have overflowed the current tick count. */
+AP_PLAT_COMMON_BSS static List_t * volatile pxDelayedTaskList;				/*< Points to the delayed task list currently being used. */
+AP_PLAT_COMMON_BSS static List_t * volatile pxOverflowDelayedTaskList;		/*< Points to the delayed task list currently being used to hold tasks that have overflowed the current tick count. */
+AP_PLAT_COMMON_BSS static List_t xPendingReadyList;						/*< Tasks that have been readied while the scheduler was suspended.  They will be moved to the ready list when the scheduler is resumed. */
+#endif
+
+#if( INCLUDE_vTaskDelete == 1 )
+
+#ifdef LTO_FEATURE_MODE
+AP_PLAT_COMMON_BSS /*static*/ List_t xTasksWaitingTermination;				/*< Tasks that have been deleted - but their memory not yet freed. */
+#else
+AP_PLAT_COMMON_BSS static List_t xTasksWaitingTermination;				/*< Tasks that have been deleted - but their memory not yet freed. */
+#endif
+AP_PLAT_COMMON_BSS static volatile UBaseType_t uxDeletedTasksWaitingCleanUp = ( UBaseType_t ) 0U;
+
+#endif
+
+#if ( INCLUDE_vTaskSuspend == 1 )
+
+#ifdef LTO_FEATURE_MODE
+AP_PLAT_COMMON_BSS /*static*/ List_t xSuspendedTaskList;                   /*< Tasks that are currently suspended. */
+#else
+AP_PLAT_COMMON_BSS static List_t xSuspendedTaskList;					/*< Tasks that are currently suspended. */
+#endif
+
+#endif
+
+/* Other file private variables. --------------------------------*/
+#ifdef LTO_FEATURE_MODE
+AP_PLAT_COMMON_BSS /*static*/ volatile UBaseType_t uxCurrentNumberOfTasks 	= ( UBaseType_t ) 0U;
+#else
+AP_PLAT_COMMON_BSS static volatile UBaseType_t uxCurrentNumberOfTasks 	= ( UBaseType_t ) 0U;
+#endif
+
+AP_PLAT_COMMON_BSS static volatile TickType_t xTickCount 				= ( TickType_t ) 0U;
+
+#ifdef LTO_FEATURE_MODE
+AP_PLAT_COMMON_DATA /*static*/ volatile UBaseType_t uxTopReadyPriority 		= tskIDLE_PRIORITY;
+AP_PLAT_COMMON_BSS /*static*/ volatile BaseType_t xSchedulerRunning 		= pdFALSE;
+#else
+AP_PLAT_COMMON_DATA static volatile UBaseType_t uxTopReadyPriority 		= tskIDLE_PRIORITY;
+AP_PLAT_COMMON_BSS static volatile BaseType_t xSchedulerRunning 		= pdFALSE;
+#endif
+
+AP_PLAT_COMMON_BSS static volatile UBaseType_t uxPendedTicks 			= ( UBaseType_t ) 0U;
+AP_PLAT_COMMON_BSS static volatile BaseType_t xYieldPending 			= pdFALSE;
+AP_PLAT_COMMON_BSS static volatile BaseType_t xNumOfOverflows 			= ( BaseType_t ) 0;
+AP_PLAT_COMMON_BSS static UBaseType_t uxTaskNumber 					= ( UBaseType_t ) 0U;
+AP_PLAT_COMMON_BSS static volatile TickType_t xNextTaskUnblockTime		= ( TickType_t ) 0U; /* Initialised to portMAX_DELAY before the scheduler starts. */
+AP_PLAT_COMMON_BSS static TaskHandle_t xIdleTaskHandle					= NULL;			/*< Holds the handle of the idle task.  The idle task is created automatically when the scheduler is started. */
+
+/* Context switches are held pending while the scheduler is suspended.  Also,
+interrupts must not manipulate the xStateListItem of a TCB, or any of the
+lists the xStateListItem can be referenced from, if the scheduler is suspended.
+If an interrupt needs to unblock a task while the scheduler is suspended then it
+moves the task's event list item into the xPendingReadyList, ready for the
+kernel to move the task from the pending ready list into the real ready list
+when the scheduler is unsuspended.  The pending ready list itself can only be
+accessed from a critical section. */
+AP_PLAT_COMMON_BSS static volatile UBaseType_t uxSchedulerSuspended	= ( UBaseType_t ) pdFALSE;
+
+#if ( configGENERATE_RUN_TIME_STATS == 1 )
+
+AP_PLAT_COMMON_BSS static uint32_t ulTaskSwitchedInTime = 0UL;	/*< Holds the value of a timer/counter the last time a task was switched in. */
+AP_PLAT_COMMON_BSS static uint32_t ulTotalRunTime = 0UL;		/*< Holds the total amount of execution time as defined by the run time counter clock. */
+
+#endif
+
+#else // #else TYPE_EC718M
 PRIVILEGED_DATA TCB_t * volatile pxCurrentTCB = NULL;
 
 #ifdef LTO_FEATURE_MODE
@@ -417,8 +502,9 @@ PRIVILEGED_DATA static volatile UBaseType_t uxSchedulerSuspended	= ( UBaseType_t
 
 	PRIVILEGED_DATA static uint32_t ulTaskSwitchedInTime = 0UL;	/*< Holds the value of a timer/counter the last time a task was switched in. */
 	PRIVILEGED_DATA static uint32_t ulTotalRunTime = 0UL;		/*< Holds the total amount of execution time as defined by the run time counter clock. */
-
 #endif
+
+#endif //#ifdef TYPE_EC718M
 
 /*lint +e956 */
 

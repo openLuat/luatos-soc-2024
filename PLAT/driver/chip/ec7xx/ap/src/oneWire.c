@@ -10,6 +10,7 @@
 #include "bsp.h"
 #include "oneWire.h"
 #include "hal_misc.h"
+#include "sctdef.h"
 
 extern void delay_us(uint32_t us);
 
@@ -22,18 +23,18 @@ extern void delay_us(uint32_t us);
 
 #define OW_IRQ_MODE     1
 
-static volatile OwStats_e owStats = OW_IDLE;
+AP_PLAT_COMMON_BSS static volatile OwStats_e owStats = OW_IDLE;
 
 #define OW_PAD_ADDR     (17)        //(19)->gpio4       (17)->gpio2             (48)->gpio28        (22)->gpio7
 #define OW_PAD_FUNC     PAD_MUX_ALT4 //PAD_MUX_ALT3       PAD_MUX_ALT4             PAD_MUX_ALT4         PAD_MUX_ALT4
 
 
-uint8_t *readBuf = NULL;
+AP_PLAT_COMMON_BSS uint8_t *readBuf = NULL;
 
 #if (OW_IRQ_MODE == 1)
 void owIrqHandler(void);
 #else
-    int A, B, C, D, E, F, G, H, I, J;
+AP_PLAT_COMMON_BSS int A, B, C, D, E, F, G, H, I, J;
 #endif
 
 void owSetMode(OwModeSel_e mode)
@@ -158,8 +159,8 @@ void owDeInit()
 
 
 #if (OW_IRQ_MODE == 1)
-volatile uint32_t irqNo;
-volatile uint16_t count = 0;
+AP_PLAT_COMMON_BSS volatile uint32_t irqNo;
+AP_PLAT_COMMON_BSS volatile uint16_t count = 0;
 void owIrqHandler()
 {
     ++count;

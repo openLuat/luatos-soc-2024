@@ -41,6 +41,14 @@
 #include "mem_map_716s.h"
 #elif defined TYPE_EC716E
 #include "mem_map_716e.h"
+#elif defined TYPE_EC718PM
+#include "mem_map_718pm.h"
+#elif defined TYPE_EC718UM
+#include "mem_map_718um.h"
+#elif defined TYPE_EC718SM
+#include "mem_map_718sm.h"
+#elif defined TYPE_EC718HM
+#include "mem_map_718hm.h"
 #else
 #error "Need define chip type"
 #endif
@@ -127,7 +135,20 @@
 #if (PSRAM_EXIST==1)
 #define EC_EXCEPTION_PSRAM_RAM_BASE            (PSRAM_START_ADDR)
 #define EC_EXCEPTION_PSRAM_RAM_END             (PSRAM_END_ADDR)
+#ifdef TYPE_EC718M
+/* 
+    The dump info of the following macros aren't correct, Those macros just to make the 
+    complie success, The dump info will get the right value when chip asserts or hardfault.
+*/
+#define EC_EXCEPTION_PSRAM0_RAM_BASE            (PSRAM_P0_START_ADDR | PSRAM_PCACHE0_BASE)
+#define EC_EXCEPTION_PSRAM0_RAM_LEN             (PSRAM_AREA_P1_OFFSET - PSRAM_AREA_P0_OFFSET)
+#define EC_EXCEPTION_PSRAM1_RAM_BASE            (PSRAM_P1_START_ADDR | PSRAM_PCACHE1_BASE)
+#define EC_EXCEPTION_PSRAM1_RAM_LEN             (PSRAM_AREA_P2_OFFSET - PSRAM_AREA_P1_OFFSET)
+#define EC_EXCEPTION_PSRAM2_RAM_BASE            (PSRAM_P2_START_ADDR | PSRAM_PCACHE2_BASE)
+#define EC_EXCEPTION_PSRAM2_RAM_LEN             (PSRAM_P2_LENGTH)
+#else
 #define EC_EXCEPTION_PSRAM_RAM_LEN             (EC_EXCEPTION_PSRAM_RAM_END - EC_EXCEPTION_PSRAM_RAM_BASE)
+#endif
 #endif
 
 #define EC_EXCEPTION_CP_SHARED_RAM_LEN        (0x14000)
@@ -461,6 +482,10 @@ typedef enum
     EC_CHIP_TYPE_EC718P     = 0x7182,
     EC_CHIP_TYPE_EC718S     = 0x7183,
     EC_CHIP_TYPE_EC718U     = 0x7184,
+    EC_CHIP_TYPE_EC718PM    = 0x7185,
+    EC_CHIP_TYPE_EC718UM    = 0x7186,
+    EC_CHIP_TYPE_EC718SM    = 0x7187,
+    EC_CHIP_TYPE_EC718HM    = 0x7188,
     EC_CHIP_TYPE_EC716E     = 0x7161,
     EC_CHIP_TYPE_EC716S     = 0x7162,
 

@@ -6,9 +6,11 @@
 #define     SH8601_HEIGHT           (466) 
 #define     SH8601_FREQ             (8*1024*1024)
 #define     SH8601_INTERFACE        (MSPI_4W_II)
-#define     SH8601_TIME_OF_FRAME    (149356) // us
+#define     SH8601_TIME_OF_FRAME    (167331) // us
 #define     SH8601_TE_CYCLE         (16742) // us
 #define     SH8601_TE_WAIT_TIME     (623)   // us
+#define     SH8601_X_OFFSET		 	(0)
+#define     SH8601_Y_OFFSET		 	(0)
 
 #if (ST8601_INTERFACE == MSPI_4W_II)
 #if (LCD_INTERFACE_MSPI != 1)
@@ -24,6 +26,9 @@
 #define     DEFAULT_INST         (0x2)
 #define     LCD_BPP_USE          (SH8601_BPP)
 #define     LCD_INTERFACE        (SH8601_INTERFACE)
+#define     LCD_FREQ			 (SH8601_FREQ)
+#define     LCD_X_OFFSET		 (SH8601_X_OFFSET)
+#define     LCD_Y_OFFSET		 (SH8601_Y_OFFSET)
 
 #define     LCD_PIXEL            (LCD_HEIGHT*LCD_WIDTH)
 #define     LCD_TIME_OF_FRAME    (SH8601_TIME_OF_FRAME) // us

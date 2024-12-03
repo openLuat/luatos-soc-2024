@@ -14,7 +14,7 @@
 extern I2sDrvInterface_t    i2sDrvInterface0;
 extern I2sDrvInterface_t    i2sDrvInterface1;
 
-static I2sDrvInterface_t   *i2sDrv = NULL;
+AP_PLAT_COMMON_BSS static I2sDrvInterface_t   *i2sDrv = NULL;
 
 extern I2sDataFmt_t         i2sDataFmt;
 extern I2sSlotCtrl_t        i2sSlotCtrl;
@@ -22,7 +22,7 @@ extern I2sBclkFsCtrl_t      i2sBclkFsCtrl;
 extern I2sCtrl_t            i2sCtrl;
 extern I2sDmaCtrl_t         i2sDmaCtrl;
 extern I2sIntCtrl_t         i2sIntCtrl;
-static I2sMode_e            i2sMode;
+AP_PLAT_COMMON_BSS static I2sMode_e            i2sMode;
 
 // [cmd][curState]
 static int32_t i2sCtrlState[6][4] = 
@@ -71,6 +71,12 @@ void halI2sDeInit()
     i2sDrv->powerCtrl(I2S_POWER_OFF);
     i2sDrv->deInit();
 }
+
+void halI2sStopDma()
+{
+    i2sDrv->stopDmaChannel();
+}
+
 
 void halI2sSetChannel(I2sChannelSel_e channelSel)
 {
@@ -422,5 +428,138 @@ void halI2sSrcAdjustVolumn(int16_t* srcBuf, uint32_t srcTotalNum, uint16_t volSc
 void halI2sSetInt()
 {
 	//i2sDrv->ctrl(I2S_CTRL_INT_CTRL , startStop);
+}
+
+int getMclkFromPin(uint8_t padAddr, PadMux_e padMux, uint32_t freq, FracDivRootClk_e clkSrc)
+{
+#include "math.h"
+    /*
+         718 supports:
+                        padAddr:18/GPIO3 /USP1/Func1, 
+                        padAddr:37/GPIO31/USP1/Func4, 
+                        padAddr:39/GPIO33/USP0/Func1, 
+                        padAddr:44/GPIO38/USP2/Func1, 
+                        padAddr:30/GPIO15/USP2/Func4
+
+         716 supports:   
+                        padAddr:11/SWDIOC /USP0/Func6, 
+                        padAddr:13/GPIO1  /USP0/Func6, 
+                        padAddr:10/SWCLKC /USP1/Func6,
+    */
+
+    PadConfig_t config;
+    FracDivConfig_t fracdivCfg;
+    PAD_getDefaultConfig(&config);
+    config.mux = padMux;
+    PAD_setPinConfig(padAddr, &config);
+
+    switch (padAddr)
+    {
+        #if defined CHIP_EC718
+        case 18:
+        case 37:
+        #elif  defined CHIP_EC716
+        case 10:
+        #endif
+        {
+            // usp1
+            *(uint32_t*)0x4d041028 = 1;
+            GPR_clockEnable(FCLK_USP1);
+            GPR_clockEnable(CLK_HF306M_G); // open cspi fclk src
+            GPR_fracDivOutCLkEnable(FRACDIV1_OUT0); 
+            GPR_setFracDivOutClkDiv(FRACDIV1_OUT0, 1); 
+
+            GPR_setMclkSrc(MCLK1, MCLK_SRC_FRACDIV1_OUT0); 
+            GPR_mclkEnable(MCLK1);
+            fracdivCfg.fracdivSel = FRACDIV_1;
+            
+            if (clkSrc == FRACDIC_ROOT_CLK_612M)
+            {
+                fracdivCfg.source = FRACDIC_ROOT_CLK_612M;
+                fracdivCfg.fracDiv1DivRatioInteger  = 614400000/freq;
+                fracdivCfg.fracDiv1DivRatioFrac     = (614400000%freq)*(pow(2,24))/freq;
+            }
+            else
+            {
+                fracdivCfg.source = FRACDIV_ROOT_CLK_26M;
+                fracdivCfg.fracDiv1DivRatioInteger  = 26100000/freq;
+                fracdivCfg.fracDiv1DivRatioFrac     = (26100000%freq)*(pow(2,24))/freq;
+            }
+    
+            break;
+        }
+
+        #if defined CHIP_EC718
+        case 39:
+        #elif  defined CHIP_EC716
+        case 11:
+        case 13:
+        #endif        
+        {
+            // usp0
+            *(uint32_t*)0x4d040028 = 1;
+            GPR_clockEnable(FCLK_USP0);
+            GPR_clockEnable(CLK_HF306M_G); // open cspi fclk src
+            GPR_fracDivOutCLkEnable(FRACDIV0_OUT0); 
+            GPR_setFracDivOutClkDiv(FRACDIV0_OUT0, 1); 
+
+            GPR_setMclkSrc(MCLK0, MCLK_SRC_FRACDIV0_OUT0); 
+            GPR_mclkEnable(MCLK0);
+            fracdivCfg.fracdivSel = FRACDIV_0;
+
+            if (clkSrc == FRACDIC_ROOT_CLK_612M)
+            {
+                fracdivCfg.source = FRACDIC_ROOT_CLK_612M;
+                fracdivCfg.fracDiv0DivRatioInteger  = 612000000/freq;
+                fracdivCfg.fracDiv0DivRatioFrac     = (612000000%freq)*(pow(2,24))/freq;
+            }
+            else
+            {
+                fracdivCfg.source = FRACDIV_ROOT_CLK_26M;
+                fracdivCfg.fracDiv0DivRatioInteger  = 26000000/freq;
+                fracdivCfg.fracDiv0DivRatioFrac     = (26000000%freq)*(pow(2,24))/freq;
+            }
+            
+            break;
+        }
+
+        #if defined CHIP_EC718
+        case 44:
+        case 30:
+        {
+            // usp2
+            *(uint32_t*)0x4d042028 = 1;
+            GPR_clockEnable(FCLK_USP0);
+            GPR_clockEnable(CLK_HF306M_G); // open cspi fclk src
+            GPR_fracDivOutCLkEnable(FRACDIV0_OUT0); 
+            GPR_setFracDivOutClkDiv(FRACDIV0_OUT0, 1); 
+
+            GPR_setMclkSrc(MCLK2, MCLK_SRC_FRACDIV0_OUT0); 
+            GPR_mclkEnable(MCLK2);
+            fracdivCfg.fracdivSel = FRACDIV_0;
+
+            if (clkSrc == FRACDIC_ROOT_CLK_612M)
+            {
+                fracdivCfg.source = FRACDIC_ROOT_CLK_612M;
+                fracdivCfg.fracDiv0DivRatioInteger  = 612000000/freq;
+                fracdivCfg.fracDiv0DivRatioFrac     = (612000000%freq)*(pow(2,24))/freq;
+            }
+            else
+            {
+                fracdivCfg.source = FRACDIV_ROOT_CLK_26M;
+                fracdivCfg.fracDiv0DivRatioInteger  = 26000000/freq;
+                fracdivCfg.fracDiv0DivRatioFrac     = (26000000%freq)*(pow(2,24))/freq;
+            }
+            break;
+        }
+        #endif
+
+        default:
+        return -2;
+    }
+    
+    GPR_setFracDivConfig(&fracdivCfg);
+    
+    return 0;
 }
 

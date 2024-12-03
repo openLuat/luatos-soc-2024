@@ -168,6 +168,9 @@ void camCheckErrStats();
 #if (ENABLE_CAMERA_LDO == 1)
 void camPowerOn(uint8_t ioInitVal);
 #endif
+void camGpioPulseCfg(uint8_t padAddr, uint8_t pinInstance, uint8_t pinNum);
+void camGpioPulse(uint8_t pinInstance, uint8_t pinNum, uint32_t pulseDurationUs, uint8_t initialState, bool needLoop);
+
 /** \} */
 
 #endif

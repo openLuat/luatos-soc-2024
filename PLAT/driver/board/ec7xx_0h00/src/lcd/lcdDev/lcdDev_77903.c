@@ -2,6 +2,7 @@
 #include "lcdDrv.h"
 #include "lcdComm.h"
 #include "lcdDev_77903.h"
+#include "sctdef.h"
 
 extern lspiDrvInterface_t *lcdDrv;
 
@@ -209,7 +210,7 @@ static int st77903Close(lcdDrvFunc_t *lcd)
     return 0;
 }
 
-lcdDrvFunc_t st77903Drv = 
+AP_PLAT_COMMON_DATA lcdDrvFunc_t st77903Drv = 
 {
     .id                 = 0x77903,
     .width              = ST77903_WIDTH,

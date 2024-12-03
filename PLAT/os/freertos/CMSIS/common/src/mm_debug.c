@@ -34,9 +34,9 @@ memory leak and memory related bugs
 
 
 
-mm_trace_node_t trace_node[MM_TRACE_MAX];//20 bytes * MEMTRACE_MAX
-mm_trace_node_t *node_hash[MM_TRACE_HASH_SIZE];//4 bytes * MEMTRACE_HASH_SIZE
-mm_trace_node_t *free_node;
+AP_PLAT_COMMON_BSS mm_trace_node_t trace_node[MM_TRACE_MAX];//20 bytes * MEMTRACE_MAX
+AP_PLAT_COMMON_BSS mm_trace_node_t *node_hash[MM_TRACE_HASH_SIZE];//4 bytes * MEMTRACE_HASH_SIZE
+AP_PLAT_COMMON_BSS mm_trace_node_t *free_node;
 
 
 

@@ -2,6 +2,7 @@
 #include "lcdDrv.h"
 #include "lcdComm.h"
 #include "lcdDev_8601.h"
+#include "sctdef.h"
 
 extern lspiDrvInterface_t *lcdDrv;
 
@@ -262,7 +263,7 @@ static int sh8601Close(lcdDrvFunc_t *lcd)
     return 0;
 }
 
-lcdDrvFunc_t sh8601Drv = 
+AP_PLAT_COMMON_DATA lcdDrvFunc_t sh8601Drv = 
 {
     .id                 = 0x8601,
     .width              = SH8601_WIDTH,

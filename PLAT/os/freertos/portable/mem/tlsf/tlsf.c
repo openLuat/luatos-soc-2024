@@ -21,7 +21,7 @@ extern void * osThreadGetId (void);
 #define TLSF_PRINT_REDECLARE  1
 #if TLSF_PRINT_REDECLARE
 typedef void(* tlsf_printcallback)(char *pbuf);
-static tlsf_printcallback g_tlsf_printcallback = NULL;
+AP_PLAT_COMMON_BSS static tlsf_printcallback g_tlsf_printcallback = NULL;
 #endif
 /*
 ** Architecture-specific bit manipulation routines.
@@ -263,7 +263,7 @@ enum tlsf_private
     FL_INDEX_MAX = 17,
     #else                 /* AP */
 #ifdef __USER_CODE__
-	FL_INDEX_MAX = 21,
+	FL_INDEX_MAX = 24,
 #else
     FL_INDEX_MAX = 19,
 #endif
@@ -473,8 +473,8 @@ typedef struct
 #define POOL_GROUP_NUM    1
 #endif
 
-static pool_group_t pool_group[POOL_GROUP_NUM];
-uint8_t gucPoolGroupSel = 0; /* 0 is for SRAM, 1 is for PSRAM */
+AP_PLAT_COMMON_BSS static pool_group_t pool_group[POOL_GROUP_NUM];
+AP_PLAT_COMMON_BSS uint8_t gucPoolGroupSel = 0; /* 0 is for SRAM, 1 is for PSRAM */
 
 #ifdef HEAP_MEM_DEBUG
 typedef struct

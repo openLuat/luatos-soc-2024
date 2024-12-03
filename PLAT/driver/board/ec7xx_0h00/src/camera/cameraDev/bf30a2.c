@@ -1,6 +1,7 @@
 #include "cameraDrv.h"
+#include "sctdef.h"
 
-camI2cCfg_t bf30a2_1sdrRegInfo[] = 
+AP_PLAT_COMMON_DATA camI2cCfg_t bf30a2_1sdrRegInfo[] = 
 {
     {0xf2,0x01},//soft reset
     {0xcf,0xb0},//power up

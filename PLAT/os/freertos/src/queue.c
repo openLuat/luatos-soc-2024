@@ -154,7 +154,11 @@ typedef xQUEUE Queue_t;
 	/* The queue registry is simply an array of QueueRegistryItem_t structures.
 	The pcQueueName member of a structure being NULL is indicative of the
 	array position being vacant. */
-	PRIVILEGED_DATA QueueRegistryItem_t xQueueRegistry[ configQUEUE_REGISTRY_SIZE ];
+#ifdef TYPE_EC718M
+AP_PLAT_COMMON_BSS QueueRegistryItem_t xQueueRegistry[ configQUEUE_REGISTRY_SIZE ];
+#else
+PRIVILEGED_DATA QueueRegistryItem_t xQueueRegistry[ configQUEUE_REGISTRY_SIZE ];
+#endif
 
 #endif /* configQUEUE_REGISTRY_SIZE */
 

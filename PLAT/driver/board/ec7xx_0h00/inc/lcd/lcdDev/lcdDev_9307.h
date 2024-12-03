@@ -9,6 +9,8 @@
 #define     GC9307_TIME_OF_FRAME    (149356) // us
 #define     GC9307_TE_CYCLE         (16742) // us
 #define     GC9307_TE_WAIT_TIME     (623)   // us
+#define     GC9307_X_OFFSET		 	(0)
+#define     GC9307_Y_OFFSET		 	(0)
 
 #if (LCD_INTERFACE_8080 == 1)
 #if (GC9307_INTERFACE != INTERFACE_8080)
@@ -27,6 +29,8 @@
 #define     LCD_WIDTH            (GC9307_WIDTH)
 #define     LCD_BPP_USE          (GC9307_BPP)
 #define     LCD_INTERFACE        (GC9307_INTERFACE)
+#define     LCD_X_OFFSET		 (GC9307_X_OFFSET)
+#define     LCD_Y_OFFSET		 (GC9307_Y_OFFSET)
 
 #define     LCD_PIXEL            (LCD_HEIGHT*LCD_WIDTH)
 #define     LCD_TIME_OF_FRAME    (GC9307_TIME_OF_FRAME) // us

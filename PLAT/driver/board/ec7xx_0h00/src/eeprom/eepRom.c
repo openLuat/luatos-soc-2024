@@ -130,7 +130,7 @@ int32_t copyScratchpad2Mem(uint16_t addr)
     return EEPROMDRV_OK;
 }
 
-uint8_t dataBack[13]={0};
+AP_PLAT_COMMON_BSS uint8_t dataBack[13]={0};
 int32_t dataCmp(uint8_t targetAddr, uint8_t* buffer, uint8_t len)
 {
     // compare the data read from scratchpad
@@ -243,7 +243,7 @@ int32_t eePromReadMem(uint8_t targetAddr, uint8_t len, uint8_t* buffer)
     return owResetPd();
 }
 
-int32_t writeSctStats;
+AP_PLAT_COMMON_BSS int32_t writeSctStats;
 int32_t eePromWriteMem(uint8_t targetAddr, uint8_t len, uint8_t* buffer)
 {
     uint8_t tmp[8];

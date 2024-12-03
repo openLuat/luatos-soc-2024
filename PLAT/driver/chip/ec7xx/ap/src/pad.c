@@ -115,8 +115,11 @@ void PAD_getDefaultConfig(PadConfig_t *config)
     config->pullSelect = PAD_PULL_AUTO;
     config->pullUpEnable = PAD_PULL_UP_DISABLE;
     config->pullDownEnable = PAD_PULL_DOWN_DISABLE;
-#if defined CHIP_EC718
+#if defined CHIP_EC718 && (!defined TYPE_EC718M)
     config->driveStrength = PAD_DRIVE_STRENGTH_HIGH;
+#elif defined CHIP_EC718 && (defined TYPE_EC718M)
+    config->driveStrength = PAD_DRIVE_STRENGTH_LOW;
+    config->slewRate = PAD_SLEW_RATE_HIGH;
 #elif defined CHIP_EC716
     config->slewRate = PAD_SLEW_RATE_HIGH;
     config->schmittTriggerEnable = 0;
@@ -187,4 +190,15 @@ void PAD_setPinPullConfig(uint32_t paddr, PadPullConfig_e config)
     CLOCK_clockDisable(PCLK_PAD);
 
 }
+
+
+#if defined TYPE_EC718M
+// call very early in bootloader
+PLAT_UNCOMP_FLASH_TEXT void PAD_setDefaultDrvStrength0(void)
+{
+    // pclk_pad is already on in bootrom
+    for(uint8_t i=0; i<PAD_ADDR_MAX_NUM; i++)
+        PAD->PCR[i] = PAD->PCR[i] & (~PAD_PCR_DRIVE_STRENGTH_Msk);
+}
+#endif
 

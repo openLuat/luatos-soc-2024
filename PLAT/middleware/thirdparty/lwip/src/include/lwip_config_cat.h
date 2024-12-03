@@ -12,6 +12,7 @@
  */
 //#include "lwipopts.h"
 #include "lwip/debug.h"
+#include "sctdef.h"
 
 /**
  * @defgroup lwip_opts Options (lwipopts.h)
@@ -29,6 +30,98 @@
  * @defgroup lwip_opts_threadsafe_apis Thread-safe APIs
  * @ingroup lwip_opts
  */
+
+/**
+ * NET code priority, according to diff priority, could located in diff location: MSMB/PsRAM/Flash
+ * 1> NET_CODE_PRI_0        high pri, code in MSMB
+ * 2> NET_CODE_PRI_0_1      high pri, EC718M in MSMB,  EC718x/EC716, open in flash, non-open in MSMB
+ * 3> NET_CODE_PRI_1        mid pri, EC718M in PsRAM, EC718x/EC716, open in flash, non-open in MSMB
+ * 4> NET_CODE_PRI_2        low pri, EC718M in PsRAM, EC718x/EC716 normal verion, code in MSMB, EC716 more RAM version, code in Flash
+ * 5> NET_CODE_PRI_3        lowest pri, code in Flash, default priority
+*/
+#ifdef __USER_CODE__
+#ifdef TYPE_EC718M
+#define NET_CODE_PRI_0      PS_FM_RAMCODE
+#define NET_CODE_PRI_0_1    PS_FM_RAMCODE
+#define NET_CODE_PRI_1      PS_FPSRAM_P0_RAMCODE
+#define NET_CODE_PRI_2      PS_FPSRAM_P0_RAMCODE
+#define NET_CODE_PRI_3      //in flash, default
+#else
+#define NET_CODE_PRI_0      PS_FM_RAMCODE
+#define NET_CODE_PRI_0_1    PS_FM_RAMCODE
+#define NET_CODE_PRI_1      PS_FM_RAMCODE
+#define NET_CODE_PRI_2      PS_FM_RAMCODE
+#define NET_CODE_PRI_3      //in flash, default
+#endif
+#else
+#ifdef TYPE_EC718M
+#define NET_CODE_PRI_0      PS_FM_RAMCODE
+#define NET_CODE_PRI_0_1    PS_FM_RAMCODE
+#define NET_CODE_PRI_1      PS_FPSRAM_P0_RAMCODE
+#define NET_CODE_PRI_2      PS_FPSRAM_P0_RAMCODE
+#define NET_CODE_PRI_3      //in flash, default
+#else
+#if (defined OPEN_CPU_MODE)
+#define NET_CODE_PRI_0      PS_FM_RAMCODE
+#define NET_CODE_PRI_0_1
+#define NET_CODE_PRI_1
+#else
+#define NET_CODE_PRI_0      PS_FM_RAMCODE
+#define NET_CODE_PRI_0_1    PS_FM_RAMCODE
+#define NET_CODE_PRI_1      PS_FM_RAMCODE
+#endif
+
+#ifdef FEATURE_MORERAM_ENABLE
+#define NET_CODE_PRI_2      //in flash
+#define NET_CODE_PRI_3      //in flash, default
+#else
+#define NET_CODE_PRI_2      PS_FM_RAMCODE
+#define NET_CODE_PRI_3      //in flash, default
+#endif
+#endif
+#endif
+
+
+/**
+ * NET DATA/ZI priority, according to diff priority, could located in diff location: MSMB/PsRAM/Flash
+ * 0> NET_DATA_PRI_00       highest pri, data in ASMB
+ *    NET_ZI_PRI_00         highest pri, BSS data in ASMB
+ * 1> NET_DATA_PRI_0        high pri, data in MSMB
+ *    NET_ZI_PRI_0          high pri, BSS data in MSMB
+ * 2> NET_DATA_PRI_1        EC718M in PsRAM 0, EC718x/EC716, data in MSMB
+ *    NET_ZI_PRI_1          BSS data, EC718M in PsRAM 0, EC718x/EC716, data in MSMB
+ * 3> NET_PKG_DATA          UL&DL massive and fast data, EC718M in PsRAM 1, EC718x/EC716, data in MSMB
+*/
+#ifndef WIN32
+#ifdef TYPE_EC718M
+#define NET_DATA_PRI_0      PS_FM_DATA
+#define NET_ZI_PRI_0        PS_FM_ZI
+#define NET_DATA_PRI_1      AP_PS_FPSRAM_P0_DATA
+#define NET_ZI_PRI_1        AP_PS_FPSRAM_P0_BSS
+#define NET_PKG_DATA        AP_PS_FPSRAM_P1_DATA
+#define NET_PKG_ZI          AP_PS_FPSRAM_P1_BSS
+#define NET_DATA_DEF        NET_DATA_PRI_1
+#define NET_ZI_DEF          NET_ZI_PRI_1
+#else
+#define NET_DATA_PRI_0      PS_FM_DATA
+#define NET_ZI_PRI_0        PS_FM_ZI
+#define NET_DATA_PRI_1      PS_FM_DATA
+#define NET_ZI_PRI_1        PS_FM_ZI
+#define NET_PKG_DATA        PS_FM_DATA
+#define NET_PKG_ZI          PS_FM_ZI
+#define NET_DATA_DEF        PS_FM_DATA
+#define NET_ZI_DEF          PS_FM_ZI
+#endif
+#else
+#define NET_DATA_PRI_0
+#define NET_ZI_PRI_0
+#define NET_DATA_PRI_1
+#define NET_ZI_PRI_1
+#define NET_PKG_DATA
+#define NET_PKG_ZI
+#define NET_DATA_DEF
+#define NET_ZI_DEF
+#endif
 
 /*
  * enable PS interface to LWIP for UE

@@ -6,6 +6,7 @@
 #include "usbd_func_cconf.h"
 #include "usbd_func_cc.h"
 #include "usbd_multi_usrcfg_common.h"
+#include "sctdef.h"
 typedef struct tag_usbd_cdc_ccinst_desc_inhrnt usbd_cdc_desc_inhrnt_st;
 
 #define CC_INHRNT_CMDEP_MPS 16
@@ -501,7 +502,7 @@ const  ccinst_setting_base_st t_vcom_custp0_base_setting =
     ccinst_setting_vcom_subtp0_inhrnt,
 };
 
-ccinst_cdc_setting_st t_vcom_custp0_setting_arr[VCOM_CCINST_SUBTP0_INHERENT_CNT] ={
+AP_PLAT_COMMON_DATA ccinst_cdc_setting_st t_vcom_custp0_setting_arr[VCOM_CCINST_SUBTP0_INHERENT_CNT] ={
 //[0]
     {
     .bs_set = t_vcom_custp0_base_setting,
@@ -530,7 +531,7 @@ ccinst_cdc_setting_st t_vcom_custp0_setting_arr[VCOM_CCINST_SUBTP0_INHERENT_CNT]
 
 };
 
-usb_func_ccinst_st t_vcom_func_custp0_inhrnt_arr[VCOM_CCINST_SUBTP0_INHERENT_CNT] ={
+AP_PLAT_COMMON_DATA usb_func_ccinst_st t_vcom_func_custp0_inhrnt_arr[VCOM_CCINST_SUBTP0_INHERENT_CNT] ={
 //[0]
     {
     .p_cc_setting = &t_vcom_custp0_setting_arr[0],

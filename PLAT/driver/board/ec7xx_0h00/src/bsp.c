@@ -23,7 +23,7 @@
 #include "clock.h"
 #include "hal_adcproxy.h"
 #include "apmu_external.h"
-
+#include "slpman.h"
 
 #define BSP_TEXT_SECTION     SECTION_DEF_IMPL(.sect_bsp_text)
 #define BSP_RODATA_SECTION   SECTION_DEF_IMPL(.sect_bsp_rodata)
@@ -257,6 +257,39 @@ bool getCPWakeupType(void)          // true: cp wakeup in int mode   false: cp w
 uint32_t getAPFlashLoadAddr(void)
 {
     return AP_FLASH_LOAD_ADDR;
+}
+
+/**
+  \fn           void apmuNeedSlpWaitTimeInWakeupFlow(bool *bUartDelay, bool *bSlp1ExtIntDelay)
+  \brief        give pmu module information to restart slpWaitTime in pmu flow
+  \param[out]    bUartDelay: give a result to pmu module whether we need restart sleep wait timer when, (1)sleep failed with uart pending in all sleep mode (2)receive uart in sleep1 wakeup flow
+  \param[out]    bSlp1ExtIntDelay: give a result to pmu module whether we need restart sleep wait timer when, (1) wakeup from sleep1 with external int pending
+                                   for sleep2/hib mode, restart slpWaitTime in BSP_CustomInit
+  \returns      void
+*/
+void apmuNeedSlpWaitTimeInWakeupFlow(bool *bUartDelay, bool *bSlp1ExtIntDelay)
+{
+    uint32_t xic0_latch = XIC_LatchIRQ(APXIC_0);
+    slpManWakeSrc_e wakeSrc = slpManGetWakeupSrc();
+
+    *bUartDelay = true;
+    *bSlp1ExtIntDelay = false;
+
+    if((xic0_latch & (1<<(PXIC0_UART2_IRQn-32))) == 0)
+    {
+        if((xic0_latch & (1<<(PXIC0_UART1_IRQn-32))) == 0)
+        {
+            if((xic0_latch & (1<<(PXIC0_UART0_IRQn-32))) == 0)
+            {
+                *bUartDelay = false;
+            }
+        }
+    }
+
+    if((WAKEUP_FROM_PAD == wakeSrc) || (WAKEUP_FROM_LPUART == wakeSrc))
+    {
+        *bSlp1ExtIntDelay = true;
+    }
 }
 
 

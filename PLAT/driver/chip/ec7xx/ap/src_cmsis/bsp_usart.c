@@ -138,7 +138,40 @@ BSP_USART_BSS_SECTION static uint32_t g_usartInitCounter = 0;
  */
 BSP_USART_DATA_SECTION static uint32_t g_usartWorkingStatus = 0xFFFF0000;
 
+#ifdef TYPE_EC718M
 
+// psram needs to keep alive for uart receiving data in dma mode when baudrate exceeds 500K bps, this gives us 640us(32*10/500K) before rxfifo overflows
+#define USART_PSRAM_HYBD_VOTE_BAUDRATE_LIMIT   (500000)
+
+/**
+  \brief usart psram hybird mode vote bitmap
+ */
+BSP_USART_BSS_SECTION static uint32_t g_usartPsramVoteBitmap = 0;
+
+static void USART_LockPsramHybd(uint32_t instance)
+{
+    uint32_t mask = SaveAndSetIRQMask();
+
+    if((g_usartPsramVoteBitmap & (1 << instance)) == 0)
+    {
+        slpManPSRamVoteHybdDisable(PSRAM_HYBD_VOTE_UART);
+        g_usartPsramVoteBitmap |= (1 << instance);
+    }
+    RestoreIRQMask(mask);
+
+}
+static void USART_UnlockPsramHybd(uint32_t instance)
+{
+    uint32_t mask = SaveAndSetIRQMask();
+    if(g_usartPsramVoteBitmap & (1 << instance))
+    {
+        slpManPSRamVoteHybdEnable(PSRAM_HYBD_VOTE_UART);
+        g_usartPsramVoteBitmap &=~(1 << instance);
+    }
+    RestoreIRQMask(mask);
+}
+
+#endif
 /**
   \fn        static void USART_EnterLowPowerStatePrepare(void* pdata, slpManLpState state)
   \brief     Perform necessary preparations before sleep.
@@ -894,6 +927,13 @@ int32_t USART_PowerControl(ARM_POWER_STATE state,USART_RESOURCES *usart)
 
             usart->info->flags &= ~(USART_FLAG_POWERED | USART_FLAG_CONFIGURED);
 
+#ifdef PM_FEATURE_ENABLE
+
+#ifdef TYPE_EC718M
+            USART_UnlockPsramHybd(instance);
+#endif
+
+#endif
             break;
 
         case ARM_POWER_LOW:
@@ -1353,6 +1393,25 @@ int32_t USART_Control(uint32_t control, uint32_t arg, USART_RESOURCES *usart)
     if(ARM_DRIVER_OK != USART_SetBaudrate (arg, usart))
         return ARM_USART_ERROR_BAUDRATE;
 
+#ifdef PM_FEATURE_ENABLE
+
+#ifdef TYPE_EC718M
+
+    uint32_t instance = USART_GetInstanceNumber(usart);
+
+    if(usart->dma_rx && (usart->info->baudrate > USART_PSRAM_HYBD_VOTE_BAUDRATE_LIMIT))
+    {
+        USART_LockPsramHybd(instance);
+    }
+    else
+    {
+        USART_UnlockPsramHybd(instance);
+    }
+
+#endif
+
+#endif
+
     // Configuration is OK - frame code is valid
     usart->info->frame_code = control;
 
@@ -1625,6 +1684,18 @@ IRQ_HANDLE:
         // backup for sleep restore
         usart->reg->DIVR = usart->reg->DIVIR;
         info->baudrate = (GPR_getClockFreq(g_uartClocks[instance*2+1]) << 4)/ (usart->reg->DIVIR);
+
+#ifdef PM_FEATURE_ENABLE
+
+#ifdef TYPE_EC718M
+        if(usart->dma_rx && (info->baudrate > USART_PSRAM_HYBD_VOTE_BAUDRATE_LIMIT))
+        {
+            USART_LockPsramHybd(instance);
+        }
+#endif
+
+#endif
+
     }
 
 

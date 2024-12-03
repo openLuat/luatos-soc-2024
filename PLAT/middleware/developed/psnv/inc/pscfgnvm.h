@@ -155,6 +155,8 @@ typedef enum _EPAT_PsConfigParamId_Enum
     CEMM_CFG_T3402_OPT,                             /* TV,  BOOL T3402Opt */
     CEMM_CFG_ANTIDETECT,                            /* TV,  BOOL */
 
+    UICC_CFG_ISIM_DISABLE,                          /* TV,  BOOL bIsimDisable, whether disable ISIM app or not */
+
     /*
      * !!!!  PARAM ID !!!!
      * 1> Only allowed

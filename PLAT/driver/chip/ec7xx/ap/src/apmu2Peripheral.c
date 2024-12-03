@@ -4,6 +4,8 @@
 #include "timer.h"
 #include "clock.h"
 #include DEBUG_LOG_HEADER_FILE
+#include "sctdef.h"
+
 #if (RTE_USB_EN == 1)
 void usblpw_enter_start_proc(bool force_cfg_pwr_down);
 void usblpw_enter_abort_proc(bool force_cfg_pwr_down);
@@ -28,13 +30,15 @@ void usblpw_retwkup_sleep1_pre_recovery(void);
 #define CP_STARTTIME_INSTANCE                   (5)
 #define CP_STARTTIME_IRQ                        (PXIC0_TIMER5_IRQn)
 #define CP_STARTTIME_MAXIMUM                    (4294967)     // 0xffffffff/1000 ms
-#ifdef __USER_CODE__	//no need, getCPWakeupType move to bsp_custom.c
+
+#ifdef __USER_CODE__
 #else
-static uint32_t cpPowerOnMask = 0;
-static bool cpPowerOnUartMaskMode = false;
+AP_PLAT_COMMON_BSS static uint32_t cpPowerOnMask = 0;
+AP_PLAT_COMMON_BSS static bool cpPowerOnUartMaskMode = false;
+#endif
 
 extern bool getCPWakeupType(void);
-#endif
+
 
 void apmuPeriUsbEnterStartProc(bool forceCfgPwrDown)
 {
@@ -265,6 +269,7 @@ void apmuPeriStartCPTimer(uint32_t cpStartTime, void* expFunc)
 
 }
 
+
 #ifdef __USER_CODE__	//move to bsp_custom.c
 #else
 void apmuPeriCPPowerOnSetIrqMask(void)
@@ -297,5 +302,6 @@ void apmuPeriCPPowerOnSetIrqRestore(void)
     }
 }
 #endif
+
 
 
