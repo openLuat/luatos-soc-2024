@@ -51,7 +51,7 @@ void* luat_heap_zalloc(size_t _size) {
 }
 
 void luat_heap_free(void* ptr) {
-	if ((uint32_t)ptr >= PSRAM_P2_START_ADDR && (uint32_t)ptr <= (PSRAM_P2_START_ADDR + PSRAM_P2_LENGTH)) {
+	if ((uint32_t)ptr >= (PSRAM_P2_START_ADDR|PSRAM_PCACHE2_BASE) && (uint32_t)ptr <= PSRAM_END_ADDR) {
 		free(ptr);
 		return ;
 	}
