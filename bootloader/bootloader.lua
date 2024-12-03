@@ -20,12 +20,14 @@ add_cxflags("-flto",
             "-flto-partition=none",
             "-Wno-lto-type-mismatch",
             {force=true})
+
 add_ldflags("-flto",
             "-fuse-linker-plugin",
             "-ffat-lto-objects",
             "-flto-partition=none",
             "-Wno-lto-type-mismatch",
             {force=true})
+
 target("driver",function()
     set_kind("static")
     set_targetdir(project_dir.."/build/bootloader_libdriver")
@@ -76,8 +78,11 @@ target("ap_bootloader.elf",function()
         csdk_root.."/PLAT/core/code/boot_code.c",
         csdk_root.."/PLAT/core/code/fota_code.c")
 
-    local chip_target = get_config("chip_target")
-
+    if has_config("chip_target") then 
+        chip_target = get_config("chip_target") 
+        LIB_PRODUCT = ((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6))
+        set_values("LIB_PRODUCT", LIB_PRODUCT)
+    end
     if chip_target and lib_ps_plat then
 
         if chip_target=="ec718u" and lib_ps_plat=="ims" then
@@ -87,7 +92,7 @@ target("ap_bootloader.elf",function()
         else
             add_linkdirs(csdk_root.."/PLAT/libs/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(lib_ps_plat=="mid"and"-mid"or"").."/bootloader")
         end
-        add_linkdirs(csdk_root.."/PLAT/prebuild/PLAT/lib/gcc/"..((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6)).."/"..lib_ps_plat)
+        add_linkdirs(csdk_root.."/PLAT/prebuild/PLAT/lib/gcc/"..LIB_PRODUCT.."/"..lib_ps_plat)
 
     end
     
@@ -108,9 +113,7 @@ target("ap_bootloader.elf",function()
     local toolchains = nil
     local ld_parameter = nil 
     before_link(function(target)
-        local chip_target = nil
-        if has_config("chip_target") then chip_target = get_config("chip_target") end
-        
+        local chip_target = get_config("chip_target")
         local project_dir = target:values("project_dir")
         local csdk_root = target:values("csdk_root")
         toolchains = target:tool("cc"):match('.+\\bin') or target:tool("cc"):match('.+/bin')
@@ -155,8 +158,10 @@ target("ap_bootloader.elf",function()
 
     end)
     after_build(function(target)
+        local LIB_PRODUCT = target:values("LIB_PRODUCT")
         local project_dir = target:values("project_dir")
         local csdk_root = target:values("csdk_root")
+        local chip_target = get_config("chip_target")
         local mem_parameter = {}
         for _, cx_flasg in pairs(target:get("cxflags")) do
             table.insert(mem_parameter,cx_flasg)
@@ -172,9 +177,7 @@ target("ap_bootloader.elf",function()
         io.writefile(project_dir.."/build/ap_bootloader/ap_bootloader.size", os.iorun(toolchains .. "/arm-none-eabi-objdump -h "..project_dir.."/build/ap_bootloader/ap_bootloader.elf"))
         local size_file = io.open(project_dir.."/build/ap_bootloader/ap_bootloader.size", "a")
         size_file:write(os.iorun(toolchains .. "/arm-none-eabi-size -G "..project_dir.."/build/ap_bootloader/ap_bootloader.elf"))
-        if ((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6)) == "ec718p" or 
-            ((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6)) == "ec718u" or 
-            ((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6)) == "ec718um" then 
+        if LIB_PRODUCT == "ec718p" or LIB_PRODUCT == "ec718u" or LIB_PRODUCT == "ec718um" then 
             size_file:write(os.iorun(toolchains .. "/arm-none-eabi-size -t -G "..csdk_root.."/lib/libffota_eflash.a")) 
         end
         size_file:write(os.iorun(toolchains .. "/arm-none-eabi-size -t -G "..project_dir.."/build/bootloader_libdriver/libdriver.a"))
@@ -184,8 +187,9 @@ target("ap_bootloader.elf",function()
         size_file:close()
         os.exec(csdk_root .. (is_plat("windows") and "/PLAT/tools/fcelf.exe " or "/PLAT/tools/fcelf ")..
                 "-C -bin "..project_dir.."/build/ap_bootloader/ap_bootloader_unZip.bin".. 
-                " -cfg ".. csdk_root.."/PLAT/project/ec7xx_0h00/ap/apps/bootloader/GCC/sectionInfo_"..((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6))..".json".. 
+                " -cfg ".. csdk_root.."/PLAT/project/ec7xx_0h00/ap/apps/bootloader/GCC/sectionInfo_"..LIB_PRODUCT..".json".. 
                 " -map "..project_dir.."/build/ap_bootloader/ap_bootloader_debug.map".." -out "..project_dir.."/build/ap_bootloader/ap_bootloader.bin")
+
     end)
 end)
 

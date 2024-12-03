@@ -9,12 +9,12 @@ function description_csdk()
             use_lto = true
         end
 
-        if chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718u" or chip_target == "ec718um" then
+        if chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718hm" then
             add_defines("PSRAM_FEATURE_ENABLE")
             --add_defines("FEATURE_EXCEPTION_FLASH_DUMP_ENABLE")
         end
 
-        if (chip_target == "ec718u" or chip_target == "ec718um") and lib_ps_plat == "ims" or chip_target == "ec718pv" then
+        if (chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718hm") and lib_ps_plat == "ims" or chip_target == "ec718pv" then
             add_defines("FEATURE_IMS_ENABLE",
                         "FEATURE_IMS_CC_ENABLE",
                         "FEATURE_IMS_SMS_ENABLE",
@@ -49,7 +49,7 @@ function description_csdk()
         else 
             add_defines("DHCPD_ENABLE_DEFINE=1")
         end
-        if (chip_target=="ec718u" or chip_target=="ec718um") and lib_ps_plat == "ims" then
+        if (chip_target=="ec718u" or chip_target=="ec718um" or chip_target=="ec718hm") and lib_ps_plat == "ims" then
             add_includedirs(csdk_root.."/PLAT/tools/"..(chip_target)..("-ims"))
         else
             add_includedirs(csdk_root.."/PLAT/tools/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(lib_ps_plat=="mid"and"-mid"or""))
@@ -112,31 +112,34 @@ function description_csdk()
                 {force = true})
 
     -- 已经生效的GCC警告信息
-    add_cxflags("-Werror=maybe-uninitialized")
-    add_cxflags("-Werror=unused-value")
-    add_cxflags("-Werror=array-bounds")
-    add_cxflags("-Werror=return-type")
-    add_cxflags("-Werror=overflow")
-    add_cxflags("-Werror=empty-body")
-    add_cxflags("-Werror=old-style-declaration")
-    -- add_cxflags("-Werror=implicit-function-declaration")
-    add_cxflags("-Werror=implicit-int")
+    add_cxflags("-Werror=maybe-uninitialized",
+                "-Werror=unused-value",
+                "-Werror=array-bounds",
+                "-Werror=return-type",
+                "-Werror=overflow",
+                "-Werror=empty-body",
+                "-Werror=old-style-declaration",
+                -- "-Werror=implicit-function-declaration",
+                "-Werror=implicit-int",
+                {force = true})
 
     -- 暂不考虑的GCC警告信息
-    add_cxflags("-Wno-unused-parameter")
-    add_cxflags("-Wno-unused-but-set-variable")
-    add_cxflags("-Wno-sign-compare")
-    add_cxflags("-Wno-unused-variable")
-    add_cxflags("-Wno-unused-function")
+    add_cxflags("-Wno-unused-parameter",
+                "-Wno-unused-but-set-variable",
+                "-Wno-sign-compare",
+                "-Wno-unused-variable",
+                "-Wno-unused-function",
+                {force = true})
 
     -- 待修复的GCC警告信息
-    add_cxflags("-Wno-int-conversion")
-    add_cxflags("-Wno-discarded-qualifiers")
-    add_cxflags("-Wno-pointer-sign")
-    add_cxflags("-Wno-type-limits")
-    add_cxflags("-Wno-incompatible-pointer-types")
-    add_cxflags("-Wno-pointer-to-int-cast")
-    add_cxflags("-Wno-int-to-pointer-cast")
+    add_cxflags("-Wno-int-conversion",
+                "-Wno-discarded-qualifiers",
+                "-Wno-pointer-sign",
+                "-Wno-type-limits",
+                "-Wno-incompatible-pointer-types",
+                "-Wno-pointer-to-int-cast",
+                "-Wno-int-to-pointer-cast",
+                {force = true})
 
     -- ==============================
     -- === includes =====
@@ -167,7 +170,7 @@ function description_csdk()
                     luatos_root .. "/components/io_queue",
                     csdk_root.."/interface/include")
                     
-    if chip_target == "ec718pv" or chip_target == "ec718u" or chip_target == "ec718um" then
+    if chip_target == "ec718pv" or chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718hm" then
         add_includedirs(luatos_root .. "/components/cjson")
     end
 end
@@ -205,10 +208,10 @@ target("csdk",function()
     if CHIP then
         add_files(csdk_root.."/PLAT/driver/chip/ec7xx/ap/src/"..CHIP.."/adc.c")
     end
-	if chip_target ~= "ec718pv" and chip_target ~= "ec718u" and chip_target ~= "ec718um" then
+	if chip_target ~= "ec718pv" and chip_target ~= "ec718u" and chip_target ~= "ec718um" and chip_target ~= "ec718hm" then
 		remove_files(csdk_root.."/PLAT/driver/hal/ec7xx/ap/src/hal_voice_eng_mem.c")
 	end
-	if chip_target == "ec718um" then
+	if chip_target == "ec718um" or chip_target == "ec718hm" then
 		remove_files(csdk_root.."/PLAT/os/freertos/src/heap_6_psram.c")
 	end
 	remove_files(csdk_root.."/PLAT/driver/chip/ec7xx/ap/src/cspi.c",
@@ -246,7 +249,7 @@ target("csdk",function()
             luatos_root.."/luat/vfs/luat_vfs.c")
 
     -- cjson
-	if chip_target == "ec718pv" or chip_target == "ec718u" or chip_target == "ec718um" then
+	if chip_target == "ec718pv" or chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718hm" then
 		add_files(luatos_root.."/components/cjson/*.c")
 	end
 
@@ -262,11 +265,16 @@ target(project_name..".elf",function()
     add_deps("csdk")
     add_deps(project_name)
 
-    local chip_target = nil
-    if has_config("chip_target") then chip_target = get_config("chip_target") end
+    if has_config("chip_target") then 
+        chip_target = get_config("chip_target") 
+        LIB_PRODUCT = ((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6))
+        set_values("LIB_PRODUCT", LIB_PRODUCT)
+    end
+
+
     if chip_target and lib_ps_plat then
-        add_linkdirs(csdk_root.."/PLAT/prebuild/PS/lib/gcc/"..((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6)).."/"..lib_ps_plat)
-        add_linkdirs(csdk_root.."/PLAT/prebuild/PLAT/lib/gcc/"..((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6)).."/"..lib_ps_plat)
+        add_linkdirs(csdk_root.."/PLAT/prebuild/PS/lib/gcc/"..LIB_PRODUCT.."/"..lib_ps_plat)
+        add_linkdirs(csdk_root.."/PLAT/prebuild/PLAT/lib/gcc/"..LIB_PRODUCT.."/"..lib_ps_plat)
         
         if (chip_target=="ec718u" or chip_target=="ec718um") and lib_ps_plat=="ims" then
             add_linkdirs(csdk_root.."/PLAT/libs/"..(chip_target)..("-ims"))
@@ -301,8 +309,7 @@ target(project_name..".elf",function()
     local ld_parameter = nil
 
     before_link(function(target)
-        local chip_target = nil
-        if has_config("chip_target") then chip_target = get_config("chip_target") end
+        local chip_target = get_config("chip_target")
 
         local project_name = target:values("project_name")
         local project_dir = target:values("project_dir")
@@ -364,9 +371,12 @@ target(project_name..".elf",function()
     end)
 
 	after_build(function(target)
+        local LIB_PRODUCT = target:values("LIB_PRODUCT")
         local project_name = target:values("project_name")
         local project_dir = target:values("project_dir")
         local csdk_root = target:values("csdk_root")
+        local chip_target = get_config("chip_target")
+
         local toolchains = target:tool("cc"):match('.+\\bin') or target:tool("cc"):match('.+/bin')
         local mem_parameter = {}
         for _, cx_flasg in pairs(target:get("cxflags")) do
@@ -402,7 +412,7 @@ target(project_name..".elf",function()
 
         os.exec(csdk_root .. (is_plat("windows") and "/PLAT/tools/fcelf.exe " or "/PLAT/tools/fcelf ")..
                 "-C -bin ".."$(buildir)/"..project_name.."/"..project_name.."_unZip.bin".. 
-                " -cfg ".. csdk_root .. "/PLAT/device/target/board/ec7xx_0h00/ap/gcc/sectionInfo_"..((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6))..".json".. 
+                " -cfg ".. csdk_root .. "/PLAT/device/target/board/ec7xx_0h00/ap/gcc/sectionInfo_"..LIB_PRODUCT..".json".. 
                 " -map ".."$(buildir)/"..project_name.."/"..project_name.. "_$(mode).map"..
                 " -out ".."$(buildir)/"..project_name.."/" .. project_name .. ".bin")
 
@@ -419,12 +429,12 @@ target(project_name..".elf",function()
         ---------------------------------------------------------
         -------------- 这部分尚不能跨平台 -------------------------
 
-        local PKG_PRODUCT = (((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6)):upper()).."_PRD"
+        local PKG_PRODUCT = LIB_PRODUCT:upper().."_PRD"
         local binpkg = csdk_root..(is_plat("windows") and "/PLAT/tools/fcelf.exe " or "/PLAT/tools/fcelf ")..
                         "-M -input $(buildir)/ap_bootloader/ap_bootloader.bin -addrname BL_PKGIMG_LNA -flashsize BOOTLOADER_PKGIMG_LIMIT_SIZE \
                         -input $(buildir)/"..project_name.."/ap.bin -addrname AP_PKGIMG_LNA -flashsize AP_PKGIMG_LIMIT_SIZE \
                         -input "..csdk_root.."/PLAT/prebuild/FW/lib/gcc/"..
-                                ((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6))..
+                                LIB_PRODUCT..
                                 "/"..target:values("lib_fw").."/cp-demo-flash.bin -addrname CP_PKGIMG_LNA -flashsize CP_PKGIMG_LIMIT_SIZE \
                         -pkgmode 1 \
                         -banoldtool 1 \
