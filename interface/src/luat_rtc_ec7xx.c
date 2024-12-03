@@ -28,10 +28,11 @@
 #include "mw_aon_info.h"
 #include "soc_service.h"
 extern MidWareAonInfo      *pMwAonInfo;
+extern void soc_save_tz(int8_t tz);
 
 void luat_rtc_set_timezone(int zone)
 {
-	soc_save_tz(zone);
+	soc_save_tz((int8_t)zone);
 }
 
 int luat_rtc_get_timezone(void)
