@@ -20,23 +20,31 @@ add_cxflags("-flto",
             "-flto-partition=none",
             "-Wno-lto-type-mismatch",
             {force=true})
-
+add_ldflags("-flto",
+            "-fuse-linker-plugin",
+            "-ffat-lto-objects",
+            "-flto-partition=none",
+            "-Wno-lto-type-mismatch",
+            {force=true})
 target("driver",function()
     set_kind("static")
     set_targetdir(project_dir.."/build/bootloader_libdriver")
-    add_includedirs(csdk_root.."/PLAT/prebuild/PLAT/inc/usb_bl")
+    add_includedirs(csdk_root.."/PLAT/prebuild/PLAT/inc/usb_bl",
+                    {public = true})
 
     add_includedirs(csdk_root.."/PLAT/middleware/developed/debug/inc",
                     csdk_root.."/PLAT/project/ec7xx_0h00/ap/apps/bootloader/code/include",
                     csdk_root.."/PLAT/project/ec7xx_0h00/ap/apps/bootloader/code/include/common",
-                    csdk_root.."/PLAT/project/ec7xx_0h00/ap/apps/bootloader/code/common/secure/hash/inc")
+                    csdk_root.."/PLAT/project/ec7xx_0h00/ap/apps/bootloader/code/common/secure/hash/inc",
+                    {public = true})
     -- wrapper
     add_includedirs(csdk_root.."/PLAT/middleware/thirdparty/lzma2201/C",
-                    csdk_root.."/PLAT/middleware/thirdparty/lzma2201/C/wrapper")
+                    csdk_root.."/PLAT/middleware/thirdparty/lzma2201/C/wrapper",
+                    {public = true})
 
 	add_files(
-                csdk_root.."/PLAT/core/code/boot_code.c",
-                csdk_root.."/PLAT/core/code/fota_code.c",
+                -- csdk_root.."/PLAT/core/code/boot_code.c",
+                -- csdk_root.."/PLAT/core/code/fota_code.c",
                 -- driver
                 csdk_root.."/PLAT/driver/board/ec7xx_0h00/src/plat_config.c",
                 csdk_root.."/PLAT/driver/hal/ec7xx/ap/src/hal_pwrkey.c",
@@ -64,7 +72,12 @@ target("ap_bootloader.elf",function()
     set_kind("binary")
     set_targetdir(project_dir.."/build/ap_bootloader")
     add_deps("driver")
-    
+    add_files(
+        csdk_root.."/PLAT/core/code/boot_code.c",
+        csdk_root.."/PLAT/core/code/fota_code.c")
+
+    local chip_target = get_config("chip_target")
+
     if chip_target and lib_ps_plat then
 
         if chip_target=="ec718u" and lib_ps_plat=="ims" then
