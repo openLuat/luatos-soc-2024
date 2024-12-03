@@ -397,7 +397,8 @@ target(project_name..".elf",function()
         os.exec(csdk_root .. (is_plat("windows") and "/PLAT/tools/fcelf.exe " or "/PLAT/tools/fcelf ")..
                 "-C -bin ".."$(buildir)/"..project_name.."/"..project_name.."_unZip.bin".. 
                 " -cfg ".. csdk_root .. "/PLAT/device/target/board/ec7xx_0h00/ap/gcc/sectionInfo_"..((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6))..".json".. 
-                " -map ".."$(buildir)/"..project_name.."/"..project_name.. "_$(mode).map".." -out ".."$(buildir)/"..project_name.."/" .. project_name .. ".bin")
+                " -map ".."$(buildir)/"..project_name.."/"..project_name.. "_$(mode).map"..
+                " -out ".."$(buildir)/"..project_name.."/" .. project_name .. ".bin")
 
         os.cp("$(buildir)/"..project_name.."/*.bin", out_path)
 		os.cp("$(buildir)/"..project_name.."/*.map", out_path)
@@ -411,13 +412,17 @@ target(project_name..".elf",function()
         os.cp("$(buildir)/"..project_name.."/" .. project_name .. ".bin", "$(buildir)/"..project_name.."/ap.bin")
         ---------------------------------------------------------
         -------------- 这部分尚不能跨平台 -------------------------
+
+        local PKG_PRODUCT = (((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6)):upper()).."_PRD"
         local binpkg = csdk_root..(is_plat("windows") and "/PLAT/tools/fcelf.exe " or "/PLAT/tools/fcelf ")..
                         "-M -input $(buildir)/ap_bootloader/ap_bootloader.bin -addrname BL_PKGIMG_LNA -flashsize BOOTLOADER_PKGIMG_LIMIT_SIZE \
                         -input $(buildir)/"..project_name.."/ap.bin -addrname AP_PKGIMG_LNA -flashsize AP_PKGIMG_LIMIT_SIZE \
-                        -input "..csdk_root.."/PLAT/prebuild/FW/lib/gcc/"..((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6)).."/"..target:values("lib_fw").."/cp-demo-flash.bin -addrname CP_PKGIMG_LNA -flashsize CP_PKGIMG_LIMIT_SIZE \
+                        -input "..csdk_root.."/PLAT/prebuild/FW/lib/gcc/"..
+                                ((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6))..
+                                "/"..target:values("lib_fw").."/cp-demo-flash.bin -addrname CP_PKGIMG_LNA -flashsize CP_PKGIMG_LIMIT_SIZE \
                         -pkgmode 1 \
                         -banoldtool 1 \
-                        -productname "..((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6):upper()).."_PRD \
+                        -productname "..PKG_PRODUCT.." \
                         -def "..out_path .. "/mem_map.txt \
                         -outfile " .. out_path.."/"..project_name..".binpkg"
 
