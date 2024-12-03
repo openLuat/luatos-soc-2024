@@ -80,7 +80,7 @@ target("ap_bootloader.elf",function()
 
     if has_config("chip_target") then 
         chip_target = get_config("chip_target") 
-        LIB_PRODUCT = ((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6))
+        LIB_PRODUCT = ((chip_target == "ec718um" and "ec718um") or (chip_target == "ec718hm" and "ec718hm") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6))
         set_values("LIB_PRODUCT", LIB_PRODUCT)
     end
     if chip_target and lib_ps_plat then
@@ -89,6 +89,8 @@ target("ap_bootloader.elf",function()
             add_linkdirs(csdk_root.."/PLAT/libs/ec718u-ims/bootloader")
         elseif chip_target=="ec718um" and lib_ps_plat=="ims" then
             add_linkdirs(csdk_root.."/PLAT/libs/ec718um-ims/bootloader")
+        elseif chip_target=="ec718hm" and lib_ps_plat=="ims" then
+            add_linkdirs(csdk_root.."/PLAT/libs/ec718hm-ims/bootloader")
         else
             add_linkdirs(csdk_root.."/PLAT/libs/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(lib_ps_plat=="mid"and"-mid"or"").."/bootloader")
         end
@@ -102,7 +104,7 @@ target("ap_bootloader.elf",function()
                     {whole = true, group = true})
 
     if chip_target then
-        if chip_target=="ec718um" then
+        if chip_target=="ec718um" or chip_target == "ec718hm" then
             add_ldflags("-T"..csdk_root.."/PLAT/core/ld/ec718xm/ec7xx_0h00_flash_bl.ld","-Wl,-Map,"..project_dir.."/build/ap_bootloader/ap_bootloader_debug.map",{force = true})
         else
             add_ldflags("-T"..csdk_root.."/PLAT/core/ld/ec7xx_0h00_flash_bl.ld","-Wl,-Map,"..project_dir.."/build/ap_bootloader/ap_bootloader_debug.map",{force = true})
@@ -137,7 +139,7 @@ target("ap_bootloader.elf",function()
         end
 
         if chip_target then
-            if chip_target=="ec718um" then
+            if chip_target=="ec718um" or chip_target == "ec718hm" then
                 os.execv(toolchains .. "/arm-none-eabi-gcc",
                 table.join(ld_parameter,user_mem_map, 
                             {"-I",csdk_root .. "/PLAT/device/target/board/ec7xx_0h00/common/pkginc"},
@@ -177,7 +179,7 @@ target("ap_bootloader.elf",function()
         io.writefile(project_dir.."/build/ap_bootloader/ap_bootloader.size", os.iorun(toolchains .. "/arm-none-eabi-objdump -h "..project_dir.."/build/ap_bootloader/ap_bootloader.elf"))
         local size_file = io.open(project_dir.."/build/ap_bootloader/ap_bootloader.size", "a")
         size_file:write(os.iorun(toolchains .. "/arm-none-eabi-size -G "..project_dir.."/build/ap_bootloader/ap_bootloader.elf"))
-        if LIB_PRODUCT == "ec718p" or LIB_PRODUCT == "ec718u" or LIB_PRODUCT == "ec718um" then 
+        if LIB_PRODUCT == "ec718p" or LIB_PRODUCT == "ec718u" or LIB_PRODUCT == "ec718um" or LIB_PRODUCT == "ec718hm" then 
             size_file:write(os.iorun(toolchains .. "/arm-none-eabi-size -t -G "..csdk_root.."/lib/libffota_eflash.a")) 
         end
         size_file:write(os.iorun(toolchains .. "/arm-none-eabi-size -t -G "..project_dir.."/build/bootloader_libdriver/libdriver.a"))

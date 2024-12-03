@@ -267,7 +267,7 @@ target(project_name..".elf",function()
 
     if has_config("chip_target") then 
         chip_target = get_config("chip_target") 
-        LIB_PRODUCT = ((chip_target == "ec718um" and "ec718um") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6))
+        LIB_PRODUCT = ((chip_target == "ec718um" and "ec718um") or (chip_target == "ec718hm" and "ec718hm") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6))
         set_values("LIB_PRODUCT", LIB_PRODUCT)
     end
 
@@ -276,12 +276,12 @@ target(project_name..".elf",function()
         add_linkdirs(csdk_root.."/PLAT/prebuild/PS/lib/gcc/"..LIB_PRODUCT.."/"..lib_ps_plat)
         add_linkdirs(csdk_root.."/PLAT/prebuild/PLAT/lib/gcc/"..LIB_PRODUCT.."/"..lib_ps_plat)
         
-        if (chip_target=="ec718u" or chip_target=="ec718um") and lib_ps_plat=="ims" then
+        if (chip_target=="ec718u" or chip_target=="ec718um" or chip_target=="ec718hm") and lib_ps_plat=="ims" then
             add_linkdirs(csdk_root.."/PLAT/libs/"..(chip_target)..("-ims"))
         else
             add_linkdirs(csdk_root.."/PLAT/libs/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(lib_ps_plat=="mid"and"-mid"or""))
         end
-        if (chip_target=="ec718u" or chip_target=="ec718um") and lib_ps_plat=="ims" or chip_target=="ec718pv" then
+        if (chip_target=="ec718u" or chip_target=="ec718um" or chip_target=="ec718hm") and lib_ps_plat=="ims" or chip_target=="ec718pv" then
             add_linkgroups("imsnv","ims","imsxml", {whole = true})
         end
     end
@@ -295,7 +295,7 @@ target(project_name..".elf",function()
 
     add_linkgroups(project_name, {whole = true})
     if chip_target then
-        if chip_target=="ec718um" then
+        if chip_target=="ec718um" or chip_target == "ec718hm" then
             add_ldflags("-T"..csdk_root.."/PLAT/core/ld/ec7xxxm_0h00_flash.ld",
                         "-Wl,-Map,"..project_dir.."/build/"..project_name.."/"..project_name.."_$(mode).map",{force = true})
         else
@@ -351,7 +351,7 @@ target(project_name..".elf",function()
         end
 
         if chip_target then
-            if chip_target=="ec718um" then
+            if chip_target=="ec718um" or chip_target == "ec718hm" then
                 os.execv(toolchains .. "/arm-none-eabi-gcc",
                         table.join(ld_parameter,user_mem_map, 
                             {"-I",csdk_root .. "/PLAT/device/target/board/ec7xx_0h00/common/pkginc"},
@@ -420,7 +420,7 @@ target(project_name..".elf",function()
 		os.cp("$(buildir)/"..project_name.."/*.map", out_path)
 		os.cp("$(buildir)/"..project_name.."/*.elf", out_path)
 		
-        if chip_target=="ec718u" or chip_target=="ec718um" and target:values("lib_ps_plat")=="ims" then
+        if chip_target=="ec718u" or chip_target=="ec718um" or chip_target == "ec718hm" and target:values("lib_ps_plat")=="ims" then
             os.cp(csdk_root .. "/PLAT/tools/"..(chip_target)..("-ims").."/comdb.txt", out_path)
         else
             os.cp(csdk_root .. "/PLAT/tools/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(target:values("lib_ps_plat")=="mid"and"-mid"or"").."/comdb.txt", out_path)
