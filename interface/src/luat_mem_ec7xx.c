@@ -40,7 +40,60 @@
 extern void GetSRAMHeapInfo(uint32_t *total, uint32_t *alloc, uint32_t *peak);
 extern void GetPSRAMHeapInfo(uint32_t *total, uint32_t *alloc, uint32_t *peak);
 
-#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1) && (!defined TYPE_EC718M)
+#ifdef TYPE_EC718M
+
+void* luat_heap_malloc(size_t len) {
+    return malloc(len);
+}
+
+void* luat_heap_zalloc(size_t _size) {
+	return calloc(1, _size);
+}
+
+void luat_heap_free(void* ptr) {
+	if ((uint32_t)ptr >= PSRAM_P2_START_ADDR && (uint32_t)ptr <= (PSRAM_P2_START_ADDR + PSRAM_P2_LENGTH)) {
+		free(ptr);
+		return ;
+	}
+	DBG("invaild ptr %p", ptr);
+}
+
+void* luat_heap_realloc(void* ptr, size_t len) {
+    return realloc(ptr, len);
+}
+
+void* luat_heap_calloc(size_t count, size_t _size) {
+    return calloc(count, _size);
+}
+
+void luat_meminfo_sys(size_t *total, size_t *used, size_t *max_used) {
+	GetSRAMHeapInfo(total, used, max_used);
+}
+
+
+
+void* luat_heap_opt_malloc(LUAT_HEAP_TYPE_E type,size_t len){
+	return malloc(len);
+}
+
+void luat_heap_opt_free(LUAT_HEAP_TYPE_E type,void* ptr){
+	luat_heap_free(ptr);
+}
+
+void* luat_heap_opt_realloc(LUAT_HEAP_TYPE_E type,void* ptr, size_t len){
+	return realloc(ptr, len);
+}
+
+void* luat_heap_opt_zalloc(LUAT_HEAP_TYPE_E type,size_t size){
+	return calloc(1, size);
+}
+
+void luat_meminfo_opt_sys(LUAT_HEAP_TYPE_E type,size_t* total, size_t* used, size_t* max_used){
+	GetSRAMHeapInfo(total, used, max_used);
+}
+
+#else
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
 static llist_head prv_psram_record_list_head;
 typedef struct
 {
@@ -145,7 +198,7 @@ void luat_heap_free(void* ptr) {
 		free(ptr);
 		return ;
 	}
-#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1) && (!defined TYPE_EC718M)
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
 	if ((uint32_t)ptr > PSRAM_START_ADDR && (uint32_t)ptr <= PSRAM_END_ADDR) {
 		psram_free(ptr);
 		return ;
@@ -170,7 +223,7 @@ void luat_meminfo_sys(size_t *total, size_t *used, size_t *max_used) {
 
 void* luat_heap_opt_malloc(LUAT_HEAP_TYPE_E type,size_t len){
 	if (type == LUAT_HEAP_AUTO){
-#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1) && (!defined TYPE_EC718M)
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
 		void* _ptr = psram_malloc(len);
 		if (_ptr) return _ptr;
 		else
@@ -178,7 +231,7 @@ void* luat_heap_opt_malloc(LUAT_HEAP_TYPE_E type,size_t len){
 			return malloc(len);
 	}
 	else if(type == LUAT_HEAP_SRAM) return malloc(len);
-#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1) && (!defined TYPE_EC718M)
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
 	else if(type == LUAT_HEAP_PSRAM) return psram_malloc(len);
 #endif
 	else return NULL;
@@ -206,7 +259,7 @@ void* luat_heap_opt_realloc(LUAT_HEAP_TYPE_E type,void* ptr, size_t len){
 
 void* luat_heap_opt_zalloc(LUAT_HEAP_TYPE_E type,size_t size){
 	if (type == LUAT_HEAP_AUTO){
-#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1) && (!defined TYPE_EC718M)
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
 		void* _ptr = psram_malloc(size);
 		if (_ptr)
 		{
@@ -218,7 +271,7 @@ void* luat_heap_opt_zalloc(LUAT_HEAP_TYPE_E type,size_t size){
 			return calloc(1, size);
 	}
 	else if(type == LUAT_HEAP_SRAM) return calloc(1, size);
-#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1) && (!defined TYPE_EC718M)
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
 	else if(type == LUAT_HEAP_PSRAM)
 	{
 		void* _ptr = psram_malloc(size);
@@ -240,4 +293,4 @@ void luat_meminfo_opt_sys(LUAT_HEAP_TYPE_E type,size_t* total, size_t* used, siz
 #endif
 		GetSRAMHeapInfo(total, used, max_used);
 }
-
+#endif
