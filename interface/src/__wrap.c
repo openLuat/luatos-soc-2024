@@ -2,22 +2,9 @@
 #include "time.h"
 #include "osasys.h"
 #include "mw_aon_info.h"
+#include "slpman.h"
+
 extern MidWareAonInfo      *pMwAonInfo;
-//static void RTC_GetDateTime(Date_UserDataStruct *pDate, Time_UserDataStruct *pTime)
-//{
-//	PV_Union uPV;
-//	utc_timer_value_t *timeUtc = OsaSystemTimeReadRamUtc();
-//	uPV.u32 = timeUtc->UTCtimer1;
-//	pDate->Year = uPV.u16[1];
-//	pDate->Mon = uPV.u8[1];
-//	pDate->Day = uPV.u8[0];
-//	uPV.u32 = timeUtc->UTCtimer2;
-//	pTime->Hour = uPV.u8[3];
-//	pTime->Min = uPV.u8[2];
-//	pTime->Sec = uPV.u8[1];
-//	//DBG("%d,%d,%d,%d,%d,%d",pDate->Year,pDate->Mon,pDate->Day,pTime->Hour,pTime->Min,pTime->Sec);
-//	//Tamp2UTC(timeUtc->UTCsecs, pDate, pTime, 0);
-//}
 
 static struct tm prvTM;
 extern const uint32_t DayTable[2][12];
