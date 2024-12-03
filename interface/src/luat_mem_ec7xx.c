@@ -40,7 +40,7 @@
 extern void GetSRAMHeapInfo(uint32_t *total, uint32_t *alloc, uint32_t *peak);
 extern void GetPSRAMHeapInfo(uint32_t *total, uint32_t *alloc, uint32_t *peak);
 
-#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1) && (!defined TYPE_EC718M)
 static llist_head prv_psram_record_list_head;
 typedef struct
 {
@@ -145,7 +145,7 @@ void luat_heap_free(void* ptr) {
 		free(ptr);
 		return ;
 	}
-#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1) && (!defined TYPE_EC718M)
 	if ((uint32_t)ptr > PSRAM_START_ADDR && (uint32_t)ptr <= PSRAM_END_ADDR) {
 		psram_free(ptr);
 		return ;
@@ -170,7 +170,7 @@ void luat_meminfo_sys(size_t *total, size_t *used, size_t *max_used) {
 
 void* luat_heap_opt_malloc(LUAT_HEAP_TYPE_E type,size_t len){
 	if (type == LUAT_HEAP_AUTO){
-#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1) && (!defined TYPE_EC718M)
 		void* _ptr = psram_malloc(len);
 		if (_ptr) return _ptr;
 		else
@@ -178,7 +178,7 @@ void* luat_heap_opt_malloc(LUAT_HEAP_TYPE_E type,size_t len){
 			return malloc(len);
 	}
 	else if(type == LUAT_HEAP_SRAM) return malloc(len);
-#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1) && (!defined TYPE_EC718M)
 	else if(type == LUAT_HEAP_PSRAM) return psram_malloc(len);
 #endif
 	else return NULL;
@@ -206,7 +206,7 @@ void* luat_heap_opt_realloc(LUAT_HEAP_TYPE_E type,void* ptr, size_t len){
 
 void* luat_heap_opt_zalloc(LUAT_HEAP_TYPE_E type,size_t size){
 	if (type == LUAT_HEAP_AUTO){
-#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1) && (!defined TYPE_EC718M)
 		void* _ptr = psram_malloc(size);
 		if (_ptr)
 		{
@@ -218,7 +218,7 @@ void* luat_heap_opt_zalloc(LUAT_HEAP_TYPE_E type,size_t size){
 			return calloc(1, size);
 	}
 	else if(type == LUAT_HEAP_SRAM) return calloc(1, size);
-#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1) && (!defined TYPE_EC718M)
 	else if(type == LUAT_HEAP_PSRAM)
 	{
 		void* _ptr = psram_malloc(size);
