@@ -47,7 +47,7 @@
 #include "luat_http.h"
 #include "luat_mem.h"
 
-// #define OTA_BY_HTTP		//OTA文件通过自定义HTTP服务器下载
+//#define OTA_BY_HTTP		//OTA文件通过自定义HTTP服务器下载
 // #define OTA_BY_IOT		//OTA文件通过合宙IOT服务器下载
 #define OTA_BY_USB			//OTA文件通过USB虚拟串口下载，打开串口工具时需要勾选DTR或者RTS，否则模块发不出同步码
 #define UART_ID LUAT_VUART_ID_0
@@ -109,6 +109,14 @@ static void luat_ymodem_cb(uint8_t *data, uint32_t data_len)
 }
 
 #else
+
+typedef struct
+{
+	luat_http_ctrl_t *http;
+	uint32_t http_data_cnt;
+	luat_rtos_task_handle task_handle;
+}http_download_ctrl_t;
+
 enum
 {
 	OTA_HTTP_GET_HEAD_DONE = 1,
@@ -131,10 +139,11 @@ static void luatos_mobile_event_callback(LUAT_MOBILE_EVENT_E event, uint8_t inde
 static void luatos_http_cb(int status, void *data, uint32_t len, void *param)
 {
 	uint8_t *ota_data;
+	http_download_ctrl_t *download = (http_download_ctrl_t *)param;
 	if (status < 0)
 	{
 		LUAT_DEBUG_PRINT("http failed! %d", status);
-		luat_rtos_event_send(param, OTA_HTTP_FAILED, 0, 0, 0, 0);
+		luat_rtos_event_send(download->task_handle, OTA_HTTP_FAILED, 0, 0, 0, 0);
 		return;
 	}
 	switch(status)
@@ -144,11 +153,20 @@ static void luatos_http_cb(int status, void *data, uint32_t len, void *param)
 		{
 			ota_data = luat_heap_malloc(len);
 			memcpy(ota_data, data, len);
-			luat_rtos_event_send(param, OTA_HTTP_GET_DATA, (uint32_t)ota_data, len, 0, 0);
+			luat_rtos_event_send(download->task_handle, OTA_HTTP_GET_DATA, (uint32_t)ota_data, len, 0, 0);
+			download->http_data_cnt++;
+			//对下载速度进行控制，如果下载速度过快，会导致ram耗尽出错
+			if (download->http_data_cnt > 6)
+			{
+				if (!download->http->is_pause)
+				{
+					luat_http_client_pause(download->http, 1);
+				}
+			}
 		}
 		else
 		{
-			luat_rtos_event_send(param, OTA_HTTP_GET_DATA_DONE, 0, 0, 0, 0);
+			luat_rtos_event_send(download->task_handle, OTA_HTTP_GET_DATA_DONE, 0, 0, 0, 0);
 		}
 		break;
 	case HTTP_STATE_GET_HEAD:
@@ -158,7 +176,7 @@ static void luatos_http_cb(int status, void *data, uint32_t len, void *param)
 		}
 		else
 		{
-			luat_rtos_event_send(param, OTA_HTTP_GET_HEAD_DONE, 0, 0, 0, 0);
+			luat_rtos_event_send(download->task_handle, OTA_HTTP_GET_HEAD_DONE, 0, 0, 0, 0);
 		}
 		break;
 	case HTTP_STATE_IDLE:
@@ -247,9 +265,12 @@ static void luat_test_task(void *param)
 		如果为了方便调试，可以设置为LUAT_DEBUG_FAULT_HANG，出现异常后死机不重启
 		但量产出货一定要设置为出现异常重启！！！！！！！！！1
 	*/
+	http_download_ctrl_t download;
 	luat_debug_set_fault_mode(LUAT_DEBUG_FAULT_HANG);
 	size_t all,now_free_block,min_free_block,done_len;
-	luat_http_ctrl_t *http = luat_http_client_create(luatos_http_cb, luat_rtos_get_current_handle(), -1);
+	download.http_data_cnt = 0;
+	download.task_handle = luat_rtos_get_current_handle();
+	download.http = luat_http_client_create(luatos_http_cb, &download, -1);
 	luat_fota_init(0, 0, NULL, NULL, 0);
 	//自建服务器，就随意命名了
 #ifdef OTA_BY_HTTP
@@ -263,38 +284,30 @@ static void luat_test_task(void *param)
     luat_mobile_get_imei(0, imei, 15);
 	snprintf_(remote_domain, 200, "http://iot.openluat.com/api/site/firmware_upgrade?project_key=%s&imei=%s&device_key=&firmware_name=%s_LuatOS_CSDK_EC7XX&version=%s", PROJECT_KEY, imei, PROJECT_NAME, PROJECT_VERSION);
 #endif
-	luat_http_client_start(http, remote_domain, 0, 0, 1);
+	luat_http_client_start(download.http, remote_domain, 0, 0, 1);
 	while (1)
 	{
-		luat_rtos_event_recv(g_s_task_handle, 0, &event, NULL, LUAT_WAIT_FOREVER);
+		luat_rtos_event_recv(download.task_handle, 0, &event, NULL, LUAT_WAIT_FOREVER);
 		switch(event.id)
 		{
 		case OTA_HTTP_GET_HEAD_DONE:
 			done_len = 0;
-			DBG("status %d total %u", luat_http_client_get_status_code(http), http->context_len);
+			DBG("status %d total %u", luat_http_client_get_status_code(download.http), download.http->context_len);
 			break;
 		case OTA_HTTP_GET_DATA:
-			//对下载速度进行控制，如果下载速度过快，会导致ram耗尽出错
-			luat_meminfo_sys(&all, &now_free_block, &min_free_block);
-			if ((all - now_free_block) < 120 * 1024 )
-			{
-				if (!http->is_pause)
-				{
-					luat_http_client_pause(http, 1);
-				}
-				LUAT_DEBUG_PRINT("meminfo %d,%d,%d",all,now_free_block,min_free_block);
-			}
-			else if ((all - now_free_block) > 180 * 1024 )
-			{
-				if (http->is_pause)
-				{
-					luat_http_client_pause(http, 0);
-				}
-			}
 //			LUAT_DEBUG_PRINT("meminfo %d,%d,%d",all,now_free_block,min_free_block);
 			done_len += event.param2;
 			result = luat_fota_write((uint8_t *)event.param1, event.param2);
 			luat_heap_free((uint8_t *)event.param1);
+			//对下载速度进行控制，如果下载速度过快，会导致ram耗尽出错
+			if (download.http_data_cnt)
+			{
+				download.http_data_cnt--;
+				if ((download.http_data_cnt < 2) && download.http->is_pause)
+				{
+					luat_http_client_pause(download.http, 0);
+				}
+			}
 			break;
 		case OTA_HTTP_GET_DATA_DONE:
 			is_error = luat_fota_done();
@@ -314,8 +327,8 @@ static void luat_test_task(void *param)
 
 OTA_DOWNLOAD_END:
 	LUAT_DEBUG_PRINT("full ota 测试失败");
-	luat_http_client_close(http);
-	luat_http_client_destroy(&http);
+	luat_http_client_close(download.http);
+	luat_http_client_destroy(&download.http);
 	luat_meminfo_sys(&all, &now_free_block, &min_free_block);
 	LUAT_DEBUG_PRINT("meminfo %d,%d,%d",all,now_free_block,min_free_block);
 	while(1)
