@@ -36,6 +36,12 @@ function description_csdk()
                         "-flto-partition=none",
                         "-Wno-lto-type-mismatch",
                         {force=true})
+            add_ldflags("-flto",
+                        "-fuse-linker-plugin",
+                        "-ffat-lto-objects",
+                        "-flto-partition=none",
+                        "-Wno-lto-type-mismatch",
+                        {force=true})
         end 
 
         if lib_ps_plat == "mid" then
