@@ -242,6 +242,10 @@ int luat_pwm_open(int channel, size_t freq,  size_t pulse, int pnum) {
 #endif
     	}
 	}
+#if defined(TIMER_IP_VERSION_B1)
+    EIGEN_TIMER(channel)->TCUMR = TIMER_TCUMR_MODE_Msk;
+    EIGEN_TIMER(channel)->TCUR = TIMER_TCUR_UPDATE_Msk;
+#endif
     TIMER_start(channel);
     return 0;
 }
@@ -253,6 +257,8 @@ int luat_pwm_update_dutycycle(int channel,size_t pulse)
 	uint64_t temp = period;
 	temp *= pulse;
 	uint32_t low_cnt = period - temp / 1000;
+#if defined(TIMER_IP_VERSION_B1)
+#else
 	if (g_s_pwm_table[channel].update_period)
 	{
 		while (EIGEN_TIMER(channel)->TACR > 5) {;}
@@ -262,6 +268,7 @@ int luat_pwm_update_dutycycle(int channel,size_t pulse)
 	{
 		while (EIGEN_TIMER(channel)->TACR <= EIGEN_TIMER(channel)->TMR[0]) {;}
 	}
+#endif
 	switch(pulse)
 	{
 	case 0:
