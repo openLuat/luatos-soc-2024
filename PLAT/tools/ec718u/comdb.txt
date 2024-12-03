@@ -1,8 +1,8 @@
 DbVersion
-193095588,100
+294078125,100
 <end>
 BuildInfo
-The current data file was built by the Application Ver. 2.2.81.216, Tue Dec  3 11:04:14 2024
+The current data file was built by the Application Ver. 2.2.81.216, Tue Dec  3 13:34:25 2024
 <end>
 EnumVals
 0,0,0,0,PHY_ONLINE,PHY_ICS_MODULE,PhyIcsMeasMainEntrance_0,P_INFO,swLogPrintf("ICS MEAS of euArfcn %d will be started ");
@@ -4760,11 +4760,9 @@ c9b5d99f6262cfa9521e693b9f65083f47d9eb22503d8804c1a9a66903479a3c0ea8394e8a8f2df6
 303104,620830976,0,0,PLAT_AP,TCPIP_DHCPD,DhcpdStop_2,P_INFO,swLogPrintf("dhcp server stop success netif %c%u ");
 303104,620834815,0,0,PLAT_AP,TCPIP_DHCPD,DhcpdGetLeaseAddr_1,P_ERROR,swLogPrintf("DHCPdGetLeaseAddr netif point is invalid ");
 305152,624953343,0,0,PLAT_AP,TCPIP_PKG_DUMP,tcpip_ps_ul,P_VALUE,swLogDumpPolling("PS UL : ");
-305152,624955391,0,0,PLAT_AP,TCPIP_PKG_DUMP,tcpip_ppp_ul,P_VALUE,swLogDump("PPP UL : ");
-305152,624957439,0,0,PLAT_AP,TCPIP_PKG_DUMP,tcpip_rndis_ul,P_VALUE,swLogDump("RNDIS UL : ");
-305152,624959487,0,0,PLAT_AP,TCPIP_PKG_DUMP,tcpip_ps_dl,P_VALUE,swLogDumpPolling("PS DL : ");
-305152,624961535,0,0,PLAT_AP,TCPIP_PKG_DUMP,tcpip_ppp_dl,P_VALUE,swLogDump("PPP DL : ");
-305152,624963583,0,0,PLAT_AP,TCPIP_PKG_DUMP,tcpip_rndis_dl,P_VALUE,swLogDump("RNDIS DL : ");
+305152,624955391,0,0,PLAT_AP,TCPIP_PKG_DUMP,tcpip_rndis_ul,P_VALUE,swLogDump("RNDIS UL : ");
+305152,624957439,0,0,PLAT_AP,TCPIP_PKG_DUMP,tcpip_ps_dl,P_VALUE,swLogDumpPolling("PS DL : ");
+305152,624959487,0,0,PLAT_AP,TCPIP_PKG_DUMP,tcpip_rndis_dl,P_VALUE,swLogDump("RNDIS DL : ");
 306176,627050495,0,0,PLAT_AP,ROHC,PsifCreateRohcCallback_dis_w_1,P_WARNING,swLogPrintf("PSIF ROHC , ROHC not enable , can ' t create ROHC channel ");
 306176,627052543,0,0,PLAT_AP,ROHC,PsifResetRohcCallback_dis_w_1,P_WARNING,swLogPrintf("PSIF ROHC , ROHC not enable , can ' t reset ROHC channel ");
 306176,627054591,0,0,PLAT_AP,ROHC,PsifCompressRohcCallback_dis_w_1,P_WARNING,swLogPrintf("PSIF ROHC , ROHC not enable , can ' t comp ");
@@ -9883,5 +9881,5 @@ MW_INFO_PHY_EDRX_PARAM,midWareNvmInfoPhyEdrxParam
 plat_config,plat_config_fs_t
 <end>
 OptionalSegment
-optional_sk_01,48A7B2BFECCF60CD0A56AA86413FA979B0A1BAC279BE70ADE7A58B9719905CD5
+optional_sk_01,FAAB0582A093B2BBFE6D67DBD0A1E7429CB1337D00FA2B573E6962F9EBD47F5C
 <end>
