@@ -334,6 +334,10 @@ function description_common()
         -- print("libs_plat:",libs_plat)
         local libs_plat_dir = csdk_root.."/PLAT/libs/"..libs_plat
         local metas_table = json.loadfile(csdk_root.."/PLAT/libs/metas.json")
+        if metas_table["libs"][libs_plat] == nil then
+            print("当前metas.json不支持该配置项 " .. libs_plat)
+            return
+        end
         local plat_sha1 = metas_table["libs"][libs_plat]["sha1"]
 
         local libs_prebuild_dir = csdk_root.."/PLAT/prebuild/"
