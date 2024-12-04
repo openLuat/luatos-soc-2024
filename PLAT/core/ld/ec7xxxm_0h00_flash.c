@@ -101,6 +101,7 @@ SECTIONS
         Load$$LOAD_AP_PSRAM_P2_DATA$$Base = LOADADDR(.load_ap_psram_p2_data);
         Image$$LOAD_AP_PSRAM_P2_DATA$$Base = .;
         *(.cust_sect_ap_psram_p2_data.*)
+        *(EXCLUDE_FILE(*libc*.a) .data*)
         . = ALIGN(4);
     } >PSRAM_P2_AREA AT>FLASH_AREA
     Image$$LOAD_AP_PSRAM_P2_DATA$$Length = SIZEOF(.load_ap_psram_p2_data);
@@ -110,6 +111,7 @@ SECTIONS
         . = ALIGN(4);
         Image$$LOAD_AP_PSRAM_P2_ZI$$Base = .;
         *(.cust_sect_ap_psram_p2_bss.*)
+        *(EXCLUDE_FILE(*libc*.a) .bss*)
         . = ALIGN(4);
         Image$$LOAD_AP_PSRAM_P2_ZI$$Limit = .;
     } >PSRAM_P2_AREA
@@ -393,7 +395,7 @@ SECTIONS
         *(.sect_hal_adcproxy_data.*)
         *(.sect_hal_alarm_data.*)
         *(.sect_excep_dump_data.*)
-        *(.data*)
+        *(*libc*.a .data*)
         . = ALIGN(4);
     } >PSRAM_P0_AREA AT>FLASH_AREA
     Image$$LOAD_PPSRAM_P0_BSP_DATA$$Length = SIZEOF(.load_ap_ppsram_p0_bsp_data);
@@ -433,7 +435,7 @@ SECTIONS
         *(.sect_alarm_bss.*)
         *(.sect_excep_dump_bss.*)
         *(.recordNodeZI)
-        *(.bss*)
+        *(*libc*.a .bss*)
         . = ALIGN(4);
         Image$$LOAD_PPSRAM_P0_BSP$$ZI$$Limit = .;
     } >PSRAM_P0_AREA

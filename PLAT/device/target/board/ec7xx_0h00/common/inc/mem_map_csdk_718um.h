@@ -327,11 +327,11 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 #if defined (FEATURE_AMR_CP_ENABLE) && defined (FEATURE_VEM_CP_ENABLE)
 #define PSRAM_AREA_P0_CP_OFFSET         (0x4e400)
 #define PSRAM_AREA_P1_OFFSET            (0x4e400)
-#define PSRAM_AREA_P2_OFFSET            (0x00180000)
+#define PSRAM_AREA_P2_OFFSET            (0x00140000)
 #else
 #define PSRAM_AREA_P0_CP_OFFSET         (0x34400)
 #define PSRAM_AREA_P1_OFFSET            (0x34400)
-#define PSRAM_AREA_P2_OFFSET            (0x00140000)
+#define PSRAM_AREA_P2_OFFSET            (0x00E0000)
 #endif
 
 
