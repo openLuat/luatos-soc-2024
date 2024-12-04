@@ -101,7 +101,7 @@ function description_common()
             add_defines("CHIP_EC718","TYPE_EC718M","TYPE_EC718UM")
         elseif chip_target == "ec718hm" then
             add_defines("CHIP_EC718","TYPE_EC718M","TYPE_EC718HM")
-        elseif chip_target == "ec718hm" then
+        elseif chip_target == "ec718pm" then
             add_defines("CHIP_EC718","TYPE_EC718M","TYPE_EC718PM")
         end
 
