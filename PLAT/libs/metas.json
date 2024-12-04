@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "update_time": "2024-12-03 13:48:31.401549",
+  "update_time": "2024-12-04 09:16:37.636072",
   "libs": {
     "ec718u": {
       "sha1": "186c9c4094e583633856557a5b5f011d041dfff8",
@@ -21,6 +21,10 @@
     "ec718hm": {
       "sha1": "1e8ea8814b369c917cd62f1927d264de6bec861f",
       "size": 7273895
+    },
+    "ec718pm": {
+      "sha1": "b53412ae8f833c9ba8fdcc2b72e3cae260c3f9d8",
+      "size": 7285932
     },
     "ec718p": {
       "sha1": "bfd1ae115d8e221bafb7e2130f05f93323ccc00d",
