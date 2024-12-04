@@ -51,7 +51,11 @@ void* luat_heap_zalloc(size_t _size) {
 }
 
 void luat_heap_free(void* ptr) {
+#ifdef __LUATOS__
+	if ((uint32_t)ptr >= (PSRAM_P2_START_ADDR|PSRAM_PCACHE2_BASE + LUAT_HEAP_SIZE) && (uint32_t)ptr <= PSRAM_END_ADDR) {
+#else
 	if ((uint32_t)ptr >= (PSRAM_P2_START_ADDR|PSRAM_PCACHE2_BASE) && (uint32_t)ptr <= PSRAM_END_ADDR) {
+#endif
 		free(ptr);
 		return ;
 	}
@@ -90,6 +94,16 @@ void* luat_heap_opt_zalloc(LUAT_HEAP_TYPE_E type,size_t size){
 
 void luat_meminfo_opt_sys(LUAT_HEAP_TYPE_E type,size_t* total, size_t* used, size_t* max_used){
 	GetSRAMHeapInfo(total, used, max_used);
+}
+
+__USER_FUNC_IN_RAM__ void *pvPortMallocEC_Psram( size_t xWantedSize, unsigned int funcPtr )
+{
+	return pvPortMallocEC(xWantedSize, funcPtr);
+}
+
+__USER_FUNC_IN_RAM__ void  vPortFree_Psram( void *pv )
+{
+	vPortFree(pv);
 }
 
 #else
