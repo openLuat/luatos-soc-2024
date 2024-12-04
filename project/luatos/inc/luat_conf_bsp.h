@@ -277,7 +277,7 @@
 
 #ifdef TYPE_EC718M
 #undef LUAT_HEAP_SIZE
-#define LUAT_HEAP_SIZE (600*1024)
+#define LUAT_HEAP_SIZE (800*1024)
 #endif
 
 #endif

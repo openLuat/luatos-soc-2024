@@ -209,11 +209,13 @@
 
 // 启用64位虚拟机
 // #define LUAT_CONF_VM_64bit
-
+#if (defined TYPE_EC718U) ||(defined TYPE_EC718UM) ||(defined TYPE_EC718HM)
+#define FLASH_SIZE_8M
+#endif
 #ifndef LUAT_SCRIPT_SIZE
 
 
-#if defined TYPE_EC718U
+#ifdef FLASH_SIZE_8M
 #define LUAT_SCRIPT_SIZE 512
 #define LUAT_SCRIPT_OTA_SIZE 360
 #else
@@ -261,7 +263,7 @@
 #define LUAT_USE_TTS_ONLY
 #endif
 
-#if defined TYPE_EC718U
+#ifdef FLASH_SIZE_8M
 #ifndef LUAT_USE_FATFS_CHINESE
 #define LUAT_USE_FATFS_CHINESE
 #endif
