@@ -32,8 +32,8 @@ static uint8_t* vmheap;
 #ifndef LUAT_HEAP_SIZE
 #define LUAT_HEAP_SIZE (200*1024)
 #endif
-#ifdef TPYE_EC718M
-static PLAT_FPSRAM_ZI_CUST uint8_t vmheap[LUAT_HEAP_SIZE] __attribute__((aligned(8)));
+#ifdef TYPE_EC718M
+static  __attribute__((__section__(".cust_sect_ap_psram_p2_bss.vmheap"))) uint8_t vmheap[LUAT_HEAP_SIZE] __attribute__((aligned(8)));
 #else
 static uint8_t vmheap[LUAT_HEAP_SIZE] __attribute__((aligned(8)));
 #endif

@@ -276,9 +276,8 @@
 #endif
 
 #ifdef TYPE_EC718M
-#ifndef LUAT_USE_PSRAM_AS_LUAHEAP
-#define LUAT_USE_PSRAM_AS_LUAHEAP 1
-#endif
+#undef LUAT_HEAP_SIZE
+#define LUAT_HEAP_SIZE (600*1024)
 #endif
 
 #endif
