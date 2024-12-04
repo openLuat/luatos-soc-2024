@@ -17,8 +17,11 @@ target(project_name,function()
     add_linkgroups("mp3", {whole = true,public = true})
     
     on_config(function(target)
-        assert (chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718e" or chip_target == "ec716e" ,
-                "luatos only support ec718u/ec718um/ec718p/ec718pv/ec718e/ec716e")
+        local csdk_root = target:values("csdk_root")
+        assert (chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718hm" or chip_target == "ec718pm" or 
+                chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718e" or chip_target == "ec716e" ,
+                "luatos only support ec718u/ec718um/ec718pm/ec718hm/ec718p/ec718pv/ec718e/ec716e")
+
         local project_dir = target:values("project_dir")
         local toolchains = target:tool("cc"):match('.+\\bin') or target:tool("cc"):match('.+/bin')
 
@@ -40,21 +43,20 @@ target(project_name,function()
                             {stdin = project_dir .."/inc/luat_conf_bsp.h"})
 
         local conf_data = io.readfile(out_path .. "/luat_conf_bsp.txt")
-        local ap_load_add
-        if chip_target == "ec718p" and has_config("denoise_force") or chip_target == "ec718pv" then
-            ap_load_add = "0x000Ba000" -- ec718pv AP_FLASH_LOAD_ADDR
-        elseif chip_target == "ec718p" or chip_target == "ec718e" or chip_target == "ec716e" then
-            ap_load_add = "0x0007e000"  -- ec718p AP_FLASH_LOAD_ADDR
-        elseif chip_target == "ec718u" then
-            if has_config("denoise_force") or conf_data:find("LUAT_USE_VOLTE") then
-                ap_load_add = "0x000C8000"  -- ec718u AP_FLASH_LOAD_ADDR,开启volte
-            else
-                ap_load_add = "0x0008C000"  -- ec718u 不开VoLTE
-            end
-        end
-        local FLASH_FOTA_REGION_START = 0x340000 -- ec718e/ec718p/ec718pv FLASH_FOTA_REGION_START
-        if chip_target == "ec718u" then FLASH_FOTA_REGION_START = 0x649000 -- ec718u FLASH_FOTA_REGION_START
-        end
+
+        os.execv(toolchains .. "/arm-none-eabi-gcc",
+                table.join(parameter, 
+                            {"-I",csdk_root .. "/PLAT/device/target/board/ec7xx_0h00/common/inc"},
+                            {"-I",csdk_root .. "/PLAT/device/target/board/ec7xx_0h00/common/pkginc"},
+                            {"-o",out_path .. "/mem_map_pre.txt","-"}),
+                            {stdin = csdk_root .. "/PLAT/device/target/board/ec7xx_0h00/common/inc/mem_map.h"})
+
+        local mem_data_pre = io.readfile(out_path .. "/mem_map_pre.txt")
+        local AP_FLASH_LOAD_ADDR = tonumber(mem_data_pre:match("#define AP_FLASH_LOAD_ADDR%s+%((%g+)%)"))
+        local ap_load_add = string.format("0x%08X", AP_FLASH_LOAD_ADDR - 0x800000)
+        local FLASH_FOTA_REGION_START = tonumber(mem_data_pre:match("#define FLASH_FOTA_REGION_START%s+%((%g+)%)"))
+        os.rm(out_path .. "/mem_map_pre.txt")
+        -- print("ap_load_add",ap_load_add)
         -- print("FLASH_FOTA_REGION_START",FLASH_FOTA_REGION_START)
         local LUAT_SCRIPT_SIZE = tonumber(conf_data:match("#define LUAT_SCRIPT_SIZE (%d+)"))
         local LUAT_SCRIPT_OTA_SIZE = tonumber(conf_data:match("#define LUAT_SCRIPT_OTA_SIZE (%d+)"))
@@ -91,7 +93,7 @@ target(project_name,function()
         end
     end)
 
-    if chip_target == "ec718pv" or chip_target == "ec718u" or chip_target == "ec718um" then
+    if chip_target == "ec718pv" or chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718hm" or chip_target == "ec718pm" then
         -- cc
         add_files(luatos_root.."/components/cc/*.c")
     end
@@ -221,8 +223,8 @@ target(project_name,function()
     add_includedirs(luatos_root.."/components/multimedia/amr_decode/amr_nb/enc/src",{public = true})
     add_files(luatos_root.."/components/multimedia/**.c")
 	if (chip_target == "ec718p" and has_config("denoise_force")) or 
-        ((chip_target == "ec718u" or chip_target == "ec718um") and not has_config("lspd_mode")) or 
-        ((chip_target == "ec718u" or chip_target == "ec718um") and has_config("lspd_mode") and has_config("denoise_force")) or 
+        ((chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718hm" or chip_target == "ec718pm") and not has_config("lspd_mode")) or 
+        ((chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718hm" or chip_target == "ec718pm") and has_config("lspd_mode") and has_config("denoise_force")) or 
         chip_target == "ec718pv" then
 		remove_files(luatos_root .. "/components/multimedia/amr_decode/**.c")
 	end
@@ -310,11 +312,11 @@ target(project_name,function()
     --加入代码和头文件
     add_includedirs("./inc",{public = true})
     add_files("./src/*.c",{public = true})
-	if chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718u" or chip_target == "ec718um" then
+	if chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718hm" or chip_target == "ec718pm" then
 		add_linkgroups("mm_common","mm_jpeg","mm_videoutil",{whole = true,public = true})
 	end
 	add_linkgroups("apn",{whole = true,public = true})
-	if os.isfile(csdk_root.."/lib/libtgt_app_service.a") and (chip_target == "ec718u" or chip_target == "ec718um") and has_config("lspd_mode") then
+	if os.isfile(csdk_root.."/lib/libtgt_app_service.a") and (chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718hm" or chip_target == "ec718pm") and has_config("lspd_mode") then
 		--加入代码和头文件
 		add_linkgroups("tgt_app_service", {whole = true,public = true})
 		add_defines("LUAT_USE_VSIM",{public = true})
