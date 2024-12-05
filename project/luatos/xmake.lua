@@ -316,7 +316,7 @@ target(project_name,function()
 		add_linkgroups("mm_common","mm_jpeg","mm_videoutil",{whole = true,public = true})
 	end
 	add_linkgroups("apn",{whole = true,public = true})
-	if os.isfile(csdk_root.."/lib/libtgt_app_service.a") and (chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718hm" or chip_target == "ec718pm") and has_config("lspd_mode") then
+	if os.isfile(csdk_root.."/lib/libtgt_app_service.a") and (chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718hm") and has_config("lspd_mode") then
 		--加入代码和头文件
 		add_linkgroups("tgt_app_service", {whole = true,public = true})
 		add_defines("LUAT_USE_VSIM",{public = true})
