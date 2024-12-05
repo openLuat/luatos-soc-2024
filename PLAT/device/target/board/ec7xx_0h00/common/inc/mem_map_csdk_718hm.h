@@ -16,23 +16,23 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 0x00002000          |---------------------------------|
                     |      fuse mirror 4KB            |
 0x00003000          |---------------------------------|
-                    |      bl 124KB + 4KB             |
+                    |      bl 116KB + 4KB             |
+0x00021000          |---------------------------------|
+                    |      factory data 8KB           |
 0x00023000          |---------------------------------|
                     |      rel data(factory)40KB      |
 0x0002D000          |---------------------------------|
                     |      ap+cp image 6276KB         |
 0x0064E000          |---------------------------------|
-                    |      fota  1040KB(可用944KB)	  |
-0x00752000          |---------------------------------|
+                    |      fota  1048KB(可用952KB)	  |
+0x00754000          |---------------------------------|
                     |      hib backup 96KB(in fota)	  |
-0x00752000          |---------------------------------|
+0x00754000          |---------------------------------|
                     |      flashdump 16KB(in fota)	  |
-0x00752000          |---------------------------------|
+0x00754000          |---------------------------------|
                     |      lfs  512KB                 |
-0x007D2000          |---------------------------------|
+0x007E4000          |---------------------------------|
                     |      kv   64KB                  |
-0x007E2000          |---------------------------------|
-                    |      factory data 8KB           |
 0x007E4000          |---------------------------------|
                     |      rel data 104KB             |
 0x007fe000          |---------------------------------|
@@ -44,7 +44,7 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 
 
 
-#include "pkg_718um_csdk_mapdef.h"
+#include "pkg_718hm_csdk_mapdef.h"
 
 
 /* -------------------------------flash  address define-------------------------*/
@@ -61,7 +61,7 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 
 //bl addr and size
 #define BOOTLOADER_FLASH_LOAD_ADDR              (0x00803000)
-#define BOOTLOADER_FLASH_LOAD_SIZE              (0x1F000)//124kB, real region size, tool will check when zip TODO:ZIP
+#define BOOTLOADER_FLASH_LOAD_SIZE              (0x1D000)//116kB, real region size, tool will check when zip TODO:ZIP
 #define BOOTLOADER_FLASH_LOAD_UNZIP_SIZE        (0x22000)//136KB ,for ld
 
 //ap image addr and size
@@ -89,8 +89,8 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 	#define AP_FLASH_LOAD_UNZIP_SIZE        (0x6D6000)//7000KB ,for ld
 
 	#define FLASH_FOTA_REGION_START         (0x64E000)
-	#define FLASH_FOTA_REGION_LEN           (0x104000)//1040K
-	#define FLASH_FOTA_REGION_END           (0x752000)
+	#define FLASH_FOTA_REGION_LEN           (0x106000)//1048K
+	#define FLASH_FOTA_REGION_END           (0x754000)
 	//hib bakcup addr and size
 	#define FLASH_HIB_BACKUP_EXIST          (1)
 	#define FLASH_MEM_BACKUP_ADDR           (AP_FLASH_XIP_ADDR+FLASH_MEM_BACKUP_NONXIP_ADDR)
@@ -99,16 +99,16 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 	#define FLASH_MEM_BLOCK_SIZE            (0x6000)
 	#define FLASH_MEM_BLOCK_CNT             (0x4)
 
-	#define FLASH_FS_REGION_START           (0x752000)
+	#define FLASH_FS_REGION_START           (0x754000)
 	#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START)
-	#define FLASH_FS_REGION_END             (0x7D2000)
+	#define FLASH_FS_REGION_END             (0x7D4000)
 
-	#define FLASH_FDB_REGION_START			(0x7D2000)//64KB
-	#define FLASH_FDB_REGION_END            (0x7E2000)
+	#define FLASH_FDB_REGION_START			(0x7D4000)//64KB
+	#define FLASH_FDB_REGION_END            (0x7E4000)
 #endif
 
-#define FLASH_CSDK_FACTORY_START		(0x7E2000)
-#define FLASH_CSDK_FACTORY_END          (0x7E4000)
+#define FLASH_CSDK_FACTORY_START		(0x21000)
+#define FLASH_CSDK_FACTORY_END          (0x23000)
 
 //ap reliable addr and size
 #define NVRAM_FACTORY_PHYSICAL_BASE     (0x23000)
