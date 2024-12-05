@@ -16,7 +16,7 @@
 #include "mbedtls/md5.h"
 #include "luat_network_adapter.h"
 #include "networkmgr.h"
-
+#include "luat_hmeta.h"
 #define LUAT_LOG_TAG "base"
 #include "luat_log.h"
 
@@ -294,7 +294,7 @@ const char* luat_os_bsp(void) {
   #if defined(LUAT_MODEL_AIR201)
   memcpy(model_name_buff, "Air201", strlen("Air201") + 1);
   return model_name_buff;
-  #elif defined(LUAT_MODEL_AIR780EPS) || defined(LUAT_MODEL_AIR780EP) || defined(LUAT_MODEL_AIR780EQ) || defined(LUAT_MODEL_AIR700ECQ) || defined(LUAT_MODEL_AIR700EAQ) || defined(LUAT_MODEL_AIR700EMQ)
+  #elif defined(LUAT_MODEL_AIR780EPS) || defined(LUAT_MODEL_AIR780EP) || defined(LUAT_MODEL_AIR780EQ) || defined(LUAT_MODEL_AIR700ECQ) || defined(LUAT_MODEL_AIR700EAQ) || defined(LUAT_MODEL_AIR700EMQ) || defined(LUAT_MODEL_AIR780EPM)
   memset(model_name_buff, 0, sizeof(model_name_buff));
   luat_hmeta_model_name(model_name_buff);
   return model_name_buff;

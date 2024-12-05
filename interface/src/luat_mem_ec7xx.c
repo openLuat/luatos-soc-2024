@@ -52,7 +52,7 @@ void* luat_heap_zalloc(size_t _size) {
 
 void luat_heap_free(void* ptr) {
 #ifdef __LUATOS__
-	if ((uint32_t)ptr >= (PSRAM_P2_START_ADDR|PSRAM_PCACHE2_BASE + LUAT_HEAP_SIZE) && (uint32_t)ptr <= PSRAM_END_ADDR) {
+	if ((uint32_t)ptr >= ((PSRAM_P2_START_ADDR|PSRAM_PCACHE2_BASE) + LUAT_HEAP_SIZE) && (uint32_t)ptr <= PSRAM_END_ADDR) {
 #else
 	if ((uint32_t)ptr >= (PSRAM_P2_START_ADDR|PSRAM_PCACHE2_BASE) && (uint32_t)ptr <= PSRAM_END_ADDR) {
 #endif

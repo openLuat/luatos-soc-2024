@@ -17,6 +17,7 @@
 // #define LUAT_MODEL_AIR700ECQ 1
 // #define LUAT_MODEL_AIR700EAQ 1
 // #define LUAT_MODEL_AIR700EMQ 1
+// #define LUAT_MODEL_AIR780EPM 1
 
 #if defined(LUAT_MODEL_AIR780EPS)
 #include "luat_conf_bsp_air780eps.h"
@@ -28,6 +29,8 @@
 #include "luat_conf_bsp_air780ep.h"
 #elif (defined(LUAT_MODEL_AIR700ECQ) || defined(LUAT_MODEL_AIR700EAQ)) || defined(LUAT_MODEL_AIR700EMQ)
 #include "luat_conf_bsp_air700exq.h"
+#elif defined(LUAT_MODEL_AIR780EPM)
+#include "luat_conf_bsp_air780epm.h"
 #else
 #include "luat_conf_bsp_dft.h"
 #endif
