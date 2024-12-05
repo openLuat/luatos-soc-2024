@@ -88,8 +88,8 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 	#define AP_FLASH_LOAD_UNZIP_SIZE        (0x6D6000)//7000KB ,for ld
 
 	#define FLASH_FOTA_REGION_START         (0x64E000)
-	#define FLASH_FOTA_REGION_LEN           (0x100000)//1M
-	#define FLASH_FOTA_REGION_END           (0x74E000)
+	#define FLASH_FOTA_REGION_LEN           (0x104000)//1M
+	#define FLASH_FOTA_REGION_END           (0x752000)
 	//hib bakcup addr and size
 	#define FLASH_HIB_BACKUP_EXIST          (1)
 	#define FLASH_MEM_BACKUP_ADDR           (AP_FLASH_XIP_ADDR+FLASH_MEM_BACKUP_NONXIP_ADDR)

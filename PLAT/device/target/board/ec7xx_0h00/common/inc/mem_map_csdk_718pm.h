@@ -22,15 +22,15 @@ flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 					|      cp+ap 3240KB   			  |
 0x00345000          |---------------------------------|
                     |      fota 448KB(352KB can use)  |
-0x003b4000          |---------------------------------|
+0x003b5000          |---------------------------------|
                     |      hib backup 96KB(in fota)	  |
-0x003b4000          |---------------------------------|
+0x003b5000          |---------------------------------|
                     |      flashdump 16KB(in fota)    |
-0x003b4000          |---------------------------------|
+0x003b5000          |---------------------------------|
                     |      lfs  168KB                 |
-0x003de000          |---------------------------------|
+0x003df000          |---------------------------------|
                     |      kv   64KB                  |
-0x003ee000          |---------------------------------|
+0x003ef000          |---------------------------------|
                     |      factory data 8KB           |
 0x003f1000          |---------------------------------|
                     |      rel data 52KB              |
@@ -85,17 +85,17 @@ flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 	//fs addr and size
 	#define FLASH_FOTA_REGION_START         (0x345000)
 	#define FLASH_FOTA_REGION_LEN           (0x6F0000)//448KB
-	#define FLASH_FOTA_REGION_END           (0x3b4000)
+	#define FLASH_FOTA_REGION_END           (0x3b5000)
 
-	#define FLASH_FS_REGION_START           (0x3b4000)
-	#define FLASH_FS_REGION_END             (0x3de000)
+	#define FLASH_FS_REGION_START           (0x3b5000)
+	#define FLASH_FS_REGION_END             (0x3df000)
 	#define FLASH_FS_REGION_SIZE            (FLASH_FS_REGION_END-FLASH_FS_REGION_START) //168KB
 
-	#define FLASH_FDB_REGION_START			(0x3db000)//64KB
-	#define FLASH_FDB_REGION_END            (0x3eb000)
+	#define FLASH_FDB_REGION_START			(0x3df000)//64KB
+	#define FLASH_FDB_REGION_END            (0x3ef000)
 
-	#define FLASH_CSDK_FACTORY_START		(0x3ed000)
-	#define FLASH_CSDK_FACTORY_END          (0x3ee000)
+	#define FLASH_CSDK_FACTORY_START		(0x3ef000)
+	#define FLASH_CSDK_FACTORY_END          (0x3f1000)
 	//hib bakcup addr and size
 	#define FLASH_HIB_BACKUP_EXIST          (1)
 	#define FLASH_MEM_BACKUP_ADDR           (AP_FLASH_XIP_ADDR+FLASH_MEM_BACKUP_NONXIP_ADDR)
