@@ -16,11 +16,12 @@
 #include "mbedtls/md5.h"
 #include "luat_network_adapter.h"
 #include "networkmgr.h"
+#ifdef __LUATOS__
 #include "luat_hmeta.h"
 #define LUAT_LOG_TAG "base"
 #include "luat_log.h"
 
-#ifdef __LUATOS__
+
 static const luaL_Reg loadedlibs[] = {
   {"_G", luaopen_base}, // _G
   {LUA_LOADLIBNAME, luaopen_package}, // require
