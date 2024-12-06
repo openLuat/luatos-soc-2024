@@ -120,20 +120,6 @@ static int32_t luat_uart_cb(void *pData, void *pParam){
 			}
 			uart_cb[uartid].sent_callback_fun(uartid, NULL);
             break;
-        case UART_CB_RX_BUFFER_FULL:
-        	//只有UART1可以唤醒
-#ifdef __LUATOS__
-        	if (UART_ID1 == uartid)
-        	{
-        		uart_cb[uartid].recv_callback_fun(uartid, 0xffffffff);
-        	}
-#else
-        	if (UART_ID1 == uartid)
-        	{
-        		uart_cb[uartid].recv_callback_fun(uartid, 0);
-        	}
-#endif
-        	break;
         case UART_CB_RX_TIMEOUT:
 			if (g_s_serials[uartid].rx_info.is_enable)
 			{
@@ -157,6 +143,20 @@ static int32_t luat_uart_cb(void *pData, void *pParam){
         		uart_cb[uartid].recv_callback_fun(uartid, len);
         	}
             break;
+        case UART_CB_WAKEUP_IN_IRQ:
+        	//只有UART1可以唤醒
+#ifdef __LUATOS__
+        	if (UART_ID1 == uartid)
+        	{
+        		uart_cb[uartid].recv_callback_fun(uartid, 0xffffffff);
+        	}
+#else
+        	if (UART_ID1 == uartid)
+        	{
+        		uart_cb[uartid].recv_callback_fun(uartid, 0);
+        	}
+#endif
+        	break;
         case UART_CB_ERROR:
             break;
         case UART_CB_CTS_IN_IRQ:
