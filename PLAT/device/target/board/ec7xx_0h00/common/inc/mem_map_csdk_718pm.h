@@ -84,7 +84,7 @@ flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 
 	//fs addr and size
 	#define FLASH_FOTA_REGION_START         (0x347000)
-	#define FLASH_FOTA_REGION_LEN           (0x700000)//448KB
+	#define FLASH_FOTA_REGION_LEN           (0x70000)//448KB
 	#define FLASH_FOTA_REGION_END           (0x3b7000)
 
 	#define FLASH_FS_REGION_START           (0x3b7000)
