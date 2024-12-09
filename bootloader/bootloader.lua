@@ -78,7 +78,7 @@ target("ap_bootloader.elf",function()
 
     if has_config("chip_target") then 
         chip_target = get_config("chip_target") 
-        LIB_PRODUCT = ((chip_target == "ec718um" and "ec718um") or (chip_target == "ec718hm" and "ec718hm") or (chip_target == "ec718pm" and "ec718hm") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6))
+        LIB_PRODUCT = ((chip_target == "ec718um" and "ec718um") or (chip_target == "ec718hm" and "ec718hm") or (chip_target == "ec718pm" and "ec718pm") or (chip_target=="ec718e"and"ec718p"or chip_target):sub(1,6))
         set_values("LIB_PRODUCT", LIB_PRODUCT)
     end
     if chip_target and lib_ps_plat then
