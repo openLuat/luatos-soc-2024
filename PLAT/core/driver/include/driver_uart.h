@@ -72,4 +72,8 @@ void Uart_SetErrorDropData(uint8_t UartID, uint8_t IsDrop);
 void Uart_SetupFlowCtrl(uint8_t UartID, uint8_t OnOff);
 void Uart_SetRTS(uint8_t UartID, uint8_t IsHigh);
 uint8_t Uart_GetCTS(uint8_t UartID);
+
+void Uart0_FastInit(uint32_t BaudRate);
+void Uart0_BlockSendString(const char *s);
+void Uart0_FastDeInit(void);
 #endif
