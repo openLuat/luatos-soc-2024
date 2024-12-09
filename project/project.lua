@@ -420,7 +420,7 @@ target(project_name..".elf",function()
 		os.cp("$(buildir)/"..project_name.."/*.map", out_path)
 		os.cp("$(buildir)/"..project_name.."/*.elf", out_path)
 		
-        if chip_target=="ec718u" or chip_target=="ec718um" or chip_target == "ec718hm" or chip_target == "ec718pm" and target:values("lib_ps_plat")=="ims" then
+        if (chip_target=="ec718u" or chip_target=="ec718um" or chip_target == "ec718hm" or chip_target == "ec718pm") and target:values("lib_ps_plat")=="ims" then
             os.cp(csdk_root .. "/PLAT/tools/"..(chip_target)..("-ims").."/comdb.txt", out_path)
         else
             os.cp(csdk_root .. "/PLAT/tools/"..(chip_target=="ec718e"and"ec718p"or chip_target)..(target:values("lib_ps_plat")=="mid"and"-mid"or"").."/comdb.txt", out_path)
