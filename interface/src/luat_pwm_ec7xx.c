@@ -282,6 +282,9 @@ int luat_pwm_update_dutycycle(int channel,size_t pulse)
 		break;
 	}
 	g_s_pwm_table[channel].last_pulse_rate = pulse;
+#if defined(TIMER_IP_VERSION_B1)
+    EIGEN_TIMER(channel)->TCUR = TIMER_TCUR_UPDATE_Msk;
+#endif
     return 0;
 }
 

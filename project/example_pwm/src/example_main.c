@@ -40,20 +40,58 @@ static void task_test_pwm(void *param)
 	luat_rtos_task_sleep(10000);
 	LUAT_DEBUG_PRINT("测试1Hz, 50占空比连续输出，输出10个波形停止");
 	luat_pwm_open(channel, 1, 500, 10);
-	luat_rtos_task_sleep(20000);
-	LUAT_DEBUG_PRINT("测试26KHz, 连续输出，占空比每5秒增加1，从0循环到100");
+	luat_rtos_task_sleep(11000);
+
+	luat_pwm_conf_t config = {0};
+	config.channel = channel;
+	config.period = 10000;
+	config.pulse = 500;
+	config.precision = 1000;
+	luat_pwm_setup(&config);
+	LUAT_DEBUG_PRINT("测试50占空比,频率从10K到100K再到1K, 每1秒变化10K");
+	while (config.period < 100000)
+	{
+		luat_rtos_task_sleep(1000);
+		config.period += 10000;
+		LUAT_DEBUG_PRINT("当前频率%u", config.period);
+		luat_pwm_setup(&config);
+	}
+	while (config.period > 10000)
+	{
+		luat_rtos_task_sleep(1000);
+		config.period -= 10000;
+		LUAT_DEBUG_PRINT("当前频率%u", config.period);
+		luat_pwm_setup(&config);
+	}
+
+	LUAT_DEBUG_PRINT("测试26KHz, 连续输出，占空比每1秒增加1，从0循环到100");
 	luat_pwm_open(channel, 26000, 0, 0);
 	uint32_t pulse_rate = 0;
     while(1)
 	{
-        luat_rtos_task_sleep(5000);
-        pulse_rate += 10;
-        if (pulse_rate > 1000)
-        {
-        	pulse_rate = 0;
-        }
-        LUAT_DEBUG_PRINT("当前占空比%u", pulse_rate/10);
-        luat_pwm_update_dutycycle(channel, pulse_rate);
+    	while(1)
+    	{
+            luat_rtos_task_sleep(1000);
+            pulse_rate += 10;
+            if (pulse_rate > 1000)
+            {
+            	break;
+            }
+            LUAT_DEBUG_PRINT("当前占空比%u", pulse_rate/10);
+            luat_pwm_update_dutycycle(channel, pulse_rate);
+    	}
+
+    	while(1)
+    	{
+            luat_rtos_task_sleep(1000);
+            pulse_rate -= 10;
+            if (pulse_rate == 0)
+            {
+            	break;
+            }
+            LUAT_DEBUG_PRINT("当前占空比%u", pulse_rate/10);
+            luat_pwm_update_dutycycle(channel, pulse_rate);
+    	}
 	}
     
 }
