@@ -10,6 +10,7 @@
 #include DEBUG_LOG_HEADER_FILE
 #include "osasys.h"
 #include "plat_config.h"
+#include "common_api.h"
 
 /***************************************************
  ***************       MACRO      ******************
@@ -68,14 +69,14 @@ static void LFS_daemonTaskEntry(void *arg);
  ***************************************************/
 
 // variables used by the filesystem
-static lfs_t lfs;
+AP_PLAT_COMMON_BSS static lfs_t lfs;
 
-static char lfs_read_buf[256];
-static char lfs_prog_buf[256];
-static __ALIGNED(4) char lfs_lookahead_buf[LFS_BLOCK_DEVICE_LOOK_AHEAD];
+AP_PLAT_COMMON_BSS static char lfs_read_buf[256];
+AP_PLAT_COMMON_BSS static char lfs_prog_buf[256];
+AP_PLAT_COMMON_BSS static __ALIGNED(4) char lfs_lookahead_buf[LFS_BLOCK_DEVICE_LOOK_AHEAD];
 
 // configuration of the filesystem is provided by this struct
-static struct lfs_config lfs_cfg =
+AP_PLAT_COMMON_DATA static struct lfs_config lfs_cfg =
 {
     .context = NULL,
     // block device operations
@@ -103,22 +104,22 @@ static struct lfs_config lfs_cfg =
 };
 
 #if defined FEATURE_FREERTOS_ENABLE
-static StaticTask_t             gLfsDaemonTask;
-static StaticQueue_t            gLfsRequestQueueCb;
-static StaticQueue_t            gLfsReplyQueueCb;
+AP_PLAT_COMMON_BSS static StaticTask_t             gLfsDaemonTask;
+AP_PLAT_COMMON_BSS static StaticQueue_t            gLfsRequestQueueCb;
+AP_PLAT_COMMON_BSS static StaticQueue_t            gLfsReplyQueueCb;
 #endif
-static uint8_t                  gLfsDaemonTaskStack[LFS_TASK_STACK_SIZE];
+AP_PLAT_COMMON_BSS static uint8_t                  gLfsDaemonTaskStack[LFS_TASK_STACK_SIZE];
 
-static uint8_t                  gLfsRequestQueueBuf[sizeof(lfs_request_t)];
+AP_PLAT_COMMON_BSS static uint8_t                  gLfsRequestQueueBuf[sizeof(lfs_request_t)];
 
-static uint8_t                  gLfsReplyQueueBuf[sizeof(lfs_reply_t)];
+AP_PLAT_COMMON_BSS static uint8_t                  gLfsReplyQueueBuf[sizeof(lfs_reply_t)];
 
 // message queue id
-static osMessageQueueId_t       gLfsRequestMsgQueue;
-static osMessageQueueId_t       gLfsReplyMsgQueue;
+AP_PLAT_COMMON_BSS static osMessageQueueId_t       gLfsRequestMsgQueue;
+AP_PLAT_COMMON_BSS static osMessageQueueId_t       gLfsReplyMsgQueue;
 
 // thread id
-static osThreadId_t             gLfsDaemonTaskthreadId;
+AP_PLAT_COMMON_BSS static osThreadId_t             gLfsDaemonTaskthreadId;
 
 #ifdef FS_FILE_OPERATION_STATISTIC
 
@@ -167,9 +168,9 @@ const static file_to_monitor_t fileToMonitor[FILE_TO_MONITOR_TOTAL_NUMBER] =
 
 #define STATISTIC_RESULT_FILE_NAME  "fileOpStatistic"
 
-static uint32_t g_fileWriteBytesCount[FILE_TO_MONITOR_TOTAL_NUMBER] = {0};
-static uint32_t g_fileWriteCount[FILE_TO_MONITOR_TOTAL_NUMBER] = {0};
-static uint32_t g_blockEraseCount[LFS_BLOCK_DEVICE_TOTOAL_SIZE / LFS_BLOCK_DEVICE_ERASE_SIZE] = {0};
+AP_PLAT_COMMON_BSS static uint32_t g_fileWriteBytesCount[FILE_TO_MONITOR_TOTAL_NUMBER] = {0};
+AP_PLAT_COMMON_BSS static uint32_t g_fileWriteCount[FILE_TO_MONITOR_TOTAL_NUMBER] = {0};
+AP_PLAT_COMMON_BSS static uint32_t g_blockEraseCount[LFS_BLOCK_DEVICE_TOTOAL_SIZE / LFS_BLOCK_DEVICE_ERASE_SIZE] = {0};
 
 #define STATITIC_RESULT_FILE_BODY_SIZE    (sizeof(g_fileWriteBytesCount) + sizeof(g_fileWriteCount) + sizeof(g_blockEraseCount))
 #define STATISTIC_RESULT_MAGIC_NUMBR  0x5AA5
@@ -181,8 +182,8 @@ typedef struct statistic_result_file_header
     uint16_t magicNumber;
 } statistic_result_file_header_t;
 
-static bool g_statisticResultLoaded = false;
-static bool g_statisticResultChanged = false;
+AP_PLAT_COMMON_BSS static bool g_statisticResultLoaded = false;
+AP_PLAT_COMMON_BSS static bool g_statisticResultChanged = false;
 
 #endif
 
@@ -409,7 +410,7 @@ int LFS_getFileWriteMonitorResult(file_operation_statistic_result_t* result)
 
     LFS_loadMonitorResult();
 
-    static uint8_t pos = 0;
+    AP_PLAT_COMMON_BSS static uint8_t pos = 0;
 
     if(pos < FILE_TO_MONITOR_TOTAL_NUMBER)
     {
@@ -432,7 +433,7 @@ int LFS_getBlockEraseCountResult(uint32_t* result)
 
     LFS_loadMonitorResult();
 
-    static uint8_t index = 0;
+    AP_PLAT_COMMON_BSS static uint8_t index = 0;
 
     if(index < (LFS_BLOCK_DEVICE_TOTOAL_SIZE / LFS_BLOCK_DEVICE_ERASE_SIZE))
     {

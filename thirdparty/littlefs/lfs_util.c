@@ -21,7 +21,7 @@ extern void FLASH_clrStatus( void );
 #endif
 
 
-static uint32_t gLFSAssertFlag = 0;
+AP_PLAT_COMMON_BSS static uint32_t gLFSAssertFlag = 0;
 
 // Software CRC implementation with small lookup table
 uint32_t lfs_crc(uint32_t crc, const void *buffer, size_t size) {
@@ -73,6 +73,7 @@ void lfs_setAssertFlag(uint32_t flag)
     gLFSAssertFlag |= flag;
 }
 
+#ifndef LFS_NO_ASSERT
 void lfs_assert(bool test)
 {
     if(test == 0)
@@ -106,5 +107,5 @@ void lfs_assert(bool test)
     }
 
 }
-
+#endif/*LFS_NO_ASSERT*/
 #endif
