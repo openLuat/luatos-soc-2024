@@ -299,7 +299,7 @@ int luat_gpio_get(int pin){
 
 void luat_gpio_close(int pin){
 
-	if (pin >= HAL_GPIO_QTY) return ;
+	if (((uint32_t)(pin)) >= HAL_GPIO_QTY) return ;
 	GPIO_ExtiSetCB(pin, NULL, 0);
     if (pin >= HAL_GPIO_MAX)
     {
@@ -341,7 +341,7 @@ void luat_gpio_close(int pin){
 int luat_gpio_set_irq_cb(int pin, luat_gpio_irq_cb cb, void* args)
 {
 
-	if (pin >= HAL_GPIO_QTY) return -1;
+	if (((uint32_t)(pin)) >= HAL_GPIO_QTY) return -1;
 	GPIO_ExtiSetCB(pin, cb, args);
 	return 0;
 }
@@ -353,7 +353,7 @@ void luat_gpio_pulse(int pin, uint8_t *level, uint16_t len, uint16_t delay_ns)
 
 int luat_gpio_ctrl(int pin, LUAT_GPIO_CTRL_CMD_E cmd, int param)
 {
-	if (pin >= (HAL_GPIO_MAX)) return -1;
+	if (((uint32_t)(pin)) >= HAL_GPIO_MAX) return -1;
 	uint8_t alt_fun = (param >> 28);
 	switch(cmd)
 	{
@@ -419,7 +419,7 @@ void luat_gpio_mode(int pin, int mode, int pull, int initOutput) {
 
 int luat_gpio_driver_ws2812b(int pin, uint8_t *data, uint32_t len, uint32_t frame_cnt, uint8_t bit0h, uint8_t bit0l, uint8_t bit1h, uint8_t bit1l)
 {
-	if (pin >= HAL_GPIO_MAX) return -1;
+	if (((uint32_t)(pin)) >= HAL_GPIO_MAX) return -1;
 	uint32_t frame_byte = frame_cnt * 3;
 	if (!frame_cnt)
 	{
