@@ -876,8 +876,7 @@ static void test_audio_demo_init(void)
 	gpio_cfg.alt_fun = CODEC_PWR_PIN_ALT_FUN;
 	luat_gpio_open(&gpio_cfg);
 
-	// 当前仅EC718p/EC718pv支持这个demo
-	#if defined TYPE_EC718P
+	#if (defined TYPE_EC718P) || (defined TYPE_EC718P) || (defined TYPE_EC718M)
 	luat_rtos_task_create(&g_s_task_handle, 8192, 100, "test", demo_task, NULL, 0);
 //	audio_play_set_ram_type(LUAT_HEAP_SRAM);		//打开后消耗RAM较多的地方将使用SRAM，否则使用AUTO模式
 	#endif
