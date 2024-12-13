@@ -43,8 +43,8 @@
 #include "luat_pm.h"
 //#include "tiny_jpeg.h"
 #include "mm_jpeg_if.h"
-//#define CAMERA_TEST_QRCODE			//扫码
-#define LCD_ENABLE						//默认均开启LCD预览
+#define CAMERA_TEST_QRCODE			//扫码
+//#define LCD_ENABLE						//默认均开启LCD预览
 #define USB_UART_ENABLE
 
 
@@ -386,8 +386,9 @@ static int luat_bfxxxx_init(void)
     }
 #endif
     lcd_camera_start_run();
-#if (defined LCD_ENABLE)
+
 	g_s_camera_app.camera = spi_camera;
+#if (defined LCD_ENABLE)
 	g_s_camera_app.camera.lcd_conf = &lcd_conf;
 	//camera_cut_info_t cut = {60, 60, 20, 20, 0, 0};
 	//luat_lcd_show_camera_in_service(&g_s_camera_app.camera, &cut, 19, 59);
@@ -492,8 +493,9 @@ static int luat_gc032a_init(void)
 #endif
 
     lcd_camera_start_run();
-#if (defined LCD_ENABLE)
+
 	g_s_camera_app.camera = spi_camera;
+#if (defined LCD_ENABLE)
 	g_s_camera_app.camera.lcd_conf = &lcd_conf;
 	camera_cut_info_t cut = {80, 80, 200, 200, 0, 0};	// 640 * 480 在240 * 320居中显示
 	luat_lcd_show_camera_in_service(&g_s_camera_app.camera, &cut, 0, 0);
@@ -516,7 +518,6 @@ static void luat_camera_save_JPEG_data(void *cxt, void *data, int size)
 }
 static int gpio_level_irq(void *data, void* args)
 {
-
 	if (!g_s_camera_app.scan_mode && !g_s_camera_app.capture_stage && !g_s_camera_app.is_process_image)
 	{
 		g_s_camera_app.capture_stage = 1;
@@ -550,8 +551,16 @@ static void luat_camera_task(void *param)
 	void *stack = NULL;
 	uint32_t all,now_used_block,max_used_block;
 	luat_debug_set_fault_mode(LUAT_DEBUG_FAULT_HANG);
-#ifdef LCD_ENABLE
+
 	luat_gpio_cfg_t gpio_cfg;
+	luat_gpio_set_default_cfg(&gpio_cfg);
+	gpio_cfg.pin = HAL_GPIO_0;
+	gpio_cfg.mode = LUAT_GPIO_IRQ;
+	gpio_cfg.irq_type = LUAT_GPIO_RISING_IRQ;
+	gpio_cfg.pull = LUAT_GPIO_PULLDOWN;
+	gpio_cfg.irq_cb = gpio_level_irq;
+	luat_gpio_open(&gpio_cfg);
+#ifdef LCD_ENABLE
 	luat_lcd_service_init(60);
 	luat_gpio_set_default_cfg(&gpio_cfg);
 	gpio_cfg.output_level = LUAT_GPIO_HIGH;
@@ -559,13 +568,6 @@ static void luat_camera_task(void *param)
 	gpio_cfg.pin = SPI_LCD_RST_PIN;
 	luat_gpio_open(&gpio_cfg);
 	gpio_cfg.pin = SPI_LCD_BL_PIN;
-	luat_gpio_open(&gpio_cfg);
-
-	gpio_cfg.pin = HAL_GPIO_0;
-	gpio_cfg.mode = LUAT_GPIO_IRQ;
-	gpio_cfg.irq_type = LUAT_GPIO_RISING_IRQ;
-	gpio_cfg.pull = LUAT_GPIO_PULLDOWN;
-	gpio_cfg.irq_cb = gpio_level_irq;
 	luat_gpio_open(&gpio_cfg);
 
     luat_lcd_IF_init(&lcd_conf);
@@ -578,6 +580,7 @@ static void luat_camera_task(void *param)
     luat_uart_setup(&uart);
     luat_uart_ctrl(LUAT_VUART_ID_0, LUAT_UART_SET_RECV_CALLBACK, luat_usb_recv_cb);
 #endif
+
 #ifdef CAMERA_TEST_QRCODE
     g_s_camera_app.scan_mode = 1;
     g_s_camera_app.scan_pause = 1;
@@ -631,7 +634,7 @@ static void luat_camera_task(void *param)
 		switch(event.id)
 		{
 		case CAMERA_FRAME_NEW:
-			//DBG("1fps");
+			//LUAT_DEBUG_PRINT("1fps");
 			break;
 		case CAMERA_FRAME_QR_DECODE:
 			LUAT_DEBUG_PRINT("解码开始 buf%d", event.param1);
@@ -738,9 +741,8 @@ static void camera_demo_init(void)
 #endif
 	luat_gpio_open(&gpio_cfg);
 
-#ifdef TYPE_EC718P
 	luat_rtos_task_create(&g_s_task_handle, 6 * 1024, 50, "camera", luat_camera_task, NULL, 64);
-#endif
+
 }
 
 INIT_TASK_EXPORT(camera_demo_init, "1");
