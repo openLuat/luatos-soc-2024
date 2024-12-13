@@ -59,5 +59,10 @@ int LSPI_Setup(uint8_t ID, uint32_t BusSpeed, uint8_t InterfaceMode, CBFuncEx_t 
 int LSPI_Sleep(uint8_t ID, uint8_t Enable);
 int LSPI_WriteCmd(uint8_t ID, uint8_t Cmd, const uint8_t *Param, uint8_t ParamLen);
 int LSPI_ReadData(uint8_t ID, uint8_t Cmd, uint8_t *Data, uint8_t DataLen, uint8_t DummyLen);
+int LSPI_ReadDataV2(uint8_t ID, uint8_t Cmd, uint8_t *Data, uint8_t DataLen, uint8_t DummyLen);
 int LSPI_WriteImageData(uint8_t ID, uint16_t ImageW, uint16_t ImageH, uint32_t DataAddress, uint32_t ByteLen, uint8_t IsBlock);
+void LSPI_SetSpeed(uint8_t ID, uint32_t BusSpeed);
+void LSPI_SetColorByte(uint8_t ID, uint8_t ColorByte);
+int LSPI_StopCameraPreview(uint8_t ID);
+int LSPI_StartCameraPreview(uint8_t ID, uint16_t CameraW, uint16_t CameraH, uint16_t ImageW, uint16_t ImageH, uint16_t CutTopLine, uint16_t CutBottomLine, uint16_t CutLeftLine, uint16_t CutRightLine, uint16_t ScaleW, uint16_t ScaleH);
 #endif
