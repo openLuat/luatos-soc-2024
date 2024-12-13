@@ -43,8 +43,8 @@
 #include "luat_pm.h"
 //#include "tiny_jpeg.h"
 #include "mm_jpeg_if.h"
-#define CAMERA_TEST_QRCODE			//扫码
-//#define LCD_ENABLE						//默认均开启LCD预览
+//#define CAMERA_TEST_QRCODE			//扫码
+#define LCD_ENABLE						//默认均开启LCD预览
 #define USB_UART_ENABLE
 
 
@@ -568,7 +568,6 @@ static void luat_camera_task(void *param)
 	luat_lcd_service_init(60);
 	luat_gpio_set_default_cfg(&gpio_cfg);
 	gpio_cfg.output_level = LUAT_GPIO_HIGH;
-	luat_gpio_open(&gpio_cfg);
 	gpio_cfg.pin = SPI_LCD_RST_PIN;
 	luat_gpio_open(&gpio_cfg);
 	gpio_cfg.pin = SPI_LCD_BL_PIN;
