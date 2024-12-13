@@ -245,7 +245,11 @@ int luat_camera_setup(int id, luat_spi_camera_t *conf, void * callback, void *pa
 #ifdef __LUATOS__
 	luat_camera_app.camera_id = id;
 	luat_camera_app.config = *conf;
+#ifdef TYPE_EC718M
+	luat_camera_app.double_buffer_mode = 1;
+#else
 	luat_camera_app.double_buffer_mode = ((conf->sensor_width * conf->sensor_height) <= 80000 );
+#endif
 	luat_camera_app.p_cache[0] = luat_heap_opt_malloc(LUAT_HEAP_PSRAM, luat_camera_app.config.sensor_width * luat_camera_app.config.sensor_height * 2);
 	if (luat_camera_app.double_buffer_mode)
 	{
