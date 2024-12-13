@@ -428,7 +428,11 @@ static int luat_gc032a_init(void)
 			.seq_type = 1,
 			.plat_param = {1,1,1,0}
 	};
+#ifdef TYPE_EC718M
+	g_s_camera_app.double_buffer_mode = 1;
+#else
 	g_s_camera_app.double_buffer_mode = 0;
+#endif
 	luat_camera_setup(CAMERA_SPI_ID, &spi_camera, luat_camera_irq_callback, NULL);	//输出MCLK供给camera时钟
 	luat_rtos_task_sleep(1);
     luat_i2c_setup(0, 1);
