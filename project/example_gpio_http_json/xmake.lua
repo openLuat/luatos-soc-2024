@@ -24,7 +24,8 @@ target(project_name,function()
     remove_files(luatos_root.."/components/network/libhttp/luat_lib_http.c")
     add_files(luatos_root.."/components/network/http_parser/*.c")
     -- cjson
-	if chip_target ~= "ec718pv" and chip_target ~= "ec718u" then
+
+	if chip_target ~= "ec718pv" and chip_target ~= "ec718u" and chip_target ~= "ec718um" and chip_target ~= "ec718hm" and chip_target ~= "ec718pm" then
         add_includedirs(luatos_root .. "/components/cjson")
 		add_files(luatos_root.."/components/cjson/*.c")
 	end

@@ -17,7 +17,7 @@ target(project_name,function()
     
     local chip_target = get_config("chip_target")
     -- cjson
-	if chip_target ~= "ec718pv" and chip_target ~= "ec718u" then
+	if chip_target ~= "ec718pv" and chip_target ~= "ec718u" and chip_target ~= "ec718um" and chip_target ~= "ec718hm" and chip_target ~= "ec718pm" then
         add_includedirs(luatos_root .. "/components/cjson")
 		add_files(luatos_root.."/components/cjson/*.c")
 	end
