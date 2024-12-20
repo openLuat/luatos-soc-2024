@@ -21,6 +21,18 @@
 #ifdef __USER_MAP_CONF_FILE__
 #include __USER_MAP_CONF_FILE__
 #else
+
+#ifdef __LUATOS__
+#if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
+#ifndef AP_PKGIMG_LIMIT_SIZE
+#define AP_PKGIMG_LIMIT_SIZE (0x219000)
+#endif
+#else
+#ifndef AP_PKGIMG_LIMIT_SIZE
+#define AP_PKGIMG_LIMIT_SIZE (0x255000)
+#endif
+#endif // (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
+#else
 #if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
 #ifndef AP_PKGIMG_LIMIT_SIZE
 #define AP_PKGIMG_LIMIT_SIZE (0x289000)
@@ -30,6 +42,7 @@
 #define AP_PKGIMG_LIMIT_SIZE (0x2c5000)
 #endif
 #endif // (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
+#endif //__LUATOS__
 #endif //__USER_MAP_CONF_FILE__
 
 #define XPKGDBLSH_VIRTIMG_MERGE_LNA    (0x0)
