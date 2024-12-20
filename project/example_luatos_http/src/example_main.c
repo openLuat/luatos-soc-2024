@@ -119,7 +119,7 @@ static void luat_test_http_get_async_task(void *param)
 	uint32_t done_len = 0;
 	luat_http_ctrl_t *http = luat_http_client_create(luatos_http_cb, luat_rtos_get_current_handle(), -1);
 	const char remote_domain[200];
-	snprintf((char *)remote_domain, 200, "%s", "http://www.baidu.com");
+	snprintf((char *)remote_domain, 200, "%s", "http://httpbin.air32.cn/get");
     LUAT_DEBUG_PRINT("print url %s", remote_domain);
 	luat_http_client_start(http, remote_domain, 0, 0, 1);
 	while (!is_end)
