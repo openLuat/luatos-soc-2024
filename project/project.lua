@@ -382,6 +382,14 @@ target(project_name..".elf",function()
         for _, cx_flasg in pairs(target:get("cxflags")) do
             table.insert(mem_parameter,cx_flasg)
         end
+
+        for _, dep in pairs(target:orderdeps()) do
+            for _, dep_define_flasg in pairs(dep:get("defines")) do
+                print(dep_define_flasg)
+                table.insert(mem_parameter,"-D" .. dep_define_flasg)
+            end
+        end
+
         table.join2(mem_parameter,ld_parameter)
         for _, includedirs_flasg in pairs(target:get("includedirs")) do
             table.insert(mem_parameter,"-I" .. includedirs_flasg)
