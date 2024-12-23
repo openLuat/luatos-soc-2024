@@ -17,7 +17,7 @@
 // #define LUAT_MODEL_AIR700ECQ 1
 // #define LUAT_MODEL_AIR700EAQ 1
 // #define LUAT_MODEL_AIR700EMQ 1
-// #define LUAT_MODEL_AIR780EPM 1
+#define LUAT_MODEL_AIR780EPM 1
 // #define LUAT_MODEL_AIR780EUN 1
 // #define LUAT_MODEL_AIR780EUS 1
 
@@ -284,7 +284,11 @@
 
 #ifdef TYPE_EC718M
 #undef LUAT_HEAP_SIZE
-#define LUAT_HEAP_SIZE (800*1024)
+#ifdef TYPE_EC718HM
+#define LUAT_HEAP_SIZE (2048*1024)
+#else
+#define LUAT_HEAP_SIZE (1024*1024)
+#endif
 #endif
 
 #endif
