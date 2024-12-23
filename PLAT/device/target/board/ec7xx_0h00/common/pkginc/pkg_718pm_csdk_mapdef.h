@@ -25,11 +25,11 @@
 #ifdef __LUATOS__
 #if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
 #ifndef AP_PKGIMG_LIMIT_SIZE
-#define AP_PKGIMG_LIMIT_SIZE (0x219000)
+#define AP_PKGIMG_LIMIT_SIZE (0x263000)
 #endif
 #else
 #ifndef AP_PKGIMG_LIMIT_SIZE
-#define AP_PKGIMG_LIMIT_SIZE (0x255000)
+#define AP_PKGIMG_LIMIT_SIZE (0x29F000)
 #endif
 #endif // (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
 #else

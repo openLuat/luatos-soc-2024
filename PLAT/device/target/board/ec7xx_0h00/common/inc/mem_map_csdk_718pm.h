@@ -70,11 +70,11 @@ flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 #ifdef __LUATOS__
 	#if defined (FEATURE_AMR_CP_ENABLE) || defined (FEATURE_VEM_CP_ENABLE)
 	#ifndef AP_FLASH_LOAD_SIZE
-	#define AP_FLASH_LOAD_SIZE              (0x219000)
+	#define AP_FLASH_LOAD_SIZE              (0x263000)
 	#endif
 	#else
 	#ifndef AP_FLASH_LOAD_SIZE
-	#define AP_FLASH_LOAD_SIZE              (0x255000)
+	#define AP_FLASH_LOAD_SIZE              (0x29F000)
 	#endif
 	#endif
 	#ifndef FULL_OTA_SAVE_ADDR
@@ -83,8 +83,8 @@ flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 	#define AP_FLASH_LOAD_UNZIP_SIZE        (AP_FLASH_LOAD_SIZE + 0x20000)
 
 	//fs addr and size
-	#define FLASH_FOTA_REGION_START         (0x2D7000)
-	#define FLASH_FOTA_REGION_LEN           (0xE0000)//896KB
+	#define FLASH_FOTA_REGION_START         (0x321000)
+	#define FLASH_FOTA_REGION_LEN           (0x96000)//600KB
 	#define FLASH_FOTA_REGION_END           (0x3b7000)
 #else
 	//ap image addr and size
