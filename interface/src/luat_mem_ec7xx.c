@@ -96,16 +96,6 @@ void luat_meminfo_opt_sys(LUAT_HEAP_TYPE_E type,size_t* total, size_t* used, siz
 	GetSRAMHeapInfo(total, used, max_used);
 }
 
-__USER_FUNC_IN_RAM__ void *pvPortMallocEC_Psram( size_t xWantedSize, unsigned int funcPtr )
-{
-	return pvPortMallocEC(xWantedSize, funcPtr);
-}
-
-__USER_FUNC_IN_RAM__ void  vPortFree_Psram( void *pv )
-{
-	vPortFree(pv);
-}
-
 #else
 #if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
 static llist_head prv_psram_record_list_head;
@@ -125,7 +115,7 @@ static int find_record(void *node, void *ptr)
 
 static void *psram_malloc(size_t len)
 {
-	void* _ptr = pvPortMalloc_Psram(len);
+	void* _ptr = pvPortMalloc_CUST(len, (unsigned int)__GET_RETURN_ADDRESS());
 	if (_ptr)
 	{
 		luat_rtos_task_suspend_all();
@@ -133,7 +123,7 @@ static void *psram_malloc(size_t len)
 		{
 			INIT_LLIST_HEAD(&prv_psram_record_list_head);
 		}
-		psram_record_t *record = pvPortAssertMalloc(sizeof(psram_record_t));
+		psram_record_t *record = pvPortAssertMallocEc(sizeof(psram_record_t));
 		record->address = _ptr;
 		if (llist_empty(&prv_psram_record_list_head))
 		{
@@ -147,7 +137,7 @@ static void *psram_malloc(size_t len)
 
 static void *psram_realloc(void* ptr, size_t len)
 {
-	void* _ptr = pvPortRealloc_Psram(ptr, len);
+	void* _ptr = pvPortRealloc_CUST(ptr, len, (unsigned int)__GET_RETURN_ADDRESS());
 	if (_ptr)
 	{
 		luat_rtos_task_suspend_all();
@@ -163,7 +153,7 @@ static void *psram_realloc(void* ptr, size_t len)
 		}
 		else
 		{
-			psram_record_t *record = pvPortAssertMalloc(sizeof(psram_record_t));
+			psram_record_t *record = pvPortAssertMallocEc(sizeof(psram_record_t));
 			record->address = _ptr;
 			if (llist_empty(&prv_psram_record_list_head))
 			{
@@ -179,7 +169,7 @@ static void *psram_realloc(void* ptr, size_t len)
 
 static void psram_free(void *ptr)
 {
-	vPortFree_Psram(ptr);
+	vPortFreeCust(ptr);
 	luat_rtos_task_suspend_all();
 	if (!prv_psram_record_list_head.next || !prv_psram_record_list_head.prev)
 	{
