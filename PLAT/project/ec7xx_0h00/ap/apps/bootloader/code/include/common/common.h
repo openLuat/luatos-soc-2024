@@ -10,6 +10,9 @@
 #define TICK_LOAD_VALUE 0x800000  //256 seconds for tick period
 
 
+#define LOG_ON      1
+
+
 #ifdef EC_ASSERT
 #undef EC_ASSERT
 #endif
@@ -19,7 +22,12 @@
 extern int EC_Printf(const char * pFormat, ...);
 extern int EC_Sprintf(char *pBuf, const char * pFormat, ...);
 
+#define BL_LOGI(fmt,args...)         EC_Printf(fmt, ##args)
+#if (LOG_ON == 1)
 #define BL_TRACE(fmt,args...)        EC_Printf(fmt, ##args)
+#else
+#define BL_TRACE(fmt,args...)
+#endif
 #define BL_SPRINTF(buf,args...)      EC_Sprintf(buf, ##args)
 
 #ifdef ECPLAT_PRINTF
@@ -28,6 +36,7 @@ extern int EC_Sprintf(char *pBuf, const char * pFormat, ...);
 #define ECPLAT_PRINTF(moduleId, subId, debugLevel, format, ...)    EC_Printf(format, ##__VA_ARGS__)
 
 #else
+#define BL_LOGI(fmt,args...)         printf(fmt, ##args)
 #define BL_TRACE(fmt,args...)        printf(fmt, ##args)
 #define BL_SPRINTF(buf,args...)      sprintf(buf, ##args)
 

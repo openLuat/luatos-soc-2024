@@ -252,3 +252,231 @@ MMDEBUG_TEXT_SECTION void show_mem_trace(void)
 }
 
 
+
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+
+#ifdef TYPE_EC718M
+#define CUST_MM_DEBUG_RAMCODE CUST_FPSRAM_P2_RAMCODE
+#define CUST_MM_DEBUG_ZI      CUST_FPSRAM_P2_BSS
+#else
+#define CUST_MM_DEBUG_RAMCODE PLAT_PSRAM_HEAP6_RAMCODE
+#define CUST_MM_DEBUG_ZI      PLAT_FPSRAM_HEAP6_ZI
+#endif
+
+CUST_MM_DEBUG_ZI mm_trace_node_t trace_node_cust[MM_TRACE_MAX];//20 bytes * MEMTRACE_MAX
+CUST_MM_DEBUG_ZI mm_trace_node_t *node_hash_cust[MM_TRACE_HASH_SIZE];//4 bytes * MEMTRACE_HASH_SIZE
+CUST_MM_DEBUG_ZI mm_trace_node_t *free_node_cust;
+
+/*----------------------------------------------------------------------------
+ Brief:          memory management debug strucure init
+ Details:        init free node list, main structure
+ Input:          none
+ Output:         none
+ Note:           internal use
+ History:         04/02/2018    Originated by bchang
+------------------------------------------------------------------------------*/
+CUST_MM_DEBUG_RAMCODE void mm_trace_init_cust(void)
+{
+    struct mm_trace_node *node;
+    unsigned long index;
+
+    memset(trace_node_cust, 0, sizeof(trace_node_cust));
+    memset(node_hash_cust, 0, sizeof(node_hash_cust));
+
+    free_node_cust = &trace_node_cust[0];
+    node = &trace_node_cust[0];
+
+    /* add all item to the free list */
+    for (index = 1; index < MM_TRACE_MAX; index ++)
+    {
+        node->next = &trace_node_cust[index];
+        node = node->next;
+    }
+
+    node->next = NULL;
+}
+
+
+
+/*----------------------------------------------------------------------------
+ Brief:          add memory management malloc trace
+ Details:        reord malloc info to free node
+ Input:          allocated buffer ptr, length
+ Output:         none
+ Note:           internal use
+ History:         04/02/2018    Originated by bchang
+------------------------------------------------------------------------------*/
+CUST_MM_DEBUG_RAMCODE void mm_malloc_trace_cust(void* buffer, unsigned long length, unsigned int func_lr)
+{
+    struct mm_trace_node* node;
+    unsigned long index;
+    const char *CurrentTaskName;
+
+    /* get free node */
+    uint32_t mask = SaveAndSetIRQMask();
+    if (free_node_cust == NULL)
+    {
+        /* no free node, just return */
+        RestoreIRQMask(mask);
+        return;
+    }
+    node = free_node_cust;
+    free_node_cust = free_node_cust->next;
+    RestoreIRQMask(mask);
+
+    CurrentTaskName=osThreadGetName (osThreadGetId());
+
+    memcpy(node->task_name, (void *)CurrentTaskName, 8);
+
+    node->task_name[7] = '\0';
+    node->memptr = buffer;
+    node->funcptr = func_lr;
+    node->length = length;
+    node->next = NULL;
+
+#if MM_TRACE_ON == 1
+    ECPLAT_PRINTF(UNILOG_PLA_STRING, mm_malloc_trace_cust_0, P_SIG, "task_name: %s, funclr=0x%x", node->task_name, func_lr);
+#endif
+
+    /* add to mem trace node hash list */
+    index = ((unsigned long)buffer) % MM_TRACE_HASH_SIZE;
+
+    mask = SaveAndSetIRQMask();
+
+    if (node_hash_cust[index] != NULL)
+    {
+        /* add node to the tail*/
+        struct mm_trace_node* tail;
+
+        /* find tail of hash node list */
+        tail = node_hash_cust[index];
+        while (tail->next != NULL)
+            tail = tail->next;
+
+        tail->next = node;
+        EC_ASSERT(tail!= node, tail->next, node, index);
+    }
+    else
+    {
+        /* empty hash list, add to head */
+        node_hash_cust[index] = node;
+    }
+    RestoreIRQMask(mask);
+
+#if MM_TRACE_ON == 1
+    ECPLAT_PRINTF(UNILOG_PLA_DRIVER, mm_malloc_trace_cust_1, P_SIG, "allocate mem @ 0x%x, len %d,node 0x%x, index %d", node->memptr,node->length,node,index);
+#elif MM_TRACE_ON == 2
+    ECPLAT_PRINTF(UNILOG_PLA_DRIVER, mm_malloc_trace_cust_export, P_WARNING, ",%s,0x%x,%d,0x%x,0x%x,", node->task_name, node->memptr, node->length, node, func_lr);
+#endif
+}
+
+
+
+/*----------------------------------------------------------------------------
+ Brief:          add memory management free trace
+ Details:        remove malloc info when free called
+ Input:          free buffer ptr
+ Output:         none
+ Note:           internal use
+ History:         04/02/2018    Originated by bchang
+------------------------------------------------------------------------------*/
+CUST_MM_DEBUG_RAMCODE void mm_free_trace_cust(void* buffer)
+{
+    struct mm_trace_node* node;
+    unsigned long index;
+
+    /* get mm node */
+    index = ((unsigned long)buffer) % MM_TRACE_HASH_SIZE;
+
+
+    if (node_hash_cust[index] != NULL)
+    {
+        uint32_t mask = SaveAndSetIRQMask();
+
+        node = node_hash_cust[index];
+        if (node->memptr == buffer)
+        {
+            /* free node from list */
+            node_hash_cust[index] = node->next;
+            RestoreIRQMask(mask);
+        }
+        else
+        {
+
+            while (node->next != NULL && node->next->memptr != buffer)
+
+                node = node->next;
+
+            /* free node from list */
+            if (node->next != NULL)
+            {
+                struct mm_trace_node* tmp;
+
+                tmp = node->next;
+                node->next = node->next->next;
+                RestoreIRQMask(mask);
+
+                node = tmp;
+            }
+            else
+            {
+                /* not match ptr found */
+                #if (MM_TRACE_ON != 0) 
+                ECPLAT_PRINTF(UNILOG_PLA_DRIVER, mm_free_trace_cust_0, P_SIG, "No match block 0x%x, ptr 0x%x\r\n", node->memptr,buffer);
+                #endif
+                RestoreIRQMask(mask);
+                return;
+            }
+        }
+
+#if MM_TRACE_ON == 1
+        ECPLAT_PRINTF(UNILOG_PLA_STRING, mm_free_trace_cust_1, P_SIG, "task_name: %s", node->task_name);
+        ECPLAT_PRINTF(UNILOG_PLA_DRIVER, mm_free_trace_cust_2, P_SIG, "free mem 0x%x, len %d,node 0x%x, index %d", node->memptr, node->length,node,index);
+#elif MM_TRACE_ON == 2
+        ECPLAT_PRINTF(UNILOG_PLA_DRIVER, mm_free_trace_cust_export, P_WARNING, ",%s,0x%x,%d,0x%x,        ,", node->task_name, node->memptr, node->length, node);
+#endif
+        /* clear node */
+        memset(node, 0, sizeof(struct mm_trace_node));
+
+        /* add node to free list */
+        mask = SaveAndSetIRQMask();
+        node->next = free_node_cust;
+        free_node_cust = node;
+        RestoreIRQMask(mask);
+
+    }
+}
+
+
+
+/*----------------------------------------------------------------------------
+ Brief:          dump all memory management node
+ Details:        only none free buffer was recorded and dumped
+ Input:          none
+ Output:         none
+ Note:           internal use
+ History:         04/02/2018    Originated by bchang
+------------------------------------------------------------------------------*/
+CUST_MM_DEBUG_RAMCODE void show_mem_trace_cust(void)
+{
+    unsigned long index;
+    struct mm_trace_node* node;
+
+    for (index = 0; index < MM_TRACE_MAX; index ++)
+    {
+        node = &trace_node_cust[index];
+
+        /* dump memory trace item */
+        if (node->task_name[0] != '\0')
+        {
+            #if MM_TRACE_ON == 1
+            ECPLAT_PRINTF(UNILOG_PLA_STRING, show_mem_trace_cust_0, P_INFO, "task_name: %s", node->task_name);
+            ECPLAT_PRINTF(UNILOG_PLA_DRIVER, show_mem_trace_cust_1, P_INFO, "malloc %d bytes @ 0x%x\r\n", node->length, node->memptr);
+            #endif
+        }
+        
+    }
+}
+#endif
+
+

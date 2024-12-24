@@ -2,13 +2,8 @@
 #define __CAMERA_DRV_H__
 
 #include "cspi.h"
-#include "sp0A39.h"
-#include "sp0821.h"
-#include "gc6123.h"
 #include "gc032A.h"
-#include "bf30a2.h"
 #include "gc6153.h"
-#include "gc6133.h"
 
 /**
   \addtogroup cam_interface_gr
@@ -85,10 +80,11 @@ typedef void (*camErrCb)(uint32_t stats);
 /**
   \brief Init camera, include pinMux, and enable clock.  
   \param[in] dataAddr     Mem addr to store picture.
-  \param[in] cb           Indicate that a picture has been taken.
+  \param[in] uspCb        usp cb.
+  \param[in] dmaCb        dma cb.  
   \return              
 */
-void camInit(void* dataAddr, camCbEvent_fn cb);
+void camInit(void* dataAddr, cspiCbEvent_fn uspCb, void* dmaCb);
 
 /**
   \brief Receive the picture has been taken.
@@ -170,6 +166,7 @@ void camPowerOn(uint8_t ioInitVal);
 #endif
 void camGpioPulseCfg(uint8_t padAddr, uint8_t pinInstance, uint8_t pinNum);
 void camGpioPulse(uint8_t pinInstance, uint8_t pinNum, uint32_t pulseDurationUs, uint8_t initialState, bool needLoop);
+void camRegisterSlp1Cb(cspiSlp1Cb_fn cb);
 
 /** \} */
 

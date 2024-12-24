@@ -65,14 +65,15 @@
 #define FOTA_ALIGN_DOWN(x,sz)    ((x) & (~((sz) - 1)))
 
 #if (FOTA_PRESET_RAM_ENABLE == 1)
-extern int EC_Printf(const char * pFormat, ...);
-extern int EC_Sprintf(char *pBuf, const char * pFormat, ...);
+#include "common.h"
 
-#define FOTA_TRACE(tag,fmt,args...)    EC_Printf(fmt, ##args)
-#define FOTA_SPRINTF(buf,args...)      EC_Sprintf(buf, ##args)
+#define FOTA_LOGI(tag,fmt,args...)     EC_Printf(fmt, ##args)
+#define FOTA_TRACE(tag,fmt,args...)    BL_TRACE(fmt, ##args)
+#define FOTA_SPRINTF(buf,args...)      BL_SPRINTF(buf, ##args)
 #define FOTA_RAND()                    (0)
 
 #else
+#define FOTA_LOGI(tag,fmt,args...)     printf(fmt, ##args)
 #define FOTA_TRACE(tag,fmt,args...)    printf(fmt, ##args)
 #define FOTA_SPRINTF(buf,args...)      sprintf(buf, ##args)
 #define FOTA_RAND()                    rand()

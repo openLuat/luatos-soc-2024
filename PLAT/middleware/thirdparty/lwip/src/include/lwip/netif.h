@@ -129,6 +129,7 @@ typedef enum lwip_netif_type
     LWIP_NETIF_TYPE_WAN_INTERNET,
     LWIP_NETIF_TYPE_WAN_DEFAULT = LWIP_NETIF_TYPE_WAN_INTERNET,
     LWIP_NETIF_TYPE_WAN_IMS,    /* Not support now */
+    LWIP_NETIF_TYPE_WAN_WIFI,
     LWIP_NETIF_TYPE_WAN_OTHER,
 
     LWIP_NETIF_TYPE_LOOPBACK = 0x0E,
@@ -222,6 +223,7 @@ typedef err_t (*psif_pending_input_fn)(u8_t lcid);
 
 typedef err_t (*lanif_input_fn)(u8_t lan_type, UlPduBlock *pPduHdr);
 
+typedef err_t (*wanif_input_fn)(u8_t wan_type);
 
 
 

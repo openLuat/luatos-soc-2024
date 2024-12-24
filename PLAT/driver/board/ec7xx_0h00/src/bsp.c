@@ -29,6 +29,8 @@
 #define BSP_RODATA_SECTION   SECTION_DEF_IMPL(.sect_bsp_rodata)
 #define BSP_DATA_SECTION     SECTION_DEF_IMPL(.sect_bsp_data)
 #define BSP_BSS_SECTION      SECTION_DEF_IMPL(.sect_bsp_bss)
+#define FLASH_READ_GRANT_SIZE   (16)
+#define FLASH_READ_MAX_DELAY    (10000)//10ms
 
 
 extern ARM_DRIVER_USART Driver_USART0;
@@ -52,6 +54,9 @@ extern void trimVadjVbatSenseSetGolbalVar(void);
 #endif
 extern void GPR_RmiErrCfg(bool en);
 extern uint32_t GPR_RmiErrAddrGet(void);
+extern uint8_t  FLASH_XIPRead(uint8_t* pData, uint32_t ReadAddr, uint32_t Size);
+extern uint8_t ShareInfoAPGetCPBusyFlag( void );
+
 
 void BSP_InitUartDriver(ARM_DRIVER_USART *drvHandler,
                         ARM_POWER_STATE powerMode,
@@ -229,6 +234,52 @@ void setUartBaudRate(uint8_t idx, uint32_t baudRate)
 
     ECPLAT_PRINTF(UNILOG_PMU, setUartBaudRate_1, P_WARNING, "Set BaudRate = %d, %d, %d", gUartBaudrate[0], gUartBaudrate[1], gUartBaudrate[2]);
 }
+
+
+void FLASH_appRead(uint8_t *pData, uint32_t ReadAddr, uint32_t Size)
+{
+    uint32_t numOfReadTrunk = 0, i=0;
+    uint32_t waitLoop =0;
+
+    numOfReadTrunk = (Size/FLASH_READ_GRANT_SIZE);
+    if(Size <= FLASH_READ_GRANT_SIZE)
+    {
+        FLASH_XIPRead(pData, ReadAddr, Size);
+    }
+    else
+    {
+        for(i=0; i<numOfReadTrunk; i++)
+        {
+            while(ShareInfoAPGetCPBusyFlag() == 1)
+            {
+                delay_us(1);
+                waitLoop ++;
+                if(waitLoop >=FLASH_READ_MAX_DELAY)
+                {
+                    waitLoop = 0;
+                    break;
+                }
+            }
+            FLASH_XIPRead(pData+i*FLASH_READ_GRANT_SIZE, ReadAddr+i*FLASH_READ_GRANT_SIZE, FLASH_READ_GRANT_SIZE);
+
+        }
+        if((Size - i*FLASH_READ_GRANT_SIZE) != 0)
+        {
+            while(ShareInfoAPGetCPBusyFlag() == 1)
+            {
+                delay_us(1);
+                waitLoop ++;
+                if(waitLoop >=FLASH_READ_MAX_DELAY)
+                {
+                    waitLoop = 0;
+                    break;
+                }
+            }
+            FLASH_XIPRead(pData+i*FLASH_READ_GRANT_SIZE, ReadAddr+i*FLASH_READ_GRANT_SIZE, Size-i*FLASH_READ_GRANT_SIZE);
+        }
+    }
+}
+
 
 /**
   \fn           bool getCPWakeupType(void)

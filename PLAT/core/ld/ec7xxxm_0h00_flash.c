@@ -101,7 +101,7 @@ SECTIONS
         Load$$LOAD_AP_PSRAM_P2_DATA$$Base = LOADADDR(.load_ap_psram_p2_data);
         Image$$LOAD_AP_PSRAM_P2_DATA$$Base = .;
         *(.cust_sect_ap_psram_p2_data.*)
-        *(EXCLUDE_FILE(*libc*.a) .data*)
+        *(EXCLUDE_FILE(*libc_nano.a *libc.a) .data*)
         . = ALIGN(4);
     } >PSRAM_P2_AREA AT>FLASH_AREA
     Image$$LOAD_AP_PSRAM_P2_DATA$$Length = SIZEOF(.load_ap_psram_p2_data);
@@ -111,7 +111,7 @@ SECTIONS
         . = ALIGN(4);
         Image$$LOAD_AP_PSRAM_P2_ZI$$Base = .;
         *(.cust_sect_ap_psram_p2_bss.*)
-        *(EXCLUDE_FILE(*libc*.a) .bss*)
+        *(EXCLUDE_FILE(*libc_nano.a *libc.a) .bss*)
         . = ALIGN(4);
         Image$$LOAD_AP_PSRAM_P2_ZI$$Limit = .;
     } >PSRAM_P2_AREA
@@ -383,6 +383,7 @@ SECTIONS
         *(.sect_slpman_data.*)
         *(.sect_bsp_usart_data.*)
         *(.sect_bsp_lpusart_data.*)
+        *(.sect_bsp_can_data.*)
         *(.sect_timer_data.*)
         *(.sect_dma_data.*)
         *(.sect_adc_data.*)
@@ -420,6 +421,7 @@ SECTIONS
         *(.sect_slpman_bss.*)
         *(.sect_bsp_usart_bss.*)
         *(.sect_bsp_lpusart_bss.*)
+        *(.sect_bsp_can_bss.*)
         *(.sect_timer_bss.*)
         *(.sect_dma_bss.*)
         *(.sect_adc_bss.*)
@@ -490,17 +492,14 @@ SECTIONS
         Image$$LOAD_AP_FPSRAM_P1_ZI$$Limit = .;
     } >PSRAM_P1_AREA
     
-    . = ALIGN(4);
-    PROVIDE(end_ap_data = .|PSRAM_PCACHE1_BASE);
-    PROVIDE(start_up_buffer = up_buf_start);
-    .unload_voiceEng_buffer start_up_buffer (NOLOAD):
+	.unload_voiceEng_buffer (.|PSRAM_PCACHE1_BASE) (NOLOAD):
     {
         . = ALIGN(4);
         *(.sect_voiceEngSharebuf.*)
         . = ALIGN(4);
     } >PSRAM_P1_AREA
 
-    .unload_up_buffer (up_buf_start+SIZEOF(.unload_voiceEng_buffer)) (NOLOAD):
+    .unload_up_buffer (.|PSRAM_PCACHE1_BASE) (NOLOAD):
     {
         . = ALIGN(4);
         *(.sect_catShareBuf_data.*)
@@ -508,11 +507,12 @@ SECTIONS
         . = ALIGN(4);
     } >PSRAM_P1_AREA
 
-    PROVIDE(end_up_buffer = . );
+    . = ALIGN(4);
+    PROVIDE(end_ap_data = .|PSRAM_PCACHE1_BASE);
+    PROVIDE(start_up_buffer = up_buf_start);
     heap_size = start_up_buffer - end_ap_data;
     asmbFlexSize = CP_AONMEMBACKUP_START_ADDR - asmb_flex_area;
     //ASSERT(heap_size>=min_heap_size_threshold,"ap use too much ram, heap less than min_heap_size_threshold!")
-    ASSERT(end_up_buffer<=PSRAM_APMEM_END_ADDR,"ap use too much ram, exceed to PSRAM_APMEM_END_ADDR")
     #if !defined FEATURE_IMS_ENABLE
     ASSERT(asmbFlexSize>=0x1000, "we should reserve at least 4KB for user")
     #endif

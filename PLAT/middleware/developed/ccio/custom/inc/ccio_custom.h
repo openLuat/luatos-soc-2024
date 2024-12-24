@@ -30,7 +30,8 @@ extern "C" {
 /*----------------------------------------------------------------------------*
  *                    MACROS                                                  *
  *----------------------------------------------------------------------------*/
-#define CSIO_IPOS_CID_DFT      1
+#define CSIO_IPOS_ID_MIFI       0
+#define CSIO_IPOS_CID_DFT       1
 
 typedef enum
 {
@@ -46,12 +47,14 @@ typedef enum
     CSIO_OCF_NORM_BASE = 0,
     CSIO_OCF_UNDEF = CSIO_OCF_NORM_BASE,
     CSIO_OCF_IPOS,
+    CSIO_OCF_IPOS_MIFI,
     CSIO_OCF_UARTEST,
     CSIO_OCF_USBTEST,
     CSIO_OCF_SPITEST,
     CSIO_OCF_MUX_BASE = 8,
     CSIO_OCF_MUX_UNDEF = CSIO_OCF_MUX_BASE,
     CSIO_OCF_MUX_IPOS,
+    CSIO_OCF_MUX_IPOS_MIFI,
     CSIO_OCF_MUX_1,
     CSIO_OCF_MUX_2,
     CSIO_OCF_MUX_3,

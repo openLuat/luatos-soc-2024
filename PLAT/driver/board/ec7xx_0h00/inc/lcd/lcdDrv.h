@@ -33,6 +33,7 @@ extern "C" {
 #define LCD_RST_HIGH   do {GPIO_pinWrite(LSPI_RST_GPIO_INSTANCE, 1 << LSPI_RST_GPIO_PIN, 1 << LSPI_RST_GPIO_PIN);}while(0)
 
 
+
 typedef struct
 {
     uint8_t cmd;
@@ -123,6 +124,28 @@ typedef enum
 	LCD_POWER_ON  = 1
 }lcdPowerOnOff_e;
 
+typedef enum
+{
+	CAM_PREVIEW_SET_AUTO 	= 0,
+	CAM_PREVIEW_SET_MANUAL 	= 1
+}lcdPreviewModeSel_e;
+
+typedef struct
+{
+	uint16_t 			rowScaleFrac;
+	uint16_t 			colScaleFrac;
+	uint16_t 			tailorLeft;
+	uint16_t 			tailorRight;
+	uint16_t 			tailorTop;
+	uint16_t 			tailorBottom;
+}lcdPreviewManulItem_t;
+
+typedef struct
+{
+	lcdPreviewModeSel_e 	previewModeSel;
+	lcdPreviewManulItem_t	previewManulSet;
+}lcdIoCtrl_t;
+
 typedef struct _lcdDrvFunc_t lcdDrvFunc_t;
 typedef void (*lspiErrCb)(uint32_t stats);
 
@@ -152,6 +175,7 @@ typedef struct _lcdDrvFunc_t
     int         (*direction)            (lcdDrvFunc_t *lcd, DisDirection_e dir);
     int         (*close)                (lcdDrvFunc_t *lcd);
 }lcdDrvFunc_t;
+
 
 #if (LCD_ST7789_ENABLE == 1)
 #include "lcdDev_7789.h"
@@ -184,6 +208,8 @@ extern lcdDrvFunc_t co5300Drv;
 void            lcdRegInit(uint32_t id);
 lcdDrvFunc_t*   lcdOpen(uint32_t id, void* uspCb, void* dmaCb);
 int             lcdClose(lcdDrvFunc_t *pdrv);
+void 			lcdIoInit(bool isAonIO);
+void 			lcdRegisterSlp1Cb(lcdSlp1Cb_fn cb);
 int             lcdDirection(lcdDrvFunc_t *pdrv, DisDirection_e dir);
 int             lcdFill(lcdDrvFunc_t *pdrv, uint32_t fillLen, uint8_t* buf);
 void            lcdDrawPoint(lcdDrvFunc_t *pdrv, uint16_t x, uint16_t y, uint32_t dataWrite);
@@ -196,6 +222,8 @@ void            lspiCheckErrStats();
 void 			imageRotateColor(uint8_t* src, uint32_t width, uint32_t height, uint8_t* dst, uint8_t bpp);
 void 			imageRotateGray(uint8_t* src, uint32_t width, uint32_t height, uint8_t* dst);
 void 			yuv422ToRgb565_2(const void* inbuf, void* outbuf, int width, int height);
+void 			lcdIoCtrl(lcdDrvFunc_t *lcd, lcdIoCtrl_t ioCtrl);
+void 			lcdConfigReg(lcdDrvFunc_t *lcd, uint8_t cmd, uint8_t *data, uint8_t dataLen);
 #if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
 void    calTe(uint32_t totalBytes, uint16_t sy);
 #else // 719

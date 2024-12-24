@@ -17,7 +17,7 @@
 #ifndef _ATEC_SIM_H
 #define _ATEC_SIM_H
 
-//#define FEATURE_PS_STK_RAW_CMD_ENABLE
+#include "psstk.h"
 
 
 /* AT+CRSM */
@@ -204,8 +204,6 @@
 #define ATC_ECSTKSTATE_AUTO_RESP_STATE  0
 #define ATC_ECSTKSTATE_TERMINAL_RESP_STATE  1
 #define ATC_ECSTKSTATE_WAITING_STATE  2
-
-#define ATC_SIM_STK_NO_RSP_TIMER_ID                 1
 
 
 CmsRetId  simCPIN(const AtCmdInputContext *pAtCmdReq);

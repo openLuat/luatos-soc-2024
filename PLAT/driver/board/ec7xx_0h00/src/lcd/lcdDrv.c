@@ -12,21 +12,16 @@ extern void lcdDrvDelay(uint32_t us);
 extern void lspiCmdSend(uint8_t cmd,uint8_t *data,uint8_t allbytes);
 AP_PLAT_COMMON_DATA static lspiDrvInterface_t *lcdDrv1  = &lspiDrvInterface2; 
 AP_PLAT_COMMON_BSS static lspiErrCb lspiErrStatsFunc;
+AP_PLAT_COMMON_BSS lcdDrvFunc_t* lcdDevHandle;
+AP_PLAT_COMMON_BSS lcdIoCtrl_t lcdIoCtrlParam;
+
 
 AP_PLAT_COMMON_DATA lcdDrvFunc_t* lcdDrvList[] = 
 {
 #if (LCD_ST7789_ENABLE == 1)
     &st7789Drv,
-#elif (LCD_SH8601_ENABLE == 1)
-    &sh8601Drv,
-#elif (LCD_ST7571_ENABLE == 1)
-    &st7571Drv,
-#elif (LCD_ST7567_ENABLE == 1)
-    &st7567Drv,
 #elif (LCD_ST77903_ENABLE == 1)
     &st77903Drv,
-#elif (LCD_GC9307_ENABLE == 1)
-    &gc9307Drv,
 #elif (LCD_AXS15231_ENABLE == 1)
     &axs15231Drv,
 #elif (LCD_CO5300_ENABLE == 1)
@@ -46,7 +41,8 @@ lcdDrvFunc_t* lcdOpen(uint32_t id, void* uspCb, void* dmaCb)
             if (id == lcdDrvList[i]->id)
             {
                 pDrvFunc = lcdDrvList[i];
-                pDrvFunc->init(pDrvFunc, uspCb, dmaCb, pDrvFunc->freq, pDrvFunc->bpp);  
+                pDrvFunc->init(pDrvFunc, uspCb, dmaCb, pDrvFunc->freq, pDrvFunc->bpp); 
+				lcdDevHandle = pDrvFunc;
                 return pDrvFunc;
             }
         }
@@ -54,6 +50,70 @@ lcdDrvFunc_t* lcdOpen(uint32_t id, void* uspCb, void* dmaCb)
 
     return NULL;
 }
+
+void lcdRegisterSlp1Cb(lcdSlp1Cb_fn cb)
+{
+    lcdSlp1CbFn = cb;
+}
+
+
+void lcdIoInit(bool isAonIO)
+{   
+    if (isAonIO)
+    {
+        slpManAONIOPowerOn();
+    }
+    
+    PadConfig_t config;
+    GpioPinConfig_t gpioCfg;
+    PAD_getDefaultConfig(&config);
+    
+    // 1. rst pin init
+    config.mux = LSPI_RST_PAD_ALT_FUNC;
+    PAD_setPinConfig(LSPI_RST_GPIO_ADDR, &config);
+    gpioCfg.pinDirection = GPIO_DIRECTION_OUTPUT;
+    gpioCfg.misc.initOutput = 1;
+    GPIO_pinConfig(LSPI_RST_GPIO_INSTANCE, LSPI_RST_GPIO_PIN, &gpioCfg);
+
+    // 2. backLight init
+#if (BK_USE_GPIO == 1)
+    config.mux = LCD_BK_PAD_ALT_FUNC;
+    PAD_setPinConfig(LCD_BK_PAD_INDEX, &config);
+    gpioCfg.pinDirection = GPIO_DIRECTION_OUTPUT;
+    gpioCfg.misc.initOutput = 0;
+    GPIO_pinConfig(LCD_BK_GPIO_INSTANCE, LCD_BK_GPIO_PIN, &gpioCfg);
+#elif (BK_USE_PWM == 1)
+    lcdPwmBkInit();
+#endif
+
+	// 3. ldo pin init
+#if (ENABLE_LDO == 1)
+    config.mux = LCD_EN_PAD_ALT_FUNC;
+    PAD_setPinConfig(LCD_EN_PAD_INDEX, &config);
+    gpioCfg.pinDirection = GPIO_DIRECTION_OUTPUT;
+    gpioCfg.misc.initOutput = 1;
+    GPIO_pinConfig(LCD_EN_GPIO_INSTANCE, LCD_EN_GPIO_PIN, &gpioCfg);
+#endif    
+
+    // 4. te init
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
+    // 4.1 718 te init
+#else
+    // 4.2 719 te init
+    config.mux = LCD_TE_PAD_ALT_FUNC;
+    PAD_setPinConfig(LCD_TE_PAD_INDEX, &config);
+#endif
+
+    // test fill one frame need how much time
+    #if 0
+    config.mux = PAD_MUX_ALT0;
+    PAD_setPinConfig(27, &config);
+    gpioCfg.pinDirection = GPIO_DIRECTION_OUTPUT;
+    gpioCfg.misc.initOutput = 1;
+    GPIO_pinConfig(0, 12, &gpioCfg);
+    #endif
+}
+
 
 void lcdRegInit(uint32_t id)
 {
@@ -195,6 +255,7 @@ void lspiRstAndClearFifo()
     
     GPR_swReset(RST_FCLK_USP2);
     LSPI2->DMACTL |= 1<<25; // clear tx fifo
+    LSPI2->STAS   |= 1;
     
     lspiCtrl.enable = 1;
     lcdDrv1->ctrl(LSPI_CTRL_CTRL, 0);
@@ -410,7 +471,6 @@ void calTe(teEdgeSel_e teEdge, uint16_t xs, uint16_t ys, uint16_t xe, uint16_t y
 	ys += LCD_Y_OFFSET;
 	ye += LCD_Y_OFFSET;
 
-	// if lspi speed=51MHZ, pic is 320x240, lspi need 28ms transfer done
 #if (LCD_INTERFACE_SPI == 1)	
 	tlspi = 24 * (LCD_FREQ / (51*1024*1024)) * (LCD_PIXEL / (320*240)) * 1000; // us
 #elif (LCD_INTERFACE_MSPI == 1)
@@ -455,7 +515,6 @@ void calTe(teEdgeSel_e teEdge, uint16_t xs, uint16_t ys, uint16_t xe, uint16_t y
 	}
 	else if	(ta > (tgape + tw + tlcd - tgaps))
 	{
-		// error
 		EC_ASSERT(0,0,0,0);
 	}
 
@@ -468,4 +527,18 @@ void calTe(teEdgeSel_e teEdge, uint16_t xs, uint16_t ys, uint16_t xe, uint16_t y
 }
 #endif
 
+void lcdIoCtrl(lcdDrvFunc_t *lcd, lcdIoCtrl_t ioCtrl)
+{
+    if (lcd == NULL)
+    {
+        return;
+    }
+
+	lcdIoCtrlParam = ioCtrl;
+}
+
+void lcdConfigReg(lcdDrvFunc_t *lcd, uint8_t cmd, uint8_t *data, uint8_t dataLen)
+{
+	lspiCmdSend(cmd, data, dataLen);
+}
 

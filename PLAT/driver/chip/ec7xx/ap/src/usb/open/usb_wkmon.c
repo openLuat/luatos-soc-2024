@@ -590,6 +590,9 @@ void usb_wkmon_task_init(void)
     task_attr.priority = osPriorityNormal;
     task_attr.cb_mem = &usb_wkmon_task_tcb;//task control block
     task_attr.cb_size = sizeof(StaticTask_t);//size of task control block
+#ifdef TYPE_EC718M
+    task_attr.reserved = osThreadDynamicStackAlloc;
+#endif
 
     osThreadNew(usb_wkmon_task, NULL, &task_attr);
 }

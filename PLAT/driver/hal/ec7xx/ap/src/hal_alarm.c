@@ -269,6 +269,10 @@ static void alarmThreadInit(void)
         #elif defined FEATURE_FREERTOS_ENABLE
         task_attr.priority = osPriorityNormal1;
         #endif
+#ifdef TYPE_EC718M
+        task_attr.reserved = osThreadDynamicStackAlloc;
+#endif
+
         osThreadNew(alarmTask, NULL, &task_attr);
     }
 }

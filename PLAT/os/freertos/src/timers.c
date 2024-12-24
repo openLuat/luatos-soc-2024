@@ -296,8 +296,7 @@ BaseType_t xReturn = pdFAIL;
 	{
 	Timer_t *pxNewTimer;
 
-		pxNewTimer = ( Timer_t * ) pvPortMalloc( sizeof( Timer_t ) );
-
+		pxNewTimer = ( Timer_t * ) pvPortMallocEc( sizeof( Timer_t ) );
 		if( pxNewTimer != NULL )
 		{
 			prvInitialiseNewTimer( pcTimerName, xTimerPeriodInTicks, uxAutoReload, pvTimerID, pxCallbackFunction, pxNewTimer );
@@ -819,7 +818,7 @@ TickType_t xTimeNow;
 					{
 						/* The timer can only have been allocated dynamically -
 						free it again. */
-						vPortFree( pxTimer );
+						vPortFreeEc( pxTimer );
 					}
 					#elif( ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) && ( configSUPPORT_STATIC_ALLOCATION == 1 ) )
 					{
@@ -828,7 +827,7 @@ TickType_t xTimeNow;
 						memory. */
 						if( pxTimer->ucStaticallyAllocated == ( uint8_t ) pdFALSE )
 						{
-							vPortFree( pxTimer );
+							vPortFreeEc( pxTimer );
 						}
 						else
 						{

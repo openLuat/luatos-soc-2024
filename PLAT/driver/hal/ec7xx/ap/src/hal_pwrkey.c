@@ -170,6 +170,9 @@ static void pwrKeyTaskInit(void)
     #elif defined FEATURE_LITEOS_ENABLE
     task_attr.priority = osPriorityNormal2;
     #endif
+#ifdef TYPE_EC718M
+    task_attr.reserved = osThreadDynamicStackAlloc;
+#endif
     osThreadNew(pwrKeyTask, NULL, &task_attr);
 }
 

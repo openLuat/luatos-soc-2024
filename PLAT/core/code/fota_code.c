@@ -21,7 +21,7 @@
 #include "fota_chksum.h"
 #include "fota_custom.h"
 #include "fota_nvm.h"
-
+extern uint8_t FLASH_write(uint8_t* pData, uint32_t WriteAddr, uint32_t Size);
 /*----------------------------------------------------------------------------*
  *                    MACROS                                                  *
  *----------------------------------------------------------------------------*/
@@ -470,11 +470,19 @@ static int32_t fotaNvmNfsWrite(uint32_t zid, uint32_t offset, uint8_t *buf, uint
 
     if(zid == FOTA_NVM_ZONE_CP)
     {
+#ifdef TYPE_EC718U
+    	retValue = FLASH_write(buf, currAddr, currLen);
+#else
         retValue = BSP_QSPI_WRITE_CP_FLASH(buf, currAddr, currLen);
+#endif
     }
     else
     {
+#ifdef TYPE_EC718U
+    	retValue = FLASH_write(buf, currAddr, currLen);
+#else
         retValue = BSP_QSPI_WRITE_AP_FLASH(buf, currAddr, currLen);
+#endif
     }
 
     return (retValue == QSPI_OK ? FOTA_EOK : FOTA_EFLWRITE);
@@ -629,6 +637,10 @@ static int32_t fotaNvmPrepareDfu(FotaDefPrepareDfu_t *preDfu)
                 ECPLAT_PRINTF(UNILOG_FOTA, FOTA_NVM_PREP_DFU_3, P_WARNING, "prep DFU: and succ!\n");
                 return FOTA_EOK;
             }
+        }
+        else
+        {
+            ECPLAT_PRINTF(UNILOG_FOTA, FOTA_NVM_PREP_DFU_4, P_WARNING, "prep DFU: save err!\n");
         }
     }
 
@@ -1265,7 +1277,11 @@ int32_t fotaNvmDoExtension(uint32_t flags, void *args)
 #ifdef __BL_MODE__
 uint8_t BSP_QSPI_Write(uint8_t* pData, uint32_t WriteAddr, uint32_t Size)
 {
-    return FLASH_write(pData, WriteAddr, Size);
+#ifdef TYPE_EC718U
+	return FLASH_write(pData, WriteAddr, Size);
+#else
+    return FLASH_writeBl(pData, WriteAddr, Size);
+#endif
 }
 
 uint8_t  BSP_QSPI_Erase_Sector(uint32_t SectorAddress)
@@ -1276,6 +1292,14 @@ uint8_t  BSP_QSPI_Erase_Sector(uint32_t SectorAddress)
 
 uint32_t BL_OTAInfoAddress(void) {return (BOOTLOADER_FLASH_LOAD_ADDR + BOOTLOADER_FLASH_LOAD_SIZE);}
 uint32_t BL_DFotaAddress(void) {return (FLASH_FOTA_REGION_START);}
+uint8_t BL_WriteFlash(uint8_t* pData, uint32_t WriteAddr, uint32_t Size)
+{
+#ifdef TYPE_EC718U
+	return FLASH_write(pData, WriteAddr, Size);
+#else
+    return FLASH_writeBl(pData, WriteAddr, Size);
+#endif
+}
 #ifdef TYPE_EC718M
 uint32_t BL_MemAddress(void) {return (PSRAM_P2_START_ADDR);}
 #else

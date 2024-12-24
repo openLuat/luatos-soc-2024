@@ -97,6 +97,7 @@
 #ifndef   __RESTRICT
   #define __RESTRICT                             __restrict
 #endif
+#define ASM_CALLER                               
 
 /* ###########################  Core Function Access  ########################### */
 /** \ingroup  CMSIS_Core_FunctionInterface

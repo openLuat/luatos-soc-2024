@@ -147,11 +147,11 @@ uint8_t tp_i2c_read(uint8_t dev_id, uint8_t reg_addr, uint16_t len, uint8_t *dat
 */
 uint8_t tp_i2c_send(uint8_t dev_id, uint8_t reg_addr, uint16_t len, uint8_t *data)
 {
-    uint8_t * tempBuffer = calloc(len+1,sizeof(char));
+    uint8_t * tempBuffer = callocEc(len+1,sizeof(char));
     memcpy(tempBuffer+1,data,len);
     tempBuffer[0] = reg_addr;
     i2cMasterDrv->MasterTransmit(dev_id, tempBuffer, len+1, false);
-    free(tempBuffer);
+    freeEc(tempBuffer);
     return 0;
 }
 

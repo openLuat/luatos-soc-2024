@@ -37,7 +37,7 @@ extern "C" {
 #define CCIO_NETDATA_LIST_INPUT_ENABLE
 
 /* the overhead of spi frame */
-#define SPI_FRAME_HDR_SIZE       4
+#define CCIO_SPI_FRAME_HDR_SIZE  4
 
 /* the min frame size for rndis, not including ethernet FCS field */
 #define CCIO_RNDIS_PKT_HDR_LEN   44
@@ -81,7 +81,7 @@ extern "C" {
 #define CCIO_NORM_XFER_MAXSIZE   512
 
 /* max size of frame over spi */
-#define CCIO_SPI_XFER_MAXSIZE    (CCIO_RBUF_XTRA_SIZE + 1600 /* SFDT_FRAME_MTU */) //(CCIO_RBUF_XTRA_SIZE + SPI_FRAME_HDR_SIZE + CCIO_NORM_XFER_MAXSIZE * 3/*ETH_FRAME_HDR_SIZE + CCIO_IPNET_DATA_MTU*/)
+#define CCIO_SPI_XFER_MAXSIZE    (CCIO_RBUF_XTRA_SIZE + 1600 /* SFDT_FRAME_MTU */) //(CCIO_RBUF_XTRA_SIZE + CCIO_SPI_FRAME_HDR_SIZE + CCIO_NORM_XFER_MAXSIZE * 3/*ETH_FRAME_HDR_SIZE + CCIO_IPNET_DATA_MTU*/)
 
 /**
  * extra size for managing ulpdu link node

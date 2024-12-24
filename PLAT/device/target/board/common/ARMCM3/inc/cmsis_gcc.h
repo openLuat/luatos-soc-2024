@@ -64,6 +64,8 @@
 #ifndef   __PACKED_UNION
   #define __PACKED_UNION                         union __attribute__((packed, aligned(1)))
 #endif
+#define ASM_CALLER                               __attribute__((noinline, optimize("-fno-ipa-ra")))
+
 #ifndef   __UNALIGNED_UINT32        /* deprecated */
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wpacked"

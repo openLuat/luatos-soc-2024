@@ -71,6 +71,7 @@ typedef void (*flashOperCallback_t)(uint8_t result, FlhOpType_e type, uint32_t a
 uint8_t FLASH_eraseSafe(uint32_t SectorAddress, uint32_t Size);
 uint8_t FLASH_writeSafe(uint8_t* pData, uint32_t WriteAddr, uint32_t Size);
 uint8_t FLASH_readSafe(uint8_t* pData, uint32_t ReadAddr, uint32_t Size);
+uint8_t FLASH_SetGranSize(uint16_t WriteGranSize);
 
 
 

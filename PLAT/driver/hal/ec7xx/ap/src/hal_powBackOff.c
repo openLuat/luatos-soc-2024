@@ -284,6 +284,9 @@ static void powBackOffThreadInit(void)
         #elif defined FEATURE_FREERTOS_ENABLE
         task_attr.priority = osPriorityNormal1;
         #endif
+#ifdef TYPE_EC718M
+        task_attr.reserved = osThreadDynamicStackAlloc;
+#endif
         powBackOffTaskId = osThreadNew(powBackOffTask, NULL, &task_attr);
     }
 }

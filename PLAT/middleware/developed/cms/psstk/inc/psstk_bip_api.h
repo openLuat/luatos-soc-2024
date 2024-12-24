@@ -14,6 +14,7 @@
  * MARCO
  *****************************************************************************
 ******************************************************************************/
+//#define FEATURE_PS_STK_RAW_CMD_ENABLE
 
 /******************************************************************************
  *****************************************************************************
@@ -43,6 +44,9 @@ BOOL psStkBipProcSimBipSig(const SignalBuf *pSig);
 
 void psStkBipProcApplInd(CmsApplInd *pAppInd);
 
+void psStkProcCmiInd(const SignalBuf *indSignalPtr, BOOL bStkDisable);
+
+void psStkProcTimerExpiry(OsaTimerExpiry *pTimerExpiry);
 
 #endif
 

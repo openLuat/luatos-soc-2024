@@ -11,6 +11,8 @@ extern lspiDrvInterface_t *lcdDrv;
 //static uint8_t s_MADCTL = 0x0; 
 AP_PLAT_COMMON_BSS static uint16_t previewWidth;
 AP_PLAT_COMMON_BSS static uint16_t previewHeight;
+AP_PLAT_COMMON_BSS static uint32_t fillLen;
+extern lcdIoCtrl_t lcdIoCtrlParam;
 
 AP_PLAT_COMMON_DATA static initLine_t initTable15231[] = 
 {
@@ -46,8 +48,8 @@ AP_PLAT_COMMON_DATA static initLine_t initTable15231[] =
     {0x11, 1,  {0}},
     {0x29, 1,  {0}},
 #endif
+    {0xff, 1, {120}},
 
-	// ec 15231 need this two lines, donglian don't need these two line
     //{0xbb, 8,  {0x00,0x00,0x00,0x00,0x00,0x00,0x5a,0xa5}},
     //{0xa0, 1,  {0x29}},
 };
@@ -62,20 +64,21 @@ static uint32_t axs15231AddrSet(lcdDrvFunc_t *lcd, uint16_t sx, uint16_t sy, uin
 {
     uint8_t set_x_cmd[] = {sx>>8, sx, ex>>8, ex};
     lspiCmdSend(0x2A, set_x_cmd, sizeof(set_x_cmd));
+	previewWidth = ex - sx + 1;
     
     uint8_t set_y_cmd[] = {sy>>8, sy, ey>>8, ey};
     lspiCmdSend(0x2B, set_y_cmd, sizeof(set_y_cmd));
-    
+    previewHeight = ey - sy + 1;
+		
     lcdWriteCmd(0x2C);
 
-    return (ey-sy+1) * (ex-sx+1) * (AXS15231_BPP/8);
+    fillLen = (ey-sy+1) * (ex-sx+1) * (AXS15231_BPP/8);
+	return fillLen;
 }
 
 
 void axs15231HandleUspIrq4Cam(lcdDrvFunc_t *lcd)
 {       
-    uint32_t fillLen = 0;
-    
     lspiCtrl.enable = 0;
     lcdDrv->ctrl(LSPI_CTRL_CTRL, 0);
 
@@ -83,8 +86,6 @@ void axs15231HandleUspIrq4Cam(lcdDrvFunc_t *lcd)
     
     lspiCtrl.enable = 1;
     lcdDrv->ctrl(LSPI_CTRL_CTRL, 0);
-
-    fillLen = axs15231AddrSet(lcd, 0, 0, previewWidth-1, previewHeight-1);
 
     lspiCmdCtrl.wrRdn           = 1; // 1: wr   0: rd
     lspiCmdCtrl.ramWr           = 1; // start ramwr
@@ -199,9 +200,7 @@ static void axs15231BackLight(lcdDrvFunc_t *lcd, uint8_t level)
 
 static void axs15231PowerOnOff(lcdDrvFunc_t *lcd, lcdPowerOnOff_e onoff)
 {
-#if (ENABLE_LDO == 1)
-    //ECPLAT_PRINTF(UNILOG_PLA_DRIVER, asx15231Poweronoff_0, P_DEBUG, "onoff:%d", onoff);
-    
+#if (ENABLE_LDO == 1)   
 	if (onoff == LCD_POWER_ON)
 	{
 		// power on
@@ -247,147 +246,141 @@ static void axs15231UnRegisterUspIrqCb(lcdDrvFunc_t *lcd, uspCbRole_e who)
 
 
 static void axs15231CamPreviewStartStop(lcdDrvFunc_t *lcd, camPreviewStartStop_e previewStartStop)
-{   
-    uint32_t fillLen = 0;
-    
-#if defined CHIP_EC719 // chip 719
+{        
+	uint8_t  divVal = 0;
+	uint16_t divRemain = 0;
+	
+#if (defined TYPE_EC718M) // chip 719
     if (previewStartStop)
     {
-#if (CAMERA_ENABLE_BF30A2)
+		axs15231UnRegisterUspIrqCb(lcd, cbForFill);
+        axs15231RegisterUspIrqCb(lcd, cbForCam);
+		
+        lspiDataFmt.wordSize            = 7;
+        lspiDataFmt.txPack              = 0;
+        lcdDrv->ctrl(LSPI_CTRL_DATA_FORMAT, 0);
+        
+        lspiInfo.frameHeight            = PIC_SRC_HEIGHT;  	// frame input height
+        lspiInfo.frameWidth             = PIC_SRC_WIDTH;   // frame input width
+        lspiFrameInfoOut.frameHeightOut = previewHeight;   	// frame output height
+        lspiFrameInfoOut.frameWidthOut  = previewWidth;    	// frame output width
 
-#elif (CAMERA_ENABLE_GC032A)
+		if ((previewHeight > PIC_SRC_HEIGHT) || (previewWidth > PIC_SRC_WIDTH))
+		{
+			EC_ASSERT(0,0,0,0);
+		}
 
-#elif (CAMERA_ENABLE_GC6153)
+		if (lcdIoCtrlParam.previewModeSel == CAM_PREVIEW_SET_AUTO)
+		{
+			divVal 		= lspiInfo.frameHeight / lspiFrameInfoOut.frameHeightOut;
+			divRemain	= lspiInfo.frameHeight % lspiFrameInfoOut.frameHeightOut;	
+			lspiTailorInfo0.tailorTop		= divRemain/2;
+			lspiTailorInfo0.tailorBottom	= divRemain/2;
+			EC_ASSERT(divVal, lspiInfo.frameHeight, lspiFrameInfoOut.frameHeightOut, 0);
+			lspiScaleInfo.colScaleFrac 		= (divVal==1)? 0 : (128/divVal);
 
-#endif
+			divVal 		= lspiInfo.frameWidth / lspiFrameInfoOut.frameWidthOut;
+			divRemain	= lspiInfo.frameWidth % lspiFrameInfoOut.frameWidthOut;	
+			lspiTailorInfo.tailorLeft		= divRemain/2;
+			lspiTailorInfo.tailorRight		= divRemain/2;
+			EC_ASSERT(divVal, lspiInfo.frameWidth, lspiFrameInfoOut.frameWidthOut, 0);
+			lspiScaleInfo.rowScaleFrac = (divVal==1)? 0 : (128/divVal);
+		}
+		else
+		{
+			lspiScaleInfo.rowScaleFrac		= lcdIoCtrlParam.previewManulSet.rowScaleFrac;
+			lspiScaleInfo.colScaleFrac		= lcdIoCtrlParam.previewManulSet.colScaleFrac;
+			lspiTailorInfo.tailorLeft		= lcdIoCtrlParam.previewManulSet.tailorLeft;
+			lspiTailorInfo.tailorRight		= lcdIoCtrlParam.previewManulSet.tailorRight;
+			lspiTailorInfo0.tailorBottom    = lcdIoCtrlParam.previewManulSet.tailorBottom;
+        	lspiTailorInfo0.tailorTop       = lcdIoCtrlParam.previewManulSet.tailorTop;
+		}
 
+        lcdDrv->ctrl(LSPI_CTRL_SCALE_INFO, 0);
+        lcdDrv->ctrl(LSPI_CTRL_TAILOR_INFO, 0);
+        lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO, 0);
+        lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO_OUT, 0);
+
+        lspiCtrl.datSrc                 = 0; // 0: data from camera; 1: data from memory
+        lspiCtrl.colorModeIn            = 0; // YUV422, every item is 8bit
+        lspiCtrl.colorModeOut           = 1; // RGB565
+        lcdDrv->ctrl(LSPI_CTRL_CTRL, 0);
+
+        lspiCmdCtrl.wrRdn               = 1; // 1: wr   0: rd
+        lspiCmdCtrl.ramWr               = 1; // start ramwr
+        #if (SPI_2_DATA_LANE == 1)
+        lspiCmdCtrl.dataLen             = fillLen/2; // 2 datalane is pixel num
+        #else
+        lspiCmdCtrl.dataLen             = AXS15231_WIDTH*AXS15231_HEIGHT*2; // pixel * bpp/8
+        #endif
+        lcdDrv->ctrl(LSPI_CTRL_CMD_CTRL, 0);
     }
-
 #else // chip 718
     if (previewStartStop)
     {
         axs15231UnRegisterUspIrqCb(lcd, cbForFill);
         axs15231RegisterUspIrqCb(lcd, cbForCam);
     
-#if (CAMERA_ENABLE_BF30A2)
-
-#elif (CAMERA_ENABLE_GC032A)
-        previewWidth  = lcd->width;
-        previewHeight = lcd->height;
-        
-        fillLen = axs15231AddrSet(lcd, 0, 0, previewWidth-1, previewHeight-1);
-        
-        lspiDataFmt.wordSize            = 7;
-        lspiDataFmt.txPack              = 0;
-        lcdDrv->ctrl(LSPI_CTRL_DATA_FORMAT, 0);
-        
-        // lcd size
-        lspiInfo.frameHeight            = PIC_SRC_HEIGHT;   // frame input height
-        lspiInfo.frameWidth             = PIC_SRC_WIDTH;    // frame input width        
-        lspiFrameInfoOut.frameHeightOut = previewWidth;     // frame output height
-        lspiFrameInfoOut.frameWidthOut  = previewHeight;    // frame output width
-        lspiTailorInfo.tailorLeft       = (lspiInfo.frameWidth  - lspiFrameInfoOut.frameWidthOut) /2;
-        lspiTailorInfo.tailorRight      = (lspiInfo.frameWidth  - lspiFrameInfoOut.frameWidthOut) /2;
-        lspiTailorInfo0.tailorBottom    = (lspiInfo.frameHeight - lspiFrameInfoOut.frameHeightOut)/2;
-        lspiTailorInfo0.tailorTop       = (lspiInfo.frameHeight - lspiFrameInfoOut.frameHeightOut)/2;
-        lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO, 0);
-        lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO_OUT, 0);
-        lcdDrv->ctrl(LSPI_CTRL_TAILOR_INFO, 0);
-        lcdDrv->ctrl(LSPI_CTRL_TAILOR_INFO0, 0);
-
-        lspiCtrl.datSrc                 = 0; // 0: data from camera; 1: data from memory
-        lspiCtrl.colorModeIn            = 0; // YUV422, every item is 8bit
-        lcdDrv->ctrl(LSPI_CTRL_CTRL, 0);
-
-        lspiCmdCtrl.wrRdn               = 1; // 1: wr   0: rd
-        lspiCmdCtrl.ramWr               = 1; // start ramwr
-        #if (SPI_2_DATA_LANE == 1)
-        lspiCmdCtrl.dataLen             = fillLen/2; // 2 datalane is pixel num
-        #else
-        lspiCmdCtrl.dataLen             = AXS15231_WIDTH*AXS15231_HEIGHT*2; // pixel * bpp/8
-        #endif
-        lcdDrv->ctrl(LSPI_CTRL_CMD_CTRL, 0);
-        
-#elif (CAMERA_ENABLE_GC6153)
-        previewWidth  = 240;
-        previewHeight = 320;
-
-        // preview      
-        fillLen = axs15231AddrSet(lcd, 0, 0, previewWidth-1, previewHeight-1);
-
-        lspiDataFmt.wordSize            = 7;
-        lspiDataFmt.txPack              = 0;
-        lcdDrv->ctrl(LSPI_CTRL_DATA_FORMAT, 0);
-        
-        // lcd size
-        lspiInfo.frameHeight            = PIC_SRC_HEIGHT;  // frame input height
-        lspiInfo.frameWidth             = PIC_SRC_WIDTH;   // frame input width
-        lspiFrameInfoOut.frameHeightOut = previewHeight;   // frame output height
-        lspiFrameInfoOut.frameWidthOut  = previewWidth;    // frame output width
-        lspiScaleInfo.rowScaleFrac      = 0;
-        lspiScaleInfo.colScaleFrac      = 0;
-        lspiTailorInfo.tailorLeft       = 0;
-        lspiTailorInfo.tailorRight      = 0;
-        lcdDrv->ctrl(LSPI_CTRL_SCALE_INFO, 0);
-        lcdDrv->ctrl(LSPI_CTRL_TAILOR_INFO, 0);
-        lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO, 0);
-        lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO_OUT, 0);
-
-        lspiCtrl.datSrc                 = 0; // 0: data from camera; 1: data from memory
-        lspiCtrl.colorModeIn            = 0; // YUV422, every item is 8bit
-        lspiCtrl.colorModeOut           = 1; // RGB565
-        lcdDrv->ctrl(LSPI_CTRL_CTRL, 0);
-
-        lspiCmdCtrl.wrRdn               = 1; // 1: wr   0: rd
-        lspiCmdCtrl.ramWr               = 1; // start ramwr
-        #if (SPI_2_DATA_LANE == 1)
-        lspiCmdCtrl.dataLen             = fillLen/2; // 2 datalane is pixel num
-        #else
-        lspiCmdCtrl.dataLen             = AXS15231_WIDTH*AXS15231_HEIGHT*2; // pixel * bpp/8
-        #endif
-        lcdDrv->ctrl(LSPI_CTRL_CMD_CTRL, 0);
-        
-#elif (CAMERA_ENABLE_GC6133)
-        previewWidth  = 240;
-        previewHeight = 320;
-
-        // preview      
-        fillLen = axs15231AddrSet(lcd, 0, 0, previewWidth-1, previewHeight-1);
-
-        lspiDataFmt.wordSize            = 7;
-        lspiDataFmt.txPack              = 0;
-        lcdDrv->ctrl(LSPI_CTRL_DATA_FORMAT, 0);
-        
-        // lcd size
-        lspiInfo.frameHeight            = PIC_SRC_HEIGHT;  // frame input height
-        lspiInfo.frameWidth             = PIC_SRC_WIDTH;   // frame input width
-        lspiFrameInfoOut.frameHeightOut = previewHeight;   // frame output height
-        lspiFrameInfoOut.frameWidthOut  = previewWidth;    // frame output width
-        lspiScaleInfo.rowScaleFrac      = 0;
-        lspiScaleInfo.colScaleFrac      = 0;
-        lspiTailorInfo.tailorLeft       = 0;
-        lspiTailorInfo.tailorRight      = 0;
-        lcdDrv->ctrl(LSPI_CTRL_SCALE_INFO, 0);
-        lcdDrv->ctrl(LSPI_CTRL_TAILOR_INFO, 0);
-        lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO, 0);
-        lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO_OUT, 0);
-
-        lspiCtrl.datSrc                 = 0; // 0: data from camera; 1: data from memory
-        lspiCtrl.colorModeIn            = 0; // YUV422, every item is 8bit
-        lspiCtrl.colorModeOut           = 1; // RGB565
-        lcdDrv->ctrl(LSPI_CTRL_CTRL, 0);
-
-        lspiCmdCtrl.wrRdn               = 1; // 1: wr   0: rd
-        lspiCmdCtrl.ramWr               = 1; // start ramwr
-        #if (SPI_2_DATA_LANE == 1)
-        lspiCmdCtrl.dataLen             = fillLen/2; // 2 datalane is pixel num
-        #else
-        lspiCmdCtrl.dataLen             = AXS15231_WIDTH*AXS15231_HEIGHT*2; // pixel * bpp/8
-        #endif
-        lcdDrv->ctrl(LSPI_CTRL_CMD_CTRL, 0);        
+		lspiDataFmt.wordSize			= 7;
+		lspiDataFmt.txPack				= 0;
+		lcdDrv->ctrl(LSPI_CTRL_DATA_FORMAT, 0);
+		
+		lspiInfo.frameHeight			= PIC_SRC_HEIGHT;	// frame input height
+		lspiInfo.frameWidth 			= PIC_SRC_WIDTH;   // frame input width
+		lspiFrameInfoOut.frameHeightOut = previewHeight;	// frame output height
+		lspiFrameInfoOut.frameWidthOut	= previewWidth; 	// frame output width
+		
+		if ((previewHeight > PIC_SRC_HEIGHT) || (previewWidth > PIC_SRC_WIDTH))
+		{
+			EC_ASSERT(0,0,0,0);
+		}
+		
+		if (lcdIoCtrlParam.previewModeSel == CAM_PREVIEW_SET_AUTO)
+		{
+			divVal		= lspiInfo.frameHeight / lspiFrameInfoOut.frameHeightOut;
+			divRemain	= lspiInfo.frameHeight % lspiFrameInfoOut.frameHeightOut;	
+			lspiTailorInfo0.tailorTop		= divRemain/2;
+			lspiTailorInfo0.tailorBottom	= divRemain/2;
+			EC_ASSERT(divVal, lspiInfo.frameHeight, lspiFrameInfoOut.frameHeightOut, 0);
+			lspiScaleInfo.colScaleFrac		= (divVal==1)? 0 : (128/divVal);
+		
+			divVal		= lspiInfo.frameWidth / lspiFrameInfoOut.frameWidthOut;
+			divRemain	= lspiInfo.frameWidth % lspiFrameInfoOut.frameWidthOut; 
+			lspiTailorInfo.tailorLeft		= divRemain/2;
+			lspiTailorInfo.tailorRight		= divRemain/2;
+			EC_ASSERT(divVal, lspiInfo.frameWidth, lspiFrameInfoOut.frameWidthOut, 0);
+			lspiScaleInfo.rowScaleFrac = (divVal==1)? 0 : (128/divVal);
+		}
+		else
+		{
+			lspiScaleInfo.rowScaleFrac		= lcdIoCtrlParam.previewManulSet.rowScaleFrac;
+			lspiScaleInfo.colScaleFrac		= lcdIoCtrlParam.previewManulSet.colScaleFrac;
+			lspiTailorInfo.tailorLeft		= lcdIoCtrlParam.previewManulSet.tailorLeft;
+			lspiTailorInfo.tailorRight		= lcdIoCtrlParam.previewManulSet.tailorRight;
+			lspiTailorInfo0.tailorBottom	= lcdIoCtrlParam.previewManulSet.tailorBottom;
+			lspiTailorInfo0.tailorTop		= lcdIoCtrlParam.previewManulSet.tailorTop;
+		}
+		
+		lcdDrv->ctrl(LSPI_CTRL_SCALE_INFO, 0);
+		lcdDrv->ctrl(LSPI_CTRL_TAILOR_INFO, 0);
+		lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO, 0);
+		lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO_OUT, 0);
+		
+		lspiCtrl.datSrc 				= 0; // 0: data from camera; 1: data from memory
+		lspiCtrl.colorModeIn			= 0; // YUV422, every item is 8bit
+		lspiCtrl.colorModeOut			= 1; // RGB565
+		lcdDrv->ctrl(LSPI_CTRL_CTRL, 0);
+		
+		lspiCmdCtrl.wrRdn				= 1; // 1: wr	0: rd
+		lspiCmdCtrl.ramWr				= 1; // start ramwr
+#if (SPI_2_DATA_LANE == 1)
+		lspiCmdCtrl.dataLen 			= fillLen/2; // 2 datalane is pixel num
+#else
+		lspiCmdCtrl.dataLen 			= AXS15231_WIDTH*AXS15231_HEIGHT*2; // pixel * bpp/8
 #endif
-
+		lcdDrv->ctrl(LSPI_CTRL_CMD_CTRL, 0);
     }
+#endif    	
     else
     {
         axs15231UnRegisterUspIrqCb(lcd, cbForCam);
@@ -429,7 +422,11 @@ static void axs15231CamPreviewStartStop(lcdDrvFunc_t *lcd, camPreviewStartStop_e
             LSPI2->STAS |= 1<<28;
         }
 
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
         if (((LSPI2->STAS >> 13)& 0x3f) > 0)
+#else // 719
+		if (((LSPI2->LSPI_STAT >> 8)& 0x3f) > 0)
+#endif			
         {
             LSPI2->DMACTL |= 1<<25;
         }
@@ -441,12 +438,15 @@ static void axs15231CamPreviewStartStop(lcdDrvFunc_t *lcd, camPreviewStartStop_e
         lcdWriteData(0x00);
         lcdDrv->send(NULL, 0);
 
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
         if (((LSPI2->STAS >> 13)& 0x3f) > 0)
+#else // 719
+		if (((LSPI2->LSPI_STAT >> 8)& 0x3f) > 0)
+#endif			
         {
             LSPI2->DMACTL |= 1<<25;
         }
     }
-#endif    
 }
 
 static int axs15231Close(lcdDrvFunc_t *lcd)

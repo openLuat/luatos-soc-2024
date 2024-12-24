@@ -41,7 +41,6 @@
 //#error "CP should use raw freertos api"
 //#endif
 
-
 /*---------------------------------------------------------------------------*/
 #ifndef __ARM_ARCH_6M__
   #define __ARM_ARCH_6M__         0
@@ -395,7 +394,12 @@ FREERTOS_CMSISOS2_TEXT_SECTION osThreadId_t osThreadNew (osThreadFunc_t func, vo
   osThreadId_t h;
   UBaseType_t prio;
   int32_t mem;
-
+#ifdef __USER_CODE__
+#else
+#ifdef TYPE_EC718M
+  int32_t isThrdDymcStckAllc = -1;
+#endif
+#endif
   h = NULL;
 
   if (!IS_IRQ() && (func != NULL)) {
@@ -424,6 +428,19 @@ FREERTOS_CMSISOS2_TEXT_SECTION osThreadId_t osThreadNew (osThreadFunc_t func, vo
         stack = attr->stack_size / sizeof(StackType_t);
       }
 
+#ifdef __USER_CODE__
+#else
+#ifdef TYPE_EC718M
+        isThrdDymcStckAllc = attr->reserved;
+        /* 
+            The msb of the stack is used to a flag
+            that indicates which pvPortMalloc should be 
+            invoked in EC718M.
+        */
+        EC_ASSERT((stack&osThreadDynamicStackFlag) != 1, 0, 0, 0);
+#endif
+#endif
+
       if ((attr->cb_mem    != NULL) && (attr->cb_size    >= sizeof(StaticTask_t)) &&
           (attr->stack_mem != NULL) && (attr->stack_size >  0U)) {
         mem = 1;
@@ -447,9 +464,20 @@ FREERTOS_CMSISOS2_TEXT_SECTION osThreadId_t osThreadNew (osThreadFunc_t func, vo
     }
     else {
       if (mem == 0) {
-        if (xTaskCreate ((TaskFunction_t)func, name, (uint16_t)stack, argument, prio, &h) != pdPASS) {
-          h = NULL;
+#ifdef __USER_CODE__
+#else
+#ifdef TYPE_EC718M
+        if (isThrdDymcStckAllc == osThreadDynamicStackAlloc){
+            if (xTaskCreate ((TaskFunction_t)func, name, (uint16_t)(stack|osThreadDynamicStackFlag), argument, prio, &h) != pdPASS) {
+              h = NULL;
+            }
         }
+        else
+#endif
+#endif
+            if (xTaskCreate ((TaskFunction_t)func, name, (uint16_t)stack, argument, prio, &h) != pdPASS) {
+              h = NULL;
+            }
       }
     }
   }
@@ -712,7 +740,8 @@ FREERTOS_CMSISOS2_TEXT_SECTION uint32_t osThreadEnumerate (osThreadId_t *thread_
     vTaskSuspendAll();
 
     count = uxTaskGetNumberOfTasks();
-    task  = pvPortMalloc (count * sizeof(TaskStatus_t));
+
+    task  = pvPortMallocEc(count * sizeof(TaskStatus_t));
 
     if (task != NULL) {
       count = uxTaskGetSystemState (task, count, NULL);
@@ -724,7 +753,8 @@ FREERTOS_CMSISOS2_TEXT_SECTION uint32_t osThreadEnumerate (osThreadId_t *thread_
     }
     (void)xTaskResumeAll();
 
-    vPortFree (task);
+    vPortFreeEc(task);
+
   }
 
   return (count);
@@ -923,8 +953,7 @@ FREERTOS_CMSISOS2_TEXT_SECTION osTimerId_t osTimerNew (osTimerFunc_t func, osTim
 
   if (!IS_IRQ() && (func != NULL)) {
     /* Allocate memory to store callback function and argument */
-    callb = pvPortMalloc (sizeof(TimerCallback_t));
-
+    callb = pvPortMallocEc(sizeof(TimerCallback_t));
     if (callb != NULL) {
       callb->func = func;
       callb->arg  = argument;
@@ -1054,7 +1083,7 @@ FREERTOS_CMSISOS2_TEXT_SECTION osStatus_t osTimerDelete (osTimerId_t timer_id) {
     callb = (TimerCallback_t *)pvTimerGetTimerID ((TimerHandle_t)timer_id);
 
     if (xTimerDelete ((TimerHandle_t)timer_id, 0) == pdPASS) {
-      vPortFree (callb);
+      vPortFreeEc(callb);
       stat = osOK;
     } else {
       stat = osErrorResource;
@@ -1829,6 +1858,7 @@ FREERTOS_CMSISOS2_TEXT_SECTION osStatus_t osMessageQueueDelete (osMessageQueueId
 
 
 /*---------------------------------------------------------------------------*/
+#ifdef __USER_CODE__
 
 /*
  * STDIO Functions
@@ -1836,11 +1866,134 @@ FREERTOS_CMSISOS2_TEXT_SECTION osStatus_t osMessageQueueDelete (osMessageQueueId
 FREERTOS_CMSISOS2_TEXT_SECTION void *malloc( size_t Size )
 {
     void *ptr;
-#ifdef __USER_CODE__
     if (!Size) Size = 4;
+    ptr = pvPortMalloc_EC(Size, (unsigned int)__GET_RETURN_ADDRESS());
+    //#ifdef MM_DEBUG_EN
+    #if 0
+    mm_malloc_trace(ptr, Size);
+    #endif
+
+    return ptr;
+}
+
+FREERTOS_CMSISOS2_TEXT_SECTION void *realloc(void *pv, size_t xWantedSize )
+{
+    void *ptr;
+    if (!xWantedSize) xWantedSize = 4;
+    ptr = pvPortRealloc_EC(pv, xWantedSize, (unsigned int)__GET_RETURN_ADDRESS());
+    //#ifdef MM_DEBUG_EN
+    #if 0
+    mm_malloc_trace(ptr, Size);
+    #endif
+
+    return ptr;
+}
+
+FREERTOS_CMSISOS2_TEXT_SECTION void free( void *p )
+{
+
+    //#ifdef MM_DEBUG_EN
+    #if 0
+    mm_free_trace(p);
+    #endif
+    if (p != NULL) vPortFreeEc( p ) ;
+}
+
+FREERTOS_CMSISOS2_TEXT_SECTION void *calloc(size_t n,size_t Size )
+{
+
+    size_t total_size = n * Size ;
+    if (!total_size) total_size = 4;
+    void *ptr = pvPortMalloc_EC( total_size , (unsigned int)__GET_RETURN_ADDRESS()) ;
+    //#ifdef MM_DEBUG_EN
+    #if 0
+    mm_malloc_trace(ptr, total_size);
+    #endif
+
+    if ( ptr )
+    memset( ptr, 0, total_size ) ;
+
+    return ptr;
+}
+
+#ifdef TYPE_EC718M
+FREERTOS_CMSISOS2_TEXT_SECTION void *mallocEc( size_t Size )
+{
+    void *ptr;
+    ptr = pvPortMalloc_EC(Size, (unsigned int)__GET_RETURN_ADDRESS());
+    //#ifdef MM_DEBUG_EN
+    #if 0
+    mm_malloc_trace(ptr, Size);
+    #endif
+
+    return ptr;
+}
+
+FREERTOS_CMSISOS2_TEXT_SECTION void *reallocEc(void *pv, size_t xWantedSize )
+{
+    void *ptr;
+
+    ptr = pvPortRealloc_EC(pv, xWantedSize, (unsigned int)__GET_RETURN_ADDRESS());
+
+    //#ifdef MM_DEBUG_EN
+    #if 0
+    mm_malloc_trace(ptr, Size);
+    #endif
+
+    return ptr;
+}
+
+FREERTOS_CMSISOS2_TEXT_SECTION void freeEc( void *p )
+{
+
+    //#ifdef MM_DEBUG_EN
+    #if 0
+    mm_free_trace(p);
+    #endif
+    if (p != NULL)
+        vPortFreeEc( p ) ;
+}
+
+FREERTOS_CMSISOS2_TEXT_SECTION void *callocEc(size_t n,size_t Size )
+{
+
+    size_t total_size = n * Size ;
+    if (!total_size) total_size = 4;
+    void *ptr = pvPortMalloc_EC( total_size , (unsigned int)__GET_RETURN_ADDRESS()) ;
+    //#ifdef MM_DEBUG_EN
+    #if 0
+    mm_malloc_trace(ptr, total_size);
+    #endif
+
+    if ( ptr )
+    memset( ptr, 0, total_size ) ;
+
+    return ptr;
+}
+FREERTOS_CMSISOS2_TEXT_SECTION void *pvPortMalloc_CUST( size_t xWantedSize, unsigned int funcPtr )
+{
+	return pvPortMalloc_EC(xWantedSize, funcPtr);
+}
+FREERTOS_CMSISOS2_TEXT_SECTION void  vPortFreeCust( void *pv )
+{
+    if (pv != NULL)
+        vPortFreeEc( pv ) ;
+}
 #endif
+
+#else
+/*
+ * STDIO Functions
+ */
+FREERTOS_CMSISOS2_TEXT_SECTION void *malloc( size_t Size )
+{
+    void *ptr;
 #if 1
-    ptr = pvPortMallocEC(Size, (unsigned int)__GET_RETURN_ADDRESS());
+#ifdef TYPE_EC718M
+    ptr = pvPortMalloc_CUST(Size, (unsigned int)__GET_RETURN_ADDRESS());
+#else
+    ptr = pvPortMalloc_EC(Size, (unsigned int)__GET_RETURN_ADDRESS());
+#endif
 #else
     ptr = pvPortMalloc( Size ) ;
 #endif
@@ -1852,11 +2005,16 @@ FREERTOS_CMSISOS2_TEXT_SECTION void *malloc( size_t Size )
 
     return ptr;
 }
+
 FREERTOS_CMSISOS2_TEXT_SECTION void *realloc(void *pv, size_t xWantedSize )
 {
     void *ptr;
 
-    ptr = pvPortReallocEC(pv, xWantedSize, (unsigned int)__GET_RETURN_ADDRESS());
+#ifdef TYPE_EC718M
+        ptr = pvPortRealloc_CUST(pv, xWantedSize, (unsigned int)__GET_RETURN_ADDRESS());
+#else
+        ptr = pvPortRealloc_EC(pv, xWantedSize, (unsigned int)__GET_RETURN_ADDRESS());
+#endif
 
     //#ifdef MM_DEBUG_EN
     #if 0
@@ -1874,7 +2032,12 @@ FREERTOS_CMSISOS2_TEXT_SECTION void free( void *p )
     mm_free_trace(p);
     #endif
     if (p != NULL)
-        vPortFree( p ) ;
+#ifdef TYPE_EC718M
+    vPortFree( p ) ;
+#else
+    vPortFreeEc( p ) ;
+#endif
+
 }
 
 FREERTOS_CMSISOS2_TEXT_SECTION void *calloc(size_t n,size_t Size )
@@ -1884,7 +2047,75 @@ FREERTOS_CMSISOS2_TEXT_SECTION void *calloc(size_t n,size_t Size )
 
     void *ptr;
 
+#ifdef TYPE_EC718M
     ptr = pvPortMalloc( total_size ) ;
+#else
+    ptr = pvPortMallocEc( total_size ) ;
+#endif
+
+    //#ifdef MM_DEBUG_EN
+    #if 0
+    mm_malloc_trace(ptr, total_size);
+    #endif
+
+    if ( ptr )
+    memset( ptr, 0, total_size ) ;
+
+    return ptr;
+}
+
+#ifdef TYPE_EC718M
+FREERTOS_CMSISOS2_TEXT_SECTION void *mallocEc( size_t Size )
+{
+    void *ptr;
+
+#if 1
+    ptr = pvPortMalloc_EC(Size, (unsigned int)__GET_RETURN_ADDRESS());
+#else
+    ptr = pvPortMalloc( Size ) ;
+#endif
+
+    //#ifdef MM_DEBUG_EN
+    #if 0
+    mm_malloc_trace(ptr, Size);
+    #endif
+
+    return ptr;
+}
+
+FREERTOS_CMSISOS2_TEXT_SECTION void *reallocEc(void *pv, size_t xWantedSize )
+{
+    void *ptr;
+
+    ptr = pvPortRealloc_EC(pv, xWantedSize, (unsigned int)__GET_RETURN_ADDRESS());
+
+    //#ifdef MM_DEBUG_EN
+    #if 0
+    mm_malloc_trace(ptr, Size);
+    #endif
+
+    return ptr;
+}
+
+FREERTOS_CMSISOS2_TEXT_SECTION void freeEc( void *p )
+{
+
+    //#ifdef MM_DEBUG_EN
+    #if 0
+    mm_free_trace(p);
+    #endif
+    if (p != NULL)
+        vPortFreeEc( p ) ;
+}
+
+FREERTOS_CMSISOS2_TEXT_SECTION void *callocEc(size_t n,size_t Size )
+{
+
+    size_t total_size = n * Size ;
+
+    void *ptr;
+
+    ptr = pvPortMallocEc( total_size ) ;
 
     //#ifdef MM_DEBUG_EN
     #if 0
@@ -1898,6 +2129,8 @@ FREERTOS_CMSISOS2_TEXT_SECTION void *calloc(size_t n,size_t Size )
     return ptr;
 }
 
+#endif
+#endif
 
 // protect critical region in task context
 FREERTOS_CMSISOS2_TEXT_SECTION void ostaskENTER_CRITICAL(void)

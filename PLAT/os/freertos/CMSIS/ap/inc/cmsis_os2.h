@@ -202,8 +202,11 @@ typedef enum {
   osErrorISR                = -6,         ///< Not allowed in ISR context: the function cannot be called from interrupt service routines.
   osStatusReserved          = 0x7FFFFFFF  ///< Prevents enum down-size compiler optimization.
 } osStatus_t;
- 
- 
+
+// ThreadNew Dynamic alloc.
+#define osThreadDynamicStackAlloc   0x0001U
+#define osThreadDynamicStackFlag    0x8000U
+
 /// \details Thread ID identifies the thread.
 typedef void *osThreadId_t;
  
@@ -782,7 +785,20 @@ osStatus_t osMessageQueueDelete (osMessageQueueId_t mq_id);
 void *malloc( size_t Size );
 void free( void *p );
 void *calloc(size_t n,size_t Size );
+void *realloc(void *pv, size_t xWantedSize );
 //add stdio malloc/free function
+
+#ifdef TYPE_EC718M
+void *mallocEc();
+void freeEc( void *p );
+void *callocEc(size_t n,size_t Size );
+void *reallocEc(void *pv, size_t xWantedSize );
+#else
+#define mallocEc(size)          malloc(size)
+#define freeEc(p)               free(p)
+#define callocEc(n,size)        calloc(n,size)
+#define reallocEc(pv, size )    realloc(pv, size )
+#endif
 
 
 // protect critical region in task context

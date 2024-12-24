@@ -187,8 +187,9 @@ cspiDelayCtrl_t cspiDelayCtrl =
 // CSPI Setting field End
 //////////////////////////////////////////////////////////////////////////////////////////////
 
+AP_PLAT_COMMON_BSS cspiSlp1Cb_fn            cspiSlp1CbFn = 0;
 
-
+static int32_t cspiSetBusSpeed(camFrequence_e freq, cspiRes_t *cspi);
 static CSPI_TypeDef* const cspiInstance[CSPI_INSTANCE_NUM] = {CSPI0, CSPI1, CSPI2};
 
 static ClockId_e cspiClk[CSPI_INSTANCE_NUM * 2] =
@@ -200,158 +201,6 @@ static ClockId_e cspiClk[CSPI_INSTANCE_NUM * 2] =
     PCLK_USP2,
     FCLK_USP2
 };
-
-
-#ifdef PM_FEATURE_ENABLE
-/**
-  \brief spi initialization counter, for lower power callback register/de-register
- */
-static uint32_t cspiInitCnt = 0;
-
-/**
-  \brief Bitmap of CSPI working status, each instance is assigned 2 bits representing tx and rx status,
-         when all CSPI instances are not working, we can vote to enter to low power state.
- */
-static uint32_t cspiWorkingStats = 0;
-
-/** \brief Internal used data structure */
-typedef struct
-{
-    bool              isInited;                       /**< Whether spi has been initialized */
-    struct
-    {
-        __IO uint32_t DFMT;                           /**< Data Format Register,                offset: 0x0 */
-        __IO uint32_t SLOTCTL;                        /**< Slot Control Register,               offset: 0x4 */
-        __IO uint32_t CLKCTL;                         /**< Clock Control Register,              offset: 0x8 */
-        __IO uint32_t DMACTL;                         /**< DMA Control Register,                offset: 0xC */
-        __IO uint32_t INTCTL;                         /**< Interrupt Control Register,          offset: 0x10 */
-        __IO uint32_t TIMEOUTCTL;                     /**< Timeout Control Register,            offset: 0x14 */
-        __IO uint32_t STAS;                           /**< Status Register,                     offset: 0x18 */
-        __IO uint32_t RFIFO;                          /**< Rx Buffer Register,                  offset: 0x1c */
-        __IO uint32_t TFIFO;                          /**< Tx Buffer Register,                  offset: 0x20 */
-        __IO uint32_t CSPICTL;                        /**< Camera SPI Control Register,         offset: 0x28 */
-        __IO uint32_t CCTL;                           /**< Auto Cg Control Register,            offset: 0x2c */
-        __IO uint32_t CSPIINFO0;                      /**< Cspi Frame info0 Register,           offset: 0x30 */
-        __IO uint32_t CSPIINFO1;                      /**< Cspi Frame info1 Register,           offset: 0x34 */
-        __IO uint32_t CSPIDBG;                        /**< Cspi Debug Register,                 offset: 0x38 */
-        __IO uint32_t CSPINIT;                        /**< Cspi Init Register,                  offset: 0x3c */
-        __IO uint32_t CLSP;                           /**< Cspi Line Start Register,            offset: 0x40 */
-        __IO uint32_t CDATP;                          /**< Cspi Data Packet Register,           offset: 0x44 */
-        __IO uint32_t CLINFO;                         /**< Cspi Line Info Register,             offset: 0x48 */
-    }regsBackup;
-} cspiDataBase_t;
-
-static cspiDataBase_t cspiDataBase[CSPI_INSTANCE_NUM] = {0};
-
-/**
-  \fn        static void cspiEnterLowPowerStatePrepare(void* pdata, slpManLpState state)
-  \brief     Perform necessary preparations before sleep.
-             After recovering from SLPMAN_SLEEP1_STATE, CSPI hareware is repowered, we backup
-             some registers here first so that we can restore user's configurations after exit.
-  \param[in] pdata pointer to user data, not used now
-  \param[in] state low power state
- */
-static void cspiEnterLpStatePrepare(void* pdata, slpManLpState state)
-{
-    uint32_t i;
-
-    switch (state)
-    {
-        case SLPMAN_SLEEP1_STATE:
-
-            for(i = 0; i < CSPI_INSTANCE_NUM; i++)
-            {
-                if(cspiDataBase[i].isInited == true)
-                {
-                    cspiDataBase[i].regsBackup.DFMT         = cspiInstance[i]->DFMT;
-                    cspiDataBase[i].regsBackup.SLOTCTL      = cspiInstance[i]->SLOTCTL;
-                    cspiDataBase[i].regsBackup.CLKCTL       = cspiInstance[i]->CLKCTL;
-                    cspiDataBase[i].regsBackup.DMACTL       = cspiInstance[i]->DMACTL;
-                    cspiDataBase[i].regsBackup.INTCTL       = cspiInstance[i]->INTCTL;
-                    cspiDataBase[i].regsBackup.TIMEOUTCTL   = cspiInstance[i]->TIMEOUTCTL;
-                    cspiDataBase[i].regsBackup.STAS         = cspiInstance[i]->STAS;
-                    cspiDataBase[i].regsBackup.CSPICTL      = cspiInstance[i]->CSPICTL;
-                    cspiDataBase[i].regsBackup.CCTL         = cspiInstance[i]->CCTL;
-                    cspiDataBase[i].regsBackup.CSPIINFO0    = cspiInstance[i]->CSPIINFO0;
-                    cspiDataBase[i].regsBackup.CSPIINFO1    = cspiInstance[i]->CSPIINFO1;
-                    cspiDataBase[i].regsBackup.CSPIDBG      = cspiInstance[i]->CSPIDBG;
-                    cspiDataBase[i].regsBackup.CSPINIT      = cspiInstance[i]->CSPINIT;
-                    cspiDataBase[i].regsBackup.CLSP         = cspiInstance[i]->CLSP;
-                    cspiDataBase[i].regsBackup.CDATP        = cspiInstance[i]->CDATP;
-                    cspiDataBase[i].regsBackup.CLINFO       = cspiInstance[i]->CLINFO;
-                }
-            }
-            break;
-        default:
-            break;
-    }
-}
-
-/**
-  \fn        static void cspiExitLowPowerStateRestore(void* pdata, slpManLpState state)
-  \brief     Restore after exit from sleep.
-             After recovering from SLPMAN_SLEEP1_STATE, CSPI hareware is repowered, we restore user's configurations
-             by aidding of the stored registers.
-  \param[in] pdata pointer to user data, not used now
-  \param[in] state low power state
- */
-static void cspiExitLpStateRestore(void* pdata, slpManLpState state)
-{
-    uint32_t i;
-
-    switch (state)
-    {
-        case SLPMAN_SLEEP1_STATE:
-
-            for(i = 0; i < CSPI_INSTANCE_NUM; i++)
-            {
-                if(cspiDataBase[i].isInited == true)
-                {
-                    GPR_clockEnable(cspiClk[2*i]);
-                    GPR_clockEnable(cspiClk[2*i+1]);
-
-                    cspiInstance[i]->DFMT       = cspiDataBase[i].regsBackup.DFMT;
-                    cspiInstance[i]->SLOTCTL    = cspiDataBase[i].regsBackup.SLOTCTL;
-                    cspiInstance[i]->CLKCTL     = cspiDataBase[i].regsBackup.CLKCTL;
-                    cspiInstance[i]->DMACTL     = cspiDataBase[i].regsBackup.DMACTL;
-                    cspiInstance[i]->INTCTL     = cspiDataBase[i].regsBackup.INTCTL;
-                    cspiInstance[i]->TIMEOUTCTL = cspiDataBase[i].regsBackup.TIMEOUTCTL;
-                    cspiInstance[i]->STAS       = cspiDataBase[i].regsBackup.STAS;
-                    cspiInstance[i]->CSPICTL    = cspiDataBase[i].regsBackup.CSPICTL;
-                    cspiInstance[i]->CCTL       = cspiDataBase[i].regsBackup.CCTL;
-                    cspiInstance[i]->CSPIINFO0  = cspiDataBase[i].regsBackup.CSPIINFO0;
-                    cspiInstance[i]->CSPIINFO1  = cspiDataBase[i].regsBackup.CSPIINFO1;
-                    cspiInstance[i]->CSPIDBG    = cspiDataBase[i].regsBackup.CSPIDBG;
-                    cspiInstance[i]->CSPINIT    = cspiDataBase[i].regsBackup.CSPINIT;
-                    cspiInstance[i]->CLSP       = cspiDataBase[i].regsBackup.CLSP;
-                    cspiInstance[i]->CDATP      = cspiDataBase[i].regsBackup.CDATP;
-                    cspiInstance[i]->CLINFO     = cspiDataBase[i].regsBackup.CLINFO;
-                }
-            }
-            break;
-
-        default:
-            break;
-    }
-}
-
-#define  LOCK_SLEEP(instance)                                                                   \
-                                    do                                                          \
-                                    {                                                           \
-                                        cspiWorkingStats |= (1U << instance);                   \
-                                        slpManDrvVoteSleep(SLP_VOTE_I2S, SLP_ACTIVE_STATE);     \
-                                    }                                                           \
-                                    while(0)
-
-#define  CHECK_TO_UNLOCK_SLEEP(instance)                                                        \
-                                    do                                                          \
-                                    {                                                           \
-                                        cspiWorkingStats &= ~(1U << instance);                  \
-                                        if(cspiWorkingStats == 0)                               \
-                                            slpManDrvVoteSleep(SLP_VOTE_I2S, SLP_SLP1_STATE);   \
-                                    }                                                           \
-                                    while(0)
-#endif
 
 #if (RTE_CSPI0)
 static cspiInfo_t  cspi0Info = {0};
@@ -405,6 +254,213 @@ static cspiRes_t cspi1Res = {
     &cspi1Dma, // note: Disable DMA
     &cspi1Info
 };
+#endif
+
+
+
+#ifdef PM_FEATURE_ENABLE
+/**
+  \brief spi initialization counter, for lower power callback register/de-register
+ */
+static uint32_t cspiInitCnt = 0;
+
+/**
+  \brief Bitmap of CSPI working status, each instance is assigned 2 bits representing tx and rx status,
+         when all CSPI instances are not working, we can vote to enter to low power state.
+ */
+static uint32_t cspiWorkingStats = 0;
+
+/** \brief Internal used data structure */
+typedef struct
+{
+    bool              isInited;                       /**< Whether spi has been initialized */
+    struct
+    {
+            __IO uint32_t DFMT;                           /**< Data Format Register,                offset: 0x0 */
+            __IO uint32_t SLOTCTL;                        /**< Slot Control Register,               offset: 0x4 */
+            __IO uint32_t CLKCTL;                         /**< Clock Control Register,              offset: 0x8 */
+            __IO uint32_t DMACTL;                         /**< DMA Control Register,                offset: 0xC */
+            __IO uint32_t INTCTL;                         /**< Interrupt Control Register,          offset: 0x10 */
+            __IO uint32_t TIMEOUTCTL;                     /**< Timeout Control Register,            offset: 0x14 */
+            __IO uint32_t STAS;                           /**< Status Register,                     offset: 0x18 */
+            __IO uint32_t CSPICTL;                        /**< Camera SPI Control Register,         offset: 0x28 */
+            __IO uint32_t CCTL;                           /**< Auto Cg Control Register,            offset: 0x2c */
+            __IO uint32_t CSPIINFO0;                      /**< Cspi Frame info0 Register,           offset: 0x30 */
+            __IO uint32_t CSPIINFO1;                      /**< Cspi Frame info1 Register,           offset: 0x34 */
+            __IO uint32_t CSPIDBG;                        /**< Cspi Debug Register,                 offset: 0x38 */
+            __IO uint32_t CSPINIT;                        /**< Cspi Init Register,                  offset: 0x3c */
+            __IO uint32_t CLSP;                           /**< Cspi Line Start Register,            offset: 0x40 */
+            __IO uint32_t CDATP;                          /**< Cspi Data Packet Register,           offset: 0x44 */
+            __IO uint32_t CLINFO;                         /**< Cspi Line Info Register,             offset: 0x48 */
+            __IO uint32_t CBCTRL;                         /**< Cspi binary ctrl                     offset: 0x4c */
+            __IO uint32_t CSPIPROCLSPI;                   /**< Cspi frame proc lspi                 offset: 0x50 */
+            __IO uint32_t CSPIQUARTILE;                   /**< Cspi OTSU quartile                   offset: 0x54 */
+            __IO uint32_t CSPIYADJ;                       /**< Cspi y Adjustment                    offset: 0x58 */
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
+            __IO uint32_t CSPIDLYCTRL;                    /**< Cspi delay ctrl                      offset: 0xD0 */
+            __IO uint32_t I2SBUSSEL;                      /**< Cspi bus select                      offset: 0xe0 */
+            __IO uint32_t HISTOBUFCTRL;                   /**< Histogram buf ctrl                   offset: 0xf0 */
+#else
+            __IO uint32_t CSPIDDRCTRL;                    /**< Cspi DDR ctrl                        offset: 0x5c */
+            __IO uint32_t CSPIDLYCTRL;                    /**< Cspi delay ctrl                      offset: 0xD8 */
+            __IO uint32_t I2SBUSSEL;                      /**< Cspi bus select                      offset: 0xe4 */
+            __IO uint32_t HISTOBUFCTRL;                   /**< Histogram buf ctrl                   offset: 0xf0 */
+            __IO uint32_t USBVERSION;                     /**< Usp version                          offset: 0xf4 */
+#endif
+
+    }regsBackup;
+} cspiDataBase_t;
+
+static cspiDataBase_t cspiDataBase[CSPI_INSTANCE_NUM] = {0};
+
+/**
+  \fn        static void cspiEnterLowPowerStatePrepare(void* pdata, slpManLpState state)
+  \brief     Perform necessary preparations before sleep.
+             After recovering from SLPMAN_SLEEP1_STATE, CSPI hareware is repowered, we backup
+             some registers here first so that we can restore user's configurations after exit.
+  \param[in] pdata pointer to user data, not used now
+  \param[in] state low power state
+ */
+static void cspiEnterLpStatePrepare(void* pdata, slpManLpState state)
+{
+    uint32_t i;
+
+    switch (state)
+    {
+        case SLPMAN_SLEEP1_STATE:
+
+            for(i = 0; i < CSPI_INSTANCE_NUM; i++)
+            {
+                if(cspiDataBase[i].isInited == true)
+                {
+                    cspiDataBase[i].regsBackup.DFMT         = cspiInstance[i]->DFMT;
+                    cspiDataBase[i].regsBackup.SLOTCTL      = cspiInstance[i]->SLOTCTL;
+                    cspiDataBase[i].regsBackup.CLKCTL       = cspiInstance[i]->CLKCTL;
+                    cspiDataBase[i].regsBackup.DMACTL       = cspiInstance[i]->DMACTL;
+                    cspiDataBase[i].regsBackup.INTCTL       = cspiInstance[i]->INTCTL;
+                    cspiDataBase[i].regsBackup.TIMEOUTCTL   = cspiInstance[i]->TIMEOUTCTL;
+                    cspiDataBase[i].regsBackup.STAS         = cspiInstance[i]->STAS;
+                    cspiDataBase[i].regsBackup.CSPICTL      = cspiInstance[i]->CSPICTL;
+                    cspiDataBase[i].regsBackup.CCTL         = cspiInstance[i]->CCTL;
+                    cspiDataBase[i].regsBackup.CSPIINFO0    = cspiInstance[i]->CSPIINFO0;
+                    cspiDataBase[i].regsBackup.CSPIINFO1    = cspiInstance[i]->CSPIINFO1;
+                    cspiDataBase[i].regsBackup.CSPIDBG      = cspiInstance[i]->CSPIDBG;
+                    cspiDataBase[i].regsBackup.CSPINIT      = cspiInstance[i]->CSPINIT;
+                    cspiDataBase[i].regsBackup.CLSP         = cspiInstance[i]->CLSP;
+                    cspiDataBase[i].regsBackup.CDATP        = cspiInstance[i]->CDATP;
+                    cspiDataBase[i].regsBackup.CLINFO       = cspiInstance[i]->CLINFO;
+                    cspiDataBase[i].regsBackup.CBCTRL       = cspiInstance[i]->CBCTRL;
+                    cspiDataBase[i].regsBackup.CSPIPROCLSPI = cspiInstance[i]->CSPIPROCLSPI;
+                    cspiDataBase[i].regsBackup.CSPIQUARTILE = cspiInstance[i]->CSPIQUARTILE;
+                    cspiDataBase[i].regsBackup.CSPIYADJ     = cspiInstance[i]->CSPIYADJ;
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
+                    cspiDataBase[i].regsBackup.CSPIDLYCTRL  = cspiInstance[i]->CSPIDLYCTRL;
+                    cspiDataBase[i].regsBackup.I2SBUSSEL    = cspiInstance[i]->I2SBUSSEL;
+                    cspiDataBase[i].regsBackup.HISTOBUFCTRL = cspiInstance[i]->HISTOBUFCTRL;
+#else // 719                    
+                    cspiDataBase[i].regsBackup.CSPIDDRCTRL  = cspiInstance[i]->CSPIDDRCTRL;
+                    cspiDataBase[i].regsBackup.CSPIDLYCTRL  = cspiInstance[i]->CSPIDLYCTRL;
+                    cspiDataBase[i].regsBackup.I2SBUSSEL    = cspiInstance[i]->I2SBUSSEL;
+                    cspiDataBase[i].regsBackup.HISTOBUFCTRL = cspiInstance[i]->HISTOBUFCTRL;
+                    cspiDataBase[i].regsBackup.USBVERSION   = cspiInstance[i]->USBVERSION;
+#endif                    
+                }
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+/**
+  \fn        static void cspiExitLowPowerStateRestore(void* pdata, slpManLpState state)
+  \brief     Restore after exit from sleep.
+             After recovering from SLPMAN_SLEEP1_STATE, CSPI hareware is repowered, we restore user's configurations
+             by aidding of the stored registers.
+  \param[in] pdata pointer to user data, not used now
+  \param[in] state low power state
+ */
+static void cspiExitLpStateRestore(void* pdata, slpManLpState state)
+{
+    uint32_t i;
+
+    switch (state)
+    {
+        case SLPMAN_SLEEP1_STATE:
+
+            for(i = 0; i < CSPI_INSTANCE_NUM; i++)
+            {
+                if(cspiDataBase[i].isInited == true)
+                {
+                    GPR_clockEnable(cspiClk[2*i]);
+                    GPR_clockEnable(cspiClk[2*i+1]);
+                    #if (RTE_CSPI1)
+					cspiSetBusSpeed(CAM_25_5_M, &cspi1Res);
+					#else
+                    cspiSetBusSpeed(CAM_25_5_M, &cspi0Res);
+					#endif
+
+                    cspiInstance[i]->DFMT       = cspiDataBase[i].regsBackup.DFMT;
+                    cspiInstance[i]->SLOTCTL    = cspiDataBase[i].regsBackup.SLOTCTL;
+                    cspiInstance[i]->CLKCTL     = cspiDataBase[i].regsBackup.CLKCTL;
+                    cspiInstance[i]->DMACTL     = cspiDataBase[i].regsBackup.DMACTL;
+                    cspiInstance[i]->INTCTL     = cspiDataBase[i].regsBackup.INTCTL;
+                    cspiInstance[i]->TIMEOUTCTL = cspiDataBase[i].regsBackup.TIMEOUTCTL;
+                    cspiInstance[i]->STAS       = cspiDataBase[i].regsBackup.STAS;
+                    cspiInstance[i]->CSPICTL    = cspiDataBase[i].regsBackup.CSPICTL;
+                    cspiInstance[i]->CCTL       = cspiDataBase[i].regsBackup.CCTL;
+                    cspiInstance[i]->CSPIINFO0  = cspiDataBase[i].regsBackup.CSPIINFO0;
+                    cspiInstance[i]->CSPIINFO1  = cspiDataBase[i].regsBackup.CSPIINFO1;
+                    cspiInstance[i]->CSPIDBG    = cspiDataBase[i].regsBackup.CSPIDBG;
+                    cspiInstance[i]->CSPINIT    = cspiDataBase[i].regsBackup.CSPINIT;
+                    cspiInstance[i]->CLSP       = cspiDataBase[i].regsBackup.CLSP;
+                    cspiInstance[i]->CDATP      = cspiDataBase[i].regsBackup.CDATP;
+                    cspiInstance[i]->CLINFO     = cspiDataBase[i].regsBackup.CLINFO;
+                    cspiInstance[i]->CBCTRL       = cspiDataBase[i].regsBackup.CBCTRL;
+                    cspiInstance[i]->CSPIPROCLSPI = cspiDataBase[i].regsBackup.CSPIPROCLSPI;
+                    cspiInstance[i]->CSPIQUARTILE = cspiDataBase[i].regsBackup.CSPIQUARTILE;
+                    cspiInstance[i]->CSPIYADJ     = cspiDataBase[i].regsBackup.CSPIYADJ;
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
+                    cspiInstance[i]->CSPIDLYCTRL  = cspiDataBase[i].regsBackup.CSPIDLYCTRL;
+                    cspiInstance[i]->I2SBUSSEL    = cspiDataBase[i].regsBackup.I2SBUSSEL;
+                    cspiInstance[i]->HISTOBUFCTRL = cspiDataBase[i].regsBackup.HISTOBUFCTRL;
+#else
+                    cspiInstance[i]->CSPIDDRCTRL  = cspiDataBase[i].regsBackup.CSPIDDRCTRL;
+                    cspiInstance[i]->CSPIDLYCTRL  = cspiDataBase[i].regsBackup.CSPIDLYCTRL;
+                    cspiInstance[i]->I2SBUSSEL    = cspiDataBase[i].regsBackup.I2SBUSSEL;
+                    cspiInstance[i]->HISTOBUFCTRL = cspiDataBase[i].regsBackup.HISTOBUFCTRL;
+                    cspiInstance[i]->USBVERSION   = cspiDataBase[i].regsBackup.USBVERSION;
+#endif
+                }
+            }
+
+            if (cspiSlp1CbFn)
+            {
+                cspiSlp1CbFn();
+            }
+            break;
+
+        default:
+            break;
+    }
+}
+
+#define  LOCK_SLEEP(instance)                                                                   \
+                                    do                                                          \
+                                    {                                                           \
+                                        cspiWorkingStats |= (1U << instance);                   \
+                                        slpManDrvVoteSleep(SLP_VOTE_I2S, SLP_ACTIVE_STATE);     \
+                                    }                                                           \
+                                    while(0)
+
+#define  CHECK_TO_UNLOCK_SLEEP(instance)                                                        \
+                                    do                                                          \
+                                    {                                                           \
+                                        cspiWorkingStats &= ~(1U << instance);                  \
+                                        if(cspiWorkingStats == 0)                               \
+                                            slpManDrvVoteSleep(SLP_VOTE_I2S, SLP_SLP1_STATE);   \
+                                    }                                                           \
+                                    while(0)
 #endif
 
 bool checkFrameStart()
@@ -907,6 +963,11 @@ void cspiDmaRxEvent(uint32_t event, cspiRes_t *cspi)
         case DMA_EVENT_END:
             if(cspi->info->cbEvent)
             {
+				CSPI1->CBCTRL &= ~3<<25;
+				CSPI1->STAS |= 0x3<<3;
+				CSPI1->STAS |= 0xf<<7;
+				CSPI1->STAS |= 0x3<<11;
+				CSPI1->DMACTL |= 1<<24;
                 cspi->info->cbEvent(ARM_CSPI_EVENT_TRANSFER_COMPLETE);
             }
 

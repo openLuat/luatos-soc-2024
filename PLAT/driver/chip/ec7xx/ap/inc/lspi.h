@@ -11,11 +11,10 @@ extern "C" {
 #include "exception_process.h"
 
 
-#include "lcdDrv.h"
-
-
-
 ////////////////////////////////////////////////////////
+typedef void (*lcdSlp1Cb_fn)();
+extern lcdSlp1Cb_fn            lcdSlp1CbFn;
+
 
 /** \brief LSPI DMA */
 typedef struct 

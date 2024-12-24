@@ -120,6 +120,7 @@ enum tcpip_msg_type {
   UDP_LOCAL_INT_SENDTO, //udp_lcoal_int_sendto
 #endif
   TCPIP_MSG_LAN_INPUT,
+  TCPIP_MSG_WAN_INPUT,
 #if LWIP_TCPIP_TIMEOUT && LWIP_TIMERS
   TCPIP_MSG_TIMEOUT,
   TCPIP_MSG_UNTIMEOUT,
@@ -175,7 +176,10 @@ struct tcpip_msg {
         UlPduBlock *pPduHdr;
         lanif_input_fn lan_input;
     }lan_inp;
-
+    struct {
+        u8_t wan_type;
+        wanif_input_fn wan_input;
+    }wan_inp;
     struct {
       tcpip_callback_fn function;
       void *ctx;

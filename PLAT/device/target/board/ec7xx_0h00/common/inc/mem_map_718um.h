@@ -400,12 +400,12 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 #define min_heap_size_threshold 0x5F000//ims heap(280KB) will also use heap
 #endif
 #if FEATURE_SUPPORT_APP_PCM_MEM_POOL//hal app mem pool 640*3+8align to 2K
-#define up_buf_start 0xa0e0000  // should be 4 byte align
+#define up_buf_start PSRAM_APMEM_END_ADDR  // should be 4 byte align
 #else
 #if defined(FEATURE_IMS_CC_ENABLE) || defined(FEATURE_AUDIO_ENABLE)
-#define up_buf_start 0xa0e0000  // should be 4 byte align
+#define up_buf_start PSRAM_APMEM_END_ADDR  // should be 4 byte align
 #else
-#define up_buf_start 0xa0c6000  // should be 4 byte align
+#define up_buf_start PSRAM_APMEM_END_ADDR  // should be 4 byte align
 #endif
 
 #endif
@@ -414,12 +414,12 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 #define min_heap_size_threshold 0x19000
 #if defined (FEATURE_AMR_CP_ENABLE) && defined (FEATURE_VEM_CP_ENABLE)
 #if FEATURE_SUPPORT_APP_PCM_MEM_POOL//hal app mem pool 640*3+8align to 2K
-#define up_buf_start 0x0a093000  // should be 4 byte align
+#define up_buf_start PSRAM_APMEM_END_ADDR  // should be 4 byte align
 #else
-#define up_buf_start 0x0a094000  // should be 4 byte align
+#define up_buf_start PSRAM_APMEM_END_ADDR  // should be 4 byte align
 #endif
 #else
-#define up_buf_start 0x0a07d000  // should be 4 byte align
+#define up_buf_start PSRAM_APMEM_END_ADDR  // should be 4 byte align
 #endif
 #endif
 
@@ -427,7 +427,7 @@ flash xip address(from both ap/cp view): 0x00800000---0x01000000
 
 #else
 #define min_heap_size_threshold 0x20000
-#define up_buf_start 0x0a080000  // should be 4 byte align
+#define up_buf_start PSRAM_APMEM_END_ADDR  // should be 4 byte align
 #define UP_BUF_MAX_SIZE 0x66D00//only upbuf size, need another 512B for other buf also in this region
 #endif
 

@@ -41,3 +41,11 @@ void mm_trace_init(void);
 void mm_malloc_trace(void* buffer, unsigned long length,unsigned int func_lr);
 void mm_free_trace(void* buffer);
 void show_mem_trace(void);
+
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+void mm_trace_init_cust(void);
+void mm_malloc_trace_cust(void* buffer, unsigned long length,unsigned int func_lr);
+void mm_free_trace_cust(void* buffer);
+void show_mem_trace_cust(void);
+#endif
+

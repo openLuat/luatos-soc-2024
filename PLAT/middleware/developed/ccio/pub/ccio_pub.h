@@ -66,7 +66,7 @@ extern "C" {
 /* msg ctrl flag1(0x000F0000): Class Of Service */
 #define CCIO_CHAN_MSG_CF_COS0     0x00000000  /* msg with cos 0, e.g. Rx: ctrl/err msg,       Tx: primary channel, mandary */
 #define CCIO_CHAN_MSG_CF_COS1     0x00010000  /* msg with cos 1, e.g. Rx: ppp/eth/eos data,   Tx: secondary channel, optional */
-#define CCIO_CHAN_MSG_CF_COS2     0x00020000  /* msg with cos 2, e.g. Rx: at/diag/opaq/audio, Tx: customed channel, optional */
+#define CCIO_CHAN_MSG_CF_COS2     0x00020000  /* msg with cos 2, e.g. Rx: at/diag/opaq/audio, Tx: customized channel, optional */
 
 /* msg ctrl flag2(0x00F00000) */
 #define CCIO_CHAN_MSG_CF_DIN      0x00400000  /* input data to device? for data msg only! */
@@ -171,12 +171,12 @@ typedef struct CcioDevice
     uint32_t llsn          :6;  /* lower-level serial number, via driver */
     uint32_t dedicate      :1;  /* common/dedicate device(attr), via driver */
     uint32_t isPwOn        :1;  /* the device is power on or off, via monitor */
-    uint32_t wkState       :2;  /* refer to 'CcioDevWorkState_e', via monitor */
+    uint32_t wkState       :3;  /* refer to 'CcioDevWorkState_e', via monitor */
     uint32_t bmHwAcm       :2;  /* refer to 'CcioDevHwAcm_e', via monitor */
     uint32_t isWaitTxCmplt :1;  /* wait Tx complete IRQ or not, via driver */
     uint32_t asgnTxCos     :2;  /* the assigned tx channel(primary/secondary/customed), via monitor */
     uint32_t owner         :3;
-    uint32_t rsvBits       :3;
+    uint32_t rsvBits       :2;
 
     uint32_t rbufFlags     :4;  /* which rbuf will be used? refer to 'CcioRbufUsage_e' */
     uint32_t needCleanRb   :1;
@@ -185,7 +185,11 @@ typedef struct CcioDevice
     uint32_t custFlags     :4;  /* flags for customers' private purpose */
     uint32_t custExtras    :16; /* extra info for customers' private purpose */
     uint32_t rsvBits2      :5;
-    void    *semaId;            /* for sync, 'osSemaphoreId_t', via driver */
+    union
+    {
+        void    *semaId;        /* for sync, 'osSemaphoreId_t', via driver */
+        void    *efId;          /* for sync, 'osEventFlagsId_t', via driver */
+    }sync;
     void    *chent;             /* for fast accessing, via monitor */
 
     chdevOutFunc         chdevOutFn;     /* via driver */
