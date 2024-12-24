@@ -297,7 +297,11 @@ lwip_sockopt_to_ipopt(int optname)
 	}
 }
 
+#ifdef TYPE_EC718M
+#define MAX_SOCK_NUM 16
+#else
 #define MAX_SOCK_NUM 8
+#endif
 #define NET_DBG	DBG
 #define NET_ERR DBG
 enum
