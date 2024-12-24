@@ -79,6 +79,15 @@ int32_t iposDataInput(UlPduBlock_t *ulpdu, OpaqosEntity_t *iposEnt);
 */
 int32_t iposDataOutput(uint8_t pdpCid, DlPduBlock_t *dlpdu);
 
+/**
+  \fn     int32_t iposDataGetBindCid(void)
+  \brief  to get ipos bind cid
+  \return
+  \note   invoked by up taks
+*/
+
+uint8_t iposDataGetBindCid(void);
+
 #ifdef __cplusplus
 }
 #endif

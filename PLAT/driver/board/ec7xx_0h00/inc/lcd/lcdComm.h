@@ -15,7 +15,6 @@ extern "C" {
 
 void lcdWriteCmd(uint8_t cmd);
 void lcdWriteData(uint8_t data);
-void lcdIoInit(bool isAonIO);
 void lcdInterfaceType(uint8_t type);
 void lspiCmdSend(uint8_t cmd, uint8_t *data, uint8_t num);
 void lspiReadReg(uint8_t addr,uint8_t *data,uint16_t num, uint8_t dummyCycleLen);

@@ -46,7 +46,10 @@ AP_PLAT_COMMON_DATA static PIN lspi2D7      = {RTE_USP2_D7_PAD_ADDR,      RTE_US
 #endif
 #endif
 
-AP_PLAT_COMMON_BSS uint8_t lspiDiv;
+AP_PLAT_COMMON_BSS uint8_t 			lspiDiv;
+AP_PLAT_COMMON_BSS lcdSlp1Cb_fn     lcdSlp1CbFn = 0;
+AP_PLAT_COMMON_BSS static uint32_t 	bpsBak;
+static int32_t lspiSetBusSpeed(uint32_t bps, lspiRes_t *lspi);
 
 
 #if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
@@ -496,30 +499,92 @@ AP_PLAT_COMMON_BSS static uint32_t lspiWorkingStats = 0;
 typedef struct
 {
     bool              isInited;                       /**< Whether spi has been initialized */
-#if 0
 
     struct
     {
-        __IO uint32_t DFMT;                           /**< Data Format Register,                offset: 0x0 */
-        __IO uint32_t SLOTCTL;                        /**< Slot Control Register,               offset: 0x4 */
-        __IO uint32_t CLKCTL;                         /**< Clock Control Register,              offset: 0x8 */
-        __IO uint32_t DMACTL;                         /**< DMA Control Register,                offset: 0xC */
-        __IO uint32_t INTCTL;                         /**< Interrupt Control Register,          offset: 0x10 */
-        __IO uint32_t TIMEOUTCTL;                     /**< Timeout Control Register,            offset: 0x14 */
-        __IO uint32_t STAS;                           /**< Status Register,                     offset: 0x18 */
-        __IO uint32_t RFIFO;                          /**< Rx Buffer Register,                  offset: 0x1c */
-        __IO uint32_t TFIFO;                          /**< Tx Buffer Register,                  offset: 0x20 */
-        __IO uint32_t LSPICTL;                        /**< Camera SPI Control Register,         offset: 0x28 */
-        __IO uint32_t CCTL;                           /**< Auto Cg Control Register,            offset: 0x2c */
-        __IO uint32_t LSPIINFO0;                      /**< Cspi Frame info0 Register,           offset: 0x30 */
-        __IO uint32_t LSPIINFO1;                      /**< Cspi Frame info1 Register,           offset: 0x34 */
-        __IO uint32_t LSPIDBG;                        /**< Cspi Debug Register,                 offset: 0x38 */
-        __IO uint32_t LSPINIT;                        /**< Cspi Init Register,                  offset: 0x3c */
-        __IO uint32_t CLSP;                           /**< Cspi Line Start Register,            offset: 0x40 */
-        __IO uint32_t CDATP;                          /**< Cspi Data Packet Register,           offset: 0x44 */
-        __IO uint32_t CLINFO;                         /**< Cspi Line Info Register,             offset: 0x48 */
-    }regsBackup;
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
+		__IO uint32_t DFMT;
+		__IO uint32_t RSVD1[2];
+		__IO uint32_t DMACTL;
+		__IO uint32_t INTCTL;						  /**< Interrupt Control Register,			offset: 0x10 */
+		__IO uint32_t RSVD2;
+		__IO uint32_t STAS; 						  /**< Status Register, 					offset: 0x18 */
+		__IO uint32_t RFIFO;						  /**< RFIFO,								offset: 0x1C */
+		__IO uint32_t TFIFO;						  /**< TFIFO,								offset: 0x20 */
+		__IO uint32_t RSVD7;
+		__IO uint32_t CSPICTL;
+		__IO uint32_t RSVD4[13];
+		__IO uint32_t LSPI_CTRL;					  /**< LSPI control 						offset: 0x60 */
+		__IO uint32_t LSPI_CCTRL;					  /**< LSPI command control 				offset: 0x64 */
+		__IO uint32_t LSPI_CADDR;					  /**< LSPI command addr					offset: 0x68 */
+		__IO uint32_t LSPI_STAT;					  /**< LSPI status							offset: 0x6c */
+		__IO uint32_t LSPI_RAMWLEN; 				  /**< LSPI ram write len					offset: 0x70 */
+		__IO uint32_t LSPFINFO; 					  /**< LSPI frame info						offset: 0x74 */
+		__IO uint32_t LSPTINFO0;					  /**< LSPI tailor info0					offset: 0x78 */
+		__IO uint32_t LSPTINFO; 					  /**< LSPI tailor info 					offset: 0x7c */
+		__IO uint32_t LSPSINFO; 					  /**< LSPI scale info						offset: 0x80 */
+		__IO uint32_t LSPIQUARTCTRL;				  /**< LSPI quartile ctrl					offset: 0x84 */
+		__IO uint32_t LSPIQUARTUSE; 				  /**< LSPI quartile inuse					offset: 0x88 */
+		__IO uint32_t LSPIYADJ; 					  /**< LSPI Y adj							offset: 0x8c */
+		__IO uint32_t LSPIYADJUSE;					  /**< LSPI Y adj inuse 					offset: 0x90 */
+		__IO uint32_t LSPIGPCMD0;					  /**< LSPI gray page cmd0					offset: 0x94 */
+		__IO uint32_t LSPIGPCMD1;					  /**< LSPI gray page cmd1					offset: 0x98 */
+		__IO uint32_t LSPFINFO0;					  /**< LSPI frame info out					offset: 0x9c */
+		__IO uint32_t YUV2RGBINFO0; 				  /**< YUV to RGB info0 					offset: 0xa0 */
+		__IO uint32_t YUV2RGBINFO1; 				  /**< YUV to RGB info1 					offset: 0xa4 */
+		__IO uint32_t RSVD5[14];					  /**< Reserved 										 */
+		__IO uint32_t I2SBUSSEL;					  /**< LSPI bus select						offset: 0xe0 */
+		__IO uint32_t RSVD6[4]; 					  /**< Reserved 										 */
+#else
+		__IO uint32_t DFMT;
+		__IO uint32_t RSVD1[2];
+		__IO uint32_t DMACTL;
+		__IO uint32_t INTCTL;						  /**< Interrupt Control Register,			offset: 0x10 */
+		__IO uint32_t RSVD2;
+		__IO uint32_t STAS; 						  /**< Status Register, 					offset: 0x18 */
+		__IO uint32_t RFIFO;						  /**< RFIFO,								offset: 0x1C */
+		__IO uint32_t TFIFO;						  /**< TFIFO,								offset: 0x20 */
+		__IO uint32_t RSVD7;
+		__IO uint32_t CSPICTL;
+		__IO uint32_t RSVD4[13];
+		__IO uint32_t LSPI_CTRL;					  /**< LSPI control 						offset: 0x60 */
+		__IO uint32_t LSPI_CCTRL;					  /**< LSPI command control 				offset: 0x64 */
+		__IO uint32_t LSPI_CADDR;					  /**< LSPI command addr					offset: 0x68 */
+		__IO uint32_t LSPI_STAT;					  /**< LSPI status							offset: 0x6c */
+		__IO uint32_t LSPI_RAMWLEN; 				  /**< LSPI ram write len					offset: 0x70 */
+		__IO uint32_t LSPFINFO; 					  /**< LSPI frame info						offset: 0x74 */
+		__IO uint32_t LSPTINFO0;					  /**< LSPI tailor info0					offset: 0x78 */
+		__IO uint32_t LSPTINFO; 					  /**< LSPI tailor info 					offset: 0x7c */
+		__IO uint32_t LSPSINFO; 					  /**< LSPI scale info						offset: 0x80 */
+		__IO uint32_t LSPIQUARTCTRL;				  /**< LSPI quartile ctrl					offset: 0x84 */
+		__IO uint32_t LSPIQUARTUSE; 				  /**< LSPI quartile inuse					offset: 0x88 */
+		__IO uint32_t LSPIYADJ; 					  /**< LSPI Y adj							offset: 0x8c */
+		__IO uint32_t LSPIYADJUSE;					  /**< LSPI Y adj inuse 					offset: 0x90 */
+		__IO uint32_t LSPIGPCMD0;					  /**< LSPI gray page cmd0					offset: 0x94 */
+		__IO uint32_t LSPIGPCMD1;					  /**< LSPI gray page cmd1					offset: 0x98 */
+		__IO uint32_t LSPFINFO0;					  /**< LSPI frame info out					offset: 0x9c */
+		__IO uint32_t YUV2RGBINFO0; 				  /**< YUV to RGB info0 					offset: 0xa0 */
+		__IO uint32_t YUV2RGBINFO1; 				  /**< YUV to RGB info1 					offset: 0xa4 */
+		__IO uint32_t DEBUG;						  /**< lspi debug							offset: 0xa8 */
+		__IO uint32_t MSPI_CTRL;					  /**< lspi mspi ctrl						offset: 0xac */
+		__IO uint32_t VSYNC_CTRL;					  /**< lspi vsync ctrl						offset: 0xb0 */
+		__IO uint32_t LSPI8080CTRL; 				  /**< lspi 8080 ctrl						offset: 0xb4 */
+		__IO uint32_t LSPICMDPREPARA0;				  /**< lspi pre cmd param0				    offset: 0xb8 */
+		__IO uint32_t LSPICMDPREPARA1;				  /**< lspi pre cmd param1					offset: 0xbc */
+		__IO uint32_t LSPICMDPREPARA2;				  /**< lspi pre cmd param2					offset: 0xc0 */
+		__IO uint32_t LSPICMDPREPARA3;				  /**< lspi pre cmd param3					offset: 0xc4 */
+		__IO uint32_t LSPICMDPOSTPARA0; 			  /**< lspi post cmd param0 				offset: 0xc8 */
+		__IO uint32_t LSPICMDPOSTPARA1; 			  /**< lspi post cmd param1 				offset: 0xcc */
+		__IO uint32_t LSPICMDPOSTPARA2; 			  /**< lspi post cmd param2 				offset: 0xd0 */
+		__IO uint32_t LSPICMDPOSTPARA3; 			  /**< lspi post cmd param3 				offset: 0xd4 */
+		__IO uint32_t RSVD5;						  /**< Reserved 										 */
+		__IO uint32_t LSPITEPARA0;					  /**< lspi te param0						offset: 0xdc */
+		__IO uint32_t LSPITEPARA1;					  /**< lspi te param1						offset: 0xe0 */
+		__IO uint32_t I2SBUSSEL;					  /**< LSPI bus select						offset: 0xe4 */
+		__IO uint32_t RSVD6[3]; 					  /**< Reserved 										 */
+		__IO uint32_t USPVERSION;					  /**< USP version						    offset: 0xf4 */
 #endif
+    }regsBackup;
 } lspiDataBase_t;
 
 AP_PLAT_COMMON_BSS static lspiDataBase_t lspiDataBase[LSPI_INSTANCE_NUM] = {0};
@@ -534,7 +599,6 @@ AP_PLAT_COMMON_BSS static lspiDataBase_t lspiDataBase[LSPI_INSTANCE_NUM] = {0};
  */
 static void lspiEnterLpStatePrepare(void* pdata, slpManLpState state)
 {
-#if 0
     uint32_t i;
     switch (state)
     {
@@ -544,29 +608,81 @@ static void lspiEnterLpStatePrepare(void* pdata, slpManLpState state)
             {
                 if(lspiDataBase[i].isInited == true)
                 {
-                    lspiDataBase[i].regsBackup.DFMT         = lspiInstance[i]->DFMT;
-                    lspiDataBase[i].regsBackup.SLOTCTL      = lspiInstance[i]->SLOTCTL;
-                    lspiDataBase[i].regsBackup.CLKCTL       = lspiInstance[i]->CLKCTL;
-                    lspiDataBase[i].regsBackup.DMACTL       = lspiInstance[i]->DMACTL;
-                    lspiDataBase[i].regsBackup.INTCTL       = lspiInstance[i]->INTCTL;
-                    lspiDataBase[i].regsBackup.TIMEOUTCTL   = lspiInstance[i]->TIMEOUTCTL;
-                    lspiDataBase[i].regsBackup.STAS         = lspiInstance[i]->STAS;
-                    lspiDataBase[i].regsBackup.LSPICTL      = lspiInstance[i]->LSPICTL;
-                    lspiDataBase[i].regsBackup.CCTL         = lspiInstance[i]->CCTL;
-                    lspiDataBase[i].regsBackup.LSPIINFO0    = lspiInstance[i]->LSPIINFO0;
-                    lspiDataBase[i].regsBackup.LSPIINFO1    = lspiInstance[i]->LSPIINFO1;
-                    lspiDataBase[i].regsBackup.LSPIDBG      = lspiInstance[i]->LSPIDBG;
-                    lspiDataBase[i].regsBackup.LSPINIT      = lspiInstance[i]->LSPINIT;
-                    lspiDataBase[i].regsBackup.CLSP         = lspiInstance[i]->CLSP;
-                    lspiDataBase[i].regsBackup.CDATP        = lspiInstance[i]->CDATP;
-                    lspiDataBase[i].regsBackup.CLINFO       = lspiInstance[i]->CLINFO;
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
+                    lspiDataBase[i].regsBackup.DFMT         	= lspiInstance[i]->DFMT;
+                    lspiDataBase[i].regsBackup.DMACTL      		= lspiInstance[i]->DMACTL;
+                    lspiDataBase[i].regsBackup.INTCTL       	= lspiInstance[i]->INTCTL;
+                    lspiDataBase[i].regsBackup.STAS       		= lspiInstance[i]->STAS;
+                    lspiDataBase[i].regsBackup.INTCTL       	= lspiInstance[i]->INTCTL;
+                    lspiDataBase[i].regsBackup.CSPICTL   		= lspiInstance[i]->CSPICTL;
+                    lspiDataBase[i].regsBackup.LSPI_CTRL      	= lspiInstance[i]->LSPI_CTRL;
+                    lspiDataBase[i].regsBackup.LSPI_CCTRL   	= lspiInstance[i]->LSPI_CCTRL;
+                    lspiDataBase[i].regsBackup.LSPI_CADDR   	= lspiInstance[i]->LSPI_CADDR;
+                    lspiDataBase[i].regsBackup.LSPI_STAT    	= lspiInstance[i]->LSPI_STAT;
+                    lspiDataBase[i].regsBackup.LSPI_RAMWLEN 	= lspiInstance[i]->LSPI_RAMWLEN;
+                    lspiDataBase[i].regsBackup.LSPFINFO     	= lspiInstance[i]->LSPFINFO;
+                    lspiDataBase[i].regsBackup.LSPTINFO0    	= lspiInstance[i]->LSPTINFO0;
+                    lspiDataBase[i].regsBackup.LSPTINFO     	= lspiInstance[i]->LSPTINFO;
+                    lspiDataBase[i].regsBackup.LSPSINFO      	= lspiInstance[i]->LSPSINFO;                    
+					lspiDataBase[i].regsBackup.LSPIQUARTCTRL	= lspiInstance[i]->LSPIQUARTCTRL;
+                    lspiDataBase[i].regsBackup.LSPIQUARTUSE     = lspiInstance[i]->LSPIQUARTUSE;
+                    lspiDataBase[i].regsBackup.LSPIYADJ       	= lspiInstance[i]->LSPIYADJ;
+                    lspiDataBase[i].regsBackup.LSPIYADJUSE      = lspiInstance[i]->LSPIYADJUSE;
+                    lspiDataBase[i].regsBackup.LSPIGPCMD0       = lspiInstance[i]->LSPIGPCMD0;
+                    lspiDataBase[i].regsBackup.LSPIGPCMD1   	= lspiInstance[i]->LSPIGPCMD1;
+                    lspiDataBase[i].regsBackup.LSPFINFO0        = lspiInstance[i]->LSPFINFO0;
+                    lspiDataBase[i].regsBackup.YUV2RGBINFO0     = lspiInstance[i]->YUV2RGBINFO0;
+                    lspiDataBase[i].regsBackup.YUV2RGBINFO1     = lspiInstance[i]->YUV2RGBINFO1;
+                    lspiDataBase[i].regsBackup.I2SBUSSEL    	= lspiInstance[i]->I2SBUSSEL;
+#else // chip 719
+					lspiDataBase[i].regsBackup.DFMT         	= lspiInstance[i]->DFMT;
+                    lspiDataBase[i].regsBackup.DMACTL      		= lspiInstance[i]->DMACTL;
+                    lspiDataBase[i].regsBackup.INTCTL       	= lspiInstance[i]->INTCTL;
+                    lspiDataBase[i].regsBackup.STAS       		= lspiInstance[i]->STAS;
+                    lspiDataBase[i].regsBackup.INTCTL       	= lspiInstance[i]->INTCTL;
+                    lspiDataBase[i].regsBackup.CSPICTL   		= lspiInstance[i]->CSPICTL;
+                    lspiDataBase[i].regsBackup.LSPI_CTRL    	= lspiInstance[i]->LSPI_CTRL;
+                    lspiDataBase[i].regsBackup.LSPI_CCTRL   	= lspiInstance[i]->LSPI_CCTRL;
+                    lspiDataBase[i].regsBackup.LSPI_CADDR   	= lspiInstance[i]->LSPI_CADDR;
+                    lspiDataBase[i].regsBackup.LSPI_STAT    	= lspiInstance[i]->LSPI_STAT;
+                    lspiDataBase[i].regsBackup.LSPI_RAMWLEN 	= lspiInstance[i]->LSPI_RAMWLEN;
+                    lspiDataBase[i].regsBackup.LSPFINFO     	= lspiInstance[i]->LSPFINFO;
+                    lspiDataBase[i].regsBackup.LSPTINFO0    	= lspiInstance[i]->LSPTINFO0;
+                    lspiDataBase[i].regsBackup.LSPTINFO     	= lspiInstance[i]->LSPTINFO;
+                    lspiDataBase[i].regsBackup.LSPSINFO      	= lspiInstance[i]->LSPSINFO;                    
+					lspiDataBase[i].regsBackup.LSPIQUARTCTRL	= lspiInstance[i]->LSPIQUARTCTRL;
+                    lspiDataBase[i].regsBackup.LSPIQUARTUSE     = lspiInstance[i]->LSPIQUARTUSE;
+                    lspiDataBase[i].regsBackup.LSPIYADJ       	= lspiInstance[i]->LSPIYADJ;
+                    lspiDataBase[i].regsBackup.LSPIYADJUSE      = lspiInstance[i]->LSPIYADJUSE;
+                    lspiDataBase[i].regsBackup.LSPIGPCMD0       = lspiInstance[i]->LSPIGPCMD0;
+                    lspiDataBase[i].regsBackup.LSPIGPCMD1   	= lspiInstance[i]->LSPIGPCMD1;
+                    lspiDataBase[i].regsBackup.LSPFINFO0        = lspiInstance[i]->LSPFINFO0;
+                    lspiDataBase[i].regsBackup.YUV2RGBINFO0     = lspiInstance[i]->YUV2RGBINFO0;
+                    lspiDataBase[i].regsBackup.YUV2RGBINFO1     = lspiInstance[i]->YUV2RGBINFO1;
+                    lspiDataBase[i].regsBackup.DEBUG     		= lspiInstance[i]->DEBUG;
+                    lspiDataBase[i].regsBackup.MSPI_CTRL     	= lspiInstance[i]->MSPI_CTRL;
+                    lspiDataBase[i].regsBackup.VSYNC_CTRL     	= lspiInstance[i]->VSYNC_CTRL;
+                    lspiDataBase[i].regsBackup.LSPI8080CTRL     = lspiInstance[i]->LSPI8080CTRL;
+                    lspiDataBase[i].regsBackup.LSPICMDPREPARA0  = lspiInstance[i]->LSPICMDPREPARA0;
+                    lspiDataBase[i].regsBackup.LSPICMDPREPARA1  = lspiInstance[i]->LSPICMDPREPARA1;
+                    lspiDataBase[i].regsBackup.LSPICMDPREPARA2  = lspiInstance[i]->LSPICMDPREPARA2;
+                    lspiDataBase[i].regsBackup.LSPICMDPREPARA3  = lspiInstance[i]->LSPICMDPREPARA3;
+                    lspiDataBase[i].regsBackup.LSPICMDPOSTPARA0 = lspiInstance[i]->LSPICMDPOSTPARA0;
+                    lspiDataBase[i].regsBackup.LSPICMDPOSTPARA1 = lspiInstance[i]->LSPICMDPOSTPARA1;
+                    lspiDataBase[i].regsBackup.LSPICMDPOSTPARA2 = lspiInstance[i]->LSPICMDPOSTPARA2;
+                    lspiDataBase[i].regsBackup.LSPICMDPOSTPARA3 = lspiInstance[i]->LSPICMDPOSTPARA3;
+                    lspiDataBase[i].regsBackup.LSPITEPARA0     	= lspiInstance[i]->LSPITEPARA0;
+                    lspiDataBase[i].regsBackup.LSPITEPARA1     	= lspiInstance[i]->LSPITEPARA1;
+                    lspiDataBase[i].regsBackup.I2SBUSSEL     	= lspiInstance[i]->I2SBUSSEL;
+                    lspiDataBase[i].regsBackup.USPVERSION     	= lspiInstance[i]->USPVERSION;
+#endif
                 }
             }
+
             break;
         default:
             break;
     }
-#endif
 }
 
 /**
@@ -579,7 +695,6 @@ static void lspiEnterLpStatePrepare(void* pdata, slpManLpState state)
  */
 static void lspiExitLpStateRestore(void* pdata, slpManLpState state)
 {
-#if 0
     uint32_t i;
     switch (state)
     {
@@ -591,31 +706,88 @@ static void lspiExitLpStateRestore(void* pdata, slpManLpState state)
                 {
                     GPR_clockEnable(lspiClk[2*i]);
                     GPR_clockEnable(lspiClk[2*i+1]);
+					lspiSetBusSpeed(bpsBak, NULL);
 
-                    lspiInstance[i]->DFMT       = lspiDataBase[i].regsBackup.DFMT;
-                    lspiInstance[i]->SLOTCTL    = lspiDataBase[i].regsBackup.SLOTCTL;
-                    lspiInstance[i]->CLKCTL     = lspiDataBase[i].regsBackup.CLKCTL;
-                    lspiInstance[i]->DMACTL     = lspiDataBase[i].regsBackup.DMACTL;
-                    lspiInstance[i]->INTCTL     = lspiDataBase[i].regsBackup.INTCTL;
-                    lspiInstance[i]->TIMEOUTCTL = lspiDataBase[i].regsBackup.TIMEOUTCTL;
-                    lspiInstance[i]->STAS       = lspiDataBase[i].regsBackup.STAS;
-                    lspiInstance[i]->LSPICTL    = lspiDataBase[i].regsBackup.LSPICTL;
-                    lspiInstance[i]->CCTL       = lspiDataBase[i].regsBackup.CCTL;
-                    lspiInstance[i]->LSPIINFO0  = lspiDataBase[i].regsBackup.LSPIINFO0;
-                    lspiInstance[i]->LSPIINFO1  = lspiDataBase[i].regsBackup.LSPIINFO1;
-                    lspiInstance[i]->LSPIDBG    = lspiDataBase[i].regsBackup.LSPIDBG;
-                    lspiInstance[i]->LSPINIT    = lspiDataBase[i].regsBackup.LSPINIT;
-                    lspiInstance[i]->CLSP       = lspiDataBase[i].regsBackup.CLSP;
-                    lspiInstance[i]->CDATP      = lspiDataBase[i].regsBackup.CDATP;
-                    lspiInstance[i]->CLINFO     = lspiDataBase[i].regsBackup.CLINFO;
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
+                    lspiInstance[i]->DFMT 						=lspiDataBase[i].regsBackup.DFMT;
+                    lspiInstance[i]->DMACTL 					= lspiDataBase[i].regsBackup.DMACTL;
+                    lspiInstance[i]->INTCTL 					= lspiDataBase[i].regsBackup.INTCTL;
+                    lspiInstance[i]->STAS 						= lspiDataBase[i].regsBackup.STAS;
+                    lspiInstance[i]->INTCTL 					= lspiDataBase[i].regsBackup.INTCTL;
+                    lspiInstance[i]->CSPICTL 					= lspiDataBase[i].regsBackup.CSPICTL;
+                    lspiInstance[i]->LSPI_CTRL 					= lspiDataBase[i].regsBackup.LSPI_CTRL;
+                    lspiInstance[i]->LSPI_CCTRL					= lspiDataBase[i].regsBackup.LSPI_CCTRL;
+                    lspiInstance[i]->LSPI_CADDR 				= lspiDataBase[i].regsBackup.LSPI_CADDR;
+                    lspiInstance[i]->LSPI_STAT 					= lspiDataBase[i].regsBackup.LSPI_STAT;
+                    lspiInstance[i]->LSPI_RAMWLEN 				= lspiDataBase[i].regsBackup.LSPI_RAMWLEN;
+                    lspiInstance[i]->LSPFINFO 					= lspiDataBase[i].regsBackup.LSPFINFO;
+                    lspiInstance[i]->LSPTINFO0 					= lspiDataBase[i].regsBackup.LSPTINFO0;
+                    lspiInstance[i]->LSPTINFO 					= lspiDataBase[i].regsBackup.LSPTINFO;
+                    lspiInstance[i]->LSPSINFO 					= lspiDataBase[i].regsBackup.LSPSINFO;                    
+					lspiInstance[i]->LSPIQUARTCTRL 				= lspiDataBase[i].regsBackup.LSPIQUARTCTRL;
+                    lspiInstance[i]->LSPIQUARTUSE 				= lspiDataBase[i].regsBackup.LSPIQUARTUSE;
+                    lspiInstance[i]->LSPIYADJ 					= lspiDataBase[i].regsBackup.LSPIYADJ;
+                    lspiInstance[i]->LSPIYADJUSE 				= lspiDataBase[i].regsBackup.LSPIYADJUSE;
+                    lspiInstance[i]->LSPIGPCMD0 				= lspiDataBase[i].regsBackup.LSPIGPCMD0;
+                    lspiInstance[i]->LSPIGPCMD1 				= lspiDataBase[i].regsBackup.LSPIGPCMD1;
+                    lspiInstance[i]->LSPFINFO0 					= lspiDataBase[i].regsBackup.LSPFINFO0;
+                    lspiInstance[i]->YUV2RGBINFO0 				= lspiDataBase[i].regsBackup.YUV2RGBINFO0;
+                    lspiInstance[i]->YUV2RGBINFO1 				= lspiDataBase[i].regsBackup.YUV2RGBINFO1;
+                    lspiInstance[i]->I2SBUSSEL 					= lspiDataBase[i].regsBackup.I2SBUSSEL;
+#else // chip 719
+                    lspiInstance[i]->DFMT 						=lspiDataBase[i].regsBackup.DFMT;
+                    lspiInstance[i]->DMACTL 					= lspiDataBase[i].regsBackup.DMACTL;
+                    lspiInstance[i]->INTCTL 					= lspiDataBase[i].regsBackup.INTCTL;
+                    lspiInstance[i]->STAS 						= lspiDataBase[i].regsBackup.STAS;
+                    lspiInstance[i]->INTCTL 					= lspiDataBase[i].regsBackup.INTCTL;
+                    lspiInstance[i]->CSPICTL 					= lspiDataBase[i].regsBackup.CSPICTL;
+                    lspiInstance[i]->LSPI_CTRL 					= lspiDataBase[i].regsBackup.LSPI_CTRL;
+                    lspiInstance[i]->LSPI_CCTRL					= lspiDataBase[i].regsBackup.LSPI_CCTRL;
+                    lspiInstance[i]->LSPI_CADDR 				= lspiDataBase[i].regsBackup.LSPI_CADDR;
+                    lspiInstance[i]->LSPI_STAT 					= lspiDataBase[i].regsBackup.LSPI_STAT;
+                    lspiInstance[i]->LSPI_RAMWLEN 				= lspiDataBase[i].regsBackup.LSPI_RAMWLEN;
+                    lspiInstance[i]->LSPFINFO 					= lspiDataBase[i].regsBackup.LSPFINFO;
+                    lspiInstance[i]->LSPTINFO0 					= lspiDataBase[i].regsBackup.LSPTINFO0;
+                    lspiInstance[i]->LSPTINFO 					= lspiDataBase[i].regsBackup.LSPTINFO;
+                    lspiInstance[i]->LSPSINFO 					= lspiDataBase[i].regsBackup.LSPSINFO;                    
+					lspiInstance[i]->LSPIQUARTCTRL 				= lspiDataBase[i].regsBackup.LSPIQUARTCTRL;
+                    lspiInstance[i]->LSPIQUARTUSE 				= lspiDataBase[i].regsBackup.LSPIQUARTUSE;
+                    lspiInstance[i]->LSPIYADJ 					= lspiDataBase[i].regsBackup.LSPIYADJ;
+                    lspiInstance[i]->LSPIYADJUSE 				= lspiDataBase[i].regsBackup.LSPIYADJUSE;
+                    lspiInstance[i]->LSPIGPCMD0 				= lspiDataBase[i].regsBackup.LSPIGPCMD0;
+                    lspiInstance[i]->LSPIGPCMD1 				= lspiDataBase[i].regsBackup.LSPIGPCMD1;
+                    lspiInstance[i]->LSPFINFO0 					= lspiDataBase[i].regsBackup.LSPFINFO0;
+                    lspiInstance[i]->YUV2RGBINFO0 				= lspiDataBase[i].regsBackup.YUV2RGBINFO0;
+                    lspiInstance[i]->YUV2RGBINFO1 				= lspiDataBase[i].regsBackup.YUV2RGBINFO1;
+                    lspiInstance[i]->DEBUG 						= lspiDataBase[i].regsBackup.DEBUG;
+                    lspiInstance[i]->MSPI_CTRL 					= lspiDataBase[i].regsBackup.MSPI_CTRL;
+                    lspiInstance[i]->VSYNC_CTRL 				= lspiDataBase[i].regsBackup.VSYNC_CTRL;
+                    lspiInstance[i]->LSPI8080CTRL 				= lspiDataBase[i].regsBackup.LSPI8080CTRL;
+                    lspiInstance[i]->LSPICMDPREPARA0 			= lspiDataBase[i].regsBackup.LSPICMDPREPARA0;
+                    lspiInstance[i]->LSPICMDPREPARA1 			= lspiDataBase[i].regsBackup.LSPICMDPREPARA1;
+                    lspiInstance[i]->LSPICMDPREPARA2 			= lspiDataBase[i].regsBackup.LSPICMDPREPARA2;
+                    lspiInstance[i]->LSPICMDPREPARA3 			= lspiDataBase[i].regsBackup.LSPICMDPREPARA3;
+                    lspiInstance[i]->LSPICMDPOSTPARA0 			= lspiDataBase[i].regsBackup.LSPICMDPOSTPARA0;
+                    lspiInstance[i]->LSPICMDPOSTPARA1 			= lspiDataBase[i].regsBackup.LSPICMDPOSTPARA1;
+                    lspiInstance[i]->LSPICMDPOSTPARA2 			= lspiDataBase[i].regsBackup.LSPICMDPOSTPARA2;
+                    lspiInstance[i]->LSPICMDPOSTPARA3 			= lspiDataBase[i].regsBackup.LSPICMDPOSTPARA3;
+                    lspiInstance[i]->LSPITEPARA0 				= lspiDataBase[i].regsBackup.LSPITEPARA0;
+                    lspiInstance[i]->LSPITEPARA1 				= lspiDataBase[i].regsBackup.LSPITEPARA1;
+                    lspiInstance[i]->I2SBUSSEL 					= lspiDataBase[i].regsBackup.I2SBUSSEL;
+                    lspiInstance[i]->USPVERSION 				= lspiDataBase[i].regsBackup.USPVERSION;
+#endif
                 }
+            }
+
+			if (lcdSlp1CbFn)
+            {
+                lcdSlp1CbFn();
             }
             break;
 
         default:
             break;
     }
-#endif
 }
 
 #define  LOCK_SLEEP(instance)                                                                   \
@@ -697,6 +869,7 @@ static uint32_t lspiGetInstanceNum(lspiRes_t *lspi)
 static int32_t lspiSetBusSpeed(uint32_t bps, lspiRes_t *lspi)
 {       
     lspiDiv = 1;
+	bpsBak = bps;
 
     if(bps < 102*1024*1024) 
     {

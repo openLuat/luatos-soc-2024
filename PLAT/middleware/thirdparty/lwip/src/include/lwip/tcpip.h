@@ -83,6 +83,7 @@ err_t  tcpip_inpkt(struct pbuf *p, struct netif *inp, netif_input_fn input_fn);
 err_t TcpipPsInpkt(UINT8 lcid, DlPduBlock *pPduHdr, psif_input_fn ps_input_fn);
 err_t TcpipPsPendingInpkt(UINT8 cid, psif_pending_input_fn ps_pending_input_fn);
 err_t TcpipLanInpkt(UINT8 lan_type, UlPduBlock *pPduHdr, lanif_input_fn lan_input);
+err_t TcpipWanInpkt(UINT8 wan_type, wanif_input_fn wan_input);
 
 err_t  tcpip_input(struct pbuf *p, struct netif *inp);
 

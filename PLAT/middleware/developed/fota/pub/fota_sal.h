@@ -83,7 +83,7 @@ extern "C" {
 #elif defined CHIP_EC718 || defined CHIP_EC716
 #define BSP_QSPI_ERASE_AP_FLASH(addr, size)        FLASH_eraseSectorSafe(addr)
 #define BSP_QSPI_ERASE_AP_FLASH_32K(addr, size)    FLASH_erase32KBlkSafe(addr)
-#define BSP_QSPI_WRITE_AP_FLASH(buf, addr, size)   FLASH_write(buf, addr, size)
+#define BSP_QSPI_WRITE_AP_FLASH(buf, addr, size)   FLASH_writeBl(buf, addr, size)
 #define BSP_QSPI_READ_AP_FLASH(buf, addr, size)    FLASH_XIPRead(buf, addr, size)
 #elif defined CHIP_EC626
 #define BSP_QSPI_ERASE_AP_FLASH(addr, size)        FLASH_eraseSector(addr)
@@ -120,7 +120,7 @@ extern "C" {
 #define BSP_QSPI_DISABLE_CP_FLASH()
 #define BSP_QSPI_ERASE_CP_FLASH(addr, size)        FLASH_eraseSectorSafe(addr)
 #define BSP_QSPI_ERASE_CP_FLASH_32K(addr, size)    FLASH_erase32KBlkSafe(addr)
-#define BSP_QSPI_WRITE_CP_FLASH(buf, addr, size)   FLASH_write(buf, addr, size)
+#define BSP_QSPI_WRITE_CP_FLASH(buf, addr, size)   FLASH_writeBl(buf, addr, size)
 #define BSP_QSPI_READ_CP_FLASH(buf, addr, size)    FLASH_XIPRead(buf, addr, size)
 #endif
 #else
@@ -146,8 +146,8 @@ extern "C" {
 #define NVRAM_RESTORE_FROM_FAC()   nvramAfterInit()
 #elif defined CHIP_EC718 || defined CHIP_EC716
 #define NVRAM_CHECK_VALID()        nvramCheckNvValid()
-#define NVRAM_CHECK_FAC_VALID()    nvramCheckFactoryCprsNvValid()
-#define NVRAM_SAVE_TO_FAC()        nvramStoreRfToFactoryCprs()
+#define NVRAM_CHECK_FAC_VALID()    nvramCheckFacNvValid()
+#define NVRAM_SAVE_TO_FAC()        nvramSave2Fac()
 #define NVRAM_RESTORE_FROM_FAC()   nvramAfterInit()
 #elif defined CHIP_EC626
 #define NVRAM_CHECK_VALID()        nvram_chk_valid()
@@ -262,7 +262,7 @@ extern void     nvramAfterInit(void);
 #elif defined CHIP_EC718 || defined CHIP_EC716
 
 extern uint8_t  FLASH_XIPRead(uint8_t* pData, uint32_t ReadAddr, uint32_t Size);
-extern uint8_t  FLASH_write(uint8_t* pData, uint32_t WriteAddr, uint32_t Size);
+extern uint8_t  FLASH_writeBl(uint8_t* pData, uint32_t WriteAddr, uint32_t Size);
 extern uint8_t  FLASH_eraseSectorSafe(uint32_t SectorAddress);
 extern uint8_t  FLASH_erase32KBlkSafe(uint32_t SectorAddress);
 
@@ -273,8 +273,8 @@ extern uint8_t  CPFLASH_eraseBlock(uint32_t BlockAddress);
 extern uint8_t  CPFLASH_xipInit( void );
 
 extern uint32_t nvramCheckNvValid(void);
-extern uint32_t nvramCheckFactoryCprsNvValid(void);
-extern uint32_t nvramStoreRfToFactoryCprs(void);
+extern uint32_t nvramCheckFacNvValid(void);
+extern uint32_t nvramSave2Fac(void);
 extern void     nvramAfterInit(void);
 
 #elif defined CHIP_EC626

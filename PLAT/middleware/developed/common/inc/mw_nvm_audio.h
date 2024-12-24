@@ -828,7 +828,7 @@ BOOL mwNvmAudioCfgLogControlSet(/*AudioParaCfgCommon_t *pMwNvmAudioCfgCommon, */
   \fn           Bool mwNvmGetAudioCfgForCP(AudioConfig_t *readAudioCfgForCp, UINT8 device, UINT8 direct, UINT8 mode)
   \brief 
   \ useage:
-  \ audioCfg = malloc(sizeof(audioCfg));
+  \ audioCfg = mallocEc(sizeof(audioCfg));
   \
   \ ret = mwNvmGetAudioCfgForCP(audioCfg, device, direct, mode);
   \

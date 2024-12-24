@@ -24,6 +24,7 @@ AP_PLAT_COMMON_BSS int32_t lcdDmaTxCh          = 0;
 AP_PLAT_COMMON_BSS static lcdUspCb userUspCb   = NULL;
 AP_PLAT_COMMON_BSS static lcdUspCb userDmaCb   = NULL;
 PLAT_FM_ZI DmaDescriptor_t __ALIGNED(16) lcdDmaTxDesc[DMA_DESC_MAX];
+extern lcdDrvFunc_t* lcdDevHandle;
 AP_PLAT_COMMON_DATA DmaTransferConfig_t lcdDmaTxCfg =
 {
     NULL,
@@ -55,6 +56,15 @@ void lcdDrvDelay(uint32_t ms)
 static void uspIrqCb(void)
 {
     LSPI2->STAS |= (1<<31);
+    if (lcdDevHandle->uspIrq4CamCb)
+    {
+        lcdDevHandle->uspIrq4CamCb(lcdDevHandle);
+    }
+
+    if (lcdDevHandle->uspIrq4FillCb)
+    {
+        lcdDevHandle->uspIrq4FillCb(lcdDevHandle);
+    }
 
     if (userUspCb) 
     {
@@ -117,8 +127,7 @@ void dmaStartStop(bool start)
     }
     else
     {    
-        extern void DMA_stopChannelNoWait(DmaInstance_e instance, uint32_t channel);
-        DMA_stopChannelNoWait(DMA_INSTANCE_MP, lcdDmaTxCh);
+        DMA_stopChannel(DMA_INSTANCE_MP, lcdDmaTxCh, false);
     }
 }
 
@@ -234,6 +243,7 @@ void lcdInterfaceType(uint8_t type)
     
 #if (SPI_2_DATA_LANE == 1)
     lspiCtrl.dspiEn = 1;
+	lspiCtrl.dspiCfg = 2;
 #endif 
 
     lcdDrv->ctrl(LSPI_CTRL_CTRL, 0);
@@ -347,7 +357,11 @@ int lcdDmaTrans(lcdDrvFunc_t *lcd, void *sourceAddress, uint32_t totalLength)
     lspiCmdCtrl.wrRdn               = 1; // 1: wr   0: rd
     lspiCmdCtrl.ramWr               = 1; // start ramwr    
 #if (defined TYPE_EC718M)
+	#if (SPI_2_DATA_LANE == 1)
+	lspiCmdCtrl.ramWrHaltMode		= 0;
+	#else
     lspiCmdCtrl.ramWrHaltMode       = 1; // maintain cs as low between cmd and data
+    #endif
 #endif
 
 #if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
@@ -729,63 +743,4 @@ void lcdPwmBkDeInit(void)
 }
 
 #endif
-
-
-void lcdIoInit(bool isAonIO)
-{   
-    if (isAonIO)
-    {
-        slpManAONIOPowerOn();
-    }
-    
-    PadConfig_t config;
-    GpioPinConfig_t gpioCfg;
-    PAD_getDefaultConfig(&config);
-    
-    // 1. rst pin init
-    config.mux = LSPI_RST_PAD_ALT_FUNC;
-    PAD_setPinConfig(LSPI_RST_GPIO_ADDR, &config);
-    gpioCfg.pinDirection = GPIO_DIRECTION_OUTPUT;
-    gpioCfg.misc.initOutput = 1;
-    GPIO_pinConfig(LSPI_RST_GPIO_INSTANCE, LSPI_RST_GPIO_PIN, &gpioCfg);
-
-    // 2. backLight init
-#if (BK_USE_GPIO == 1)
-    config.mux = LCD_BK_PAD_ALT_FUNC;
-    PAD_setPinConfig(LCD_BK_PAD_INDEX, &config);
-    gpioCfg.pinDirection = GPIO_DIRECTION_OUTPUT;
-    gpioCfg.misc.initOutput = 0;
-    GPIO_pinConfig(LCD_BK_GPIO_INSTANCE, LCD_BK_GPIO_PIN, &gpioCfg);
-#elif (BK_USE_PWM == 1)
-    lcdPwmBkInit();
-#endif
-
-	// 3. ldo pin init
-#if (ENABLE_LDO == 1)
-    config.mux = LCD_EN_PAD_ALT_FUNC;
-    PAD_setPinConfig(LCD_EN_PAD_INDEX, &config);
-    gpioCfg.pinDirection = GPIO_DIRECTION_OUTPUT;
-    gpioCfg.misc.initOutput = 1;
-    GPIO_pinConfig(LCD_EN_GPIO_INSTANCE, LCD_EN_GPIO_PIN, &gpioCfg);
-#endif    
-
-    // 4. te init
-#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
-    // 4.1 718 te init
-#else
-    // 4.2 719 te init
-    config.mux = LCD_TE_PAD_ALT_FUNC;
-    PAD_setPinConfig(LCD_TE_PAD_INDEX, &config);
-#endif
-
-    // test fill one frame need how much time
-    #if 0
-    config.mux = PAD_MUX_ALT0;
-    PAD_setPinConfig(27, &config);
-    gpioCfg.pinDirection = GPIO_DIRECTION_OUTPUT;
-    gpioCfg.misc.initOutput = 1;
-    GPIO_pinConfig(0, 12, &gpioCfg);
-    #endif
-}
-
 

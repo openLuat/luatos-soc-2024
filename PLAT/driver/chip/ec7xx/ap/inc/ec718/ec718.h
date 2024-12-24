@@ -1384,7 +1384,7 @@ typedef struct {
     __IO uint32_t CSPIPROCLSPI;                   /**< Cspi frame proc lspi                 offset: 0x50 */
     __IO uint32_t CSPIQUARTILE;                   /**< Cspi OTSU quartile                   offset: 0x54 */
     __IO uint32_t CSPIYADJ;                       /**< Cspi y Adjustment                    offset: 0x58 */
-#if (defined CHIP_EC718) && !(defined TYPE_EC718M)
+#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
     __IO uint32_t RSVD2;
     __IO uint32_t RSVD3[18];                      /**< For lspi                                          */
     __IO uint32_t RSVD4[10];                      /**< Reserved                                          */

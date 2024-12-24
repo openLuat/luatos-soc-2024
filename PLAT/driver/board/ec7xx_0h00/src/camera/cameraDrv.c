@@ -18,30 +18,10 @@ extern cspiFrameProcLspi_t  cspiFrameProcLspi;
 
 #define EIGEN_CSPI(n)             ((CSPI_TypeDef *) (MP_USP0_BASE_ADDR + 0x1000*n))
 AP_PLAT_COMMON_BSS static camErrCb             camErrStatsFunc;
+AP_PLAT_COMMON_BSS static cspiCbEvent_fn userCamUspCb   = NULL;
 
 
-#if (CAMERA_ENABLE_SP0A39)
- #if (SP0A39_2SDR)
-    char* regName = "sp0a39_2sdr";
- #elif (SP0A39_1SDR)
-    char* regName = "sp0a39_1sdr";
- #endif
-
-#elif (CAMERA_ENABLE_SP0821)
- #if (SP0821_2SDR)
-    char* regName = "sp0821_2sdr";
- #elif (SP0821_1SDR)
-    char* regName = "sp0821_1sdr";
- #endif
-
-#elif (CAMERA_ENABLE_GC6123)
- #if (GC6123_2SDR)
-    char* regName = "gc6123_2sdr";
- #elif (GC6123_1SDR)
-    char* regName = "gc6123_1sdr";
- #endif
-
-#elif (CAMERA_ENABLE_GC032A)
+#if (CAMERA_ENABLE_GC032A)
  #if (GC032A_2SDR)
     char* regName = "gc032a_2sdr";
  #elif (GC032A_1SDR)
@@ -49,21 +29,9 @@ AP_PLAT_COMMON_BSS static camErrCb             camErrStatsFunc;
  #elif (GC032A_2DDR)
     char* regName = "gc032a_2ddr";
  #endif
-#elif (CAMERA_ENABLE_BF30A2)
- #if (BF30A2_1SDR)
-    char* regName = "bf30a2_1sdr";
- #endif 
 #elif (CAMERA_ENABLE_GC6153)
  #if (GC6153_1SDR)
 	char* regName = "gc6153_1sdr";
- #endif 
-#elif (CAMERA_ENABLE_BF30A2)
- #if (BF30A2_1SDR)
-    char* regName = "bf30a2_1sdr";
- #endif 
-#elif (CAMERA_ENABLE_GC6133)
- #if (GC6133_1SDR)
-	char* regName = "gc6133_1sdr";
  #endif  
 #endif
 
@@ -80,49 +48,7 @@ extern void delay_us(uint32_t us);
 
 void findRegInfo(char* regName, uint8_t* slaveAddr, uint16_t* regCnt, camI2cCfg_t** regInfo)
 {
-    if (strcmp(regName, "sp0a39_2sdr") == 0)
-    {
-        extern camI2cCfg_t sp0A39_2sdrRegInfo[];
-        *regInfo = sp0A39_2sdrRegInfo;
-        *slaveAddr = SP0A39_I2C_ADDR;
-        *regCnt = sp0a39GetRegCnt(regName);
-    }
-    else if (strcmp(regName, "sp0a39_1sdr") == 0)
-    {
-        extern camI2cCfg_t sp0A39_1sdrRegInfo[];
-        *regInfo = sp0A39_1sdrRegInfo;
-        *slaveAddr = SP0A39_I2C_ADDR;
-        *regCnt = sp0a39GetRegCnt(regName);
-    }
-    else if (strcmp(regName, "sp0821_2sdr") == 0)
-    {
-        extern camI2cCfg_t sp0821_2sdrRegInfo[];
-        *regInfo = sp0821_2sdrRegInfo;
-        *slaveAddr = SP0821_I2C_ADDR;
-        *regCnt = sp0821GetRegCnt(regName);
-    }
-    else if (strcmp(regName, "sp0821_1sdr") == 0)
-    {
-        extern camI2cCfg_t sp0821_1sdrRegInfo[];
-        *regInfo = sp0821_1sdrRegInfo;
-        *slaveAddr = SP0821_I2C_ADDR;
-        *regCnt = sp0821GetRegCnt(regName);
-    }
-    else if (strcmp(regName, "gc6123_2sdr") == 0)
-    {
-        extern camI2cCfg_t gc6123_2sdrRegInfo[];
-        *regInfo = gc6123_2sdrRegInfo;
-        *slaveAddr = GC6123_I2C_ADDR;
-        *regCnt = gc6123GetRegCnt(regName);
-    }
-    else if (strcmp(regName, "gc6123_1sdr") == 0)
-    {
-        extern camI2cCfg_t gc6123_1sdrRegInfo[];
-        *regInfo = gc6123_1sdrRegInfo;
-        *slaveAddr = GC6123_I2C_ADDR;
-        *regCnt = gc6123GetRegCnt(regName);
-    }
-    else if (strcmp(regName, "gc032a_2sdr") == 0)
+ 	if (strcmp(regName, "gc032a_2sdr") == 0)
     {
         extern camI2cCfg_t gc032A_2sdrRegInfo[];
         *regInfo = gc032A_2sdrRegInfo;
@@ -143,26 +69,12 @@ void findRegInfo(char* regName, uint8_t* slaveAddr, uint16_t* regCnt, camI2cCfg_
         *slaveAddr = GC032A_I2C_ADDR;
         *regCnt = gc032aGetRegCnt(regName);
     }
-    else if (strcmp(regName, "bf30a2_1sdr") == 0)
-    {
-        extern camI2cCfg_t bf30a2_1sdrRegInfo[];
-        *regInfo = bf30a2_1sdrRegInfo;
-        *slaveAddr = BF30A2_I2C_ADDR;
-        *regCnt = bf30a2GetRegCnt(regName);
-    }
 	else if (strcmp(regName, "gc6153_1sdr") == 0)
     {
         extern camI2cCfg_t gc6153_1sdrRegInfo[];
         *regInfo = gc6153_1sdrRegInfo;
         *slaveAddr = GC6153_I2C_ADDR;
         *regCnt = gc6153GetRegCnt(regName);
-    }
-	else if (strcmp(regName, "gc6133_1sdr") == 0)
-    {
-        extern camI2cCfg_t gc6133_1sdrRegInfo[];
-        *regInfo = gc6133_1sdrRegInfo;
-        *slaveAddr = GC6133_I2C_ADDR;
-        *regCnt = gc6133GetRegCnt(regName);
     }
 }
 
@@ -269,58 +181,54 @@ void camPowerOn(uint8_t ioInitVal)
 }
 #endif
 
-void camInit(void* dataAddr, cspiCbEvent_fn cb)
+static void camUspCb()
+{
+	uint32_t cspiStatus;
+	
+	#if (RTE_CSPI0 == 1)
+	cspiStatus = camGetCspiStats(CSPI_0);
+	#elif (RTE_CSPI1 == 1)
+	cspiStatus = camGetCspiStats(CSPI_1);
+	#endif
+	
+	if (cspiStatus & ICL_STATS_FRAME_END_Msk)
+	{
+		CSPI1->STAS |= 0x3<<3;
+		CSPI1->STAS |= 0xf<<7;
+		CSPI1->STAS |= 0x3<<11;
+		CSPI1->DMACTL |= 1<<24;
+
+		if (userCamUspCb)
+		{
+			userCamUspCb(cspiStatus);
+		}
+		
+		CSPI1->CBCTRL |= 2<<25;
+	}
+}
+
+
+void camInit(void* dataAddr, cspiCbEvent_fn uspCb, void* dmaCb)
 {
 	camResolution_e camResolution;
-
-    // Need to enable cspi first to make camera clock working
 	camParamCfg_t camParamCfg;
+	IRQn_Type irqNum;
+
+	#if (RTE_CSPI0 == 1)
+	irqNum = PXIC0_USP0_IRQn;
+	#elif (RTE_CSPI1 == 1)
+	irqNum = PXIC0_USP1_IRQn;
+	#endif
+
+	if(uspCb) 
+    {
+        userCamUspCb = uspCb;
+    }
 	
-#if (CAMERA_ENABLE_SP0A39)
- #if (SP0A39_2SDR)
- 	camParamCfg.wireNum  	= WIRE_2;
- #elif (SP0A39_1SDR)
- 	camParamCfg.wireNum  	= WIRE_1;
- #endif
-	camParamCfg.endianMode  = CAM_LSB_MODE;
-	camParamCfg.rxSeq		= SEQ_0;
-	camParamCfg.cpha		= 1;
-	camParamCfg.cpol		= 0;
-	camResolution 			= CAM_CHAIN_COUNT;
-
-#elif (CAMERA_ENABLE_SP0821)
- #if (SP0821_2SDR)
- 	camParamCfg.wireNum  	= WIRE_2;
- #elif (SP0821_1SDR)
- 	camParamCfg.wireNum  	= WIRE_1;
- #endif
-	camParamCfg.endianMode  = CAM_LSB_MODE;
-	camParamCfg.rxSeq		= SEQ_0;	
-	camParamCfg.cpha		= 1;
-	camParamCfg.cpol		= 0;
-	camResolution 			= CAM_CHAIN_COUNT;
-
-#elif (CAMERA_ENABLE_GC6123)
- #if (GC6123_2SDR)
- 	camParamCfg.wireNum  	= WIRE_2;
- #elif (GC6123_1SDR)
- 	camParamCfg.wireNum  	= WIRE_1;
- #endif
-	camParamCfg.endianMode  = CAM_LSB_MODE;
-	camParamCfg.rxSeq		= SEQ_1;
-	camParamCfg.cpha		= 1;
-	camParamCfg.cpol		= 0;
-	camParamCfg.ddrMode     = 0;
-	camParamCfg.wordIdSeq   = 0;
-	camParamCfg.yOnly       = 1;
-	camParamCfg.rowScaleRatio		= 0;
-	camParamCfg.colScaleRatio		= 0;
-	camParamCfg.scaleBytes		    = 0;
-	camResolution 			= CAM_CHAIN_COUNT;
-	// recv 8w pic into memory
-    camParamCfg.yOnly               = 1;
-
-#elif (CAMERA_ENABLE_GC032A)
+    XIC_SetVector(irqNum, camUspCb);
+    XIC_EnableIRQ(irqNum);	
+	
+#if (CAMERA_ENABLE_GC032A)
  #if (GC032A_2SDR)
  	camParamCfg.wireNum  	= WIRE_2;
     camParamCfg.endianMode  = CAM_LSB_MODE;
@@ -353,58 +261,40 @@ void camInit(void* dataAddr, cspiCbEvent_fn cb)
 	camResolution 			= CAM_CHAIN_COUNT;
  #endif
 
-    // recv 8w pic into memory
-    if (CAM_CHAIN_COUNT == 20)
+    if (CAM_CHAIN_COUNT == CAM_8W_COLOR)
     {    
 	    camParamCfg.yOnly               = 0;
 	    camParamCfg.rowScaleRatio       = 1;
 	    camParamCfg.colScaleRatio       = 1;
 	    camParamCfg.scaleBytes          = 3;
 	}
-	else if (CAM_CHAIN_COUNT == 10)
+	else if (CAM_CHAIN_COUNT == CAM_8W_Y)
 	{
 		camParamCfg.yOnly				= 1;
 		camParamCfg.rowScaleRatio		= 1;
 		camParamCfg.colScaleRatio		= 1;
 		camParamCfg.scaleBytes			= 1;
 	}
-
-#elif (CAMERA_ENABLE_BF30A2)
- #if (BF30A2_1SDR)
- 	camParamCfg.wireNum  	= WIRE_1;
- #endif
-	camParamCfg.endianMode  = CAM_LSB_MODE;
-	camParamCfg.rxSeq		= SEQ_0;
-	camParamCfg.cpha		= 0;
-	camParamCfg.cpol		= 0;
-	camParamCfg.yOnly       = 1;
-    camParamCfg.ddrMode     = 0;
-	camParamCfg.wordIdSeq   = 0;
-    camParamCfg.rowScaleRatio		= 0;
-	camParamCfg.colScaleRatio		= 0;
-	camParamCfg.scaleBytes		    = 0;
-	camResolution 			= CAM_CHAIN_COUNT;
+	else if (CAM_CHAIN_COUNT == CAM_30W_Y)
+	{
+		camParamCfg.yOnly				= 1;
+		camParamCfg.rowScaleRatio		= 0;
+		camParamCfg.colScaleRatio		= 0;
+		camParamCfg.scaleBytes			= 0;
+	}
+	else if (CAM_CHAIN_COUNT == CAM_30W_COLOR)
+	{
+		camParamCfg.yOnly				= 0;
+		camParamCfg.rowScaleRatio		= 0;
+		camParamCfg.colScaleRatio		= 0;
+		camParamCfg.scaleBytes			= 0;
+	}
 #elif (CAMERA_ENABLE_GC6153)
  #if (GC6153_1SDR)
  	camParamCfg.wireNum  	= WIRE_1;
  #endif
 	camParamCfg.endianMode  = CAM_LSB_MODE;
 	camParamCfg.rxSeq		= SEQ_1;
-	camParamCfg.cpha		= 1;
-	camParamCfg.cpol		= 0;
-	camParamCfg.yOnly       = 1;
-	camParamCfg.ddrMode     = 0;
-	camParamCfg.wordIdSeq   = 0;
-    camParamCfg.rowScaleRatio       = 0;
-    camParamCfg.colScaleRatio       = 0;
-    camParamCfg.scaleBytes          = 0;
-	camResolution 			= CAM_CHAIN_COUNT;	
-#elif (CAMERA_ENABLE_GC6133)
- #if (GC6133_1SDR)
- 	camParamCfg.wireNum  	= WIRE_1;
- #endif
-	camParamCfg.endianMode  = CAM_LSB_MODE;
-	camParamCfg.rxSeq		= SEQ_0;
 	camParamCfg.cpha		= 1;
 	camParamCfg.cpol		= 0;
 	camParamCfg.yOnly       = 1;
@@ -420,19 +310,19 @@ void camInit(void* dataAddr, cspiCbEvent_fn cb)
 
 	cspiDrv->ctrl(CSPI_CTRL_MEM_ADDR , (uint32_t)dataAddr); // register the recv memory
     cspiDrv->powerCtrl(CSPI_POWER_FULL);
-    cspiDrv->init(cb);
-    cspiDrv->ctrl(CSPI_CTRL_DATA_FORMAT , 0); // control cspi
+    cspiDrv->init(dmaCb);
+    cspiDrv->ctrl(CSPI_CTRL_DATA_FORMAT , 0);
     cspiDrv->ctrl(CSPI_CTRL_RXTOR , 0);
     cspiDrv->ctrl(CSPI_CTRL_FRAME_INFO0 , 0);
 	cspiDrv->ctrl(CSPI_CTRL_INT_CTRL , 0);
     cspiDrv->ctrl(CSPI_CTRL_CSPICTL , 0);
 	cspiDrv->ctrl(CSPI_CTRL_DMA_CTRL , 0);
 	cspiDrv->ctrl(CSPI_CTRL_RESOLUTION_SET , camResolution);
-    cspiDrv->ctrl(CSPI_CTRL_BUS_SPEED, (camFrequence_e)CAM_25_5_M);  // cspi working frequency
-    cspiDrv->ctrl(CSPI_BINARY_CTRL, 0);  // binary control
-    cspiDrv->ctrl(CSPI_CTRL_AUTO_CG_CTRL, 0);  // autocg control
-    cspiDrv->ctrl(CSPI_FRAME_PROC_LSPI, 0);  // out for lspi
-    cspiDrv->ctrl(CSPI_DELAY_CTRL, 0);  // delay ctrl
+    cspiDrv->ctrl(CSPI_CTRL_BUS_SPEED, (camFrequence_e)CAM_25_5_M);
+    cspiDrv->ctrl(CSPI_BINARY_CTRL, 0);
+    cspiDrv->ctrl(CSPI_CTRL_AUTO_CG_CTRL, 0);
+    cspiDrv->ctrl(CSPI_FRAME_PROC_LSPI, 0);
+    cspiDrv->ctrl(CSPI_DELAY_CTRL, 0);
 }
 
 void camStartStop(cspiStartStop_e startStop)
@@ -457,16 +347,14 @@ void cspiEndIntEnable(cspiIntEnable_e endIntEnable)
 {
     if (endIntEnable)
     {
-        //printf("now enable end irq.\n");
         cspiIntCtrl.frameEndIntEn |= endIntEnable;
     }
     else
     {
-        //printf("now disable end irq.\n");
         cspiIntCtrl.frameEndIntEn &= endIntEnable;
     }
     
-    cspiDrv->ctrl(CSPI_CTRL_INT_CTRL , 0); // cspi interrupt enable or disable
+    cspiDrv->ctrl(CSPI_CTRL_INT_CTRL , 0);
 }
 
 void cspi2LspiEnable(uint8_t enable)
@@ -477,7 +365,7 @@ void cspi2LspiEnable(uint8_t enable)
 
 void camFlush()
 {
-	cspiDrv->ctrl(CSPI_CTRL_FLUSH_RX_FIFO , 0); // flush rx fifo
+	cspiDrv->ctrl(CSPI_CTRL_FLUSH_RX_FIFO , 0);
 }
 
 void camRegisterIRQ(cspiInstance_e instance, camIrq_fn irqCb)
@@ -499,7 +387,7 @@ void camRegisterIRQ(cspiInstance_e instance, camIrq_fn irqCb)
 
 PLAT_FM_RAMCODE void camRecv(uint8_t * dataAddr)
 {
-    cspiDrv->ctrl(CSPI_CTRL_MEM_ADDR , (uint32_t)dataAddr); // register the recv memory
+    cspiDrv->ctrl(CSPI_CTRL_MEM_ADDR , (uint32_t)dataAddr);
     cspiDrv->recv();   
 }
 
@@ -600,4 +488,8 @@ void camGpioPulse(uint8_t pinInstance, uint8_t pinNum, uint32_t pulseDurationUs,
 	}
 }
 
+void camRegisterSlp1Cb(cspiSlp1Cb_fn cb)
+{
+    cspiSlp1CbFn = cb;
+}
 

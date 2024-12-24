@@ -1246,7 +1246,11 @@ uint8_t usbcustom_multidev_ctrl_proc(usbcust_md_ctrl_st* p_usbcust_md_ctrl)
     return 0;
 }
 
+#ifdef __USER_CODE__
+__attribute__((weak)) void usblpw_innophy_enh_drv_strenth(void)
+#else
 void usblpw_innophy_enh_drv_strenth(void)
+#endif
 {
 #ifdef TYPE_EC718M
 
@@ -1261,7 +1265,7 @@ void usblpw_innophy_enh_drv_strenth(void)
 * addr = (* addr &~ (0xf<<3)) | (0x6<<3);
 
 addr = (volatile uint32_t*)0x4f0a0124;
-* addr = (* addr &~ (0x7<<2)) | (0x5<<2);
+* addr = (* addr &~ (0x7<<2)) | (0x4<<2);
 
 #else
     volatile uint32_t* addr = (volatile uint32_t*)0x4f0a0030;

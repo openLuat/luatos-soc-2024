@@ -1697,9 +1697,12 @@ FREERTOS_TLSF_TEXT_SECTION pool_t tlsf_add_pool(tlsf_t tlsf, void* mem, size_t b
 {
     block_header_t* block;
     block_header_t* next;
+    void*           orig_mem = mem;
+
+    mem = align_ptr(mem, ALIGN_SIZE);
 
     const size_t pool_overhead = tlsf_pool_overhead();
-    const size_t pool_bytes = align_down(bytes - pool_overhead, ALIGN_SIZE);
+    const size_t pool_bytes = align_down(bytes - pool_overhead - (size_t)(mem - orig_mem), ALIGN_SIZE);
 
     if (((ptrdiff_t)mem % ALIGN_SIZE) != 0)
     {

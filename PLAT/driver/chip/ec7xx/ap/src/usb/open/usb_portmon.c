@@ -415,6 +415,10 @@ void usb_portmon_task_init(void)
     #elif defined FEATURE_LITEOS_ENABLE
     task_attr.priority = osPriorityNormal1;
     #endif
+#ifdef TYPE_EC718M
+    task_attr.reserved = osThreadDynamicStackAlloc;
+#endif
+
     osThreadNew(usb_portmon_task, NULL, &task_attr);
 }
 #endif

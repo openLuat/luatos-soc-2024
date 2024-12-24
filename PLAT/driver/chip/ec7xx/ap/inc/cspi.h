@@ -13,6 +13,9 @@ extern "C" {
 
 
 typedef void (*cspiCbEvent_fn) (uint32_t event);            ///< cspi callback event.
+typedef void (*cspiSlp1Cb_fn)();
+extern cspiSlp1Cb_fn            cspiSlp1CbFn;
+
 
 /****** CSPI Event *****/
 #define ARM_CSPI_EVENT_TRANSFER_COMPLETE (1UL << 0)  ///< Data Transfer completed
@@ -47,9 +50,10 @@ typedef struct
 
 typedef enum
 {
-	CAM_8W				= 10, ///< 8w only y use 10 dma descriptor chain
-	CAM_8W_COLOR		= 20, ///< 8w color use 20 dma descriptor chain
-	CAM_30W				= 80, ///< 30w use 80 dma descriptor chain
+	CAM_8W_Y			= 10, // 8w only y use 10 dma descriptor chain
+	CAM_8W_COLOR		= 20, // 8w color use 20 dma descriptor chain
+	CAM_30W_Y			= 40, // 30w only y use 40 dma descriptor chain
+	CAM_30W_COLOR		= 80, // 30w use 80 dma descriptor chain
 }camResolution_e;
 
 typedef enum

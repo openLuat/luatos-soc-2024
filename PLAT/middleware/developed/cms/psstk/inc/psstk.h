@@ -9,7 +9,9 @@
  ******************************************************************************
 ******************************************************************************/
 #include <stdint.h>
+#include "psstk_bip_api.h"
 #include "cmisim.h"
+#include <osasys.h>
 
 /******************************************************************************
  *****************************************************************************
@@ -24,7 +26,18 @@
 #define PS_STK_MAX_ITEM_NUM             30
 #define PS_STK_MAX_ENC_TEXT_STR_LEN     200
 
-#define PS_STK_RESULT_NO_RESPONSE_FROM_USER    0x12
+//General Result
+#define PS_STK_RESULT_CMD_PERFORMED_OK             0x00
+#define PS_STK_RESULT_CMD_PERFORMED_MISS_INFO      0x02
+#define PS_STK_RESULT_TERMINATED_BY_USER           0x10
+#define PS_STK_RESULT_NO_RESPONSE_FROM_USER        0x12
+#define PS_STK_RESULT_CMD_BEYOND_ME_CAP            0x30
+#define PS_STK_RESULT_GR_CMD_TYPE_UNKNOWN_BY_ME    0x31
+
+#define PS_STK_NO_RSP_TIMER_ID    1
+
+#define STK_COMMAND_MENU_SELECTION       0xFD
+#define STK_COMMAND_TERMINATE_SESSION    0xFE
 
 /******************************************************************************
  *****************************************************************************
@@ -41,8 +54,9 @@ typedef enum PsStkProactCmdTypeTag
     STK_COMMAND_SET_UP_MENU            = 0x25,
     STK_COMMAND_SET_UP_IDLE_MODE_TXT   = 0x28,
     STK_COMMAND_LANG_NOTIFICATION      = 0x35,
-    STK_COMMAND_MENU_SELECTION         = 0xFD,
-    STK_COMMAND_TERMINATE_SESSION      = 0xFE
+    STK_COMMAND_SESSION_END            = 0xFD, //internal use, no proactive command
+    STK_COMMAND_SIM_LOST               = 0xFE, //internal use, SIM is lost
+    STK_COMMAND_TIMEOUT_RESPONSE       = 0xFF  //internal use, URC of timeout response
 }
 PsStkProactCmdType;
 
@@ -91,10 +105,10 @@ PsStkProactiveCmd;
 
 typedef struct PsStkCommandDetailsTag
 {
-    UINT8                        cmdNum;//command number
-    UINT8                        cmdType;//PsStkProactCmdType
-    UINT8                        cmdQualifier;
-    UINT8                        resvd;
+    UINT8                       cmdNum;//command number
+    UINT8                       cmdType;//PsStkProactCmdType
+    UINT8                       cmdQualifier;
+    BOOL                        crFlag;//comprehension required flag
 }
 PsStkCommandDetails;
 
@@ -214,7 +228,6 @@ PsStkProactCmdRsp;
  *****************************************************************************
 ******************************************************************************/
 UINT8 psStkGetPendingProactCmdType(void);
-void psStkProcProactiveCmdInd(UINT8 cmdType, UINT16 cmdLen, UINT8 *pCmdData);
 CmsRetId psStkGetPlayToneCmdInfo(PsStkPlayToneCmdInfo *pPlayToneCmdInfo);
 CmsRetId psStkGetDisplayTextCmdInfo(PsStkDisplayTextCmdInfo *pDisplayTextCmdInfo);
 CmsRetId psStkGetGetInkeyCmdInfo(PsStkGetInkeyCmdInfo *pGetInkeyCmdInfo);
@@ -223,8 +236,7 @@ CmsRetId psStkGetSetUpIdleModeTextCmdInfo(PsStkSetUpIdleModeTextCmdInfo *pSetUpI
 CmsRetId psStkGeLanguageNotificationCmdInfo(PsStkLanguageNotificationCmdInfo *pLanguageNotificationCmdInfo);
 CmsRetId psStkGetSetUpMenuCmdInfo(PsStkSetUpMenuCmdInfo *pSetUpMenuCmdInfo);
 CmsRetId psStkGetSelectItemCmdInfo(PsStkSelectItemCmdInfo *pSelectItemCmdInfo);
-CmsRetId psStkSetResponse(UINT8 cmdType, PsStkProactCmdRsp *pProactCmdRsp);
-void psStkProcProactiveCmdAutoResp(UINT8 cmdType, UINT16 cmdLen, UINT8 *pCmdData);
+CmsRetId psStkProcSTKRsp(UINT32 atHandle, UINT8 cmdType, PsStkProactCmdRsp *pProactCmdRsp);
 
 #endif
 

@@ -213,7 +213,7 @@ int32_t exStorageWrite(uint32_t zid, uint32_t offset, uint8_t *buf, uint32_t buf
         return EXSTO_EWRITE;
 
     //step2 read back and check
-    rdPtr = malloc(currLen);
+    rdPtr = mallocEc(currLen);
     if(rdPtr == NULL)
     {
         return EXSTO_EMALLOC;
@@ -223,7 +223,7 @@ int32_t exStorageWrite(uint32_t zid, uint32_t offset, uint8_t *buf, uint32_t buf
         return EXSTO_EREAD;
 
     ret = memcmp(buf,rdPtr,currLen);
-    free(rdPtr);
+    freeEc(rdPtr);
 
     return ret ? EXSTO_EWRITE : EXSTO_OK;
 }
@@ -403,7 +403,7 @@ int32_t exStorageVerifyPkg(uint32_t zid, uint8_t *hash, uint32_t pkgSize, uint32
 
     mwAalInitSha256(&sha256, 0);
 
-    buffer = (uint8_t*)malloc(stepSize);
+    buffer = (uint8_t*)mallocEc(stepSize);
     if(buffer == NULL)
     {
         ECPLAT_PRINTF(UNILOG_PLA_DRIVER, EX_VERIFY_PKG_3, P_WARNING, "verify pkg: zone(%d) malloc(%d) failure!\n",
@@ -450,7 +450,7 @@ int32_t exStorageVerifyPkg(uint32_t zid, uint8_t *hash, uint32_t pkgSize, uint32
     }
 
 VERIFY_PKG_END:
-    if(buffer) free(buffer);
+    if(buffer) freeEc(buffer);
 
     mwAalDeinitSha256(&sha256);
 

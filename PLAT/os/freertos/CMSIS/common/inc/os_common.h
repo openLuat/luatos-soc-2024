@@ -26,6 +26,7 @@
 #include "stdio.h"
 #include "cmsis_compiler.h"
 #include "exception_process.h"
+#include "portable.h"
 
 #include DEBUG_LOG_HEADER_FILE
 
@@ -45,44 +46,44 @@ extern "C" {
 /*
  * OSA memory function
 */
-//void* OsaAllocMemory(UINT32 size);
-#define     OsaAllocMemory(S)           pvPortAssertMalloc((S))         /* Assert, if no memory allocated */
-//void* OsaAllocZeroMemory(UINT32 size);
-#define     OsaAllocZeroMemory(S)       pvPortZeroAssertMalloc((S))     /* Assert, if no memory allocated */
-//void* OsaAllocMemoryNoAssert(UINT32 size);
-#define     OsaAllocMemoryNoAssert(S)   pvPortMalloc((S))               /* return PNULL, if no memory allcated */
-//void* OsaAllocZeroMemoryNoAssert(UINT32 size);
-#define     OsaAllocZeroMemoryNoAssert(S)       pvPortZeroMalloc((S))   /* return PNULL, if no memory allcated */
-//void* OsaReallocMemory(void *pv, UINT32 size);
-#define     OsaReallocMemory(pv, S)     pvPortRealloc((pv), (S))
 
+//void* OsaAllocMemory(UINT32 size);
+#define     OsaAllocMemory(S)                   pvPortAssertMallocEc((S))         /* Assert, if no memory allocated */
+//void* OsaAllocZeroMemory(UINT32 size);
+#define     OsaAllocZeroMemory(S)               pvPortZeroAssertMallocEc((S))     /* Assert, if no memory allocated */
+//void* OsaAllocMemoryNoAssert(UINT32 size);
+#define     OsaAllocMemoryNoAssert(S)           pvPortMallocEc((S))               /* return PNULL, if no memory allcated */
+//void* OsaAllocZeroMemoryNoAssert(UINT32 size);
+#define     OsaAllocZeroMemoryNoAssert(S)       pvPortZeroMallocEc((S))   /* return PNULL, if no memory allcated */
+//void* OsaReallocMemory(void *pv, UINT32 size);
+#define     OsaReallocMemory(pv, S)             pvPortReallocEc((pv), (S))
 
 #define OsaFreeMemory(pPtr)     \
 do {                            \
-    vPortFree(*(pPtr));                                                     \
+    vPortFreeEc(*(pPtr));                                                     \
     (*(pPtr)) = PNULL;                                                      \
 }while(FALSE);
 
 #define OsaFreeMemoryNoCheck(pPtr)      \
 do {                                    \
-    vPortFree(*(pPtr));                                                     \
+    vPortFreeEc(*(pPtr));                                                     \
     (*(pPtr)) = PNULL;                                                      \
 }while(FALSE)
 
+
 #if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
 //void* OsaAllocMemory_Psram(UINT32 size);
-#define     OsaAllocMemory_Psram(S)        pvPortAssertMalloc_Psram((S))         /* Assert, if no memory allocated */
+#define     OsaAllocMemory_Psram(S)                   pvPortAssertMallocCust((S))         /* Assert, if no memory allocated */
 //void* OsaAllocZeroMemory_Psram(UINT32 size);
-#define     OsaAllocZeroMemory_Psram(S)    pvPortZeroAssertMalloc_Psram((S))     /* Assert, if no memory allocated */
+#define     OsaAllocZeroMemory_Psram(S)               pvPortZeroAssertMallocCust((S))     /* Assert, if no memory allocated */
 //void* OsaAllocMemoryNoAssert_Psram(UINT32 size);
-#define     OsaAllocMemoryNoAssert_Psram(S)      pvPortMalloc_Psram((S))         /* return PNULL, if no memory allcated */
+#define     OsaAllocMemoryNoAssert_Psram(S)           pvPortMalloc_CUST(S, 0)         /* return PNULL, if no memory allcated */
 //void* OsaAllocZeroMemoryNoAssert_Psram(UINT32 size);
-#define     OsaAllocZeroMemoryNoAssert_Psram(S)       pvPortZeroMalloc_Psram((S))   /* return PNULL, if no memory allcated */
-
+#define     OsaAllocZeroMemoryNoAssert_Psram(S)       pvPortZeroMallocCust((S))   /* return PNULL, if no memory allcated */
 
 #define OsaFreeMemory_Psram(pPtr)     \
 do {                            \
-    vPortFree_Psram(*(pPtr));                                                     \
+    vPortFreeCust(*(pPtr));                                                     \
     (*(pPtr)) = PNULL;                                                      \
 }while(FALSE);
 

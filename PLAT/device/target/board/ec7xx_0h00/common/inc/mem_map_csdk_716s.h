@@ -270,7 +270,7 @@ flash xip address(from ap/cp view): 0x00800000---0x00a00000
 #define MSMB_CPMEM_START_ADDR           (0x004CA000)
 
 #define MSMB_CPMEM_LENGTH               (MSMB_END_ADDR-MSMB_CPMEM_START_ADDR)
-#define MSMB_CPDATA_START_ADDR          (0x004ED000)
+#define MSMB_CPDATA_START_ADDR          (0x004ED800)
 #define XP_SHAREINFO_BASE_ADDR          (0x004FE000)
 #define XP_DBGRESERVED_BASE_ADDR        (0x004FEF00)
 #define IPC_SHAREDMEM_START_ADDR        (0x004FF000)

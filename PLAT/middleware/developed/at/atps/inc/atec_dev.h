@@ -504,6 +504,33 @@
 #define ATC_ECBARCELL_2_BAR_TIME_VAL_MAX        (65535)     //bar cell inifinity
 #define ATC_ECBARCELL_2_BAR_TIME_VAL_DEF        (0)
 
+/* AT+ECJDC */
+#define ATC_ECJDC_0_MODE_VAL_MIN                (0)         //Jamming detection mode.
+#define ATC_ECJDC_0_MODE_VAL_MAX                (1)
+#define ATC_ECJDC_0_MODE_VAL_DEF                (0)
+
+#define ATC_ECJDC_1_RSSI_THR_VAL_MIN            (-90)       //RSSI Threashold.
+#define ATC_ECJDC_1_RSSI_THR_VAL_MAX            (-30)
+#define ATC_ECJDC_1_RSSI_THR_VAL_DEF            (-40)
+
+#define ATC_ECJDC_2_RSRP_THR_VAL_MIN            (-140)      //RSRP Threashold.
+#define ATC_ECJDC_2_RSRP_THR_VAL_MAX            (-44)
+#define ATC_ECJDC_2_RSRP_THR_VAL_DEF            (-105)
+
+#define ATC_ECJDC_3_RSRQ_THR_VAL_MIN            (-20)       //RSRQ Threashold.
+#define ATC_ECJDC_3_RSRQ_THR_VAL_MAX            (0)
+#define ATC_ECJDC_3_RSRQ_THR_VAL_DEF            (-15)
+
+#define ATC_ECJDC_4_T_DETECT_VAL_MIN            (0)         //Tdetection.
+#define ATC_ECJDC_4_T_DETECT_VAL_MAX            (10)
+#define ATC_ECJDC_4_T_DETECT_VAL_DEF            (3)
+
+#define ATC_ECJDC_5_RPT_INTERVAL_VAL_MIN        (0)       //Report Interval.
+#define ATC_ECJDC_5_RPT_INTERVAL_VAL_MAX        (60)
+#define ATC_ECJDC_5_RPT_INTERVAL_VAL_DEF        (0)
+
+
+
 CmsRetId  devCFUN(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  devECBAND(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  devECFREQ(const AtCmdInputContext *pAtCmdReq);
@@ -529,6 +556,7 @@ CmsRetId  devECPSTEST(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  devECBARCELL(const AtCmdInputContext *pAtCmdReq);
 
 CmsRetId  devECNASTCFG(const AtCmdInputContext *pAtCmdReq);
+CmsRetId  devECJDC(const AtCmdInputContext *pAtCmdReq);
 
 
 #endif

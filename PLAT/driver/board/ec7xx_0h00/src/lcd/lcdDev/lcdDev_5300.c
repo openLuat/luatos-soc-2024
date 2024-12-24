@@ -5,8 +5,8 @@
 #include "sctdef.h"
 
 extern lspiDrvInterface_t *lcdDrv;
-AP_PLAT_COMMON_BSS uint8_t set_x_cmd[4] = {0};
-AP_PLAT_COMMON_BSS uint8_t set_y_cmd[4] = {0};
+AP_PLAT_COMMON_BSS static uint8_t co5300SetXCmd[4] = {0};
+AP_PLAT_COMMON_BSS static uint8_t co5300SetYCmd[4] = {0};
 
 #define PRE_CMD_ENABLE 	0
 #define TEST_IRQ_NUM    1
@@ -129,21 +129,22 @@ static uint32_t co5300AddrSet(lcdDrvFunc_t *lcd, uint16_t sx, uint16_t sy, uint1
 
     lcdMspiSet(1, 0, 0, 0x02); // 1wire: 0x02;    4wire: 0x32
     
-    // column addr set. p112    
     sx += LCD_X_OFFSET;
 	ex += LCD_X_OFFSET;
+	sy += LCD_Y_OFFSET;
+	ey += LCD_Y_OFFSET;
 
-	set_x_cmd[0] = sx>>8;
-	set_x_cmd[1] = sx;
-	set_x_cmd[2] = ex>>8;
-	set_x_cmd[3] = ex;
-    lspiCmdSend(0x2A, set_x_cmd, sizeof(set_x_cmd));
+	co5300SetXCmd[0] = sx>>8;
+	co5300SetXCmd[1] = sx;
+	co5300SetXCmd[2] = ex>>8;
+	co5300SetXCmd[3] = ex;
+    lspiCmdSend(0x2A, co5300SetXCmd, sizeof(co5300SetXCmd));
     
-	set_y_cmd[0] = sy>>8;
-	set_y_cmd[1] = sy;
-	set_y_cmd[2] = ey>>8;
-	set_y_cmd[3] = ey;
-    lspiCmdSend(0x2B, set_y_cmd, sizeof(set_y_cmd));
+	co5300SetYCmd[0] = sy>>8;
+	co5300SetYCmd[1] = sy;
+	co5300SetYCmd[2] = ey>>8;
+	co5300SetYCmd[3] = ey;
+    lspiCmdSend(0x2B, co5300SetYCmd, sizeof(co5300SetYCmd));
 
     if (CO5300_BPP == 24)
     {

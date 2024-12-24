@@ -137,7 +137,7 @@ FREERTOS_EVENTGROUPS_TEXT_SECTION EventGroupHandle_t xEventGroupCreate( void )
 	EventGroup_t *pxEventBits;
 
 		/* Allocate the event group. */
-		pxEventBits = ( EventGroup_t * ) pvPortMalloc( sizeof( EventGroup_t ) );
+        pxEventBits = ( EventGroup_t * ) pvPortMallocEc( sizeof( EventGroup_t ) );
 
 		if( pxEventBits != NULL )
 		{
@@ -603,7 +603,7 @@ const List_t *pxTasksWaitingForBits = &( pxEventBits->xTasksWaitingForBits );
 		{
 			/* The event group can only have been allocated dynamically - free
 			it again. */
-			vPortFree( pxEventBits );
+			vPortFreeEc( pxEventBits );
 		}
 		#elif( ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) && ( configSUPPORT_STATIC_ALLOCATION == 1 ) )
 		{
@@ -611,7 +611,7 @@ const List_t *pxTasksWaitingForBits = &( pxEventBits->xTasksWaitingForBits );
 			dynamically, so check before attempting to free the memory. */
 			if( pxEventBits->ucStaticallyAllocated == ( uint8_t ) pdFALSE )
 			{
-				vPortFree( pxEventBits );
+				vPortFreeEc( pxEventBits );
 			}
 			else
 			{

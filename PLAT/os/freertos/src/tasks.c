@@ -41,6 +41,7 @@ task.h is included from an application file. */
 #include "timers.h"
 #include "StackMacros.h"
 #include DEBUG_LOG_HEADER_FILE
+#include "cmsis_os2.h"
 #ifdef __USER_CODE__
 extern void am_record_task(void *tcb, uint8_t is_on);
 extern void am_record_task_start(void);
@@ -102,6 +103,9 @@ a statically allocated stack and a dynamically allocated TCB. */
 #define tskDYNAMICALLY_ALLOCATED_STACK_AND_TCB 		( ( uint8_t ) 0 )
 #define tskSTATICALLY_ALLOCATED_STACK_ONLY 			( ( uint8_t ) 1 )
 #define tskSTATICALLY_ALLOCATED_STACK_AND_TCB		( ( uint8_t ) 2 )
+#ifdef TYPE_EC718M
+#define tskDYNAMICALLY_ALLOCATED_STACK_AND_TCB_CUST ( ( uint8_t ) 3 )
+#endif
 
 /*
  * Macros used by vListTask to indicate which state a task is in.
@@ -725,8 +729,7 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB ) PRIVILEGED_FUNCTION;
 			/* Allocate space for the TCB.  Where the memory comes from depends
 			on the implementation of the port malloc function and whether or
 			not static allocation is being used. */
-			pxNewTCB = ( TCB_t * ) pvPortMalloc( sizeof( TCB_t ) );
-
+			pxNewTCB = ( TCB_t * ) pvPortMallocEc( sizeof( TCB_t ) );
 			if( pxNewTCB != NULL )
 			{
 				/* Store the stack location in the TCB. */
@@ -756,6 +759,9 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB ) PRIVILEGED_FUNCTION;
 #endif /* portUSING_MPU_WRAPPERS */
 /*-----------------------------------------------------------*/
 
+#ifdef __USER_CODE__
+#undef TYPE_EC718M
+#endif
 #if( configSUPPORT_DYNAMIC_ALLOCATION == 1 )
 
 	FREERTOS_TASKS_TEXT_SECTION BaseType_t xTaskCreate(	TaskFunction_t pxTaskCode,
@@ -767,84 +773,153 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB ) PRIVILEGED_FUNCTION;
 	{
 	TCB_t *pxNewTCB;
 	BaseType_t xReturn;
+#if (defined TYPE_EC718M) && (defined CORE_IS_AP)
+    uint16_t isTskDymcStckAllc = usStackDepth&osThreadDynamicStackFlag;
+    uint16_t usRealStackDepth = usStackDepth&(uint16_t)(~osThreadDynamicStackFlag);
+#endif
 
-		/* If the stack grows down then allocate the stack then the TCB so the stack
-		does not grow into the TCB.  Likewise if the stack grows up then allocate
-		the TCB then the stack. */
-		#if( portSTACK_GROWTH > 0 )
-		{
-			/* Allocate space for the TCB.  Where the memory comes from depends on
-			the implementation of the port malloc function and whether or not static
-			allocation is being used. */
-			pxNewTCB = ( TCB_t * ) pvPortMalloc( sizeof( TCB_t ) );
+        /* If the stack grows down then allocate the stack then the TCB so the stack
+        does not grow into the TCB.  Likewise if the stack grows up then allocate
+        the TCB then the stack. */
+        #if( portSTACK_GROWTH > 0 )
+        {
+            /* Allocate space for the TCB.  Where the memory comes from depends on
+            the implementation of the port malloc function and whether or not static
+            allocation is being used. */
+#if (defined TYPE_EC718M) && (defined CORE_IS_AP)
+            if (isTskDymcStckAllc){
+                pxNewTCB = ( TCB_t * ) pvPortMallocEc( sizeof( TCB_t ) );
+            }
+            else
+            {
+                pxNewTCB = ( TCB_t * ) pvPortMalloc( sizeof( TCB_t ) );
+            }
+#else
+            pxNewTCB = ( TCB_t * ) pvPortMallocEc( sizeof( TCB_t ) );
+#endif
+            if( pxNewTCB != NULL )
+            {
+                /* Allocate space for the stack used by the task being created.
+                The base of the stack memory stored in the TCB so the task can
+                be deleted later if required. */
+#if (defined TYPE_EC718M) && (defined CORE_IS_AP)
+                if (isTskDymcStckAllc){
+                    pxNewTCB->pxStack = ( StackType_t * ) pvPortMallocEc( ( ( ( size_t ) (usRealStackDepth)) * sizeof( StackType_t ) ) ); /*lint !e961 MISRA exception as the casts are only redundant for some ports. */
+                }
+                else {
+                    pxNewTCB->pxStack = ( StackType_t * ) pvPortMalloc( ( ( ( size_t ) (usRealStackDepth)) * sizeof( StackType_t ) ) ); /*lint !e961 MISRA exception as the casts are only redundant for some ports. */
+                }
+#else
+                pxNewTCB->pxStack = ( StackType_t * ) pvPortMallocEc( ( ( ( size_t ) usStackDepth ) * sizeof( StackType_t ) ) ); /*lint !e961 MISRA exception as the casts are only redundant for some ports. */
+#endif
+                if( pxNewTCB->pxStack == NULL )
+                {
+                /* Could not allocate the stack.  Delete the allocated TCB. */
+#if (defined TYPE_EC718M) && (defined CORE_IS_AP)
+                    if (isTskDymcStckAllc){
+                        vPortFreeEc( pxNewTCB );
+                    }
+                    else {
+                        vPortFree( pxNewTCB );
+                    }
+#else
+                    vPortFreeEc( pxNewTCB );
+#endif
+                    pxNewTCB = NULL;
+                }
+            }
+        }
+        #else /* portSTACK_GROWTH */
+        {
+        StackType_t *pxStack;
 
-			if( pxNewTCB != NULL )
-			{
-				/* Allocate space for the stack used by the task being created.
-				The base of the stack memory stored in the TCB so the task can
-				be deleted later if required. */
-				pxNewTCB->pxStack = ( StackType_t * ) pvPortMalloc( ( ( ( size_t ) usStackDepth ) * sizeof( StackType_t ) ) ); /*lint !e961 MISRA exception as the casts are only redundant for some ports. */
+            /* Allocate space for the stack used by the task being created. */
+#if (defined TYPE_EC718M) && (defined CORE_IS_AP)
+            if (isTskDymcStckAllc){
+                pxStack = ( StackType_t * ) pvPortMallocEc( ( ( ( size_t ) usRealStackDepth ) * sizeof( StackType_t ) ) ); /*lint !e961 MISRA exception as the casts are only redundant for some ports. */
+            }
+            else {
+                pxStack = ( StackType_t * ) pvPortMalloc( ( ( ( size_t ) usRealStackDepth ) * sizeof( StackType_t ) ) ); /*lint !e961 MISRA exception as the casts are only redundant for some ports. */
+            }
+#else
+            pxStack = ( StackType_t * ) pvPortMallocEc( ( ( ( size_t ) usStackDepth ) * sizeof( StackType_t ) ) ); /*lint !e961 MISRA exception as the casts are only redundant for some ports. */
+#endif
+            if( pxStack != NULL )
+            {
+                /* Allocate space for the TCB. */
+#if (defined TYPE_EC718M) && (defined CORE_IS_AP)
+                if (isTskDymcStckAllc){
+                    pxNewTCB = ( TCB_t * ) pvPortMallocEc( sizeof( TCB_t ) );
+                }
+                else
+                {
+                    pxNewTCB = ( TCB_t * ) pvPortMalloc( sizeof( TCB_t ) );
+                }
+#else
+                pxNewTCB = ( TCB_t * ) pvPortMallocEc( sizeof( TCB_t ) ); /*lint !e961 MISRA exception as the casts are only redundant for some paths. */
+#endif
+                if( pxNewTCB != NULL )
+                {
+                    /* Store the stack location in the TCB. */
+                    pxNewTCB->pxStack = pxStack;
+                }
+                else
+                {
+                    /* The stack cannot be used as the TCB was not created.  Free
+                    it again. */
+#if (defined TYPE_EC718M) && (defined CORE_IS_AP)
+                    if (isTskDymcStckAllc){
+                        vPortFreeEc( pxStack );
+                    }
+                    else {
+                        vPortFree( pxStack );
+                    }
+#else
+                    vPortFreeEc( pxStack );
+#endif
+                }
+            }
+            else
+            {
+                pxNewTCB = NULL;
+            }
+        }
+        #endif /* portSTACK_GROWTH */
 
-				if( pxNewTCB->pxStack == NULL )
-				{
-					/* Could not allocate the stack.  Delete the allocated TCB. */
-					vPortFree( pxNewTCB );
-					pxNewTCB = NULL;
-				}
-			}
-		}
-		#else /* portSTACK_GROWTH */
-		{
-		StackType_t *pxStack;
+        if( pxNewTCB != NULL )
+        {
+            #if( tskSTATIC_AND_DYNAMIC_ALLOCATION_POSSIBLE != 0 )
+            {
+                /* Tasks can be created statically or dynamically, so note this
+                task was created dynamically in case it is later deleted. */
+#if (defined TYPE_EC718M) && (defined CORE_IS_AP)
+                if (isTskDymcStckAllc){
+                    pxNewTCB->ucStaticallyAllocated = tskDYNAMICALLY_ALLOCATED_STACK_AND_TCB;
+                }
+                else {
+                    pxNewTCB->ucStaticallyAllocated = tskDYNAMICALLY_ALLOCATED_STACK_AND_TCB_CUST;
+                }
+#else
+                pxNewTCB->ucStaticallyAllocated = tskDYNAMICALLY_ALLOCATED_STACK_AND_TCB;
+#endif
+            }
+            #endif /* configSUPPORT_STATIC_ALLOCATION */
 
-			/* Allocate space for the stack used by the task being created. */
-			pxStack = ( StackType_t * ) pvPortMalloc( ( ( ( size_t ) usStackDepth ) * sizeof( StackType_t ) ) ); /*lint !e961 MISRA exception as the casts are only redundant for some ports. */
+#if (defined TYPE_EC718M) && (defined CORE_IS_AP)
+            prvInitialiseNewTask( pxTaskCode, pcName, ( uint32_t ) usRealStackDepth, pvParameters, uxPriority, pxCreatedTask, pxNewTCB, NULL );
+#else
+            prvInitialiseNewTask( pxTaskCode, pcName, ( uint32_t ) usStackDepth, pvParameters, uxPriority, pxCreatedTask, pxNewTCB, NULL );
+#endif
+            prvAddNewTaskToReadyList( pxNewTCB );
+            xReturn = pdPASS;
+        }
+        else
+        {
+            xReturn = errCOULD_NOT_ALLOCATE_REQUIRED_MEMORY;
+        }
 
-			if( pxStack != NULL )
-			{
-				/* Allocate space for the TCB. */
-				pxNewTCB = ( TCB_t * ) pvPortMalloc( sizeof( TCB_t ) ); /*lint !e961 MISRA exception as the casts are only redundant for some paths. */
-
-				if( pxNewTCB != NULL )
-				{
-					/* Store the stack location in the TCB. */
-					pxNewTCB->pxStack = pxStack;
-				}
-				else
-				{
-					/* The stack cannot be used as the TCB was not created.  Free
-					it again. */
-					vPortFree( pxStack );
-				}
-			}
-			else
-			{
-				pxNewTCB = NULL;
-			}
-		}
-		#endif /* portSTACK_GROWTH */
-
-		if( pxNewTCB != NULL )
-		{
-			#if( tskSTATIC_AND_DYNAMIC_ALLOCATION_POSSIBLE != 0 )
-			{
-				/* Tasks can be created statically or dynamically, so note this
-				task was created dynamically in case it is later deleted. */
-				pxNewTCB->ucStaticallyAllocated = tskDYNAMICALLY_ALLOCATED_STACK_AND_TCB;
-			}
-			#endif /* configSUPPORT_STATIC_ALLOCATION */
-
-			prvInitialiseNewTask( pxTaskCode, pcName, ( uint32_t ) usStackDepth, pvParameters, uxPriority, pxCreatedTask, pxNewTCB, NULL );
-			prvAddNewTaskToReadyList( pxNewTCB );
-			xReturn = pdPASS;
-		}
-		else
-		{
-			xReturn = errCOULD_NOT_ALLOCATE_REQUIRED_MEMORY;
-		}
-
-		return xReturn;
-	}
+        return xReturn;
+    }
 
 #endif /* configSUPPORT_DYNAMIC_ALLOCATION */
 /*-----------------------------------------------------------*/
@@ -3783,8 +3858,8 @@ FREERTOS_TASKS_TEXT_SECTION static void prvCheckTasksWaitingTermination( void )
 		{
 			/* The task can only have been allocated dynamically - free both
 			the stack and TCB. */
-			vPortFree( pxTCB->pxStack );
-			vPortFree( pxTCB );
+			vPortFreeEc( pxTCB->pxStack );
+			vPortFreeEc( pxTCB );
 		}
 		#elif( tskSTATIC_AND_DYNAMIC_ALLOCATION_POSSIBLE == 1 )
 		{
@@ -3795,15 +3870,22 @@ FREERTOS_TASKS_TEXT_SECTION static void prvCheckTasksWaitingTermination( void )
 			{
 				/* Both the stack and TCB were allocated dynamically, so both
 				must be freed. */
-				vPortFree( pxTCB->pxStack );
-				vPortFree( pxTCB );
+				vPortFreeEc( pxTCB->pxStack );
+				vPortFreeEc( pxTCB );
 			}
 			else if( pxTCB->ucStaticallyAllocated == tskSTATICALLY_ALLOCATED_STACK_ONLY )
 			{
 				/* Only the stack was statically allocated, so the TCB is the
 				only memory that must be freed. */
-				vPortFree( pxTCB );
+                vPortFreeEc( pxTCB );
 			}
+#if (defined TYPE_EC718M) && (defined CORE_IS_AP)
+            else if (pxTCB->ucStaticallyAllocated == tskDYNAMICALLY_ALLOCATED_STACK_AND_TCB_CUST)
+            {
+                vPortFree( pxTCB->pxStack );
+                vPortFree( pxTCB );
+            }
+#endif
 			else
 			{
 				/* Neither the stack nor the TCB were allocated dynamically, so
@@ -4166,8 +4248,8 @@ TCB_t *pxTCB;
 		/* Allocate an array index for each task.  NOTE!  if
 		configSUPPORT_DYNAMIC_ALLOCATION is set to 0 then pvPortMalloc() will
 		equate to NULL. */
-		pxTaskStatusArray = pvPortMalloc( uxCurrentNumberOfTasks * sizeof( TaskStatus_t ) );
 
+		pxTaskStatusArray = pvPortMallocEc( uxCurrentNumberOfTasks * sizeof( TaskStatus_t ) );
 		if( pxTaskStatusArray != NULL )
 		{
 			/* Generate the (binary) data. */
@@ -4207,7 +4289,7 @@ TCB_t *pxTCB;
 
 			/* Free the array again.  NOTE!  If configSUPPORT_DYNAMIC_ALLOCATION
 			is 0 then vPortFree() will be #defined to nothing. */
-			vPortFree( pxTaskStatusArray );
+			vPortFreeEc( pxTaskStatusArray );
 		}
 		else
 		{
@@ -4267,8 +4349,7 @@ TCB_t *pxTCB;
 		/* Allocate an array index for each task.  NOTE!  If
 		configSUPPORT_DYNAMIC_ALLOCATION is set to 0 then pvPortMalloc() will
 		equate to NULL. */
-		pxTaskStatusArray = pvPortMalloc( uxCurrentNumberOfTasks * sizeof( TaskStatus_t ) );
-
+		pxTaskStatusArray = pvPortMallocEc( uxCurrentNumberOfTasks * sizeof( TaskStatus_t ) );
 		if( pxTaskStatusArray != NULL )
 		{
 			/* Generate the (binary) data. */
@@ -4334,7 +4415,7 @@ TCB_t *pxTCB;
 
 			/* Free the array again.  NOTE!  If configSUPPORT_DYNAMIC_ALLOCATION
 			is 0 then vPortFree() will be #defined to nothing. */
-			vPortFree( pxTaskStatusArray );
+			vPortFreeEc( pxTaskStatusArray );
 		}
 		else
 		{
@@ -4394,8 +4475,7 @@ TCB_t *pxTCB;
 		/* Allocate an array index for each task.  NOTE!  If
 		configSUPPORT_DYNAMIC_ALLOCATION is set to 0 then pvPortMalloc() will
 		equate to NULL. */
-		pxTaskStatusArray = pvPortMalloc( uxCurrentNumberOfTasks * sizeof( TaskStatus_t ) );
-
+		pxTaskStatusArray = pvPortMallocEc( uxCurrentNumberOfTasks * sizeof( TaskStatus_t ) );
 		if( pxTaskStatusArray != NULL )
 		{
 			/* Generate the (binary) data. */
@@ -4461,7 +4541,7 @@ TCB_t *pxTCB;
 
 			/* Free the array again.  NOTE!  If configSUPPORT_DYNAMIC_ALLOCATION
 			is 0 then vPortFree() will be #defined to nothing. */
-			vPortFree( pxTaskStatusArray );
+			vPortFreeEc( pxTaskStatusArray );
 		}
 		else
 		{

@@ -36,13 +36,15 @@ typedef enum
     OPAQ_CHAN_0 = 0,
     OPAQ_CHAN_UNDEF = OPAQ_CHAN_0,
     OPAQ_CHAN_1,
-    OPAQ_CHAN_IPOS = OPAQ_CHAN_1,    /* IP Packet over SPI service */
+    OPAQ_CHAN_IPOS = OPAQ_CHAN_1,       /*WAN IP Packet over SPI service */
     OPAQ_CHAN_2,
-    OPAQ_CHAN_CUST1 = OPAQ_CHAN_2,   /* rename OPAQ_CHAN_CUST1 to whatever customer wants */
+    OPAQ_CHAN_IPOS_MIFI = OPAQ_CHAN_2,  /*MIFI IP Packet over SPI service */
     OPAQ_CHAN_3,
-    OPAQ_CHAN_CUST2 = OPAQ_CHAN_3,   /* rename OPAQ_CHAN_CUST2 to whatever customer wants */
+    OPAQ_CHAN_CUST1 = OPAQ_CHAN_3,      /* rename OPAQ_CHAN_CUST1 to whatever customer wants */
     OPAQ_CHAN_4,
-    OPAQ_CHAN_CUST3 = OPAQ_CHAN_4,   /* rename OPAQ_CHAN_CUST3 to whatever customer wants */
+    OPAQ_CHAN_CUST2 = OPAQ_CHAN_4,      /* rename OPAQ_CHAN_CUST2 to whatever customer wants */
+    OPAQ_CHAN_5,
+    OPAQ_CHAN_CUST3 = OPAQ_CHAN_5,      /* rename OPAQ_CHAN_CUST3 to whatever customer wants */
 
     OPAQ_CHAN_MAXNUM
 }OpaqChanId_e;

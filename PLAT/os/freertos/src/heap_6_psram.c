@@ -1,6 +1,6 @@
 
 #include "FreeRTOS.h"
-#if (defined __USER_CODE__) && (defined TYPE_EC718M)
+#if (defined __USER_CODE__)
 #else
 #if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
 #if( configSUPPORT_DYNAMIC_ALLOC_HEAP == 6 )

@@ -123,45 +123,114 @@ typedef struct HeapRegion
 void vPortDefineHeapRegions( const HeapRegion_t * const pxHeapRegions ) PRIVILEGED_FUNCTION;
 
 
+void *pvPortMalloc_EC( size_t xWantedSize, unsigned int funcPtr );
+void *pvPortRealloc_EC( void *pv, size_t xWantedSize,  unsigned int funcPtr );
+void *pvPortZeroMallocEc( size_t xWantedSize);
+void *pvPortAssertMallocEc( size_t xWantedSize);
+void *pvPortZeroAssertMallocEc( size_t xWantedSize);
+void  vPortFreeEc( void *pv );
+size_t xPortGetTotalHeapSizeEc( void );
+size_t xPortGetFreeHeapSizeEc( void );
+size_t xPortGetMinimumEverFreeHeapSizeEc( void );
+size_t xPortGetMaximumFreeBlockSizeEc( void );
+uint8_t xPortGetFreeHeapPctEc( void );
+uint8_t xPortIsFreeHeapOnAlertEc( void );
+
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+void *pvPortZeroMallocCust( size_t xWantedSize) PRIVILEGED_FUNCTION;
+void *pvPortAssertMallocCust( size_t xWantedSize) PRIVILEGED_FUNCTION;
+void *pvPortZeroAssertMallocCust( size_t xWantedSize) PRIVILEGED_FUNCTION;
+void *pvPortMalloc_CUST( size_t xWantedSize, unsigned int funcPtr ) PRIVILEGED_FUNCTION;
+void *pvPortRealloc_CUST( void *pv, size_t xWantedSize, unsigned int funcPtr ) PRIVILEGED_FUNCTION;
+void vPortFreeCust( void *pv ) PRIVILEGED_FUNCTION;
+size_t xPortGetTotalHeapSizeCust( void ) PRIVILEGED_FUNCTION;
+size_t xPortGetFreeHeapSizeCust( void ) PRIVILEGED_FUNCTION;
+size_t xPortGetMinimumEverFreeHeapSizeCust( void ) PRIVILEGED_FUNCTION;
+size_t xPortGetMaximumFreeBlockSizeCust( void ) PRIVILEGED_FUNCTION;
+uint8_t xPortGetFreeHeapPctCust( void ) PRIVILEGED_FUNCTION;
+uint8_t xPortIsFreeHeapOnAlertCust( void ) PRIVILEGED_FUNCTION;
+#endif
+
+
 /*
  * Map to the memory management routines required for the port.
  */
-#define pvPortMalloc(xWantedSize)     pvPortMallocEC(xWantedSize, 0)
-#define pvPortRealloc(pv, xWantedSize)    pvPortReallocEC(pv, xWantedSize, 0)
+#define pvPortMallocEc(xWantedSize)                  pvPortMalloc_EC(xWantedSize, 0)
+#define pvPortReallocEc(pv, xWantedSize)             pvPortRealloc_EC(pv, xWantedSize, 0)
 
-void *pvPortZeroMalloc( size_t xWantedSize) PRIVILEGED_FUNCTION;
-void *pvPortAssertMalloc( size_t xWantedSize) PRIVILEGED_FUNCTION;
-void *pvPortZeroAssertMalloc( size_t xWantedSize) PRIVILEGED_FUNCTION;
-void *pvPortMallocEC( size_t xWantedSize, unsigned int funcPtr ) PRIVILEGED_FUNCTION;
-void *pvPortReallocEC( void *pv, size_t xWantedSize, unsigned int funcPtr ) PRIVILEGED_FUNCTION;
-void vPortFree( void *pv ) PRIVILEGED_FUNCTION;
-void vPortInitialiseBlocks( void ) PRIVILEGED_FUNCTION;
-size_t xPortGetTotalHeapSize( void ) PRIVILEGED_FUNCTION;
-size_t xPortGetFreeHeapSize( void ) PRIVILEGED_FUNCTION;
-size_t xPortGetMinimumEverFreeHeapSize( void ) PRIVILEGED_FUNCTION;
-size_t xPortGetMaximumFreeBlockSize( void ) PRIVILEGED_FUNCTION;
-uint8_t xPortGetFreeHeapPct( void ) PRIVILEGED_FUNCTION;
-uint8_t xPortIsFreeHeapOnAlert( void ) PRIVILEGED_FUNCTION;
-
+#ifdef TYPE_EC718M
 #if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
-
-#define pvPortMalloc_Psram(xWantedSize)     pvPortMallocEC_Psram(xWantedSize, 0)
-#define pvPortRealloc_Psram(pv, xWantedSize)    pvPortReallocEC_Psram(pv, xWantedSize, 0)
-
-void *pvPortZeroMalloc_Psram( size_t xWantedSize) PRIVILEGED_FUNCTION;
-void *pvPortAssertMalloc_Psram( size_t xWantedSize) PRIVILEGED_FUNCTION;
-void *pvPortZeroAssertMalloc_Psram( size_t xWantedSize) PRIVILEGED_FUNCTION;
-void *pvPortMallocEC_Psram( size_t xWantedSize, unsigned int funcPtr ) PRIVILEGED_FUNCTION;
-void *pvPortReallocEC_Psram( void *pv, size_t xWantedSize, unsigned int funcPtr ) PRIVILEGED_FUNCTION;
-void vPortFree_Psram( void *pv ) PRIVILEGED_FUNCTION;
-size_t xPortGetTotalHeapSize_Psram( void ) PRIVILEGED_FUNCTION;
-size_t xPortGetFreeHeapSize_Psram( void ) PRIVILEGED_FUNCTION;
-size_t xPortGetMinimumEverFreeHeapSize_Psram( void ) PRIVILEGED_FUNCTION;
-size_t xPortGetMaximumFreeBlockSize_Psram( void ) PRIVILEGED_FUNCTION;
-uint8_t xPortGetFreeHeapPct_Psram( void ) PRIVILEGED_FUNCTION;
-uint8_t xPortIsFreeHeapOnAlert_Psram( void ) PRIVILEGED_FUNCTION;
+#define pvPortMalloc(xWantedSize)                  pvPortMalloc_CUST(xWantedSize, 0)
+#define pvPortRealloc(pv, xWantedSize)             pvPortRealloc_CUST(pv, xWantedSize, 0)
+#define pvPortZeroMalloc(xWantedSize)              pvPortZeroMallocCust(xWantedSize)
+#define pvPortAssertMalloc(xWantedSize)            pvPortAssertMallocCust(xWantedSize)
+#define pvPortZeroAssertMalloc(xWantedSize)        pvPortZeroAssertMallocCust(xWantedSize)
+#define vPortFree(pv )                             vPortFreeCust(pv ) 
+#define vPortInitialiseBlocks()
+#define xPortGetTotalHeapSize()                    xPortGetTotalHeapSizeCust()
+#define xPortGetFreeHeapSize()                     xPortGetFreeHeapSizeCust()
+#define xPortGetMinimumEverFreeHeapSize()          xPortGetMinimumEverFreeHeapSizeCust()
+#define xPortGetMaximumFreeBlockSize()             xPortGetMaximumFreeBlockSizeCust()
+#define xPortGetFreeHeapPct()                      xPortGetFreeHeapPctCust()
+#define xPortIsFreeHeapOnAlert()                   xPortIsFreeHeapOnAlertCust()
 #endif
 
+#else //#ifdef TYPE_EC718M
+
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+#define pvPortMallocCust(xWantedSize)               pvPortMalloc_CUST(xWantedSize, 0)
+#define pvPortReallocCust(pv, xWantedSize)          pvPortRealloc_CUST(pv, xWantedSize, 0)
+
+#define pvPortMalloc_Psram(xWantedSize)             pvPortMalloc_CUST(xWantedSize, 0)
+#define pvPortRealloc_Psram(pv, xWantedSize)        pvPortRealloc_CUST(pv, xWantedSize, 0)
+#define pvPortZeroMalloc_Psram(xWantedSize)         pvPortZeroMallocCust(xWantedSize)
+#define pvPortAssertMalloc_Psram(xWantedSize)       pvPortAssertMallocCust(xWantedSize)
+#define pvPortZeroAssertMalloc_Psram(xWantedSize)   pvPortZeroAssertMallocCust(xWantedSize)
+#define vPortFree_Psram(pv)                         vPortFreeCust(pv )
+#define xPortGetTotalHeapSize_Psram()               xPortGetTotalHeapSizeCust()
+#define xPortGetFreeHeapSize_Psram()                xPortGetFreeHeapSizeCust()
+#define xPortGetMinimumEverFreeHeapSize_Psram()     xPortGetMaximumFreeBlockSizeCust()
+#define xPortGetMaximumFreeBlockSize_Psram()        xPortGetMaximumFreeBlockSizeCust()
+#define xPortGetFreeHeapPct_Psram()                 xPortGetFreeHeapPctCust()
+#define xPortIsFreeHeapOnAlert_Psram()              xPortIsFreeHeapOnAlertCust()
+
+#endif
+
+#endif
+
+#if (defined __USER_CODE__) && (defined TYPE_EC718M)
+#undef pvPortMalloc
+#undef pvPortRealloc
+#undef pvPortZeroMalloc
+#undef pvPortAssertMalloc
+#undef pvPortZeroAssertMalloc
+#undef vPortFree
+#undef vPortInitialiseBlocks
+#undef xPortGetTotalHeapSize
+#undef xPortGetFreeHeapSize
+#undef xPortGetMinimumEverFreeHeapSize
+#undef xPortGetMaximumFreeBlockSize
+#undef xPortGetFreeHeapPct
+#undef xPortIsFreeHeapOnAlert
+
+#define pvPortMalloc(xWantedSize)                  pvPortMalloc_EC(xWantedSize, 0)
+#define pvPortRealloc(pv, xWantedSize)             pvPortRealloc_EC(pv, xWantedSize, 0)
+
+#ifdef TYPE_EC718U
+#else
+#define pvPortZeroMalloc(xWantedSize)              pvPortZeroMallocEc(xWantedSize)
+#define pvPortAssertMalloc(xWantedSize)            pvPortAssertMallocEc(xWantedSize)
+#define pvPortZeroAssertMalloc(xWantedSize)        pvPortZeroAssertMallocEc(xWantedSize)
+#define vPortFree(pv )                             vPortFreeEc(pv )
+#define xPortGetTotalHeapSize()                    xPortGetTotalHeapSizeEc()
+#define xPortGetMinimumEverFreeHeapSize()          xPortGetMinimumEverFreeHeapSizeEc()
+#define xPortGetMaximumFreeBlockSize()             xPortGetMaximumFreeBlockSizeEc()
+#define xPortGetFreeHeapSize()                     xPortGetFreeHeapSizeEc()
+#endif
+#define vPortInitialiseBlocks()
+#define xPortGetFreeHeapPct()                      xPortGetFreeHeapPctEc()
+#define xPortIsFreeHeapOnAlert()                   xPortIsFreeHeapOnAlertEc()
+#endif
 /*
  * Setup the hardware ready for the scheduler to take control.  This generally
  * sets up a tick interrupt and sets timers for the correct tick frequency.

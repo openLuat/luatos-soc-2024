@@ -279,10 +279,11 @@ typedef enum
 /* 2bits: ccio device working state definition */
 typedef enum
 {
-    CCIO_DWS_UNDEF = 0,
-    CCIO_DWS_INITIAL,
-    CCIO_DWS_ASSIGNED,
+    CCIO_DWS_UNDEF = 0,     /* never initialized */
+    CCIO_DWS_INITIAL,       /* initialized */
+    CCIO_DWS_ASSIGNED,      /* established, but unable to work */
     CCIO_DWS_WORKING,
+    CCIO_DWS_STOPPING,      /* terminating to work */
 
     CCIO_DWS_MAXNUM
 }CcioDevWorkState_e;
@@ -451,6 +452,7 @@ typedef enum
     CCIO_EEMPTY      = -9,    /* table/list is empty */
     CCIO_EMORE       = -10,   /* wanted more data/info */
     CCIO_EMOREPAD    = -11,   /* wanted more padding */
+    CCIO_EOBZP       = -12,   /* usb1.0 ecm obzp padding */
 
     CCIO_STATUS_RSVD = 0x7FFFFFFF
 }CcioStatus_e;

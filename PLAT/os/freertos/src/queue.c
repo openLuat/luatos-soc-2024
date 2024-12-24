@@ -373,8 +373,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
             configASSERT((sizeof(Queue_t) + xQueueSizeInBytes) > xQueueSizeInBytes);
 		}
 
-		pxNewQueue = ( Queue_t * ) pvPortMalloc( sizeof( Queue_t ) + xQueueSizeInBytes );
-
+		pxNewQueue = ( Queue_t * ) pvPortMallocEc( sizeof( Queue_t ) + xQueueSizeInBytes );
 		if( pxNewQueue != NULL )
 		{
 			/* Jump past the queue structure to find the location of the queue
@@ -1609,7 +1608,8 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 	{
 		/* The queue can only have been allocated dynamically - free it
 		again. */
-		vPortFree( pxQueue );
+
+		vPortFreeEc( pxQueue );
 	}
 	#elif( ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) && ( configSUPPORT_STATIC_ALLOCATION == 1 ) )
 	{
@@ -1617,7 +1617,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 		check before attempting to free the memory. */
 		if( pxQueue->ucStaticallyAllocated == ( uint8_t ) pdFALSE )
 		{
-			vPortFree( pxQueue );
+            vPortFreeEc( pxQueue );
 		}
 		else
 		{
