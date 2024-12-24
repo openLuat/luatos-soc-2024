@@ -216,8 +216,6 @@ uint8_t xPortIsFreeHeapOnAlertCust( void ) PRIVILEGED_FUNCTION;
 #define pvPortMalloc(xWantedSize)                  pvPortMalloc_EC(xWantedSize, 0)
 #define pvPortRealloc(pv, xWantedSize)             pvPortRealloc_EC(pv, xWantedSize, 0)
 
-#ifdef TYPE_EC718U
-#else
 #define pvPortZeroMalloc(xWantedSize)              pvPortZeroMallocEc(xWantedSize)
 #define pvPortAssertMalloc(xWantedSize)            pvPortAssertMallocEc(xWantedSize)
 #define pvPortZeroAssertMalloc(xWantedSize)        pvPortZeroAssertMallocEc(xWantedSize)
@@ -226,11 +224,16 @@ uint8_t xPortIsFreeHeapOnAlertCust( void ) PRIVILEGED_FUNCTION;
 #define xPortGetMinimumEverFreeHeapSize()          xPortGetMinimumEverFreeHeapSizeEc()
 #define xPortGetMaximumFreeBlockSize()             xPortGetMaximumFreeBlockSizeEc()
 #define xPortGetFreeHeapSize()                     xPortGetFreeHeapSizeEc()
-#endif
+
 #define vPortInitialiseBlocks()
 #define xPortGetFreeHeapPct()                      xPortGetFreeHeapPctEc()
 #define xPortIsFreeHeapOnAlert()                   xPortIsFreeHeapOnAlertEc()
 #endif
+
+#if (defined __USER_CODE__) && (defined TYPE_EC718U)
+#undef vPortFree_Psram
+#endif
+
 /*
  * Setup the hardware ready for the scheduler to take control.  This generally
  * sets up a tick interrupt and sets timers for the correct tick frequency.
