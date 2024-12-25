@@ -17,7 +17,7 @@
    "hasPkgHlc": 1,
    "metaPseg": 32,
    "bkupMemSize": 98304,
-   "deltaMemSize": 479232,
+   "deltaMemSize": 950272,
    "avlbRamSize": 204800,
    "zipAlgorithm": {
      "zipMeth": 0,
@@ -98,8 +98,12 @@
    "BootSecurity":{
      "enable": 1,
      "shaMode": 224,
-     "sysImgs": "AP,CP",
-     "standalone": [
+     "bootCombo": [
+      {
+       "enable": 1,
+       "imgs": "AP,CP",
+       "imgh": "SYSH"
+      },
       {
        "enable": 0,
        "imgs": "APP",

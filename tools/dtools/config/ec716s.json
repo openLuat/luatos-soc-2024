@@ -26,7 +26,7 @@
  },
  "HuluSuite": {
    "ver": 1,
-   "enable": 0,
+   "enable": 1,
    "adjust": 1,
    "wkspSize": 450560
  },
@@ -98,8 +98,12 @@
    "BootSecurity":{
      "enable": 1,
      "shaMode": 224,
-     "sysImgs": "AP,CP",
-     "standalone": [
+     "bootCombo": [
+      {
+       "enable": 1,
+       "imgs": "AP,CP",
+       "imgh": "SYSH"
+      },
       {
        "enable": 0,
        "imgs": "APP",

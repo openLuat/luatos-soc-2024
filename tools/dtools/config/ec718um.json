@@ -9,7 +9,7 @@
   {"Comment": "However, other fields can be redefined to whatever you want, including the name of this config file!"}
  ],
  "CompanyName": "EiGENCOMM",
- "ProductName": "EC716E",
+ "ProductName": "EC718UM",
  "FotaCoreVer": "2.5",
  "FotaCapability": {
    "capacity": 0,
@@ -17,7 +17,7 @@
    "hasPkgHlc": 1,
    "metaPseg": 32,
    "bkupMemSize": 98304,
-   "deltaMemSize": 331776,
+   "deltaMemSize": 479232,
    "avlbRamSize": 204800,
    "zipAlgorithm": {
      "zipMeth": 0,
@@ -46,13 +46,13 @@
   },
   {
    "attr": "AP",
-   "addr": 8904704,
-   "size": 3190784
+   "addr": 8982528,
+   "size": 6795264
   },
   {
    "attr": "CP",
-   "addr": 8495104,
-   "size": 409600
+   "addr": 8572928,
+   "size": 655360
   },
   {
    "attr": "APP",
@@ -81,12 +81,12 @@
   {
    "name": "AP",
    "base": 8388608,
-   "size": 4194304
+   "size": 8388608
   },
   {
    "name": "CP",
    "base": 8388608,
-   "size": 4194304
+   "size": 8388608
   },
   {
    "name": "EF",
@@ -115,7 +115,7 @@
     {
      "enable": 0,
      "attr": "AP",
-     "size": 3190784
+     "size": 6868992
     },
     {
      "enable": 0,

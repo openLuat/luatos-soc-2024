@@ -9,15 +9,15 @@
   {"Comment": "However, other fields can be redefined to whatever you want, including the name of this config file!"}
  ],
  "CompanyName": "EiGENCOMM",
- "ProductName": "EC716E",
+ "ProductName": "EC718PM",
  "FotaCoreVer": "2.5",
  "FotaCapability": {
    "capacity": 0,
    "diffMode": 1,
-   "hasPkgHlc": 1,
+   "hasPkgHlc": 0,
    "metaPseg": 32,
    "bkupMemSize": 98304,
-   "deltaMemSize": 331776,
+   "deltaMemSize": 360448,
    "avlbRamSize": 204800,
    "zipAlgorithm": {
      "zipMeth": 0,

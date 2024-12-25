@@ -190,9 +190,9 @@ def diff_full(old_path, new_path, dst_path, version=None):
     if len(bin_data) >= fs_address - ota_save_address:
         print("升级包超过大小限制了")
         return False, "升级包超过大小限制了"
-    with open(tmpp("total.zip"), "wb") as f :
+    with open(tmpp("total.zip"), "w+b") as f :
         f.write(bin_data)
-    with open(tmpp("dummy.bin"), "wb") as f :
+    with open(tmpp("dummy.bin"), "w+b") as f :
         pass
 
     if version == None or len(version) == 0 :
@@ -312,7 +312,7 @@ def diff_soc(old_path, new_path, dst_path):
         cmd.append(str(new_param['fota']['block_len']))
         subprocess.check_call(" ".join(cmd), shell=True)
     else:
-        with open(tmpp("script_fota.zip"), "wb+") as f :
+        with open(tmpp("script_fota.zip"), "w+b") as f :
             pass
 
     ## 然后打包整体差分包
@@ -335,6 +335,7 @@ def diff_soc(old_path, new_path, dst_path):
     cmd.append(tmpp("script_fota.zip"))
     cmd.append("delta.par")
     cmd.append(tmpp("output.sota"))
+    print("cmd=>", " ".join(cmd))
     subprocess.check_call(" ".join(cmd), shell=True)
 
     shutil.copy(tmpp("output.sota"), dst_path)
