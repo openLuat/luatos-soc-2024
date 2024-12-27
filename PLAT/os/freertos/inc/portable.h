@@ -233,7 +233,6 @@ uint8_t xPortIsFreeHeapOnAlertCust( void ) PRIVILEGED_FUNCTION;
 #if (defined __USER_CODE__) && (defined TYPE_EC718U)
 #undef vPortFree_Psram
 #endif
-
 /*
  * Setup the hardware ready for the scheduler to take control.  This generally
  * sets up a tick interrupt and sets timers for the correct tick frequency.

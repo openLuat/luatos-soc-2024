@@ -85,6 +85,13 @@ SECTIONS
     Image$$LOAD_AP_PIRAM_UNCOMP_MSMB$$Length = SIZEOF(.load_ap_piram_uncomp_msmb);
 
     // psram part3 for customer
+    .csdk_sect_ap_psram_p2_unued  (NOLOAD): ALIGN(4)
+    {
+        . = ALIGN(4);
+        *(.csdk_sect_ap_psram_p2_unued.*)
+        . = ALIGN(4);
+    } >PSRAM_P2_AREA
+    
     .load_ap_psram_p2_ram : ALIGN(4)
     {
         . = ALIGN(4);
@@ -112,7 +119,7 @@ SECTIONS
         Image$$LOAD_AP_PSRAM_P2_ZI$$Base = .;
         *(.cust_sect_ap_psram_p2_bss.*)
         *(EXCLUDE_FILE(*libc_nano.a *libc.a) .bss*)
-        . = ALIGN(4);
+        . = ALIGN(8);
         Image$$LOAD_AP_PSRAM_P2_ZI$$Limit = .;
     } >PSRAM_P2_AREA
 
@@ -482,7 +489,7 @@ SECTIONS
     } >PSRAM_P1_AREA AT>FLASH_AREA
     Image$$LOAD_AP_FPSRAM_P1_DATA$$Length = SIZEOF(.load_ap_fpsram_p1_data);
 
-    .load_ap_fpsram_p1_bss .|PSRAM_PCACHE1_BASE (NOLOAD):
+    .load_ap_fpsram_p1_bss (.|PSRAM_PCACHE1_BASE) (NOLOAD):
     {
         . = ALIGN(4);
         Image$$LOAD_AP_FPSRAM_P1_ZI$$Base = .;
@@ -501,7 +508,7 @@ SECTIONS
 
     .unload_up_buffer (.|PSRAM_PCACHE1_BASE) (NOLOAD):
     {
-        . = ALIGN(4);
+        . = ALIGN(1024);
         *(.sect_catShareBuf_data.*)
         *(.sect_ccio_buf.*)
         . = ALIGN(4);

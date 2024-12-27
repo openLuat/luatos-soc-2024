@@ -1970,15 +1970,7 @@ FREERTOS_CMSISOS2_TEXT_SECTION void *callocEc(size_t n,size_t Size )
 
     return ptr;
 }
-FREERTOS_CMSISOS2_TEXT_SECTION void *pvPortMalloc_CUST( size_t xWantedSize, unsigned int funcPtr )
-{
-	return pvPortMalloc_EC(xWantedSize, funcPtr);
-}
-FREERTOS_CMSISOS2_TEXT_SECTION void  vPortFreeCust( void *pv )
-{
-    if (pv != NULL)
-        vPortFreeEc( pv ) ;
-}
+
 #endif
 
 #else
