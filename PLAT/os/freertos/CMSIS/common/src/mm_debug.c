@@ -50,6 +50,9 @@ AP_PLAT_COMMON_BSS mm_trace_node_t *free_node;
 ------------------------------------------------------------------------------*/
 MMDEBUG_TEXT_SECTION void mm_trace_init(void)
 {
+#ifdef __USER_CODE__
+	if (free_node) return;
+#endif
     struct mm_trace_node *node;
     unsigned long index;
 
@@ -254,6 +257,27 @@ MMDEBUG_TEXT_SECTION void show_mem_trace(void)
 
 
 #ifdef __USER_CODE__
+
+MMDEBUG_TEXT_SECTION void mm_trace_init_cust(void)
+{
+	mm_trace_init();
+}
+
+MMDEBUG_TEXT_SECTION void mm_free_trace_cust(void* buffer)
+{
+    mm_free_trace(buffer);
+}
+
+MMDEBUG_TEXT_SECTION void mm_malloc_trace_cust(void* buffer, unsigned long length, unsigned int func_lr)
+{
+	mm_malloc_trace(buffer, length, func_lr);
+}
+
+MMDEBUG_TEXT_SECTION void show_mem_trace_cust(void)
+{
+	show_mem_trace();
+}
+
 #else
 #if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
 

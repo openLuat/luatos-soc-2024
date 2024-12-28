@@ -393,6 +393,7 @@ FREERTOS_HEAP6_TEXT_SECTION void GetSRAMHeapInfo(uint32_t *total, uint32_t *allo
 	xTaskResumeAll();
 }
 
+#ifdef TYPE_EC718M
 FREERTOS_HEAP6_TEXT_SECTION void *pvPortMalloc_CUST( size_t xWantedSize, unsigned int funcPtr )
 {
 	return pvPortMalloc_EC(xWantedSize, funcPtr);
@@ -403,6 +404,7 @@ FREERTOS_HEAP6_TEXT_SECTION void  vPortFreeCust( void *pv )
     if (pv != NULL)
         vPortFreeEc( pv ) ;
 }
+#endif
 
 #ifdef TYPE_EC718U
 FREERTOS_HEAP6_TEXT_SECTION bool vPortGetHeapInfo(uint8_t type, int *mem_range)
