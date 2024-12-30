@@ -85,12 +85,6 @@ SECTIONS
     Image$$LOAD_AP_PIRAM_UNCOMP_MSMB$$Length = SIZEOF(.load_ap_piram_uncomp_msmb);
 
     // psram part3 for customer
-    .csdk_sect_ap_psram_p2_unued  (NOLOAD): ALIGN(4)
-    {
-        . = ALIGN(4);
-        *(.csdk_sect_ap_psram_p2_unued.*)
-        . = ALIGN(4);
-    } >PSRAM_P2_AREA
     
     .load_ap_psram_p2_ram : ALIGN(4)
     {
@@ -499,14 +493,17 @@ SECTIONS
         Image$$LOAD_AP_FPSRAM_P1_ZI$$Limit = .;
     } >PSRAM_P1_AREA
     
-	.unload_voiceEng_buffer (.|PSRAM_PCACHE1_BASE) (NOLOAD):
+    . = ALIGN(4);
+    PROVIDE(end_ap_data = .|PSRAM_PCACHE1_BASE);
+    PROVIDE(start_up_buffer = up_buf_start);
+    .unload_voiceEng_buffer start_up_buffer (NOLOAD):
     {
         . = ALIGN(4);
         *(.sect_voiceEngSharebuf.*)
         . = ALIGN(4);
     } >PSRAM_P1_AREA
 
-    .unload_up_buffer (.|PSRAM_PCACHE1_BASE) (NOLOAD):
+    .unload_up_buffer (up_buf_start+SIZEOF(.unload_voiceEng_buffer)) (NOLOAD):
     {
         . = ALIGN(1024);
         *(.sect_catShareBuf_data.*)
