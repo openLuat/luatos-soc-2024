@@ -47,8 +47,8 @@
 #include "luat_mem.h"
 
 //#define OTA_BY_HTTP		//OTA文件通过自定义HTTP服务器下载
-#define OTA_BY_IOT		//OTA文件通过合宙IOT服务器下载
-//#define OTA_BY_USB			//OTA文件通过USB虚拟串口下载，打开串口工具时需要勾选DTR或者RTS，否则模块发不出同步码
+//#define OTA_BY_IOT		//OTA文件通过合宙IOT服务器下载
+#define OTA_BY_USB			//OTA文件通过USB虚拟串口下载，打开串口工具时需要勾选DTR或者RTS，否则模块发不出同步码
 #define UART_ID LUAT_VUART_ID_0
 luat_rtos_task_handle g_s_task_handle;
 luat_rtos_task_handle g_s_version_print_task_handle;
@@ -246,7 +246,7 @@ static void luatos_http_cb(int status, void *data, uint32_t len, void *param)
 
 static void luat_test_task(void *param)
 {
-	luat_debug_set_fault_mode(LUAT_DEBUG_FAULT_HANG_RESET);
+	luat_debug_set_fault_mode(LUAT_DEBUG_FAULT_HANG);
 #ifdef OTA_BY_USB
 	uint8_t temp[128];
     luat_uart_t uart = {
