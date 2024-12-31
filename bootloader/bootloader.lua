@@ -9,6 +9,7 @@ add_defines("LTO_FEATURE_MODE",
             "USB_DRV_SMALL_IMAGE=1",
             "FEATURE_BOOTLOADER_PROJECT_ENABLE",
             "__BL_MODE__",
+			"__USER_CODE__",
             "FEATURE_FOTA_HLS_ENABLE",
             "FEATURE_FOTA_USBURC_ENABLE",
             "FOTA_PRESET_RAM_ENABLE=1",
@@ -27,6 +28,12 @@ add_ldflags("-flto",
             "-flto-partition=none",
             "-Wno-lto-type-mismatch",
             {force=true})
+
+set_values("project_name", project_name)
+if project_name == "luatos" then
+	add_defines("__LUATOS__")
+end
+
 
 target("driver",function()
     set_kind("static")
