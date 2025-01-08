@@ -236,9 +236,9 @@ int luat_uart_setup(luat_uart_t* uart) {
 		    GPIO_PullConfig(27, 1, 1);
             break;
         case UART_ID3:
-            GPIO_IomuxEC7XX(40, 3, 0, 0);
-		    GPIO_IomuxEC7XX(41, 3, 0, 0);
-		    GPIO_PullConfig(40, 1, 1);
+            GPIO_IomuxEC7XX(29, 3, 0, 0);
+		    GPIO_IomuxEC7XX(30, 3, 0, 0);
+		    GPIO_PullConfig(29, 1, 1);
 		    break;
         default:
             break;
