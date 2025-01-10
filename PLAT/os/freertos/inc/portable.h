@@ -184,11 +184,14 @@ uint8_t xPortIsFreeHeapOnAlertCust( void ) PRIVILEGED_FUNCTION;
 #define pvPortMalloc_Psram(xWantedSize)             pvPortMalloc_CUST(xWantedSize, 0)
 #define pvPortRealloc_Psram(pv, xWantedSize)        pvPortRealloc_CUST(pv, xWantedSize, 0)
 #define pvPortZeroMalloc_Psram(xWantedSize)         pvPortZeroMallocCust(xWantedSize)
-#define pvPortAssertMalloc_Psram(xWantedSize)       pvPortAssertMallocCust(xWantedSize)
 #define pvPortZeroAssertMalloc_Psram(xWantedSize)   pvPortZeroAssertMallocCust(xWantedSize)
 #define vPortFree_Psram(pv)                         vPortFreeCust(pv )
 #define xPortGetTotalHeapSize_Psram()               xPortGetTotalHeapSizeCust()
+#ifdef TYPE_EC718U
+#else
+#define pvPortAssertMalloc_Psram(xWantedSize)       pvPortAssertMallocCust(xWantedSize)
 #define xPortGetFreeHeapSize_Psram()                xPortGetFreeHeapSizeCust()
+#endif
 #define xPortGetMinimumEverFreeHeapSize_Psram()     xPortGetMaximumFreeBlockSizeCust()
 #define xPortGetMaximumFreeBlockSize_Psram()        xPortGetMaximumFreeBlockSizeCust()
 #define xPortGetFreeHeapPct_Psram()                 xPortGetFreeHeapPctCust()

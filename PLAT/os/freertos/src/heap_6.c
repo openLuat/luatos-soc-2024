@@ -442,6 +442,8 @@ FREERTOS_HEAP6_TEXT_SECTION void *pvPortZeroAssertMalloc( size_t xWantedSize)
 	return pvPortZeroAssertMallocEc(xWantedSize);
 }
 
+
+
 FREERTOS_HEAP6_TEXT_SECTION void *pvPortMallocEC( size_t xWantedSize, unsigned int funcPtr )
 {
 	return pvPortMalloc_EC(xWantedSize, funcPtr);
@@ -454,15 +456,6 @@ FREERTOS_HEAP6_TEXT_SECTION void  vPortFree( void *pv )
 FREERTOS_HEAP6_TEXT_SECTION size_t  xPortGetFreeHeapSize(void)
 {
 	return xPortGetFreeHeapSizeEc();
-}
-FREERTOS_HEAP6_TEXT_SECTION void *pvPortMallocEC_Psram( size_t xWantedSize, unsigned int funcPtr )
-{
-	return pvPortMalloc_EC(xWantedSize, funcPtr);
-}
-
-FREERTOS_HEAP6_TEXT_SECTION void  vPortFree_Psram( void *pv )
-{
-	vPortFreeEc(pv);
 }
 
 #endif

@@ -328,6 +328,29 @@ CUST_HEAP_6_RAMCODE static void prvHeapInitCust( void )
 }
 
 #ifdef __USER_CODE__
+#ifdef TYPE_EC718U
+
+CUST_HEAP_6_RAMCODE void *pvPortMallocEC_Psram( size_t xWantedSize, unsigned int funcPtr )
+{
+	return pvPortMalloc_EC(xWantedSize, funcPtr);
+}
+
+CUST_HEAP_6_RAMCODE void *pvPortAssertMalloc_Psram( size_t xWantedSize)
+{
+	return pvPortAssertMallocCust(xWantedSize);
+}
+
+CUST_HEAP_6_RAMCODE void  vPortFree_Psram( void *pv )
+{
+	vPortFreeEc(pv);
+}
+
+CUST_HEAP_6_RAMCODE size_t xPortGetFreeHeapSize_Psram(void)
+{
+	return xPortGetFreeHeapSizeCust();
+}
+#endif
+
 extern void tlsf_mem_get_record(tlsf_t tlsf, uint32_t *alloc, uint32_t *peak);
 CUST_HEAP_6_RAMCODE void GetPSRAMHeapInfo(uint32_t *total, uint32_t *alloc, uint32_t *peak)
 {

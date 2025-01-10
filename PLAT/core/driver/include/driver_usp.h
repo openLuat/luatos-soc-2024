@@ -54,6 +54,8 @@ enum
 	LCD_IM_3_WIRE_9_BIT_INTERFACE_II = 13,
 	LCD_IM_4_WIRE_8_BIT_INTERFACE_II = 14,
 	LCD_IM_2_DATA_LANE = 16,
+
+	LCD_QSPI_MODE = 0x20,
 };
 int LSPI_Setup(uint8_t ID, uint32_t BusSpeed, uint8_t InterfaceMode, CBFuncEx_t cb, void *param);
 int LSPI_Sleep(uint8_t ID, uint8_t Enable);
