@@ -14,6 +14,7 @@ typedef struct
 	HANDLE task_handle;
 	HANDLE camera_show_stop_sem;
 	uint8_t mem_type;
+	uint8_t direction;
 }lcd_service_t;
 
 static lcd_service_t g_s_lcd;
@@ -38,7 +39,8 @@ enum
 	SERVICE_RUN_USER_API,
 };
 
-#define __SWAP_RB(value) ((value & 0x07e0) | (value >> 11) | (value << 11))
+//#define __SWAP_RB(value) ((value & 0x07e0) | (value >> 11) | (value << 11))
+#define __SWAP_RB(value) (value)
 
 extern int LSPI_StopCameraPreview(uint8_t ID);
 extern int LSPI_StartCameraPreview(uint8_t ID, uint16_t CameraW, uint16_t CameraH, uint16_t ImageW, uint16_t ImageH, uint16_t CutTopLine, uint16_t CutBottomLine, uint16_t CutLeftLine, uint16_t CutRightLine, uint16_t ScaleW, uint16_t ScaleH);
@@ -54,7 +56,7 @@ static void prvLCD_Task(void* params)
 	camera_cut_info_t *cut;
 	uint8_t *data;
 	uint16_t x1,y1,w,h;
-	uint8_t is_static_buf;
+	uint8_t is_static_buf,dir;
 	while(1)
 	{
 		get_event_from_task(g_s_lcd.task_handle, CORE_EVENT_ID_ANY, &event, NULL, 0xffffffff);
@@ -104,11 +106,23 @@ static void prvLCD_Task(void* params)
 			}
 			break;
 		case SERVICE_LCD_SHOW_CAMERA:
+
 			camera = (luat_spi_camera_t *)event.Param1;
 			lcd = (luat_lcd_conf_t *)camera->lcd_conf;
 			cut = (camera_cut_info_t *)event.Param2;
 			x1 = event.Param3;
 			y1 = event.Param3 >> 16;
+			if (lcd->opts->rb_swap)
+			{
+				dir = g_s_lcd.direction;
+			}
+			else
+			{
+				dir = g_s_lcd.direction|0x08;
+			}
+			GPIO_Output(lcd->lcd_cs_pin, 0);
+			LSPI_WriteCmd(USP_ID2, 0x36, &dir, 1);
+			GPIO_Output(lcd->lcd_cs_pin, 1);
 			if (cut)
 			{
 				w = (camera->sensor_width / (cut->w_scale +1)) - (cut->left_cut_lines + cut->right_cut_lines);
@@ -127,6 +141,17 @@ static void prvLCD_Task(void* params)
 
 			OS_MutexLock(g_s_lcd.camera_show_stop_sem);
 			DBG("camera show stop!");
+			if (lcd->opts->rb_swap)
+			{
+				dir = g_s_lcd.direction|0x08;
+			}
+			else
+			{
+				dir = g_s_lcd.direction;
+			}
+			GPIO_Output(lcd->lcd_cs_pin, 0);
+			LSPI_WriteCmd(USP_ID2, 0x36, &dir, 1);
+			GPIO_Output(lcd->lcd_cs_pin, 1);
 
 			break;
 		case SERVICE_LCD_INIT:
@@ -228,6 +253,24 @@ void luat_lcd_IF_init(luat_lcd_conf_t* conf)
 }
 int luat_lcd_IF_write_cmd_data(luat_lcd_conf_t* conf,const uint8_t cmd, const uint8_t *data, uint8_t data_len)
 {
+	if (cmd == 0x36)
+	{
+		g_s_lcd.direction = data[0] & 0xf7;
+		DBG("dir %x %d", g_s_lcd.direction, conf->opts->rb_swap);
+		uint8_t dir;
+		if (conf->opts->rb_swap)
+		{
+			dir = g_s_lcd.direction | 0x08;
+		}
+		else
+		{
+			dir = g_s_lcd.direction;
+		}
+		GPIO_Output(conf->lcd_cs_pin, 0);
+		int res = LSPI_WriteCmd(USP_ID2, cmd, &dir, 1);
+		GPIO_Output(conf->lcd_cs_pin, 1);
+		return res;
+	}
 	GPIO_Output(conf->lcd_cs_pin, 0);
 	int res = LSPI_WriteCmd(USP_ID2, cmd, data, data_len);
 	GPIO_Output(conf->lcd_cs_pin, 1);
@@ -285,10 +328,6 @@ int luat_lcd_IF_draw(luat_lcd_conf_t* conf, int16_t x1, int16_t y1, int16_t x2, 
 	}
 	else
 	{
-		for(i = 0; i < points; i++)
-		{
-			color[i] = __SWAP_RB(color[i]);
-		}
 		GPIO_Output(conf->lcd_cs_pin, 0);
 		LSPI_WriteImageData(USP_ID2, w, h, (uint32_t)color, size, 1);
 		GPIO_Output(conf->lcd_cs_pin, 1);
