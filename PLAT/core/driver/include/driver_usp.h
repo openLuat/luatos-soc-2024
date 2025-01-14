@@ -49,6 +49,7 @@ void CSPI_Debug(uint8_t ID);
 
 enum
 {
+	LCD_SPI_MODE = 0,
 	LCD_IM_3_WIRE_9_BIT_INTERFACE_I = 5,
 	LCD_IM_4_WIRE_8_BIT_INTERFACE_I = 6,
 	LCD_IM_3_WIRE_9_BIT_INTERFACE_II = 13,
@@ -56,15 +57,29 @@ enum
 	LCD_IM_2_DATA_LANE = 16,
 
 	LCD_QSPI_MODE = 0x20,
+	LCD_8080_MODE = 0x30,
+	LCD_COLOR_MODE_RGB565 = 0,
+	LCD_COLOR_MODE_RGB888 = 0x01,
 };
 int LSPI_Setup(uint8_t ID, uint32_t BusSpeed, uint8_t InterfaceMode, CBFuncEx_t cb, void *param);
+void LSPI_SetColorMode(uint8_t ID, uint8_t ColorMode);
+void LSPI_SetQspiLaneConfig(uint8_t ID, uint8_t Address, uint8_t Data, uint8_t CmdInst);
+void LSPI_HsyncConfig(uint8_t ID, uint8_t hsyncAddr, uint8_t hsyncInst, uint16_t vbpNum, uint16_t vfpNum);
+void LSPI_VsyncConfig(uint8_t ID, uint8_t vsyncEnable, uint8_t vsyncInst, uint32_t Param);
+void LSPI_CsnHighCycleMinConfig(uint8_t ID, uint32_t Param);
+void LSPI_ExtraParamConfig(uint8_t ID, uint32_t CmdPreParam[4], uint32_t CmdPostParam[4], uint32_t TEParam[2]);
+void LSPI_QspiNoramConfig(uint8_t ID, uint32_t ByteLen, uint16_t ImageW, uint16_t ImageH, uint8_t VsyncAddr, uint8_t HsyncAddr, uint8_t HsyncInst, uint16_t vbpNum, uint16_t vfpNum, uint32_t VsyncLineTime, uint32_t CsHighTime);
+void LSPI_QspiStartFlush(uint8_t ID, uint32_t DataAddress);
+void LSPI_QspiNewFlush(uint8_t ID, uint32_t DataAddress);
+void LSPI_QspiEndFlush(uint8_t ID);
+uint32_t LSPI_QspiCurrentFlush(uint8_t ID);
+uint32_t LSPI_QspiGetFrameCntAndClear(uint8_t ID);
 int LSPI_Sleep(uint8_t ID, uint8_t Enable);
 int LSPI_WriteCmd(uint8_t ID, uint8_t Cmd, const uint8_t *Param, uint8_t ParamLen);
 int LSPI_ReadData(uint8_t ID, uint8_t Cmd, uint8_t *Data, uint8_t DataLen, uint8_t DummyLen);
 int LSPI_ReadDataV2(uint8_t ID, uint8_t Cmd, uint8_t *Data, uint8_t DataLen, uint8_t DummyLen);
 int LSPI_WriteImageData(uint8_t ID, uint16_t ImageW, uint16_t ImageH, uint32_t DataAddress, uint32_t ByteLen, uint8_t IsBlock);
 void LSPI_SetSpeed(uint8_t ID, uint32_t BusSpeed);
-void LSPI_SetColorByte(uint8_t ID, uint8_t ColorByte);
 int LSPI_StopCameraPreview(uint8_t ID);
 int LSPI_StartCameraPreview(uint8_t ID, uint16_t CameraW, uint16_t CameraH, uint16_t ImageW, uint16_t ImageH, uint16_t CutTopLine, uint16_t CutBottomLine, uint16_t CutLeftLine, uint16_t CutRightLine, uint16_t ScaleW, uint16_t ScaleH);
 #endif
