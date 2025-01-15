@@ -309,6 +309,24 @@ target(project_name,function()
     add_files(luatos_root.."/components/antbot/**.c")
     add_linkgroups("bot", {whole = true,public = true})
 
+    -- ulwip
+    add_includedirs(luatos_root.."/components/network/ulwip/include",{public = true})
+    add_files(luatos_root.."/components/network/ulwip/src/*.c")
+    add_files(luatos_root.."/components/network/ulwip/binding/*.c")
+    add_includedirs(luatos_root.."/components/network/adapter_lwip2",{public = true})
+    add_files(luatos_root.."/components/network/adapter_lwip2/*.c")
+
+    -- netdrv
+    add_includedirs(luatos_root.."/components/network/netdrv/include",{public = true})
+    add_files(luatos_root.."/components/network/netdrv/src/*.c")
+    add_files(luatos_root.."/components/network/netdrv/binding/*.c")
+
+    -- 开启网络IP包拦截
+    if chip_target == "ec718um" or chip_target == "ec718hm" or chip_target == "ec718pm" then
+        add_defines("LUAT_NET_IP_INTERCEPT=1")
+        add_ldflags("-Wl,--wrap=ps_ip_input",{force = true})
+    end
+
     --加入代码和头文件
     add_includedirs("./inc",{public = true})
     add_files("./src/*.c",{public = true})
@@ -321,4 +339,5 @@ target(project_name,function()
 		add_linkgroups("tgt_app_service", {whole = true,public = true})
 		add_defines("LUAT_USE_VSIM",{public = true})
 	end
+
 end)

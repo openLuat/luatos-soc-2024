@@ -163,6 +163,10 @@ static void luatos_task(void *param)
 #endif
 	luat_pm_init();
 
+#ifdef LUAT_USE_NETDRV
+	extern void luat_napt_native_init(void);
+	luat_napt_native_init();
+#endif
 	luat_main();
 	while (1) {
 		DBG("LuatOS exit");
@@ -200,9 +204,18 @@ void soc_service_misc_callback(uint8_t *data, uint32_t len)
 	}
 }
 
+#ifdef LUAT_USE_NETDRV
+#include "luat_netdrv.h"
+#endif
+
 static void luatos_mobile_event_callback(LUAT_MOBILE_EVENT_E event, uint8_t index, uint8_t status)
 {
 	luat_mobile_event_cb(event, index, status, NULL);
+	#ifdef LUAT_USE_NETDRV
+    extern luat_netdrv_t netdrv_gprs;
+	extern struct netif * net_lwip_get_netif(uint8_t adapter_index);
+	netdrv_gprs.netif = net_lwip_get_netif(NW_ADAPTER_INDEX_LWIP_GPRS);
+    #endif
 }
 
 static void luatos_task_init(void)

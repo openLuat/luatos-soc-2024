@@ -270,6 +270,12 @@ static const luaL_Reg loadedlibs[] = {
 #ifdef LUAT_USE_ANTBOT
   {"antbot", luaopen_antbot},
 #endif
+#ifdef LUAT_USE_ULWIP
+  {"ulwip", luaopen_ulwip},
+#endif
+#ifdef LUAT_USE_NETDRV
+  {"netdrv", luaopen_netdrv},
+#endif
   {NULL, NULL}
 };
 
