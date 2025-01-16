@@ -39,7 +39,7 @@
 /**
  * 使用硬件LCD接口打开下面的注释
  */
-//#define LCD_USE_HW_IF
+#define LCD_USE_HW_IF
 
 #ifdef LCD_USE_HW_IF
 static luat_lcd_conf_t lcd_conf = {
@@ -58,6 +58,28 @@ static luat_lcd_conf_t lcd_conf = {
     .interface_mode = LUAT_LCD_IM_4_WIRE_8_BIT_INTERFACE_I,
     .lcd_cs_pin = 0xff,	//注意不用的时候写0xff
 };
+
+//static luat_lcd_conf_t lcd_conf = {
+//    .port = LUAT_LCD_HW_ID_0,
+//    .lcd_spi_device = NULL,
+//    .auto_flush = 1,
+//    .opts = &lcd_opts_jd9261t_inited,
+//    .pin_dc = 0xff,
+//    .pin_rst = LCD_RST,
+//    .pin_pwr = LCD_PWR,
+//    .direction = 0,
+//    .w = 480,
+//    .h = 480,
+//    .xoffset = 0,
+//    .yoffset = 0,
+//    .interface_mode = LUAT_LCD_IM_QSPI_MODE,
+//    .lcd_cs_pin = 0xff,	//注意不用的时候写0xff
+//	.bus_speed = 60000000,
+//	.flush_rate = 658,
+//	.vbp = 19,
+//	.vfp = 108,
+//	.vs = 2,
+//};
 #else
 static luat_spi_device_t lcd_spi_dev = {
     .bus_id = LCD_SPI,
@@ -101,7 +123,7 @@ static void task_test_lcd(void *param)
     luat_lcd_draw_line(&lcd_conf,20,35,140,35,0x001F);
     luat_lcd_draw_rectangle(&lcd_conf,20,40,120,70,0xF800);
     luat_lcd_draw_circle(&lcd_conf,60,60,10,0x0CE0);
-
+    luat_lcd_flush(&lcd_conf);
     while (1){
         luat_rtos_task_sleep(1000);
     }

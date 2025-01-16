@@ -11,10 +11,15 @@ typedef struct
 {
 	uint64_t wait_bytes;
 	uint64_t done_bytes;
+	luat_lcd_qspi_conf_t qspi_param;
 	HANDLE task_handle;
 	HANDLE camera_show_stop_sem;
+	PV_Union auto_flush_ram;
+	uint32_t auto_flush_ram_size;
 	uint8_t mem_type;
 	uint8_t direction;
+	uint8_t qspi_auto_flush_inited;
+	uint8_t need_record_frame_cnt;
 }lcd_service_t;
 
 static lcd_service_t g_s_lcd;
@@ -110,48 +115,73 @@ static void prvLCD_Task(void* params)
 			camera = (luat_spi_camera_t *)event.Param1;
 			lcd = (luat_lcd_conf_t *)camera->lcd_conf;
 			cut = (camera_cut_info_t *)event.Param2;
-			x1 = event.Param3;
-			y1 = event.Param3 >> 16;
-			if (lcd->opts->rb_swap)
+			if (lcd->opts->no_ram_mode)
 			{
-				dir = g_s_lcd.direction;
+				if (cut)
+				{
+					LSPI_StartCameraPreview(USP_ID2, camera->sensor_width, camera->sensor_height,
+							lcd->w, lcd->h, cut->top_cut_lines, cut->bottom_cut_lines, cut->left_cut_lines, cut->right_cut_lines,
+							cut->w_scale, cut->h_scale);
+				}
+				else
+				{
+					LSPI_StartCameraPreview(USP_ID2, camera->sensor_width, camera->sensor_height,
+							lcd->w, lcd->h, 0, 0, 0, 0, 0, 0);
+				}
 			}
 			else
 			{
-				dir = g_s_lcd.direction|0x08;
+				x1 = event.Param3;
+				y1 = event.Param3 >> 16;
+				if (lcd->opts->rb_swap)
+				{
+					dir = g_s_lcd.direction;
+				}
+				else
+				{
+					dir = g_s_lcd.direction|0x08;
+				}
+				GPIO_Output(lcd->lcd_cs_pin, 0);
+				LSPI_WriteCmd(USP_ID2, 0x36, &dir, 1);
+				GPIO_Output(lcd->lcd_cs_pin, 1);
+				if (cut)
+				{
+					w = (camera->sensor_width / (cut->w_scale +1)) - (cut->left_cut_lines + cut->right_cut_lines);
+					h = (camera->sensor_height / (cut->h_scale +1)) - (cut->top_cut_lines + cut->bottom_cut_lines);
+					luat_lcd_set_address(lcd, x1, y1, x1+w-1, y1+h-1);
+					LSPI_StartCameraPreview(USP_ID2, camera->sensor_width, camera->sensor_height,
+							w, h, cut->top_cut_lines, cut->bottom_cut_lines, cut->left_cut_lines, cut->right_cut_lines,
+							cut->w_scale, cut->h_scale);
+				}
+				else
+				{
+					luat_lcd_set_address(lcd, x1, y1, x1+lcd->w-1, y1+lcd->h-1);
+					LSPI_StartCameraPreview(USP_ID2, camera->sensor_width, camera->sensor_height,
+							lcd->w, lcd->h, 0, 0, 0, 0, 0, 0);
+				}
 			}
-			GPIO_Output(lcd->lcd_cs_pin, 0);
-			LSPI_WriteCmd(USP_ID2, 0x36, &dir, 1);
-			GPIO_Output(lcd->lcd_cs_pin, 1);
-			if (cut)
+			OS_MutexLock(g_s_lcd.camera_show_stop_sem);
+			LSPI_StopCameraPreview(USP_ID2);
+			DBG("camera show stop!");
+			if (lcd->opts->no_ram_mode)
 			{
-				w = (camera->sensor_width / (cut->w_scale +1)) - (cut->left_cut_lines + cut->right_cut_lines);
-				h = (camera->sensor_height / (cut->h_scale +1)) - (cut->top_cut_lines + cut->bottom_cut_lines);
-				luat_lcd_set_address(lcd, x1, y1, x1+w-1, y1+h-1);
-				LSPI_StartCameraPreview(USP_ID2, camera->sensor_width, camera->sensor_height,
-						w, h, cut->top_cut_lines, cut->bottom_cut_lines, cut->left_cut_lines, cut->right_cut_lines,
-						cut->w_scale, cut->h_scale);
+
 			}
 			else
 			{
-				luat_lcd_set_address(lcd, x1, y1, x1+lcd->w-1, y1+lcd->h-1);
-				LSPI_StartCameraPreview(USP_ID2, camera->sensor_width, camera->sensor_height,
-						lcd->w, lcd->h, 0, 0, 0, 0, 0, 0);
+				if (lcd->opts->rb_swap)
+				{
+					dir = g_s_lcd.direction|0x08;
+				}
+				else
+				{
+					dir = g_s_lcd.direction;
+				}
+				GPIO_Output(lcd->lcd_cs_pin, 0);
+				LSPI_WriteCmd(USP_ID2, 0x36, &dir, 1);
+				GPIO_Output(lcd->lcd_cs_pin, 1);
 			}
 
-			OS_MutexLock(g_s_lcd.camera_show_stop_sem);
-			DBG("camera show stop!");
-			if (lcd->opts->rb_swap)
-			{
-				dir = g_s_lcd.direction|0x08;
-			}
-			else
-			{
-				dir = g_s_lcd.direction;
-			}
-			GPIO_Output(lcd->lcd_cs_pin, 0);
-			LSPI_WriteCmd(USP_ID2, 0x36, &dir, 1);
-			GPIO_Output(lcd->lcd_cs_pin, 1);
 
 			break;
 		case SERVICE_LCD_INIT:
@@ -234,6 +264,46 @@ void luat_lcd_service_debug(void)
 
 void luat_lcd_IF_init(luat_lcd_conf_t* conf)
 {
+#ifdef TYPE_EC718M
+	switch(conf->interface_mode)
+	{
+	case LUAT_LCD_IM_QSPI_MODE:
+		GPIO_IomuxEC7XX(40, 4, 0, 0);
+		GPIO_IomuxEC7XX(41, 4, 0, 0);
+		GPIO_IomuxEC7XX(43, 4, 0, 0);
+		GPIO_IomuxEC7XX(44, 4, 0, 0);
+		GPIO_IomuxEC7XX(16, 1, 0, 0);
+		GPIO_IomuxEC7XX(17, 1, 0, 0);
+		GPIO_IomuxEC7XX(13, 2, 1, 0);
+		GPIO_IomuxEC7XX(14, 2, 1, 0);
+		break;
+	case LUAT_LCD_IM_8080_MODE:
+		break;
+
+	default:
+		GPIO_IomuxEC7XX(40, 1, 0, 0);
+		if (conf->lcd_cs_pin != 0xff)
+		{
+
+		}
+		else
+		{
+			GPIO_IomuxEC7XX(41, 1, 0, 0);
+		}
+		GPIO_IomuxEC7XX(43, 1, 0, 0);
+		GPIO_IomuxEC7XX(44, 2, 0, 0);
+		break;
+	}
+	if (!conf->bus_speed || (conf->bus_speed > 80000000))
+	{
+		conf->bus_speed = 80000000;
+	}
+	if (!conf->flush_rate)
+	{
+		conf->flush_rate = 630;
+	}
+	LSPI_Setup(USP_ID2, conf->bus_speed, conf->interface_mode, NULL, 0);
+#else
 	GPIO_IomuxEC7XX(40, 1, 0, 0);
 	if (conf->lcd_cs_pin != 0xff)
 	{
@@ -245,8 +315,8 @@ void luat_lcd_IF_init(luat_lcd_conf_t* conf)
 	}
 	GPIO_IomuxEC7XX(43, 1, 0, 0);
 	GPIO_IomuxEC7XX(44, 2, 0, 0);
-
 	LSPI_Setup(USP_ID2, 0, conf->interface_mode, NULL, 0);
+#endif
 	conf->opts->write_cmd_data = luat_lcd_IF_write_cmd_data;
 	conf->opts->read_cmd_data = luat_lcd_IF_read_cmd_data;
 	conf->opts->lcd_draw = luat_lcd_IF_draw;
@@ -256,7 +326,7 @@ int luat_lcd_IF_write_cmd_data(luat_lcd_conf_t* conf,const uint8_t cmd, const ui
 	if (cmd == 0x36)
 	{
 		g_s_lcd.direction = data[0] & 0xf7;
-		DBG("dir %x %d", g_s_lcd.direction, conf->opts->rb_swap);
+//		DBG("dir %x %d", g_s_lcd.direction, conf->opts->rb_swap);
 		uint8_t dir;
 		if (conf->opts->rb_swap)
 		{
@@ -267,11 +337,23 @@ int luat_lcd_IF_write_cmd_data(luat_lcd_conf_t* conf,const uint8_t cmd, const ui
 			dir = g_s_lcd.direction;
 		}
 		GPIO_Output(conf->lcd_cs_pin, 0);
+#ifdef TYPE_EC718M
+		if (LUAT_LCD_IM_QSPI_MODE == conf->interface_mode)
+		{
+			LSPI_SetQspiLaneConfig(USP_ID2, 0, 0, g_s_lcd.qspi_param.write_1line_cmd);
+		}
+#endif
 		int res = LSPI_WriteCmd(USP_ID2, cmd, &dir, 1);
 		GPIO_Output(conf->lcd_cs_pin, 1);
 		return res;
 	}
 	GPIO_Output(conf->lcd_cs_pin, 0);
+#ifdef TYPE_EC718M
+	if (LUAT_LCD_IM_QSPI_MODE == conf->interface_mode)
+	{
+		LSPI_SetQspiLaneConfig(USP_ID2, 0, 0, g_s_lcd.qspi_param.write_1line_cmd);
+	}
+#endif
 	int res = LSPI_WriteCmd(USP_ID2, cmd, data, data_len);
 	GPIO_Output(conf->lcd_cs_pin, 1);
 	return res;
@@ -280,13 +362,18 @@ int luat_lcd_IF_write_cmd_data(luat_lcd_conf_t* conf,const uint8_t cmd, const ui
 int luat_lcd_IF_read_cmd_data(luat_lcd_conf_t* conf,const uint8_t cmd, uint8_t *data, uint8_t data_len, uint8_t dummy_bit)
 {
 	GPIO_Output(conf->lcd_cs_pin, 0);
-	int res = LSPI_ReadData(USP_ID2, cmd, data, data_len, dummy_bit);
+	int res = LSPI_ReadDataV2(USP_ID2, cmd, data, data_len, dummy_bit);
 	GPIO_Output(conf->lcd_cs_pin, 1);
 	return res;
 }
 
 int luat_lcd_IF_draw(luat_lcd_conf_t* conf, int16_t x1, int16_t y1, int16_t x2, int16_t y2, luat_color_t* color)
 {
+	if (conf->opts->no_ram_mode)
+	{
+		memcpy(g_s_lcd.auto_flush_ram.p, color, g_s_lcd.auto_flush_ram_size);
+		return 0;
+	}
 	uint32_t size,w,h,points,i;
 	PV_Union dummy;
 	uint32_t temp[16];
@@ -365,7 +452,64 @@ int luat_lcd_stop_show_camera(void)
 	OS_MutexRelease(g_s_lcd.camera_show_stop_sem);
 	return 0;
 }
-
+#ifdef TYPE_EC718M
+int luat_lcd_qspi_config(luat_lcd_conf_t* conf, luat_lcd_qspi_conf_t *qspi_config)
+{
+	g_s_lcd.qspi_param = *qspi_config;
+	g_s_lcd.auto_flush_ram_size = conf->w * conf->h * ((conf->bpp <= 16)?2:4);
+	g_s_lcd.auto_flush_ram.p = luat_heap_opt_zalloc(LUAT_HEAP_AUTO, g_s_lcd.auto_flush_ram_size);
+	return 0;
+}
+int luat_lcd_qspi_auto_flush_on_off(luat_lcd_conf_t* conf, uint8_t on_off)
+{
+	if (on_off)
+	{
+		if (!g_s_lcd.qspi_auto_flush_inited)
+		{
+			uint32_t div = (612*1024*1024 / conf->bus_speed);
+			conf->bus_speed = 612*1024*1024 / div;
+			uint32_t vlt = 0;
+			uint32_t csht = 3;
+			switch(div)
+			{
+			case 8:
+				csht = 8;
+				break;
+			case 9:
+				csht = 5;
+				break;
+			default:
+				csht = 3;
+				break;
+			}
+			vlt = conf->h + conf->vbp + conf->vfp + conf->vs;
+			DBG("%u, %u, %d", conf->bus_speed, vlt, conf->flush_rate);
+			vlt = (conf->bus_speed * 10) / (conf->flush_rate * vlt);
+			DBG("%u, %u, %d", conf->bus_speed, vlt, csht);
+			LSPI_SetQspiLaneConfig(USP_ID2, 0, 2, g_s_lcd.qspi_param.write_4line_cmd);
+			LSPI_QspiAutoFlushConfigAndRun(USP_ID2, g_s_lcd.auto_flush_ram.p, conf->w, conf->h,
+					g_s_lcd.qspi_param.vsync_reg,
+					g_s_lcd.qspi_param.hsync_reg,
+					g_s_lcd.qspi_param.hsync_cmd,
+					conf->vbp,
+					conf->vfp,
+					vlt, csht, g_s_lcd.need_record_frame_cnt);
+		}
+		else
+		{
+			LSPI_AutoFlushReStart(USP_ID2, g_s_lcd.auto_flush_ram.p, g_s_lcd.need_record_frame_cnt);
+		}
+	}
+	else
+	{
+		if (g_s_lcd.qspi_auto_flush_inited)
+		{
+			LSPI_AutoFlushStop(USP_ID2);
+		}
+	}
+	return 0;
+}
+#endif
 #ifdef LUAT_USE_LCD_CUSTOM_DRAW
 
 int luat_lcd_draw_no_block(luat_lcd_conf_t* conf, int16_t x1, int16_t y1, int16_t x2, int16_t y2, luat_color_t* color, uint8_t last_flush)
