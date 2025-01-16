@@ -203,7 +203,7 @@ void luat_lcd_service_init(uint32_t pro)
 	if (!g_s_lcd.task_handle)
 	{
 		g_s_lcd.mem_type = LUAT_HEAP_AUTO;
-		g_s_lcd.task_handle = create_event_task(prvLCD_Task, NULL, 2048, pro, 0, "lcdSer");
+		g_s_lcd.task_handle = create_event_task(prvLCD_Task, NULL, 4096, pro, 0, "lcdSer");
 		g_s_lcd.camera_show_stop_sem = OS_MutexCreate();
 	}
 }

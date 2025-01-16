@@ -58,28 +58,33 @@ static luat_lcd_conf_t lcd_conf = {
     .interface_mode = LUAT_LCD_IM_4_WIRE_8_BIT_INTERFACE_I,
     .lcd_cs_pin = 0xff,	//注意不用的时候写0xff
 };
-
-//static luat_lcd_conf_t lcd_conf = {
-//    .port = LUAT_LCD_HW_ID_0,
-//    .lcd_spi_device = NULL,
-//    .auto_flush = 1,
-//    .opts = &lcd_opts_jd9261t_inited,
-//    .pin_dc = 0xff,
-//    .pin_rst = LCD_RST,
-//    .pin_pwr = LCD_PWR,
-//    .direction = 0,
-//    .w = 480,
-//    .h = 480,
-//    .xoffset = 0,
-//    .yoffset = 0,
-//    .interface_mode = LUAT_LCD_IM_QSPI_MODE,
-//    .lcd_cs_pin = 0xff,	//注意不用的时候写0xff
-//	.bus_speed = 60000000,
-//	.flush_rate = 658,
-//	.vbp = 19,
-//	.vfp = 108,
-//	.vs = 2,
-//};
+#if 0
+static luat_lcd_conf_t lcd_conf = {
+    .port = LUAT_LCD_HW_ID_0,
+    .lcd_spi_device = NULL,
+    .auto_flush = 1,
+    .opts = &lcd_opts_jd9261t_inited,
+    .pin_dc = 0xff,
+    .pin_rst = LCD_RST,
+    .pin_pwr = LCD_PWR,
+    .direction = 0,
+    .w = 480,
+    .h = 480,
+    .xoffset = 0,
+    .yoffset = 0,
+    .interface_mode = LUAT_LCD_IM_QSPI_MODE,
+    .lcd_cs_pin = 0xff,	//注意不用的时候写0xff
+	.bus_speed = 60000000,
+	.flush_rate = 658,
+	.vbp = 19,
+	.vfp = 108,
+	.vs = 2,
+	.tp_driver_id = 0,//填非0值开启
+	.tp_i2c_id = 1,
+	.tp_pin_rst = 0xff,
+	.tp_pin_irq = HAL_WAKEUP_4,
+};
+#endif
 #else
 static luat_spi_device_t lcd_spi_dev = {
     .bus_id = LCD_SPI,
@@ -136,5 +141,11 @@ static void task_demo_lcd(void)
 
 INIT_TASK_EXPORT(task_demo_lcd,"1");
 
-
+#ifndef LUAT_USE_LCD_SERVICE
+static void lcd_service_task_init(void)
+{
+	luat_lcd_service_init(90);
+}
+INIT_TASK_EXPORT(lcd_service_task_init, "1");
+#endif
 
