@@ -54,7 +54,7 @@ static void prvLCD_Task(void* params)
 {
 	OS_EVENT event;
 	uint32_t size;
-	CBDataFun_t callback;
+	luat_lcd_api callback;
 	lcd_service_draw_t *draw;
 	luat_spi_camera_t *camera;
 	luat_lcd_conf_t* lcd;
@@ -188,8 +188,8 @@ static void prvLCD_Task(void* params)
 			luat_lcd_init((luat_lcd_conf_t *)event.Param1);
 			break;
 		case SERVICE_RUN_USER_API:
-			callback = (CBDataFun_t)event.Param1;
-			callback((uint8_t *)event.Param2, event.Param3);
+			callback = (luat_lcd_api)event.Param1;
+			callback((void *)event.Param2, event.Param3);
 			break;
 
 		}
@@ -208,10 +208,7 @@ void luat_lcd_service_init(uint32_t pro)
 	}
 }
 
-void luat_lcd_service_run(void *CB, void *data, uint32_t param, uint32_t timeout)
-{
-	send_event_to_task(g_s_lcd.task_handle, NULL, SERVICE_RUN_USER_API, (uint32_t)CB, data, param, timeout);
-}
+
 
 int luat_lcd_service_draw(luat_lcd_conf_t* conf, int16_t x1, int16_t y1, int16_t x2, int16_t y2, luat_color_t *data, uint8_t is_static_buf)
 {
@@ -451,6 +448,11 @@ int luat_lcd_stop_show_camera(void)
 	if (!g_s_lcd.camera_show_stop_sem) return -1;
 	OS_MutexRelease(g_s_lcd.camera_show_stop_sem);
 	return 0;
+}
+
+int luat_lcd_run_api_in_service(luat_lcd_api api, void *param, uint32_t param_len)
+{
+	return send_event_to_task(g_s_lcd.task_handle, NULL, SERVICE_RUN_USER_API, (uint32_t)api, (uint32_t)param, param_len, 0);
 }
 #ifdef TYPE_EC718M
 int luat_lcd_qspi_config(luat_lcd_conf_t* conf, luat_lcd_qspi_conf_t *qspi_config)
