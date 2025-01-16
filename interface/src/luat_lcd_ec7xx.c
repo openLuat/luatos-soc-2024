@@ -485,9 +485,9 @@ int luat_lcd_qspi_auto_flush_on_off(luat_lcd_conf_t* conf, uint8_t on_off)
 				break;
 			}
 			vlt = conf->h + conf->vbp + conf->vfp + conf->vs;
-			DBG("%u, %u, %d", conf->bus_speed, vlt, conf->flush_rate);
+//			DBG("%u, %u, %d", conf->bus_speed, vlt, conf->flush_rate);
 			vlt = (conf->bus_speed * 10) / (conf->flush_rate * vlt);
-			DBG("%u, %u, %d", conf->bus_speed, vlt, csht);
+//			DBG("%u, %u, %d", conf->bus_speed, vlt, csht);
 			LSPI_SetQspiLaneConfig(USP_ID2, 0, 2, g_s_lcd.qspi_param.write_4line_cmd);
 			LSPI_QspiAutoFlushConfigAndRun(USP_ID2, g_s_lcd.auto_flush_ram.p, conf->w, conf->h,
 					g_s_lcd.qspi_param.vsync_reg,
