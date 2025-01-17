@@ -291,7 +291,11 @@ void luat_lcd_IF_init(luat_lcd_conf_t* conf)
 		GPIO_IomuxEC7XX(44, 2, 0, 0);
 		break;
 	}
-	if (!conf->bus_speed || (conf->bus_speed > 80000000))
+	if (!conf->bus_speed)
+	{
+		conf->bus_speed = 51000000;
+	}
+	if (conf->bus_speed > 80216064)
 	{
 		conf->bus_speed = 80000000;
 	}
