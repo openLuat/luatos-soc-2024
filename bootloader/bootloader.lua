@@ -32,6 +32,8 @@ add_ldflags("-flto",
 set_values("project_name", project_name)
 if project_name == "luatos" then
 	add_defines("__LUATOS__")
+	add_includedirs(csdk_root.."/project/luatos/inc",
+                    {public = true})
 end
 
 

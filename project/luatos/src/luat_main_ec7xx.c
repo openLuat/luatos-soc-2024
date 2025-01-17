@@ -248,3 +248,28 @@ void soc_get_unilog_br(uint32_t *baudrate)
 #endif
 }
 
+#ifdef LUAT_MODEL_AIR780EPM
+#include "slpman.h"
+#include "driver_gpio.h"
+uint8_t bsp_user_init_io(void)
+{
+
+	if (slpManNormalIOVoltGet() >= IOVOLT_2_65V)
+	{
+		slpManNormalIOVoltSet(IOVOLT_3_00V);
+		slpManAONIOVoltSet(IOVOLT_3_00V);
+	}
+	else
+	{
+		slpManNormalIOVoltSet(IOVOLT_1_80V);
+		slpManAONIOVoltSet(IOVOLT_1_80V);
+	}
+	DBG("io level %d", slpManNormalIOVoltGet());
+
+
+	GPIO_Config(HAL_GPIO_23, 0, 1);
+	DBG("gpio23 output 1");
+
+	return 1;
+}
+#endif
