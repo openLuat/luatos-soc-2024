@@ -19,6 +19,10 @@ __attribute__((weak)) void user_code_init(void)
     if(pwrKeyGetPwrKeyMode() == PWRKEY_PWRON_MODE)
         pwrkeyPwrOnDebounce(2000);
 }
+__attribute__((weak)) uint8_t user_io_sel(uint8_t io_sel)
+{
+	return 0;
+}
 #include "sctdef.h"
 extern void Bltransfer_Control(uint32_t p_base_addr);
 PLAT_BL_AIRAM_PRE2_TEXT void soc_bl(void)
