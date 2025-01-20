@@ -136,7 +136,7 @@ void soc_require_lowpower_state(uint8_t state);
  * @param onoff 1打开，0关闭
  */
 void soc_usb_onoff(uint8_t onoff);
-
+void soc_set_usb_sleep(uint8_t onoff);
 uint8_t soc_usb_stack_onoff_state(void);
 uint32_t soc_get_utc(void);
 uint64_t soc_get_utc_ms(void);
