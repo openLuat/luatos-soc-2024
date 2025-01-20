@@ -24,6 +24,11 @@
 #define LUAT_USE_PSRAM_AS_LUAHEAP 0
 #endif
 
+
+#ifdef TYPE_EC718M
+static  __attribute__((__section__(".cust_sect_ap_psram_p2_bss.vmheap"))) uint8_t vmheap[LUAT_HEAP_SIZE] __attribute__((aligned(8)));
+#else
+
 #if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1) && (LUAT_USE_PSRAM_AS_LUAHEAP==1)
 #undef LUAT_HEAP_SIZE
 #define LUAT_HEAP_SIZE (1280*1024) // 1280k 1.25M
@@ -32,13 +37,10 @@ static uint8_t* vmheap;
 #ifndef LUAT_HEAP_SIZE
 #define LUAT_HEAP_SIZE (200*1024)
 #endif
-#ifdef TYPE_EC718M
-static  __attribute__((__section__(".cust_sect_ap_psram_p2_bss.vmheap"))) uint8_t vmheap[LUAT_HEAP_SIZE] __attribute__((aligned(8)));
-#else
 static uint8_t vmheap[LUAT_HEAP_SIZE] __attribute__((aligned(8)));
 #endif
-#endif
 
+#endif
 
 //------------------------------------------------
 // ---------- 管理 LuaVM所使用的内存----------------
