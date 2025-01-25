@@ -362,10 +362,14 @@ int luat_lcd_IF_write_cmd_data(luat_lcd_conf_t* conf,const uint8_t cmd, const ui
 
 int luat_lcd_IF_read_cmd_data(luat_lcd_conf_t* conf,const uint8_t cmd, uint8_t *data, uint8_t data_len, uint8_t dummy_bit)
 {
+#ifdef TYPE_EC718M
 	GPIO_Output(conf->lcd_cs_pin, 0);
 	int res = LSPI_ReadDataV2(USP_ID2, cmd, data, data_len, dummy_bit);
 	GPIO_Output(conf->lcd_cs_pin, 1);
 	return res;
+#else
+	return -1;
+#endif
 }
 
 int luat_lcd_IF_draw(luat_lcd_conf_t* conf, int16_t x1, int16_t y1, int16_t x2, int16_t y2, luat_color_t* color)
