@@ -251,6 +251,8 @@ int luat_pm_get_poweron_reason(void)
 	case LAST_RESET_AONWDT:
 		return LUAT_PM_POWERON_REASON_WDT;
 		break;
+	default:
+		break;
 	}
 
 	switch(apRstState)
