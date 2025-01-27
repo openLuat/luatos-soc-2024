@@ -18,7 +18,8 @@ static void gprs_dataout(void* userdata, uint8_t* buff, uint16_t len) {
     extern BOOL PsifRawUlOutput(UINT8, UINT8 *, UINT16);
     // luat_netdrv_print_pkg("上行数据", buff, len);
     BOOL ret = PsifRawUlOutput(1, buff, len);
-    LLOGD("gprs 数据上行 %d %p %d ret %d", 1, buff, len, ret);
+    if (ret)
+        LLOGD("gprs 数据上行 %d %p %d ret %d", 1, buff, len, ret);
 }
 
 luat_netdrv_t netdrv_gprs = {
