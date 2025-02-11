@@ -617,7 +617,7 @@ typedef struct
 	uint8_t *Data;
 }BSP_FifoStruct;
 int OS_InitFifo(BSP_FifoStruct *Fifo, uint8_t *StaticBuf, uint32_t SizePower);
-uint32_t OS_WriteFifo(BSP_FifoStruct *Fifo, uint8_t *Buf, uint32_t Size);
+uint32_t OS_WriteFifo(BSP_FifoStruct *Fifo, const uint8_t *Buf, uint32_t Size);
 uint32_t OS_SetFifo(BSP_FifoStruct *Fifo, uint8_t Value, uint32_t Size);
 uint32_t OS_ReadFifo(BSP_FifoStruct *Fifo, uint8_t *Buf, uint32_t Size);
 uint32_t OS_QueryFifo(BSP_FifoStruct *Fifo, uint8_t *Buf, uint32_t Size);

@@ -90,9 +90,9 @@ AP_PLAT_COMMON_BSS MWNvmCfgUsrSetCodecVolumn usrCodecVolumn2;
 AP_PLAT_COMMON_BSS MWNvmCfgVolumnSetFlag     volumeSetFlag;
 AP_PLAT_COMMON_BSS MWNvmCfgVolumnSetFlag     volumeSetFlag2;
 #endif
-extern void mwNvmCfgGetUsrCodecVolumn(MWNvmCfgUsrSetCodecVolumn *pUsrCodecVolumn);
+extern void mwNvmCfgGetUsrCodecVolumn(UINT8 deviceType, MWNvmCfgUsrSetCodecVolumn *pUsrCodecVolumn);
 extern void mwNvmCfgGetVolumnSetFlag(MWNvmCfgVolumnSetFlag *pVolumnSetFlag);
-extern void mwNvmCfgSetAndSaveUsrCodecVolumn(UINT16 usrDigVolumn, UINT16 usrAnaVolumn);
+extern void mwNvmCfgSetAndSaveUsrCodecVolumn(UINT8 deviceType, UINT16 usrDigVolumn, UINT16 usrAnaVolumn);
 
 /*----------------------------------------------------------------------------*
  *                      PRIVATE VARIABLES                                     *
@@ -467,7 +467,7 @@ HalCodecSts_e es8311Init(HalCodecCfg_t *codecCfg)
     OsaFreeMemory(&pMwNvmAudioCfg);
 
 
-    mwNvmCfgGetUsrCodecVolumn(&usrCodecVolumn);
+    mwNvmCfgGetUsrCodecVolumn(0, &usrCodecVolumn);
     mwNvmCfgGetVolumnSetFlag(&volumeSetFlag);
     DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311init_10, P_DEBUG, "init get nv speaker vol. rxDigUsrSet:%d, rxAnaUsrSet:%d", usrCodecVolumn.rxDigUsrSet, usrCodecVolumn.rxAnaUsrSet);
     DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311init_11, P_DEBUG, "rxDigUsrSetFlag:%d, rxAnaUsrSetFlag:%d, txDigGainFlag%d, txAnaGainFlag:%d", volumeSetFlag.rxDigUsrSetFlag, volumeSetFlag.rxAnaUsrSetFlag, volumeSetFlag.txDigGainFlag, volumeSetFlag.txAnaGainFlag);
@@ -909,6 +909,7 @@ HalCodecSts_e es8311Stop(HalCodecMode_e mode)
             if (isHasPA)
             {
                 es8311EnablePA(false);
+                isHasPA = false;
             }
         }
         break;
@@ -1006,9 +1007,9 @@ HalCodecSts_e es8311SetVolume(HalCodecCfg_t* codecHalCfg, int volume)
      // 4. write into nv
     usrCodecVolumn.rxDigUsrSet &= ~0xff;
     usrCodecVolumn.rxDigUsrSet |= volume;
-    mwNvmCfgSetAndSaveUsrCodecVolumn(usrCodecVolumn.rxDigUsrSet, usrCodecVolumn.rxAnaUsrSet);
+    mwNvmCfgSetAndSaveUsrCodecVolumn(0, usrCodecVolumn.rxDigUsrSet, usrCodecVolumn.rxAnaUsrSet);
 
-    mwNvmCfgGetUsrCodecVolumn(&usrCodecVolumn2);
+    mwNvmCfgGetUsrCodecVolumn(0, &usrCodecVolumn2);
     DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311SetVolume_2, P_DEBUG, "rxDigUsrSet:%d, rxAnaUsrSet:%d", usrCodecVolumn2.rxDigUsrSet, usrCodecVolumn2.rxAnaUsrSet);
 #else
     int vol = volume * 2550 / 1000; // volume * (rxDigGain100 - rxDigGain0) / 100

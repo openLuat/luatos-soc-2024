@@ -31,6 +31,9 @@ CmsRetId ccSetVTD(UINT32 atHandle, UINT16 duration);
 CmsRetId ccGetVTD(UINT32 atHandle);
 CmsRetId ccSetCCWA(UINT32 atHandle, UINT8 mode, BOOL classPresent, UINT8 class);
 CmsRetId ssSetCHLD(UINT32 atHandle, UINT8 n);
+CmsRetId ccGetECEMGNUM(UINT32 atHandle);
+CmsRetId ccSetECEMGNUM(UINT32 atHandle, UINT8 mode, UINT8 type, UINT8 category, UINT8 emgNumCount,
+                            CHAR emgNum[IMI_CC_MAX_EMG_NUMS][IMI_CC_MAX_SINGLE_EMG_NUM_STR_LEN + 1]);
 
 
 CmsRetId ssGetCCFC(UINT8     operType, UINT32 atHandle);

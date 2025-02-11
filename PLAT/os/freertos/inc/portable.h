@@ -136,7 +136,7 @@ size_t xPortGetMaximumFreeBlockSizeEc( void );
 uint8_t xPortGetFreeHeapPctEc( void );
 uint8_t xPortIsFreeHeapOnAlertEc( void );
 
-#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1) || (defined TYPE_EC718M)
 void *pvPortZeroMallocCust( size_t xWantedSize) PRIVILEGED_FUNCTION;
 void *pvPortAssertMallocCust( size_t xWantedSize) PRIVILEGED_FUNCTION;
 void *pvPortZeroAssertMallocCust( size_t xWantedSize) PRIVILEGED_FUNCTION;
@@ -159,7 +159,7 @@ uint8_t xPortIsFreeHeapOnAlertCust( void ) PRIVILEGED_FUNCTION;
 #define pvPortReallocEc(pv, xWantedSize)             pvPortRealloc_EC(pv, xWantedSize, 0)
 
 #ifdef TYPE_EC718M
-#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+
 #define pvPortMalloc(xWantedSize)                  pvPortMalloc_CUST(xWantedSize, 0)
 #define pvPortRealloc(pv, xWantedSize)             pvPortRealloc_CUST(pv, xWantedSize, 0)
 #define pvPortZeroMalloc(xWantedSize)              pvPortZeroMallocCust(xWantedSize)
@@ -173,7 +173,6 @@ uint8_t xPortIsFreeHeapOnAlertCust( void ) PRIVILEGED_FUNCTION;
 #define xPortGetMaximumFreeBlockSize()             xPortGetMaximumFreeBlockSizeCust()
 #define xPortGetFreeHeapPct()                      xPortGetFreeHeapPctCust()
 #define xPortIsFreeHeapOnAlert()                   xPortIsFreeHeapOnAlertCust()
-#endif
 
 #else //#ifdef TYPE_EC718M
 

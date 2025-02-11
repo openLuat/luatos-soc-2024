@@ -437,7 +437,9 @@ FREERTOS_CMSISOS2_TEXT_SECTION osThreadId_t osThreadNew (osThreadFunc_t func, vo
             that indicates which pvPortMalloc should be 
             invoked in EC718M.
         */
-        EC_ASSERT((stack&osThreadDynamicStackFlag) != 1, 0, 0, 0);
+        if (isThrdDymcStckAllc == osThreadDynamicStackAlloc){
+            EC_ASSERT(!(stack&osThreadDynamicStackFlag), stack, isThrdDymcStckAllc, 0);
+        }
 #endif
 #endif
 

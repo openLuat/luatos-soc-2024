@@ -211,6 +211,10 @@ typedef enum
 #define UART_CLOCK_VECTOR    {PCLK_UART0, FCLK_UART0, PCLK_UART1, FCLK_UART1, PCLK_UART2, FCLK_UART2, PCLK_UART3, FCLK_UART3}
 #define I2C_CLOCK_VECTOR     {PCLK_I2C0, FCLK_I2C0, PCLK_I2C1, FCLK_I2C1}
 
+#ifdef TYPE_EC718M
+#define CAN_CLOCK_VECTOR     {PCLK_CAN0, FCLK_CAN0}
+#endif
+
 /** \brief List of all configurable module's functional clock sources */
 typedef enum
 {

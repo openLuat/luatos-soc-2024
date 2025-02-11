@@ -184,6 +184,31 @@ FOTA_PLAT_SCT_ZI uint8_t  gFotaHash[FOTA_SHA256_HASH_LEN];
 #endif
 
 /*----------------------------------------------------------------------------*
+ *                      PRIVATE FUNCTION DECLEARATION                         *
+ *----------------------------------------------------------------------------*/
+
+extern uint32_t VerifySignature(uint8_t is224, uint8_t *hash, uint8_t *ecsda, uint8_t *pubKey);
+
+extern osStatus_t osDelay (uint32_t ticks);
+extern bool apmuIsCpSleeped(void);
+
+/*----------------------------------------------------------------------------*
+ *                      GLOBAL VARIABLES                                      *
+ *----------------------------------------------------------------------------*/
+
+#ifdef TYPE_EC718M
+AP_PLAT_COMMON_BSS static FotaNvmZoneMan_t   gFotaNvmZoneMan;
+
+/* sha256 hash */
+AP_PLAT_COMMON_BSS uint8_t  gFotaHash[FOTA_SHA256_HASH_LEN];
+#else
+static FotaNvmZoneMan_t   gFotaNvmZoneMan;
+
+/* sha256 hash */
+FOTA_PLAT_SCT_ZI uint8_t  gFotaHash[FOTA_SHA256_HASH_LEN];
+#endif
+
+/*----------------------------------------------------------------------------*
  *                      PRIVATE FUNCTIONS                                     *
  *----------------------------------------------------------------------------*/
 static void fotaNvmSetZone(FotaNvmZoneId_e zid, uint32_t handle, uint32_t size, uint32_t ovhd, uint32_t extras)
@@ -470,19 +495,11 @@ static int32_t fotaNvmNfsWrite(uint32_t zid, uint32_t offset, uint8_t *buf, uint
 
     if(zid == FOTA_NVM_ZONE_CP)
     {
-#ifdef TYPE_EC718U
-    	retValue = FLASH_write(buf, currAddr, currLen);
-#else
         retValue = BSP_QSPI_WRITE_CP_FLASH(buf, currAddr, currLen);
-#endif
     }
     else
     {
-#ifdef TYPE_EC718U
-    	retValue = FLASH_write(buf, currAddr, currLen);
-#else
         retValue = BSP_QSPI_WRITE_AP_FLASH(buf, currAddr, currLen);
-#endif
     }
 
     return (retValue == QSPI_OK ? FOTA_EOK : FOTA_EFLWRITE);
@@ -585,7 +602,10 @@ PLAT_BL_CIRAM_FLASH_TEXT static int32_t fotaNvmGetDfuResult(FotaDefDfuResult_t *
 
     if(!result) return FOTA_EARGS;
 
-    if(!gFotaNvmZoneMan.bmZoneId) fotaNvmInit();
+    if(!(gFotaNvmZoneMan.bmZoneId & FOTA_NVM_BM_ZONE_BKUP))
+    {
+        fotaNvmSetZone(FOTA_NVM_ZONE_BKUP, FOTA_NVM_REAL_BACKUP_ADDR, FOTA_NVM_REAL_BACKUP_SIZE, FOTA_NVM_BACKUP_MUX_SIZE, FOTA_NVM_A2AP_XIP_ADDR);
+    }
 
     if(FOTA_EOK != fotaNvmRead(FOTA_NVM_ZONE_BKUP, 0, buf, 4))
     {
@@ -712,18 +732,32 @@ static int32_t fotaNvmCheckDeltaState(FotaDefChkDeltaState_t *chkDelta)
     uint32_t          readLen = 0;
     uint32_t           offset = 0;
     CustFotaParHdr_t     parh;
-
-    memset(gFotaHash, 0, FOTA_SHA256_HASH_LEN);
+#ifdef FEATURE_FOTA_SIGN_EANBLE
+    int32_t           retCode = FOTA_EUNDEF;
+    uint8_t         *signHash = gFotaHash;
+    CustFotaAuthHdr_t    pauh;
+#endif
 
     if(chkDelta == NULL) return FOTA_EARGS;
 
     chkDelta->isValid = 0;
     chkDelta->state   = FOTA_DCS_DELTA_UNFOUND;
 
+#ifdef FEATURE_FOTA_SIGN_EANBLE
+    fotaNvmRead(FOTA_NVM_ZONE_DELTA, offset, (uint8_t*)&pauh, sizeof(CustFotaAuthHdr_t));
+    if(!FOTA_CHECK_AUTH_MAGIC((uint8_t*)pauh.magic))
+    {
+        ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_DELTA_1, P_SIG, "delta: not a auth par! pmagic(%x%x)\n", pauh.magic[0], pauh.magic[1]);
+        return FOTA_EAUTH;
+    }
+
+    offset = sizeof(CustFotaAuthHdr_t);
+#endif
+
     fotaNvmRead(FOTA_NVM_ZONE_DELTA, offset, (uint8_t*)&parh, sizeof(CustFotaParHdr_t));
     if(!FOTA_CHECK_PAR_MAGIC(parh.pmagic))
     {
-        ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_DELTA_0, P_SIG, "delta: not a par! pmagic(%x%x)\n", parh.pmagic[0], parh.pmagic[1]);
+        ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_DELTA_2, P_SIG, "delta: not a par! pmagic(%x%x)\n", parh.pmagic[0], parh.pmagic[1]);
         return FOTA_EPAR;
     }
 
@@ -732,37 +766,67 @@ static int32_t fotaNvmCheckDeltaState(FotaDefChkDeltaState_t *chkDelta)
     if(deltaSize < parh.parLen)
     {
         chkDelta->state = FOTA_DCS_DELTA_PARTIAL;
-        ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_DELTA_1, P_SIG, "delta: partial(%d) par! real size(%d)\n", deltaSize, parh.parLen);
+        ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_DELTA_3, P_SIG, "delta: partial(%d) par! real size(%d)\n", deltaSize, parh.parLen);
         return FOTA_EPARSZ;
     }
 #endif
 
+#ifdef FEATURE_FOTA_SIGN_EANBLE
+    chkDelta->state = FOTA_DCS_DELTA_SIGNFAIL;
+    if(pauh.curveType == 1)
+    {
+        memset(signHash, 0, FOTA_SHA256_HASH_LEN);
+        fotaInitChksum(FOTA_CA_SHA224SUM, NULL);
+        retCode = FOTA_chksumBufData(FOTA_CA_SHA224SUM, parh.parHash, FOTA_SHA256_HASH_LEN, signHash, 1, NULL);
+        fotaDeinitChksum(FOTA_CA_SHA224SUM, NULL);
+        if(FOTA_EOK != retCode)
+        {
+            ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_DELTA_4, P_ERROR, "delta: sha224 hash failed(%d)!\n", retCode);
+            return retCode;
+        }
+    }
+    else
+    {
+        signHash = parh.parHash;
+    }
+
+    if(VerifySignature(pauh.curveType, signHash, pauh.sign, fotaGetDeltaPubKey()))
+    {
+        //ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_DELTA_6, P_ERROR, "delta signature err!\n");
+        return FOTA_EVERIFY;
+    }
+
+    //ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_DELTA_7, P_SIG, "delta signature ok!\n");
+#endif
+
     chkDelta->state = FOTA_DCS_DELTA_INVALID;
 
+    memset(gFotaHash, 0, FOTA_SHA256_HASH_LEN);
     fotaInitChksum(FOTA_CA_SHA256SUM, NULL);
 
     readLen = 2 * FOTA_SHA256_HWALIGN_SIZE;
-    if(FOTA_EOK != FOTA_chksumFlashData(FOTA_NVM_ZONE_DELTA, offset, readLen, &gFotaHash[0], 0, (buf_handle_callback)fotaResetParhHashField))
+    if(FOTA_EOK != FOTA_chksumFlashData(FOTA_CA_SHA256SUM, FOTA_NVM_ZONE_DELTA, offset, readLen, &gFotaHash[0], 0, (buf_handle_callback)fotaResetParhHashField))
     {
-        ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_DELTA_2, P_ERROR, "delta: parh chksum calc fail!\n");
+        ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_DELTA_8, P_ERROR, "delta: parh chksum calc fail!\n");
 
         fotaDeinitChksum(FOTA_CA_SHA256SUM, NULL);
         return FOTA_ECHKSUM;
     }
 
     offset += readLen;
-    readLen = parh.parLen - offset;
-    if(FOTA_EOK != FOTA_chksumFlashData(FOTA_NVM_ZONE_DELTA, offset, readLen, &gFotaHash[0], 1, NULL))
+    readLen = parh.parLen - readLen;
+    if(FOTA_EOK != FOTA_chksumFlashData(FOTA_CA_SHA256SUM, FOTA_NVM_ZONE_DELTA, offset, readLen, &gFotaHash[0], 1, NULL))
     {
-        ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_DELTA_3, P_ERROR, "delta: par-pl chksum calc fail!\n");
+        ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_DELTA_9, P_ERROR, "delta: par-pl chksum calc fail!\n");
 
         fotaDeinitChksum(FOTA_CA_SHA256SUM, NULL);
         return FOTA_ECHKSUM;
     }
+    fotaDeinitChksum(FOTA_CA_SHA256SUM, NULL);
 
     if(0 != memcmp(&parh.parHash[0], &gFotaHash[0], FOTA_SHA256_HASH_LEN))
     {
-        ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_DELTA_4, P_WARNING, "delta: unmatched chksum! curr/wanted as follows:\n");
+        ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_DELTA_10, P_WARNING, "delta: unmatched chksum! curr/wanted as follows:\n");
         FOTA_dumpOctets(gFotaHash, FOTA_SHA256_HASH_LEN);
         FOTA_dumpOctets(parh.parHash, FOTA_SHA256_HASH_LEN);
         return FOTA_EPAR;
@@ -781,13 +845,15 @@ PLAT_BL_CIRAM_FLASH_TEXT static int32_t fotaNvmIsImageIdentical(FotaDefIsImageId
 
     fotaInitChksum(FOTA_CA_SHA256SUM, NULL);
 
-    if(FOTA_EOK != FOTA_chksumFlashData(isIdent->zid, 0, isIdent->size, &gFotaHash[0], 1, NULL))
+    if(FOTA_EOK != FOTA_chksumFlashData(FOTA_CA_SHA256SUM, isIdent->zid, 0, isIdent->size, &gFotaHash[0], 1, NULL))
     {
         ECPLAT_PRINTF(UNILOG_FOTA, FOTA_IS_IDENTICAL_1, P_ERROR, "image(%d): fw chksum calc fail!\n", isIdent->zid);
 
         fotaDeinitChksum(FOTA_CA_SHA256SUM, NULL);
         return FOTA_ECHKSUM;
     }
+
+    fotaDeinitChksum(FOTA_CA_SHA256SUM, NULL);
 
     if(0 != memcmp((void*)isIdent->hash, (void*)&gFotaHash[0], FOTA_SHA256_HASH_LEN))
     {
@@ -810,10 +876,24 @@ static int32_t fotaNvmCheckBaseImage(FotaDefChkBaseImage_t *chkImage)
     CustFotaPkgHdr_t            pkgh;
     FotaDefIsImageIdentical_t  ident;
     FotaDefChkBootState_t       boot;
+#ifdef FEATURE_FOTA_SIGN_EANBLE
+    CustFotaAuthHdr_t           auth;
+#endif
 
     if(chkImage == NULL) return FOTA_EARGS;
 
     chkImage->isMatched = 0;
+
+#ifdef FEATURE_FOTA_SIGN_EANBLE
+    fotaNvmRead(FOTA_NVM_ZONE_DELTA, offset, (uint8_t*)&auth, sizeof(CustFotaAuthHdr_t));
+    if(!FOTA_CHECK_AUTH_MAGIC((uint8_t*)auth.magic))
+    {
+        ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_IMAGE_0, P_SIG, "delta: not a auth par! pmagic(%x%x)\n", auth.magic[0], auth.magic[1]);
+        return FOTA_EAUTH;
+    }
+
+    offset = sizeof(CustFotaAuthHdr_t);
+#endif
 
     fotaNvmRead(FOTA_NVM_ZONE_DELTA, offset, (uint8_t*)&parh, sizeof(CustFotaParHdr_t));
     if(!FOTA_CHECK_PAR_MAGIC(parh.pmagic)) return FOTA_EPAR;
@@ -827,7 +907,7 @@ static int32_t fotaNvmCheckBaseImage(FotaDefChkBaseImage_t *chkImage)
 
     ECPLAT_PRINTF(UNILOG_FOTA, FOTA_CHK_IMAGE_2, P_INFO, "image: *.par pcap(%d)\n", parh.fotaCap);
 
-    offset = sizeof(CustFotaParHdr_t) + (parh.fotaCap ? FOTA_PAR_RETEN_SIZE_16M : FOTA_PAR_RETEN_SIZE_4M);
+    offset += sizeof(CustFotaParHdr_t) + (parh.fotaCap ? FOTA_PAR_RETEN_SIZE_16M : FOTA_PAR_RETEN_SIZE_4M);
     for(; offset + sizeof(CustFotaPkgHdr_t) < parh.parLen; offset += pkgh.pkgLen)
     {
         fotaNvmRead(FOTA_NVM_ZONE_DELTA, offset, (uint8_t*)&pkgh, sizeof(CustFotaPkgHdr_t));
@@ -903,9 +983,7 @@ PLAT_BL_CIRAM_FLASH_TEXT int32_t fotaNvmInit(void)
 #if defined CHIP_EC618 || defined CHIP_EC618_Z0 || defined CHIP_EC718 || defined CHIP_EC716
     fotaNvmSetZone(FOTA_NVM_ZONE_AP, FOTA_NVM_AP_LOAD_ADDR, FOTA_NVM_AP_LOAD_SIZE, 0, FOTA_NVM_A2AP_XIP_ADDR);
     fotaNvmSetZone(FOTA_NVM_ZONE_CP, FOTA_NVM_CP_LOAD_ADDR, FOTA_NVM_CP_LOAD_SIZE, 0, FOTA_NVM_A2CP_XIP_ADDR);
-#ifdef CONFIG_PROJ_APP_SECURITY_BOOT
     fotaNvmSetZone(FOTA_NVM_ZONE_SYSH, FOTA_NVM_SYSH_LOAD_ADDR, FOTA_NVM_SYSH_LOAD_SIZE, 0, FOTA_NVM_A2AP_XIP_ADDR);
-#endif
 #endif
 #ifdef FOTA_CUST_APP_ENABLE
     fotaNvmSetZone(FOTA_NVM_ZONE_APP, FOTA_NVM_APP_LOAD_ADDR, FOTA_NVM_APP_LOAD_SIZE, 0, FOTA_NVM_A2AP_XIP_ADDR);
@@ -1176,14 +1254,16 @@ PLAT_BL_CIRAM_FLASH_TEXT int32_t fotaNvmGetExtras(uint32_t zid)
  ******************************************************************************/
 int32_t fotaNvmVerifyDelta(uint32_t zid, uint8_t *hash, uint32_t pkgSize, uint32_t *deltaState)
 {
+    int32_t                    retCode = FOTA_EOK;
     FotaDefChkDeltaState_t    chkDelta = {0};
     FotaDefChkBaseImage_t      chkBase = {0};
 
     fotaNvmCheckDeltaState(&chkDelta);
     if(!chkDelta.isValid)
     {
+        retCode = FOTA_EPAR;
         ECPLAT_PRINTF(UNILOG_FOTA, VERIFY_DELTA_1, P_ERROR, "validate delta err! errno(%d)", chkDelta.state);
-        return FOTA_EPAR;
+        goto VERIFY_DELTA_END;
     }
 
     ECPLAT_PRINTF(UNILOG_FOTA, VERIFY_DELTA_2, P_SIG, "validate delta ok!");
@@ -1191,9 +1271,10 @@ int32_t fotaNvmVerifyDelta(uint32_t zid, uint8_t *hash, uint32_t pkgSize, uint32
     fotaNvmCheckBaseImage(&chkBase);
     if(!chkBase.isMatched)
     {
-        ECPLAT_PRINTF(UNILOG_FOTA, VERIFY_DELTA_3, P_WARNING, "however, base fw is unmatched!");
+        retCode = FOTA_EFWNIDENT;
         chkDelta.state = FOTA_DCS_DELTA_UNMATCHB;
-        return FOTA_EFWNIDENT;
+        ECPLAT_PRINTF(UNILOG_FOTA, VERIFY_DELTA_3, P_WARNING, "however, base fw is unmatched!");
+        goto VERIFY_DELTA_END;
     }
 
     if(deltaState)
@@ -1201,7 +1282,14 @@ int32_t fotaNvmVerifyDelta(uint32_t zid, uint8_t *hash, uint32_t pkgSize, uint32
         *deltaState = chkDelta.state;
     }
 
-    return FOTA_EOK;
+VERIFY_DELTA_END:
+#ifdef FEATURE_FOTA_FS_ENABLE
+#ifndef FEATURE_BOOTLOADER_PROJECT_ENABLE
+    fotaNvmFsClose(fotaNvmGetHandle(FOTA_NVM_ZONE_DELTA));
+#endif
+#endif
+
+    return retCode;
 }
 
 /******************************************************************************
@@ -1277,11 +1365,7 @@ int32_t fotaNvmDoExtension(uint32_t flags, void *args)
 #ifdef __BL_MODE__
 uint8_t BSP_QSPI_Write(uint8_t* pData, uint32_t WriteAddr, uint32_t Size)
 {
-#ifdef TYPE_EC718U
-	return FLASH_write(pData, WriteAddr, Size);
-#else
     return FLASH_writeBl(pData, WriteAddr, Size);
-#endif
 }
 
 uint8_t  BSP_QSPI_Erase_Sector(uint32_t SectorAddress)
@@ -1294,14 +1378,17 @@ uint32_t BL_OTAInfoAddress(void) {return (BOOTLOADER_FLASH_LOAD_ADDR + BOOTLOADE
 uint32_t BL_DFotaAddress(void) {return (FLASH_FOTA_REGION_START);}
 uint8_t BL_WriteFlash(uint8_t* pData, uint32_t WriteAddr, uint32_t Size)
 {
-#ifdef TYPE_EC718U
-	return FLASH_write(pData, WriteAddr, Size);
-#else
     return FLASH_writeBl(pData, WriteAddr, Size);
-#endif
 }
 #ifdef TYPE_EC718M
 uint32_t BL_MemAddress(void) {return (PSRAM_P2_START_ADDR);}
 #else
 uint32_t BL_MemAddress(void) {return (MSMB_START_ADDR);}
+#endif
+
+#ifdef TYPE_EC718U
+uint8_t  FLASH_writeBl(uint8_t* pData, uint32_t WriteAddr, uint32_t Size)
+{
+	return FLASH_write(pData, WriteAddr, Size);
+}
 #endif

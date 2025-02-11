@@ -992,6 +992,7 @@ uint8_t usbcustom_multidev_cfg_reset(void)
     uint32_t map_flag = 0;
     uint32_t cur_flag = 0;
     uint8_t ret;
+
     if (epout_remap_custom_tbl[0]!=0)
     {
         return USBD_MULTIDEV_LOAD_FAIL;

@@ -593,8 +593,8 @@ uint32_t FOTA_getHlsBaseProfSize(void);
 
 uint32_t FOTA_convToZoneId(uint32_t fwAttr);
 uint32_t FOTA_convToFwAttr(uint32_t zoneId);
-int32_t  FOTA_chksumFlashData(uint32_t zid, uint32_t offset, uint32_t size, uint8_t *hash, uint32_t isLast, buf_handle_callback buf_handle_cb);
-int32_t  FOTA_chksumBufData(uint8_t *buf, uint32_t size, uint8_t *hash, uint32_t isLast, buf_handle_callback buf_handle_cb);
+int32_t  FOTA_chksumFlashData(uint8_t/* FotaChksumAlgo_e */ algo, uint32_t zid, uint32_t offset, uint32_t size, uint8_t *hash, uint32_t isLast, buf_handle_callback buf_handle_cb);
+int32_t  FOTA_chksumBufData(uint8_t/* FotaChksumAlgo_e */ algo, uint8_t *buf, uint32_t size, uint8_t *hash, uint32_t isLast, buf_handle_callback buf_handle_cb);
 void     FOTA_dumpOctets(uint8_t *octs, int32_t len);
 
 #endif

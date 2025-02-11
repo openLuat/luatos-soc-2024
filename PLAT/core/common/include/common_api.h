@@ -163,4 +163,5 @@ int soc_call_function_in_audio(CBDataFun_t CB, uint32_t data, uint32_t param, ui
 #define DBG(X,Y...) soc_printf("%s %d:"X, __FUNCTION__,__LINE__,##Y)
 
 void soc_fast_printf(const char *fmt, ...);
+void soc_dump(uint8_t *data, uint32_t size);
 #endif

@@ -195,7 +195,7 @@
 #define TCP_HIB_SLEEP2_PCB_MAX_NUM 1
 
 //the max sleep2 mode tcp connection number
-#define TCP_SLEEP2_PCB_MAX_NUM 2
+#define TCP_SLEEP2_PCB_MAX_NUM 4
 
 //the max hib/sleep2 mode udp connection number
 #define UDP_HIB_SLEEP2_PCB_MAX_NUM 1

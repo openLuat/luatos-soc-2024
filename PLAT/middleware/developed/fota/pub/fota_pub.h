@@ -53,6 +53,7 @@
 #define FOTA_ECHKSUM     -20  /* checksum calc fail*/
 #define FOTA_EDCONV      -21  /* data convertion fail*/
 #define FOTA_EVERIFY     -22  /* verify signature fail*/
+#define FOTA_EAUTH       -23  /* no auth header*/
 
 
 #define FOTA_TICK_RATE_MS         (1)
@@ -175,7 +176,8 @@ typedef enum
     FOTA_DEF_SET_XOBJ_ZONE,
     FOTA_DEF_CHK_HLS_STATE,
     FOTA_DEF_CHK_BOOT_STATE,
-    FOTA_DEF_CHK_BOOT_HDSEC
+    FOTA_DEF_CHK_BOOT_HDSEC,
+    FOTA_DEF_CHK_SIGN_STATE    /* is delta signed? */
 }FotaDoExtensionFlags_e;
 
 /* FOTA_DEF_US_DELAY */
@@ -263,6 +265,7 @@ typedef enum
     FOTA_DCS_DELTA_UNMATCHB,     /* unmatched base image */
     FOTA_DCS_DELTA_UNMATCHN,     /* unmatched new image */
     FOTA_DCS_DELTA_PATCHFAIL,    /* patching failure */
+    FOTA_DCS_DELTA_SIGNFAIL,
     FOTA_DCS_DELTA_UNDEF
 }FotaDeltaChkState_e;
 
@@ -334,6 +337,30 @@ typedef struct
     uint8_t  hash[FOTA_SHA256_HASH_LEN];
     uint8_t  ecdsa[FOTA_SIGNED_ECDSA_LEN];
 }FotaDefChkBootHdSec_t;
+
+
+/* FOTA_DEF_CHK_SIGN_STATE */
+typedef struct
+{
+    uint8_t  isEnable;   /* 0/1 */
+    uint8_t  rsvd[3];
+}FotaDefChkSignState_t;
+
+#define FOTA_AUTH_MAGIC_0      0xEC
+#define FOTA_AUTH_MAGIC_1      0xAE
+#define FOTA_CHECK_AUTH_MAGIC(magic)    \
+             (((FOTA_AUTH_MAGIC_0 == ((uint8_t*)(magic))[0]) && \
+               (FOTA_AUTH_MAGIC_1 == ((uint8_t*)(magic))[1])) ? 1 : 0)
+
+typedef struct
+{
+    uint8_t   magic[2];  /* 0xEC,0xAE */
+    uint8_t   rsvdb;
+    uint8_t   curveType :2;    /* 0: 256; 1: 224*/
+    uint8_t   rsvdBits  :6;
+    uint32_t  rsvdw[2];
+    uint8_t   sign[FOTA_SIGNED_ECDSA_LEN];
+}CustFotaAuthHdr_t;
 
 /*
  * definition of 'pmagic': ec-delta/diff-fw

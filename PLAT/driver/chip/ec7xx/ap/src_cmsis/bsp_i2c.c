@@ -853,6 +853,8 @@ int32_t I2C_MasterTransmit(uint32_t addr, const uint8_t *data, uint32_t num, boo
         i2c->reg->ICR[5] |= 1;
         i2c->reg->ICR[0] |= 1;
 
+        uint32_t mask = SaveAndSetIRQMask();
+
         // stop_det indicates the end of tx if pending is false and master_on_hold is the case for true condition
         i2c->reg->IMR = I2C_IMR_TX_WL_Msk | \
                         I2C_IMR_TX_ABRT_Msk | \
@@ -862,6 +864,8 @@ int32_t I2C_MasterTransmit(uint32_t addr, const uint8_t *data, uint32_t num, boo
 
         // Trigger state machine to run
         I2C_MasterStateMachine(i2c, &event);
+
+        RestoreIRQMask(mask);
 
         return ARM_DRIVER_OK;
     }
@@ -957,6 +961,8 @@ int32_t I2C_MasterReceive(uint32_t addr, uint8_t *data, uint32_t num, bool xfer_
         i2c->reg->ICR[5] |= 1;
         i2c->reg->ICR[0] |= 1;
 
+        uint32_t mask = SaveAndSetIRQMask();
+
         // stop_det indicates the end of rx if pending is false and master_on_hold is the case for true condition
         i2c->reg->IMR = I2C_IMR_TX_WL_Msk | \
                         I2C_IMR_TX_ABRT_Msk | \
@@ -966,6 +972,8 @@ int32_t I2C_MasterReceive(uint32_t addr, uint8_t *data, uint32_t num, bool xfer_
 
         // Trigger state machine to run
         I2C_MasterStateMachine(i2c, &event);
+
+        RestoreIRQMask(mask);
 
         return ARM_DRIVER_OK;
     }

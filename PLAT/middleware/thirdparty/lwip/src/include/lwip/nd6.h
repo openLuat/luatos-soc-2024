@@ -111,6 +111,7 @@ void nd6_adjust_mld_membership(struct netif *netif, s8_t addr_idx, u8_t new_stat
 #endif /* LWIP_IPV6_MLD */
 
 #if LWIP_TIMER_ON_DEMOND
+void nd6_enable_rs_refresh(UINT32 life_time, struct netif *inp);
 void nd6_router_entry_timer_handler(void *arg);
 void nd6_prefix_entry_timer_handler(void *arg);
 void nd6_address_dad_timer_handler(void *arg);
@@ -130,7 +131,7 @@ void nd6_ra_retrans_timer_handler(void *arg);
 struct nd6_prefix_list_entry *nd6_new_onlink_prefix_info(ip6_addr_t *prefix, struct netif *netif);
 struct nd6_router_list_entry *nd6_get_default_router_info_by_cid(u8_t cid);
 void nd6_add_default_router_info(u8_t cid, ip6_addr_t *src_addr, u32_t valid_time, u8_t flags);
-
+void nd6_remove_default_router_info_by_cid(u8_t cid);
 #endif
 
 #if LWIP_ENABLE_IPV6_RA_SERVER

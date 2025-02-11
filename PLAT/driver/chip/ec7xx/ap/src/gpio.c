@@ -247,8 +247,10 @@ uint16_t GPIO_getInterruptFlags(uint32_t port)
 #if defined(GPIO_IP_VERSION_B1)
     EIGEN_GPIO(port)->INTLATCH = GPIO_INTLATCH_LATCH_Msk;
     while((EIGEN_GPIO(port)->INTLATCH) & GPIO_INTLATCH_LATCH_Msk); // Takes 3 fclk cycles
-#endif
+    return EIGEN_GPIO(port)->INTSTATUS & GPIO_INTSTATUS_INSTAT_Msk;
+#else
     return EIGEN_GPIO(port)->INTSTATUS;
+#endif
 }
 
 void GPIO_clearInterruptFlags(uint32_t port, uint16_t mask)

@@ -71,7 +71,7 @@ do {                                    \
 }while(FALSE)
 
 
-#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1) || (defined TYPE_EC718M)
 //void* OsaAllocMemory_Psram(UINT32 size);
 #define     OsaAllocMemory_Psram(S)                   pvPortAssertMallocCust((S))         /* Assert, if no memory allocated */
 //void* OsaAllocZeroMemory_Psram(UINT32 size);

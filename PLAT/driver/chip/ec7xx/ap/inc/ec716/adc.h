@@ -44,20 +44,18 @@ typedef enum
 typedef enum
 {
     ADC_AIO_RESDIV_RATIO_1          = 0U,  /**< ADC AIO RESDIV select as VIN */
-    ADC_AIO_RESDIV_RATIO_28OVER32   = 1U,  /**< ADC AIO RESDIV select as 28/32 VIN */
-    ADC_AIO_RESDIV_RATIO_24OVER32   = 2U,  /**< ADC AIO RESDIV select as 24/32 VIN */
-    ADC_AIO_RESDIV_RATIO_20OVER32   = 3U,  /**< ADC AIO RESDIV select as 20/32 VIN */
-    ADC_AIO_RESDIV_RATIO_16OVER32   = 4U,  /**< ADC AIO RESDIV select as 16/32 VIN */
-    ADC_AIO_RESDIV_RATIO_12OVER32   = 5U,  /**< ADC AIO RESDIV select as 12/32 VIN */
-    ADC_AIO_RESDIV_RATIO_8OVER32    = 6U,  /**< ADC AIO RESDIV select as 8/32 VIN */
-    ADC_AIO_RESDIV_RATIO_7OVER32    = 7U,  /**< ADC AIO RESDIV select as 7/32 VIN */
-    ADC_AIO_RESDIV_RATIO_6OVER32    = 8U,  /**< ADC AIO RESDIV select as 6/32 VIN */
-    ADC_AIO_RESDIV_RATIO_5OVER32    = 9U,  /**< ADC AIO RESDIV select as 5/32 VIN */
-    ADC_AIO_RESDIV_RATIO_4OVER32    = 10U, /**< ADC AIO RESDIV select as 4/32 VIN */
-    ADC_AIO_RESDIV_RATIO_3OVER32    = 11U, /**< ADC AIO RESDIV select as 3/32 VIN */
-    ADC_AIO_RESDIV_RATIO_2OVER32    = 12U, /**< ADC AIO RESDIV select as 2/32 VIN */
-    ADC_AIO_RESDIV_RATIO_1OVER32    = 13U, /**< ADC AIO RESDIV select as 1/32 VIN */
-    ADC_AIO_RESDIV_BYPASS           = 14U, /**< BYPASS the whole ADC AIO RESDIV network(direct input) */
+    ADC_AIO_RESDIV_RATIO_14OVER16   = 1U,  /**< ADC AIO RESDIV select as 14/16 VIN */
+    ADC_AIO_RESDIV_RATIO_12OVER16   = 2U,  /**< ADC AIO RESDIV select as 12/16 VIN */
+    ADC_AIO_RESDIV_RATIO_10OVER16   = 3U,  /**< ADC AIO RESDIV select as 10/16 VIN */
+    ADC_AIO_RESDIV_RATIO_8OVER16    = 4U,  /**< ADC AIO RESDIV select as 8/16 VIN */
+    ADC_AIO_RESDIV_RATIO_7OVER16    = 5U,  /**< ADC AIO RESDIV select as 7/16 VIN */
+    ADC_AIO_RESDIV_RATIO_6OVER16    = 6U,  /**< ADC AIO RESDIV select as 6/16 VIN */
+    ADC_AIO_RESDIV_RATIO_5OVER16    = 7U,  /**< ADC AIO RESDIV select as 5/16 VIN */
+    ADC_AIO_RESDIV_RATIO_4OVER16    = 8U,  /**< ADC AIO RESDIV select as 4/16 VIN */
+    ADC_AIO_RESDIV_RATIO_3OVER16    = 9U,  /**< ADC AIO RESDIV select as 3/16 VIN */
+    ADC_AIO_RESDIV_RATIO_2OVER16    = 10U, /**< ADC AIO RESDIV select as 2/16 VIN */
+    ADC_AIO_RESDIV_RATIO_1OVER16    = 11U, /**< ADC AIO RESDIV select as 1/16 VIN */
+    ADC_AIO_RESDIV_BYPASS           = 12U, /**< BYPASS the whole ADC AIO RESDIV network(direct input) */
 } AdcAioResDiv_e;
 
 /** \brief List of VBAT resdiv select options */

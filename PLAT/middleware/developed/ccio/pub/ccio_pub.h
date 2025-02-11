@@ -90,6 +90,19 @@ extern "C" {
 
 #define CCIO_CHAN_MSG_TBL_ENTRY(id, idDesc, func)   {id, /*(const int8_t*)(idDesc),*/ (chanMsgHandleFunc)func}
 
+/* ccio internal log API */
+#if 1
+#define CCIO_TRACE(subId, debugLevel, format, ...)      \
+                  ECPLAT_PRINTF(UNILOG_CCIO, subId, debugLevel, format, ##__VA_ARGS__)
+#else
+#define CCIO_TRACE(subId, debugLevel, format, ...)      \
+                  ECPLAT_PRINTF2(UNILOG_CCIO, subId, debugLevel, format, ##__VA_ARGS__)
+#endif
+#define CCIO_TRACE_OPT(subId, debugLevel, format, ...)  \
+                  ECPLAT_PRINTF_OPT(UNILOG_CCIO, subId, debugLevel, format, ##__VA_ARGS__)
+#define CCIO_DUMP(subId, debugLevel, format, dumpLen, dump)  \
+                  ECPLAT_DUMP(UNILOG_CCIO, subId, debugLevel, format, dumpLen, dump)
+
 /*----------------------------------------------------------------------------*
  *                   DATA TYPE DEFINITION                                     *
  *----------------------------------------------------------------------------*/

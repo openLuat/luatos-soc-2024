@@ -217,9 +217,7 @@ SECTIONS
         Image$$LOAD_APOS$$Base = .;
         *(.sect_freertos_eventgroups_text.*)
         *(.sect_freertos_heap6_text.*)
-#if PSRAM_EXIST
         *(.sect_freertos_psram_heap6_text.*)
-#endif
         *(.sect_freertos_list_text.*)
         *(.sect_freertos_queue_text.*)
         *(.sect_freertos_tasks_text.*)
@@ -493,19 +491,16 @@ SECTIONS
         Image$$LOAD_AP_FPSRAM_P1_ZI$$Limit = .;
     } >PSRAM_P1_AREA
     
-    . = ALIGN(4);
-    PROVIDE(end_ap_data = .|PSRAM_PCACHE1_BASE);
-    PROVIDE(start_up_buffer = up_buf_start);
-    .unload_voiceEng_buffer start_up_buffer (NOLOAD):
+    .unload_voiceEng_buffer (.|PSRAM_PCACHE1_BASE) (NOLOAD):
     {
         . = ALIGN(4);
         *(.sect_voiceEngSharebuf.*)
         . = ALIGN(4);
     } >PSRAM_P1_AREA
 
-    .unload_up_buffer (up_buf_start+SIZEOF(.unload_voiceEng_buffer)) (NOLOAD):
+    .unload_up_buffer (.|PSRAM_PCACHE1_BASE) (NOLOAD):
     {
-        . = ALIGN(1024);
+        . = ALIGN(4);
         *(.sect_catShareBuf_data.*)
         *(.sect_ccio_buf.*)
         . = ALIGN(4);
@@ -513,7 +508,7 @@ SECTIONS
 
     . = ALIGN(4);
     PROVIDE(end_ap_data = .|PSRAM_PCACHE1_BASE);
-    PROVIDE(start_up_buffer = up_buf_start);
+    PROVIDE(start_up_buffer = heap_end_addr);
     heap_size = start_up_buffer - end_ap_data;
     asmbFlexSize = CP_AONMEMBACKUP_START_ADDR - asmb_flex_area;
     //ASSERT(heap_size>=min_heap_size_threshold,"ap use too much ram, heap less than min_heap_size_threshold!")

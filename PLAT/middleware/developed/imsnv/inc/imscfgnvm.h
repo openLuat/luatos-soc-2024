@@ -47,6 +47,21 @@
     /* e.g.: "CallWaiting":true                   value type: bool */
     #define ICFG_JSON_CALLWAITING_KEY_BOOL        "CallWaiting"
 
+    /* e.g.: "norBrCid":15                   value type: number */
+    #define ICFG_JSON_NOR_BR_CID_KEY_UINT8  "norBrCid"
+
+    /* e.g.: "emcBrCid":14                   value type: number */
+    #define ICFG_JSON_EMC_BR_CID_KEY_UINT8  "emcBrCid"
+
+    /* e.g.: "norCallIfEmBrNotSupp":true        value type: bool,whether initials normal call when emc br NOT supp */
+    #define ICFG_JSON_INIT_NOR_CALL_KEY_BOOL "norCallIfEmBrNotSupp"
+
+    /* e.g.: "EmgNum":"911/0"               value type: string                    */
+    #define ICFG_JSON_EMGNUM_KEY_STR        "EmgNum"
+
+    /* e.g.: "EmgNumNoSim":"911/0"          value type: string                    */
+    #define ICFG_JSON_EMGNUMNOSIM_KEY_STR   "EmgNumNoSim"
+
     /* e.g.: "SsAutoQry":false                    value type: bool */
     #define ICFG_JSON_SS_AUTO_QRY_KEY_BOOL        "SsAutoQry"
     /* e.g.: "SsColpUtQry":false                  value type: bool */
@@ -78,6 +93,20 @@
  * member under: "Icm" - end
 */
 
+/**
+ * member under: "Icm" - end
+*/
+/**
+ * ICM config struct
+*/
+
+typedef struct _EPAT_ImsIcmEmgCfg_Tag
+{
+    UINT8   category;
+    UINT8   resv[3];
+
+    CHAR    emgNum[IMS_MAX_SINGLE_EMG_NUM_STR_LEN + 1];
+}ImsIcmEmgCfg;
 
 /**
  * ICM config struct
@@ -85,7 +114,7 @@
 
 typedef struct _EPAT_ImsSupSrvCfg_Tag
 {
-    UINT32      simServsAutoQuery :1;      /*simservs auto query switch*/
+    UINT32      simServsAutoQuery :1;      /*simservs node auto query flag*/
     UINT32      colpUtEnable:1;            /*COIP, choice via UT or UE local policy*/
     UINT32      colrUtEnable:1;            /*COIR, choice via UT or UE local policy*/
     UINT32      clipUtEnable:1;            /*ClIP, choice via UT or UE local policy*/
@@ -109,17 +138,27 @@ typedef struct _EPAT_ImsIcmCfg_Tag
     UINT32      imsOLte         : 1;    /*whether IMS over LTE is enable*/
     UINT32      imsOIp          : 1;    /*whether IMS over IP (VoIP), only used for test case, and IPPcscf must configed */
     UINT32      autoReg         : 1;
-    UINT32                      : 5;
     UINT32      ipType          : 3;    /*ImsIpType*/
     UINT32      quickReReg      : 1;
     UINT32      callWaiting     : 1;    /* whether call waiting is enable */
-    UINT32      regRetryTime    : 16;   /*whether need to configure register retry according Operator*/
-    UINT32                      : 3;
+    UINT32      normalRegBrCid  : 4;    /*which cid initial ims default BR used */
+    UINT32      emcRegBrCid     : 4;    /*which cid initial ims default BR used */
+    UINT32      norCallWhenEmcBrNotSupp :1;    /*initial nor call when emc br is not supported*/
+    UINT32                      :15;
 
     UINT8       ipPcscf[IMS_IP_MAX_STR_LEN];    /*whether using IP string? cost to much memory - TBD*/
     CHAR        imsApn[IMS_APN_MAX_STR_LEN];
 
     ImsSupSrvCfg supSrvCfg;
+#ifdef FEATURE_IMS_EMC_ENABLE
+    UINT8       emgNumCount;
+    UINT8       emgNumNoSimCount;
+    UINT8       resv[2];
+
+    ImsIcmEmgCfg emgNumList[IMS_MAX_EMG_NUMS];
+    ImsIcmEmgCfg emgNumListNoSim[IMS_MAX_EMG_NUMS];
+
+#endif
 
 }ImsIcmCfg;     /* already 144 bytes */
 
@@ -503,6 +542,7 @@ typedef enum
 {
     ICFG_REG_AUTH_AKA_GIBA      = 0,
     ICFG_REG_AUTH_GIBA          = 1,
+    ICFG_REG_AUTH_AKA           = 2,
     ICFG_REG_AUTH_TYPE_MAX      = 0xFF
 }ICfgRegAuthType;
 

@@ -318,13 +318,13 @@ int32_t ADC_channelInit(AdcChannel_e channel, AdcUser_t userID, const AdcConfig_
             {
                configValue = 1 << (channel + ADC_CHANNEL_ENABLE_BIT_POSITION + 4);
             }
-            else if(config->channelConfig.aioResDiv < ADC_AIO_RESDIV_RATIO_8OVER32)
+            else if(config->channelConfig.aioResDiv < ADC_AIO_RESDIV_RATIO_8OVER16)
             {
                configValue = (1 << (channel + ADC_CHANNEL_ENABLE_BIT_POSITION)) | ADC_AIOCFG_RDIV_BYP_Msk | EIGEN_VAL2FLD(ADC_AIOCFG_RDIV, config->channelConfig.aioResDiv);
             }
             else
             {
-               configValue = (1 << (channel + ADC_CHANNEL_ENABLE_BIT_POSITION)) | (EIGEN_VAL2FLD(ADC_AIOCFG_RDIV, (config->channelConfig.aioResDiv - ADC_AIO_RESDIV_RATIO_8OVER32)));
+               configValue = (1 << (channel + ADC_CHANNEL_ENABLE_BIT_POSITION)) | (EIGEN_VAL2FLD(ADC_AIOCFG_RDIV, (config->channelConfig.aioResDiv - ADC_AIO_RESDIV_RATIO_8OVER16)));
             }
             break;
         default:

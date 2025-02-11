@@ -105,7 +105,7 @@ typedef enum _EPAT_MidWareCfgParamId_Enum
     MW_CFG_URC_RI_SIGNAL_TYPE_PARAM,   /* TLV, MWNvmCfgUrcRISignalTypeParam  */
 
     MW_CFG_NET_HSOT_INFO_PARAM,     /* TLV, MWNvmCfgNetHostInfoParam */
-    
+
     MW_CFG_DM_CMCC_PARAM2,           /* TLV, MWNvmCfgDmCmccParam2 */
     MW_CFG_NET_CLAT_PARAM,  /* TLV, MWNvmCfgNetXlatParam */
 
@@ -115,7 +115,7 @@ typedef enum _EPAT_MidWareCfgParamId_Enum
     MW_CFG_AT_CHAN_7_CONFIG,        /* TLV,  MWNvmCfgAtChanConfig, AT channel 7 */
 
     MW_CFG_DM_CTCC_PARAM2,           /* TLV, MWNvmCfgDmCtccParam2 */
-    
+
     // new add id for usr set codec volumn
     MW_CFG_USR_CODEC_VOLUMN,        /* TLV,  MWNvmCfgUsrSetCodecVolumn */
     MW_CFG_USR_CODEC_VOLUMN_FLG,    /* TLV,  MWNvmCfgUsrSetCodecVolumn */
@@ -672,7 +672,7 @@ typedef struct MidWareNvmConfig_Tag
     * used for usr set codec speaker volumn
     */
     #ifdef FEATURE_AUDIO_ENABLE//volte
-    MWNvmCfgUsrSetCodecVolumn     usrSetCodecVolumn;
+    MWNvmCfgUsrSetCodecVolumn     usrSetCodecVolumn[4];
     MWNvmCfgVolumnSetFlag         volumnSetFlag;
     #endif
 
@@ -1095,9 +1095,9 @@ UINT16 mwNvmCfgGetUrcSignalTypeParam(void);
 void mwNvmCfgSetAndSaveUrcSignalTypeParam(UINT16 usSignalType);
 
 //void mwCfgDefaultUsrCodecVolumn(MWNvmCfgUsrSetCodecVolumn *pUsrCodecVolumn);
-void mwNvmCfgGetUsrCodecVolumn(MWNvmCfgUsrSetCodecVolumn *pUsrCodecVolumn);
+void mwNvmCfgGetUsrCodecVolumn(UINT8 deviceType, MWNvmCfgUsrSetCodecVolumn *pUsrCodecVolumn);
 void mwNvmCfgGetVolumnSetFlag(MWNvmCfgVolumnSetFlag *pVolumnSetFlag);
-void mwNvmCfgSetAndSaveUsrCodecVolumn(UINT16 usrDigVolumn, UINT16 usrAnaVolumn);
+void mwNvmCfgSetAndSaveUsrCodecVolumn(UINT8 deviceType, UINT16 usrDigVolumn, UINT16 usrAnaVolumn);
 void mwNvmCfgSetAndSaveUsrCodecVolumnFlag(MWNvmCfgVolumnSetFlag* pVolumnSetFlag);
 
 void mwNvmCfgSetAndSaveAutoApnCfg(BOOL enable);

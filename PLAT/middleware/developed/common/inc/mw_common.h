@@ -139,6 +139,7 @@ typedef enum MidWareATChanCfgEnum_Tag
     MID_WARE_AT_CHAN_COLP_RPT_CFG,          //AT+COLP for URC: +COLP
     MID_WARE_AT_CHAN_CLIR_RPT_CFG,          //AT+CLIR
     MID_WARE_AT_CHAN_CLIR_DEF_BE_CFG,
+    MID_WARE_AT_CHAN_ECCSSN_RPT_CFG,        //AT+ECCSSN for URC: +ECCSSN
     MID_WARE_AT_CHAN_CVHU_CTRL_CFG,         //AT+CVHU for whether ATH can hangup voice call
     MID_WARE_AT_CHAN_CIREG_URC_CFG,          //AT+CIREG for IMS +CIREGU
     MID_WARE_AT_CHAN_CCWA_RPT_CFG,          //AT+CCWA for URC: +CCWA
@@ -156,6 +157,7 @@ typedef enum MidWareATChanCfgEnum_Tag
 /*
  * AT CMD channel config
  * paramId: MW_CFG_AT_CHAN_1_CONFIG/...
+ * Note: New AT config must be appended to the end.
 */
 typedef struct _SIG_EPAT_MW_CFG_AT_CHAN_1_CONFIG
 {
@@ -209,8 +211,8 @@ typedef struct _SIG_EPAT_MW_CFG_AT_CHAN_1_CONFIG
     UINT32  noCarrierRptMode : 1;       //NO CARRIER
     UINT32  clirRptMode      : 2;       //+CLIR
     UINT32  clirDefBeh       : 3;       //CLIR for m default behavior value
+    UINT32  eccssnRptMode    : 1;       //+ECCSSN
 
-    UINT32  rsvd0            : 1;      //VALUE is 0
 }MWCfgAtChanConfig;   // 8 bytes
 
 /******************************************************************************

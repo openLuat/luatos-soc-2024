@@ -35,6 +35,7 @@ extern "C" {
  *----------------------------------------------------------------------------*/
 //#define CCIO_ULPDU_FAST_FREE_ENABLE
 #define CCIO_NETDATA_LIST_INPUT_ENABLE
+//#define CCIO_PPPDATA_CACHED_WHEN_ONLINE_CMD
 
 /* the overhead of spi frame */
 #define CCIO_SPI_FRAME_HDR_SIZE  4
@@ -55,6 +56,10 @@ extern "C" {
 
 /* NOTE: must be LE than sizeof(NmAtiGetNetInfoRet) */
 #define CCIO_WAN_CONF_MAXSIZE    128
+
+/* mps for usb1.0 & usb2.0 */
+#define CCIO_USB10_PACKET_MAXSIZE    64
+#define CCIO_USB20_PACKET_MAXSIZE    512
 
 /* max rndis packets in one transfer */
 #define CCIO_RNDIS_MAX_PKT_PER_XFER  10 //RNDIS_MAX_PACK_PER_XFER

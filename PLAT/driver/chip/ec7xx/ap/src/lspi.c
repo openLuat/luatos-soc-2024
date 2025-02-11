@@ -473,7 +473,7 @@ AP_PLAT_COMMON_DATA lspiBusSel_t lspiBusSel =
 // LSPI Setting field End
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-static LSPI_TypeDef* const lspiInstance[LSPI_INSTANCE_NUM] = {LSPI1, LSPI2};
+AP_PLAT_COMMON_DATA static LSPI_TypeDef* const lspiInstance[LSPI_INSTANCE_NUM] = {LSPI1, LSPI2};
 
 AP_PLAT_COMMON_DATA static ClockId_e lspiClk[LSPI_INSTANCE_NUM * 2] =
 {
@@ -805,8 +805,8 @@ static void lspiExitLpStateRestore(void* pdata, slpManLpState state)
 
 
 #if (RTE_LSPI2)
-static lspiRteInfo_t lspi2Info = {0};
-static lspiRes_t lspi2Res = {
+AP_PLAT_COMMON_BSS static lspiRteInfo_t lspi2Info = {0};
+AP_PLAT_COMMON_DATA static lspiRes_t lspi2Res = {
     LSPI2,
     {    
 #if (LCD_INTERFACE_SPI == 1)
@@ -873,7 +873,7 @@ static int32_t lspiSetBusSpeed(uint32_t bps, lspiRes_t *lspi)
 
     if(bps < 102*1024*1024) 
     {
-        lspiDiv = (uint8_t)((102*1024*1024)/bps);
+        lspiDiv = (uint8_t)((6*102*1024*1024)/bps);
     }
     
     if(bps < 1024*1024)
@@ -892,7 +892,7 @@ static int32_t lspiSetBusSpeed(uint32_t bps, lspiRes_t *lspi)
     CLOCK_setClockSrc(CLK_APB_MP,CLK_APB_MP_SEL_102M);
     CLOCK_clockEnable(CLK_HF102M);
     CLOCK_setClockSrc(FCLK_USP2,FCLK_USP2_SEL_612M);
-    CLOCK_setClockDiv(FCLK_USP2, lspiDiv*6);
+    CLOCK_setClockDiv(FCLK_USP2, lspiDiv);
     CLOCK_clockEnable(FCLK_USP2);
 #endif
 

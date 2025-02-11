@@ -544,11 +544,20 @@ PLAT_BL_UNCOMP_FLASH_TEXT void decompressGetAddrInfo(void)
     compBinHeader.numOfSec = *(unsigned int *)(pFlashXIPAddr+4);
     pCompBinSectionInfoAddr = (ecCompBinSectionInfo *)(pFlashXIPAddr+8);
 
+#ifdef TYPE_EC718M
+    #if (defined CORE_IS_AP) && !(defined FEATURE_BOOTLOADER_PROJECT_ENABLE)
+    extern void *psDialGetUpMemAndSize(UINT32 *pUpMemSize);
+    decompBuffStartAddr = (uint32_t)psDialGetUpMemAndSize(NULL);
+    decompBuffEndAddr    = decompBuffStartAddr + AP_DECOMP_MEM_RF_CALIB_MAX_LEN;
+    hashBuffStartAddr    = decompBuffStartAddr + AP_HASH_MEM_OFFSET;
+    #endif
+#else
     #ifdef CORE_IS_AP
     decompBuffStartAddr  = up_buf_start;
     decompBuffEndAddr    = decompBuffStartAddr + AP_DECOMP_MEM_RF_CALIB_MAX_LEN;
     hashBuffStartAddr    = decompBuffStartAddr + AP_HASH_MEM_OFFSET;
     #endif
+#endif
 
     #ifdef CORE_IS_CP
     decompBuffStartAddr = ShareInfoCPGetCpdprsBufAddr();

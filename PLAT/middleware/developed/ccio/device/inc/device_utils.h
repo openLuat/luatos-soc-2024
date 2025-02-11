@@ -53,10 +53,16 @@ extern "C" {
 /*----------------------------------------------------------------------------*
  *                    DATA TYPE DEFINITION                                    *
  *----------------------------------------------------------------------------*/
+typedef enum
+{
+    UARTD_PIS_IDLE = 0,
+    UARTD_PIS_BUSY
+}UartDevPadInstState_e;
 
 typedef struct
 {
-    uint8_t   hasInit;
+    uint8_t   hasInit:4;
+    uint8_t   pwmFlag:4;
     uint8_t   pinId;    /* pin@gpio */
     uint16_t  instId;
     uint32_t  data1;    /* initVal@gpio or dutyCyclePct@pwm */
@@ -67,8 +73,9 @@ typedef struct
 {
     uint8_t  hasUsed;
     uint8_t  altFunc;  /* PadMux_e */
-    uint8_t  rsvd[2];
-    UartDevPadInst_t inst[2];
+    uint8_t  state;    /* UartDevPadInstState_e */
+    uint8_t  rsvd;
+    UartDevPadInst_t inst[2]; /* 0-gpio, 1-pwm */
 }UartDevPadInstSel_t;
 
 typedef struct

@@ -302,6 +302,11 @@ typedef enum IRQn
 #define MP_USP0_BASE_ADDR                        (APB_MP_PERIPH_BASE + 0x040000)    /**< MP USP0 base address */
 #define MP_USP1_BASE_ADDR                        (APB_MP_PERIPH_BASE + 0x041000)    /**< MP USP1 base address */
 #define MP_USP2_BASE_ADDR                        (APB_MP_PERIPH_BASE + 0x042000)    /**< MP USP1 base address */
+
+#ifdef TYPE_EC718M
+#define MP_CAN0_BASE_ADDR                        (APB_MP_PERIPH_BASE + 0x050000)    /**< MP CAN0 base address */
+#endif
+
 #define MP_DMA_BASE_ADDR                         (APB_MP_PERIPH_BASE + 0x1F0000)    /**< MP DMA base address */
 
 #define LPUSARTAON_BASE_ADDR                     (GP_AON_BASE_ADDR + 0x000154)      /**< LPUSART AON base address */
@@ -442,6 +447,265 @@ typedef struct {
 /**
   * @}
   */ /* end of group ADC */
+#ifdef TYPE_EC718M
+/** @addtogroup CAN CAN(Controller Area Network)
+  * @{
+  */
+
+/**
+  * @brief CAN register layout typedef
+  *
+  */
+typedef struct {
+    __IO uint8_t  MODER;                          /**< Mode Register,                         offset: 0x0 */
+    __IO uint8_t  CMDR;                           /**< Command Register,                      offset: 0x1 */
+    __I  uint8_t  STR;                            /**< Status Register,                       offset: 0x2 */
+    __I  uint8_t  ISR;                            /**< Interrupt Status Register,             offset: 0x3 */
+    __IO uint8_t  IER;                            /**< Interrupt Eable Register,              offset: 0x4 */
+         uint8_t  RESERVED_0;
+    __IO uint8_t  BT0R;                           /**< BUS Timing 0 Register,                 offset: 0x6 */
+    __IO uint8_t  BT1R;                           /**< BUS Timing 1 Register,                 offset: 0x7 */
+         uint8_t  RESERVED_1[3];
+    __I  uint8_t  ALCR;                           /**< Arbitration Lost Capture Register,     offset: 0xB */
+    __I  uint8_t  ECCR;                           /**< Error Capture Code Register,           offset: 0xC */
+    __IO uint8_t  EWLR;                           /**< Error Warning Limit Register,          offset: 0xD */
+    __I  uint8_t  RECR;                           /**< RX Error Cnt Register,                 offset: 0xE */
+    __I  uint8_t  TECR;                           /**< TX Error Cnt Register,                 offset: 0xF */
+    union{
+    __IO uint8_t  AC0R;                           /**< Acceptance Code 0 Register,            offset: 0x10 */
+    __I  uint8_t  RXD0;                           /**< RX Data 0 Register,                    offset: 0x10 */
+    __O  uint8_t  TXD0;                           /**< TX Data 0 Register,                    offset: 0x10 */
+    };
+    union{
+    __IO uint8_t  AC1R;                           /**< Acceptance Code 1 Register,            offset: 0x11 */
+    __I  uint8_t  RXD1;                           /**< RX Data 1 Register,                    offset: 0x11 */
+    __O  uint8_t  TXD1;                           /**< TX Data 1 Register,                    offset: 0x11 */
+    };
+    union{
+    __IO uint8_t  AC2R;                           /**< Acceptance Code 2 Register,            offset: 0x12 */
+    __I  uint8_t  RXD2;                           /**< RX Data 2 Register,                    offset: 0x12 */
+    __O  uint8_t  TXD2;                           /**< TX Data 2 Register,                    offset: 0x12 */
+    };
+    union{
+    __IO uint8_t  AC3R;                           /**< Acceptance Code 3 Register,            offset: 0x13 */
+    __I  uint8_t  RXD3;                           /**< RX Data 3 Register,                    offset: 0x13 */
+    __O  uint8_t  TXD3;                           /**< TX Data 3 Register,                    offset: 0x13 */
+    };
+    union{
+    __IO uint8_t  AM0R;                           /**< Acceptance Mask 0 Register,            offset: 0x14 */
+    __I  uint8_t  RXD4;                           /**< RX Data 4 Register,                    offset: 0x14 */
+    __O  uint8_t  TXD4;                           /**< TX Data 4 Register,                    offset: 0x14 */
+    };
+    union{
+    __IO uint8_t  AM1R;                           /**< Acceptance Mask 1 Register,            offset: 0x15 */
+    __I  uint8_t  RXD5;                           /**< RX Data 5 Register,                    offset: 0x15 */
+    __O  uint8_t  TXD5;                           /**< TX Data 5 Register,                    offset: 0x15 */
+    };
+    union{
+    __IO uint8_t  AM2R;                           /**< Acceptance Mask 2 Register,            offset: 0x16 */
+    __I  uint8_t  RXD6;                           /**< RX Data 6 Register,                    offset: 0x16 */
+    __O  uint8_t  TXD6;                           /**< TX Data 6 Register,                    offset: 0x16 */
+    };
+    union{
+    __IO uint8_t  AM3R;                           /**< Acceptance Mask 3 Register,            offset: 0x17 */
+    __I  uint8_t  RXD7;                           /**< RX Data 7 Register,                    offset: 0x17 */
+    __O  uint8_t  TXD7;                           /**< TX Data 7 Register,                    offset: 0x17 */
+    };
+    union{
+    __I  uint8_t  RXD8;                           /**< RX Data 8 Register,                    offset: 0x18 */
+    __O  uint8_t  TXD8;                           /**< TX Data 8 Register,                    offset: 0x18 */
+    };
+    union{
+    __I  uint8_t  RXD9;                           /**< RX Data 9 Register,                    offset: 0x19 */
+    __O  uint8_t  TXD9;                           /**< TX Data 9 Register,                    offset: 0x19 */
+    };
+    union{
+    __I  uint8_t  RXD10;                          /**< RX Data 10 Register,                   offset: 0x1A */
+    __O  uint8_t  TXD10;                          /**< TX Data 10 Register,                   offset: 0x1A */
+    };
+    union{
+    __I  uint8_t  RXD11;                          /**< RX Data 11 Register,                   offset: 0x1B */
+    __O  uint8_t  TXD11;                          /**< TX Data 11 Register,                   offset: 0x1B */
+    };
+    union{
+    __I  uint8_t  RXD12;                          /**< RX Data 12 Register,                   offset: 0x1C */
+    __O  uint8_t  TXD12;                          /**< TX Data 12 Register,                   offset: 0x1C */
+    };
+    __I  uint8_t  RMCR;                           /**< Rx Message Counter Register,           offset: 0x1D */
+    __IO uint8_t  STBR;                           /**< Standby Register,                      offset: 0x1E */
+    __IO uint8_t  EMR;                            /**< Extended Mode Register,                offset: 0x1F */
+} CAN_TypeDef;
+
+/** @name MODER - CAN_MODER register */
+/** @{ */
+#define CAN_MODER_RESET_MODE_Pos                  (0)
+#define CAN_MODER_RESET_MODE_Msk                  (0x1UL << CAN_MODER_RESET_MODE_Pos)
+
+#define CAN_MODER_LISTEN_ONLY_Pos                 (1)
+#define CAN_MODER_LISTEN_ONLY_Msk                 (0x1UL << CAN_MODER_LISTEN_ONLY_Pos)
+
+#define CAN_MODER_SELF_TEST_Pos                   (2)
+#define CAN_MODER_SELF_TEST_Msk                   (0x1UL << CAN_MODER_SELF_TEST_Pos)
+
+#define CAN_MODER_FILTER_MODE_Pos                 (3)
+#define CAN_MODER_FILTER_MODE_Msk                 (0x1UL << CAN_MODER_FILTER_MODE_Pos)
+/** @} */
+
+/** @name CMDR - CAN_CMDR register */
+/** @{ */
+#define CAN_CMDR_TX_REQ_Pos                       (0)
+#define CAN_CMDR_TX_REQ_Msk                       (0x1UL << CAN_CMDR_TX_REQ_Pos)
+
+#define CAN_CMDR_TX_ABT_Pos                       (1)
+#define CAN_CMDR_TX_ABT_Msk                       (0x1UL << CAN_CMDR_TX_ABT_Pos)
+
+#define CAN_CMDR_RELEASE_BUF_Pos                  (2)
+#define CAN_CMDR_RELEASE_BUF_Msk                  (0x1UL << CAN_CMDR_RELEASE_BUF_Pos)
+
+#define CAN_CMDR_CLR_OVERRUN_Pos                  (3)
+#define CAN_CMDR_CLR_OVERRUN_Msk                  (0x1UL << CAN_CMDR_CLR_OVERRUN_Pos)
+
+#define CAN_CMDR_SELF_RX_REQ_Pos                  (4)
+#define CAN_CMDR_SELF_RX_REQ_Msk                  (0x1UL << CAN_CMDR_SELF_RX_REQ_Pos)
+/** @} */
+
+/** @name STR - CAN_STR register */
+/** @{ */
+#define CAN_STR_RX_BUF_Pos                        (0)
+#define CAN_STR_RX_BUF_Msk                        (0x1UL << CAN_STR_RX_BUF_Pos)
+
+#define CAN_STR_OVERRUN_Pos                       (1)
+#define CAN_STR_OVERRUN_Msk                       (0x1UL << CAN_STR_OVERRUN_Pos)
+
+#define CAN_STR_TX_BUF_Pos                        (2)
+#define CAN_STR_TX_BUF_Msk                        (0x1UL << CAN_STR_TX_BUF_Pos)
+
+#define CAN_STR_TX_COMPLETE_Pos                   (3)
+#define CAN_STR_TX_COMPLETE_Msk                   (0x1UL << CAN_STR_TX_COMPLETE_Pos)
+
+#define CAN_STR_RX_Pos                            (4)
+#define CAN_STR_RX_Msk                            (0x1UL << CAN_STR_RX_Pos)
+
+#define CAN_STR_TX_Pos                            (5)
+#define CAN_STR_TX_Msk                            (0x1UL << CAN_STR_TX_Pos)
+
+#define CAN_STR_ERR_Pos                           (6)
+#define CAN_STR_ERR_Msk                           (0x1UL << CAN_STR_ERR_Pos)
+
+#define CAN_STR_BUS_Pos                           (7)
+#define CAN_STR_BUS_Msk                           (0x1UL << CAN_STR_BUS_Pos)
+/** @} */
+
+/** @name ISR - CAN_ISR register */
+/** @{ */
+#define CAN_ISR_RX_REQ_Pos                        (0)
+#define CAN_ISR_RX_REQ_Msk                        (0x1UL << CAN_ISR_RX_REQ_Pos)
+
+#define CAN_ISR_TX_EMPTY_Pos                      (1)
+#define CAN_ISR_TX_EMPTY_Msk                      (0x1UL << CAN_ISR_TX_EMPTY_Pos)
+
+#define CAN_ISR_ERR_WARNING_Pos                   (2)
+#define CAN_ISR_ERR_WARNING_Msk                   (0x1UL << CAN_ISR_ERR_WARNING_Pos)
+
+#define CAN_ISR_OVERRUN_Pos                       (3)
+#define CAN_ISR_OVERRUN_Msk                       (0x1UL << CAN_ISR_OVERRUN_Pos)
+
+#define CAN_ISR_ERR_PASSIVE_Pos                   (5)
+#define CAN_ISR_ERR_PASSIVE_Msk                   (0x1UL << CAN_ISR_ERR_PASSIVE_Pos)
+
+#define CAN_ISR_ARB_LOST_Pos                      (6)
+#define CAN_ISR_ARB_LOST_Msk                      (0x1UL << CAN_ISR_ARB_LOST_Pos)
+
+#define CAN_ISR_BUS_ERR_Pos                       (7)
+#define CAN_ISR_BUS_ERR_Msk                       (0x1UL << CAN_ISR_BUS_ERR_Pos)
+/** @} */
+
+/** @name IER - CAN_IER register */
+/** @{ */
+#define CAN_IER_RX_REQ_Pos                        (0)
+#define CAN_IER_RX_REQ_Msk                        (0x1UL << CAN_IER_RX_REQ_Pos)
+
+#define CAN_IER_TX_EMPTY_Pos                      (1)
+#define CAN_IER_TX_EMPTY_Msk                      (0x1UL << CAN_IER_TX_EMPTY_Pos)
+
+#define CAN_IER_ERR_WARNING_Pos                   (2)
+#define CAN_IER_ERR_WARNING_Msk                   (0x1UL << CAN_IER_ERR_WARNING_Pos)
+
+#define CAN_IER_OVERRUN_Pos                       (3)
+#define CAN_IER_OVERRUN_Msk                       (0x1UL << CAN_IER_OVERRUN_Pos)
+
+#define CAN_IER_ERR_PASSIVE_Pos                   (5)
+#define CAN_IER_ERR_PASSIVE_Msk                   (0x1UL << CAN_IER_ERR_PASSIVE_Pos)
+
+#define CAN_IER_ARB_LOST_Pos                      (6)
+#define CAN_IER_ARB_LOST_Msk                      (0x1UL << CAN_IER_ARB_LOST_Pos)
+
+#define CAN_IER_BUS_ERR_Pos                       (7)
+#define CAN_IER_BUS_ERR_Msk                       (0x1UL << CAN_IER_BUS_ERR_Pos)
+/** @} */
+
+
+/** @name BT0R - CAN_BT0R register */
+/** @{ */
+#define CAN_BT0R_BAUD_PRESC_Pos                   (0)
+#define CAN_BT0R_BAUD_PRESC_Msk                   (0x3FUL << CAN_BT0R_BAUD_PRESC_Pos)
+
+#define CAN_BT0R_SJW_Pos                          (6)
+#define CAN_BT0R_SJW_Msk                          (0x3UL << CAN_BT0R_SJW_Pos)
+/** @} */
+
+/** @name BT1R - CAN_BT1R register */
+/** @{ */
+#define CAN_BT1R_TSEG1_Pos                        (0)
+#define CAN_BT1R_TSEG1_Msk                        (0xFUL << CAN_BT1R_TSEG1_Pos)
+
+#define CAN_BT1R_TSEG2_Pos                        (4)
+#define CAN_BT1R_TSEG2_Msk                        (0x7UL << CAN_BT1R_TSEG2_Pos)
+
+#define CAN_BT1R_SAM_Pos                          (7)
+#define CAN_BT1R_SAM_Msk                          (0x1UL << CAN_BT1R_SAM_Pos)
+/** @} */
+
+
+/** @name ECCR - CAN_ECCR register */
+/** @{ */
+#define CAN_ECCR_SEG_Pos                          (0)
+#define CAN_ECCR_SEG_Msk                          (0x1FUL << CAN_ECCR_SEG_Pos)
+
+#define CAN_ECCR_DIR_Pos                          (5)
+#define CAN_ECCR_DIR_Msk                          (0x1UL << CAN_ECCR_DIR_Pos)
+
+#define CAN_ECCR_CODE_Pos                         (6)
+#define CAN_ECCR_CODE_Msk                         (0x3UL << CAN_ECCR_CODE_Pos)
+/** @} */
+
+
+/** @name EMR - CAN_EMR register */
+/** @{ */
+#define CAN_EMR_CLK_DIV_Pos                       (0)
+#define CAN_EMR_CLK_DIV_Msk                       (0x7UL << CAN_EMR_CLK_DIV_Pos)
+
+#define CAN_EMR_CLK_OFF_Pos                       (3)
+#define CAN_EMR_CLK_OFF_Msk                       (0x1UL << CAN_EMR_CLK_OFF_Pos)
+
+#define CAN_EMR_EXT_MODE_Pos                      (7)
+#define CAN_EMR_EXT_MODE_Msk                      (0x1UL << CAN_EMR_EXT_MODE_Pos)
+/** @} */
+
+/** Peripheral CAN0 base pointer */
+#define CAN0                                      ((CAN_TypeDef *)MP_CAN0_BASE_ADDR)
+
+/** @brief CAN peripheral instance number */
+#define CAN_INSTANCE_NUM                         (1)
+
+/** @brief CAN peripheral instance array */
+#define CAN_INSTANCE_ARRAY                       {CAN0}
+
+#endif
+
+/**
+  * @}
+  */ /* end of group CAN */
 
 
 /** @addtogroup GPIO GPIO
@@ -1384,7 +1648,7 @@ typedef struct {
     __IO uint32_t CSPIPROCLSPI;                   /**< Cspi frame proc lspi                 offset: 0x50 */
     __IO uint32_t CSPIQUARTILE;                   /**< Cspi OTSU quartile                   offset: 0x54 */
     __IO uint32_t CSPIYADJ;                       /**< Cspi y Adjustment                    offset: 0x58 */
-#if ((defined CHIP_EC718) && !(defined TYPE_EC718M)) || (defined CHIP_EC716)
+#if (defined CHIP_EC718) && !(defined TYPE_EC718M)
     __IO uint32_t RSVD2;
     __IO uint32_t RSVD3[18];                      /**< For lspi                                          */
     __IO uint32_t RSVD4[10];                      /**< Reserved                                          */

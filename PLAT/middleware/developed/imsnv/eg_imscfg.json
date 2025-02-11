@@ -21,7 +21,11 @@
 		"SsDigestName":null,
 		"SsDigestPwd":null,
 		"SsXcapLclPort":80,
-		"SsBsfLclPort":8080
+		"SsBsfLclPort":8080,
+		"norBrCid":15,
+ 		"emcBrCid":14,
+	        "EmgNum":"911/0,112/0",
+		"EmgNumNoSim":"911/0,112/0,00/0,08/0,110/0,999/0,118/0,119/0"
 	},
 	"UA":
 	{

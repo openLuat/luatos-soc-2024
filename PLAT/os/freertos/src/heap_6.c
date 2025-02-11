@@ -398,6 +398,25 @@ FREERTOS_HEAP6_TEXT_SECTION void *pvPortMalloc_CUST( size_t xWantedSize, unsigne
 {
 	return pvPortMalloc_EC(xWantedSize, funcPtr);
 }
+FREERTOS_HEAP6_TEXT_SECTION void *pvPortAssertMallocCust( size_t xWantedSize)
+{
+    void *ptr = pvPortMalloc_EC(xWantedSize, (unsigned int)__GET_RETURN_ADDRESS());
+    configASSERT(ptr != 0);
+    return ptr;
+}
+FREERTOS_HEAP6_TEXT_SECTION void *pvPortZeroAssertMallocCust( size_t xWantedSize)
+{
+    void *ptr = pvPortMalloc_EC(xWantedSize, (unsigned int)__GET_RETURN_ADDRESS());
+    configASSERT(ptr != 0);
+    memset(ptr, 0, xWantedSize);
+    return ptr;
+}
+
+FREERTOS_HEAP6_TEXT_SECTION void *pvPortZeroMallocCust( size_t xWantedSize)
+{
+    void *ptr = pvPortMalloc_EC(xWantedSize, (unsigned int)__GET_RETURN_ADDRESS());
+    return ptr ? memset(ptr, 0, xWantedSize), ptr : ptr;
+}
 
 FREERTOS_HEAP6_TEXT_SECTION void  vPortFreeCust( void *pv )
 {
@@ -441,8 +460,6 @@ FREERTOS_HEAP6_TEXT_SECTION void *pvPortZeroAssertMalloc( size_t xWantedSize)
 {
 	return pvPortZeroAssertMallocEc(xWantedSize);
 }
-
-
 
 FREERTOS_HEAP6_TEXT_SECTION void *pvPortMallocEC( size_t xWantedSize, unsigned int funcPtr )
 {

@@ -254,8 +254,6 @@ MMDEBUG_TEXT_SECTION void show_mem_trace(void)
     }
 }
 
-
-
 #ifdef __USER_CODE__
 
 MMDEBUG_TEXT_SECTION void mm_trace_init_cust(void)
@@ -279,7 +277,7 @@ MMDEBUG_TEXT_SECTION void show_mem_trace_cust(void)
 }
 
 #else
-#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1)
+#if defined (PSRAM_FEATURE_ENABLE) && (PSRAM_EXIST==1) || (defined TYPE_EC718M)
 
 #ifdef TYPE_EC718M
 #define CUST_MM_DEBUG_RAMCODE CUST_FPSRAM_P2_RAMCODE

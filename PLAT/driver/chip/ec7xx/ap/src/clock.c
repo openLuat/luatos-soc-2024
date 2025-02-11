@@ -545,11 +545,11 @@ PLAT_PA_RAMCODE void CLOCK_fpFlckCtrl(uint8_t enterExitWfi)
 
     if(enterExitWfi == 0)// before enter wfi
     {
-        #if (defined TYPE_EC718S) || (defined TYPE_EC716S) || (defined TYPE_EC716E)
+        #if (defined TYPE_EC718S) || (defined TYPE_EC716S) || (defined TYPE_EC716E) || (defined TYPE_EC718M)
         CLOCK_clockDisable(CLK_FLASH);
         #elif (defined TYPE_EC718H)
         CLOCK_clockDisable(CLK_FLASH);
-        #elif (defined TYPE_EC718P) || (defined TYPE_EC718U) || (defined TYPE_EC718M)
+        #elif (defined TYPE_EC718P) || (defined TYPE_EC718U)
         //only ctrl psram fclk when psram exist
         if(AonRegIsPsramExist())
             CLOCK_clockDisable(CLK_PSRAM);
@@ -561,11 +561,11 @@ PLAT_PA_RAMCODE void CLOCK_fpFlckCtrl(uint8_t enterExitWfi)
     else//exit wfi
     {
 
-        #if (defined TYPE_EC718S) || (defined TYPE_EC716S) || (defined TYPE_EC716E)
+        #if (defined TYPE_EC718S) || (defined TYPE_EC716S) || (defined TYPE_EC716E) || (defined TYPE_EC718M)
         CLOCK_clockEnable(CLK_FLASH);
         #elif (defined TYPE_EC718H)
         CLOCK_clockEnable(CLK_FLASH);
-        #elif (defined TYPE_EC718P) || (defined TYPE_EC718U) || (defined TYPE_EC718M)
+        #elif (defined TYPE_EC718P) || (defined TYPE_EC718U) 
         CLOCK_clockEnable(CLK_FLASH);
         //only ctrl psram fclk when psram exist
         if(AonRegIsPsramExist())

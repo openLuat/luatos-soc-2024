@@ -54,6 +54,13 @@
 #define ATC_COLR_0_VAL_MIN                       0
 #define ATC_COLR_0_VAL_MAX                       2
 #define ATC_COLR_0_VAL_DEFAULT                   0
+
+
+/* AT+ECCSSN */
+#define ATC_ECCSSN_0_VAL_MIN                     0
+#define ATC_ECCSSN_0_VAL_MAX                     1
+#define ATC_ECCSSN_0_VAL_DEFAULT                 0
+
 /* AT+CCWA */
 #define ATC_CCWA_0_VAL_MIN                       0
 #define ATC_CCWA_0_VAL_MAX                       1
@@ -82,6 +89,16 @@
 #define ATC_VTD_0_VAL_MAX                       10
 #define ATC_VTD_0_VAL_DEFAULT                   1
 
+/* AT+ECEMGNUM */
+#define ATC_ECEMGNUM_0_VAL_MIN                   0
+#define ATC_ECEMGNUM_0_VAL_MAX                   2
+#define ATC_ECEMGNUM_0_VAL_DEFAULT               0
+#define ATC_ECEMGNUM_1_VAL_MIN                   0
+#define ATC_ECEMGNUM_1_VAL_MAX                   1
+#define ATC_ECEMGNUM_1_VAL_DEFAULT               1
+#define ATC_ECEMGNUM_2_VAL_MIN                   0
+#define ATC_ECEMGNUM_2_VAL_MAX                   5
+#define ATC_ECEMGNUM_2_VAL_DEFAULT               0
 
 /*AT+CCFC*/
 #define ATC_CCFC_0_REASON_VAL_MIN               0
@@ -121,11 +138,15 @@ CmsRetId  ccCLIP(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  ccCOLP(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  ccCLIR(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  ccCOLR(const AtCmdInputContext *pAtCmdReq);
+
+CmsRetId  ccECCSSN(const AtCmdInputContext *pAtCmdReq);
+
 CmsRetId  ccCCWA(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  ccCHLD(const AtCmdInputContext *pAtCmdReq);
 
 CmsRetId  ccVTS(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  ccVTD(const AtCmdInputContext *pAtCmdReq);
+CmsRetId  ccECEMGNUM(const AtCmdInputContext *pAtCmdReq);
 
 
 CmsRetId  ssCCFC(const AtCmdInputContext *pAtCmdReq);

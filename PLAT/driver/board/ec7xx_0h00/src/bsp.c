@@ -211,6 +211,13 @@ uint8_t* getDebugDVersion(void)
     return (uint8_t*)DB_VERSION_UNIQ_ID;
 }
 
+extern void excepDump(uint32_t* start, uint32_t len);
+
+void cpCoreRegsDumpCheckHook(void)
+{
+    excepDump((uint32_t*)0x4f000000, 40);
+}
+
 __attribute__ ((noinline)) __attribute__((weak)) uint32_t getUnilogUartPort(void)
 {
     return UART_0_FOR_UNILOG;      // Swith to UART_x_FOR_UNILOG if need to use other uart for unilog

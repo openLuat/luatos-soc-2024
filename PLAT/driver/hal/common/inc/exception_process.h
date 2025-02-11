@@ -28,7 +28,6 @@
 #include "sys_record.h"
 #include "stdbool.h"
 #endif
-#if (PSRAM_EXIST==1)
 #if defined TYPE_EC718S
 #include "mem_map_718s.h"
 #elif defined TYPE_EC718H
@@ -49,9 +48,10 @@
 #include "mem_map_718sm.h"
 #elif defined TYPE_EC718HM
 #include "mem_map_718hm.h"
+#elif defined CHIP_EC618
+#include "mem_map.h"
 #else
 #error "Need define chip type"
-#endif
 #endif
 /*----------------------------------------------------------------------------*
  *                    MACROS                                                  *
@@ -132,14 +132,14 @@
 #define EC_EXCEPTION_APCP_RAM_END             (MSMB_END_ADDR)
 #define EC_EXCEPTION_APCP_RAM_LEN             (EC_EXCEPTION_APCP_RAM_END - EC_EXCEPTION_APCP_RAM_BASE)
 
-#if (PSRAM_EXIST==1)
-#define EC_EXCEPTION_PSRAM_RAM_BASE            (PSRAM_START_ADDR)
-#define EC_EXCEPTION_PSRAM_RAM_END             (PSRAM_END_ADDR)
+
 #ifdef TYPE_EC718M
 /* 
     The dump info of the following macros aren't correct, Those macros just to make the 
     complie success, The dump info will get the right value when chip asserts or hardfault.
 */
+#define EC_EXCEPTION_PSRAM_RAM_BASE            (PSRAM_START_ADDR)
+#define EC_EXCEPTION_PSRAM_RAM_END             (PSRAM_END_ADDR)
 #define EC_EXCEPTION_PSRAM0_RAM_BASE            (PSRAM_P0_START_ADDR | PSRAM_PCACHE0_BASE)
 #define EC_EXCEPTION_PSRAM0_RAM_LEN             (PSRAM_AREA_P1_OFFSET - PSRAM_AREA_P0_OFFSET)
 #define EC_EXCEPTION_PSRAM1_RAM_BASE            (PSRAM_P1_START_ADDR | PSRAM_PCACHE1_BASE)
@@ -147,6 +147,9 @@
 #define EC_EXCEPTION_PSRAM2_RAM_BASE            (PSRAM_P2_START_ADDR | PSRAM_PCACHE2_BASE)
 #define EC_EXCEPTION_PSRAM2_RAM_LEN             (PSRAM_P2_LENGTH)
 #else
+#if (PSRAM_EXIST==1)
+#define EC_EXCEPTION_PSRAM_RAM_BASE            (PSRAM_START_ADDR)
+#define EC_EXCEPTION_PSRAM_RAM_END             (PSRAM_END_ADDR)
 #define EC_EXCEPTION_PSRAM_RAM_LEN             (EC_EXCEPTION_PSRAM_RAM_END - EC_EXCEPTION_PSRAM_RAM_BASE)
 #endif
 #endif
@@ -706,6 +709,7 @@ void ecRecordNodeInit(void);
 
 void excepCheckFaultType(ec_m3_exception_regs *excep_regs);
 void excepShowStackFrame(ec_m3_exception_regs *excep_regs);
+void excepDump(uint32_t* start, uint32_t len);
 
 
 #if (defined TYPE_EC718S) || (defined TYPE_EC716S)

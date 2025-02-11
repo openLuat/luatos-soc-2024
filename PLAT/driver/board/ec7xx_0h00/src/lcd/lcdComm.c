@@ -689,6 +689,7 @@ uint8_t lcdPwmBkLevel(uint8_t level)
     if (level == 0)
     {
         TIMER_stop(LCD_PWM_INSTANCE);
+        isPwmOn = false;
         goto END;
     }
 
