@@ -6,9 +6,16 @@
 /**
  * 特别说明，为了在中断里使用heap分配，所以使用bget，而不是freertos自带的heap
  */
+#ifdef CHIP_EC718
+#define SPI_ID	SPI_ID1
+#define CS_PIN HAL_WAKEUP_0
+#define NEW_DATA_PIN HAL_GPIO_25	   //新数据提示
+#endif
+#ifdef CHIP_EC716
 #define SPI_ID	SPI_ID0
 #define CS_PIN HAL_WAKEUP_5
 #define NEW_DATA_PIN	HAL_GPIO_14		//新数据提示
+#endif
 extern void netif_dump_ul_packet(u8_t *data, u16_t len, u8_t type);
 extern void netif_dump_dl_packet(u8_t *data, u16_t len, u8_t type);
 static uint64_t netif_mem[128 * 128];

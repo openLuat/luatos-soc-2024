@@ -1,8 +1,15 @@
 #include "csdk.h"
 #include "spinet.h"
+#ifdef CHIP_EC718
 #define SPI_ID	SPI_ID1
 #define CS_PIN HAL_GPIO_25
-#define NEW_DATA_PIN	HAL_WAKEUP_0
+#define NEW_DATA_PIN	HAL_WAKEUP_0   //新数据提示
+#endif
+#ifdef CHIP_EC716
+#define SPI_ID	SPI_ID0
+#define CS_PIN  HAL_GPIO_14
+#define NEW_DATA_PIN HAL_WAKEUP_5			//新数据提示
+#endif
 #define TIMEOUT 20
 extern void netif_dump_ul_packet(u8_t *data, u16_t len, u8_t type);
 extern void netif_dump_dl_packet(u8_t *data, u16_t len, u8_t type);
@@ -135,7 +142,7 @@ __USER_FUNC_IN_RAM__ void spi_netif_input(void *param)
 	uint8_t end = 0;
 	uint8_t *pp;
 	struct pbuf p = {0};
-	p.bIgnorluat_heap_free = 1;
+	p.bIgnorFree = 1;
 	p.type = PBUF_ROM;
 
 	uint32_t cr;
