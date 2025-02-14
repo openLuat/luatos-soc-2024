@@ -275,6 +275,7 @@ static const luaL_Reg loadedlibs[] = {
 #endif
 #ifdef LUAT_USE_NETDRV
   {"netdrv", luaopen_netdrv},
+  {"iperf", luaopen_iperf},
 #endif
   {NULL, NULL}
 };
