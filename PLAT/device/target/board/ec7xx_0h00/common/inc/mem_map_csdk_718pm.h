@@ -378,7 +378,7 @@ flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 #define XP_DBGRESERVED_BASE_ADDR        (0x08000f00)
 #define IPC_SHAREDMEM_START_ADDR        (0x08001000)
 
-
+#if 0
 #if FEATURE_IMS_ENABLE
 #ifdef FEATURE_IMS_USE_PSRAM_ENABLE
 #define min_heap_size_threshold 0x57800//ims heap(250KB) will also use heap
@@ -386,13 +386,13 @@ flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 #define min_heap_size_threshold 0x5F000//ims heap(280KB) will also use heap
 #endif
 #if FEATURE_SUPPORT_APP_PCM_MEM_POOL//hal app mem pool 640*3+8align to 2K
-#define heap_end_addr 0x0a086000  // should be 4 byte align
+#define heap_end_addr PSRAM_APMEM_END_ADDR  // should be 4 byte align
 #else
 
 #if defined(FEATURE_IMS_CC_ENABLE) || defined(FEATURE_AUDIO_ENABLE)
-#define heap_end_addr 0xa086000  // should be 4 byte align
+#define heap_end_addr PSRAM_APMEM_END_ADDR  // should be 4 byte align
 #else
-#define heap_end_addr 0xa066000  // should be 4 byte align
+#define heap_end_addr PSRAM_APMEM_END_ADDR  // should be 4 byte align
 #endif
 
 #endif
@@ -401,15 +401,18 @@ flash xip address(from both ap/cp view): 0x00800000---0x00c00000
 #define min_heap_size_threshold 0x19000
 #if defined (FEATURE_AMR_CP_ENABLE) && defined (FEATURE_VEM_CP_ENABLE)
 #if FEATURE_SUPPORT_APP_PCM_MEM_POOL//hal app mem pool 640*3+8align to 2K
-#define heap_end_addr 0x0a086000  // should be 4 byte align
+#define heap_end_addr PSRAM_APMEM_END_ADDR  // should be 4 byte align
 #else
-#define heap_end_addr 0x0a086000  // should be 4 byte align
+#define heap_end_addr PSRAM_APMEM_END_ADDR  // should be 4 byte align
 #endif
 #else
-#define heap_end_addr 0x0a066000  // should be 4 byte align
+#define heap_end_addr PSRAM_APMEM_END_ADDR  // should be 4 byte align
+#endif
 #endif
 #endif
 
+#define min_heap_size_threshold 0x1
+#define heap_end_addr PSRAM_APMEM_END_ADDR
 #define UP_BUF_MAX_SIZE 0x3CA00//only upbuf size, need another 512B for other buf also in this region
 
 

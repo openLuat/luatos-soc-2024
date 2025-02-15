@@ -603,7 +603,11 @@
  */
 #if !defined MEMP_NUM_PBUF || defined __DOXYGEN__
 #ifdef __USER_CODE__
+#ifdef TYPE_EC718M
+#define MEMP_NUM_PBUF         			64
+#else
 #define MEMP_NUM_PBUF         			48
+#endif
 #else
 #define MEMP_NUM_PBUF                   12
 #endif
@@ -636,7 +640,11 @@
  */
 #if !defined MEMP_NUM_TCP_PCB || defined __DOXYGEN__
 #ifdef __USER_CODE__
+#ifdef TYPE_EC718M
+#define MEMP_NUM_TCP_PCB         		16
+#else
 #define MEMP_NUM_TCP_PCB                10
+#endif
 #else
 #define MEMP_NUM_TCP_PCB                15
 #endif
@@ -660,7 +668,11 @@
  */
 #if !defined MEMP_NUM_TCP_SEG || defined __DOXYGEN__
 #ifdef __USER_CODE__
+#ifdef TYPE_EC718M
+#define MEMP_NUM_TCP_SEG         		60
+#else
 #define MEMP_NUM_TCP_SEG                40
+#endif
 #else
 #define MEMP_NUM_TCP_SEG                13
 #endif
@@ -777,7 +789,11 @@
  */
 #if !defined PBUF_POOL_SIZE || defined __DOXYGEN__
 #ifdef __USER_CODE__
+#ifdef TYPE_EC718M
+#define PBUF_POOL_SIZE                  60
+#else
 #define PBUF_POOL_SIZE                  40
+#endif
 #else
 #define PBUF_POOL_SIZE                  8
 #endif
