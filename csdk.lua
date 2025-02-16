@@ -98,11 +98,11 @@ function description_common()
         elseif chip_target == "ec718u" then
             add_defines("CHIP_EC718","TYPE_EC718U")
         elseif chip_target == "ec718um" then
-            add_defines("CHIP_EC718","TYPE_EC718M","TYPE_EC718UM")
+            add_defines("CHIP_EC718","TYPE_EC718M","TYPE_EC718UM","LWIP_NUM_SOCKETS=16")
         elseif chip_target == "ec718hm" then
-            add_defines("CHIP_EC718","TYPE_EC718M","TYPE_EC718HM")
+            add_defines("CHIP_EC718","TYPE_EC718M","TYPE_EC718HM","LWIP_NUM_SOCKETS=16")
         elseif chip_target == "ec718pm" then
-            add_defines("CHIP_EC718","TYPE_EC718M","TYPE_EC718PM")
+            add_defines("CHIP_EC718","TYPE_EC718M","TYPE_EC718PM","LWIP_NUM_SOCKETS=16")
         end
 
         if (chip_target == "ec718p" or chip_target == "ec718e") and has_config("lspd_mode") or 
