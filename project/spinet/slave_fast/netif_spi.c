@@ -74,7 +74,7 @@ static int slave_spi_cs(int pin, void *pParam)
 					memset(g_s_spi_netif.spi_tx_buf, 0, PACKET_MAX_LEN);
 					s_head.type = SPINET_TYPE_S_NOP;
 					s_head.more = 0;
-					tx_len = pack_spinet_packet(&s_head, NULL, 0, g_s_spi_netif.spi_tx_buf + 4);//从机SPI第一个发送数据总是0，所以跳过4个字节
+					tx_len = pack_spinet_packet(&s_head, NULL, 0, g_s_spi_netif.spi_tx_buf);
 					luat_gpio_set(NEW_DATA_PIN, 0);
 				}
 				else if (!g_s_spi_netif.new_state_flag)
@@ -84,7 +84,7 @@ static int slave_spi_cs(int pin, void *pParam)
 					s_head.type = data->type;
 					s_head.cmd = data->cmd;
 					s_head.more = 1;
-					tx_len = pack_spinet_packet(&s_head, data->data, data->len, g_s_spi_netif.spi_tx_buf + 4);
+					tx_len = pack_spinet_packet(&s_head, data->data, data->len, g_s_spi_netif.spi_tx_buf);
 					brel(data);
 				}
 				else
@@ -92,7 +92,7 @@ static int slave_spi_cs(int pin, void *pParam)
 					g_s_spi_netif.new_state_flag = 0;
 					s_head.type = SPINET_TYPE_S_STATE;
 					s_head.more = 1;
-					tx_len = pack_spinet_packet(&s_head, &g_s_spi_netif.state, sizeof(g_s_spi_netif.state), g_s_spi_netif.spi_tx_buf + 4);
+					tx_len = pack_spinet_packet(&s_head, &g_s_spi_netif.state, sizeof(g_s_spi_netif.state), g_s_spi_netif.spi_tx_buf);
 				}
 				SPI_SlaveStartNextFast(SPI_ID, g_s_spi_netif.spi_tx_buf, g_s_spi_netif.spi_rx_buf, PACKET_MAX_LEN);
 				switch(head.type)
@@ -133,7 +133,7 @@ static int slave_spi_cs(int pin, void *pParam)
 			spinet_head_t s_head;
 			s_head.type = SPINET_TYPE_S_NOP;
 			s_head.more = 0;
-			tx_len = pack_spinet_packet(&s_head, NULL, 0, g_s_spi_netif.spi_tx_buf + 4);
+			tx_len = pack_spinet_packet(&s_head, NULL, 0, g_s_spi_netif.spi_tx_buf);
 			SPI_SlaveTransferStart(SPI_ID, g_s_spi_netif.spi_tx_buf, g_s_spi_netif.spi_rx_buf, PACKET_MAX_LEN);
 		}
 		return luat_rtos_event_send(pParam, SPI_CS_EVENT, 0, 0, 0, 0);
@@ -163,7 +163,11 @@ static void hw_init(void)
         .bit_dict = 0,
 		.master = 0,
         .mode = 1,             // mode设置为1，全双工
+#ifdef TYPE_EC718M
+		.bandrate = 104000000,
+#else
 		.bandrate = 52000000,
+#endif
         .cs = 0xff
     };
     luat_spi_setup(&spi_conf);

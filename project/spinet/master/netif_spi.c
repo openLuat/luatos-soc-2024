@@ -46,6 +46,7 @@ static void hw_init(void)
 		.master = 1,
         .mode = 1,             // mode设置为1，全双工
 		.bandrate = 18600000,
+//		.bandrate = 25600000,  // 从机是780EPM的话，可以提升到25.6M
         .cs = 0xff
     };
     luat_spi_setup(&spi_conf);
