@@ -912,6 +912,11 @@ static void spinet_netif_slave_init(void)
     luat_rtos_mutex_create(&tx_queue_mutex);
     luat_rtos_mutex_create(&rx_queue_mutex);
 
+    // TODO 按ch390的逻辑,新增netif设备
+    // TODO 调用 luat_napt_native_init
+    // TODO 按情况开启NAPT功能
+    // TODO 修改收发IP包的逻辑, 走netdrv的API
+
     luat_mobile_event_register_handler(mobile_event_cb);
     rx_decode_timer = luat_create_rtos_timer(rx_decode_timer_cb, NULL, NULL);
     tx_notify_timer = luat_create_rtos_timer(tx_notify_timer_cb, NULL, NULL);
