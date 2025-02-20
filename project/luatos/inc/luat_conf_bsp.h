@@ -32,7 +32,7 @@
 #include "luat_conf_bsp_air780ep.h"
 #elif (defined(LUAT_MODEL_AIR700ECQ) || defined(LUAT_MODEL_AIR700EAQ)) || defined(LUAT_MODEL_AIR700EMQ)
 #include "luat_conf_bsp_air700exq.h"
-#elif defined(LUAT_MODEL_AIR780EPM)
+#elif defined(LUAT_MODEL_AIR780EPM) || defined (TYPE_EC718PM)
 #include "luat_conf_bsp_air780epm.h"
 #elif (defined(LUAT_MODEL_AIR780EUN) || defined(LUAT_MODEL_AIR780EUS))
 #include "luat_conf_bsp_air780eun.h"

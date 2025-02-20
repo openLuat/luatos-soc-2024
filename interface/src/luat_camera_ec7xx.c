@@ -402,6 +402,7 @@ static void luat_camera_task(void *param)
 	{
 		if (luat_camera_app.is_work)
 		{
+			event.id = 0;
 			result = luat_rtos_event_recv(luat_camera_app.task_handle, 0, &event, NULL, 1000);
 			if (result && luat_camera_app.is_work)
 			{
@@ -410,6 +411,10 @@ static void luat_camera_task(void *param)
 		        msg.arg1 = 0;
 		        msg.arg2 = 0;
 		        luat_msgbus_put(&msg, 1);
+				continue;
+			}
+			else if (!luat_camera_app.is_work)
+			{
 				continue;
 			}
 		}
