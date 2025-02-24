@@ -41,9 +41,14 @@ static int luat_can_cb(void *data, void *param)
 	return 0;
 }
 
-int luat_can_base_init(uint8_t can_id, uint32_t rx_msg_cache_max, luat_can_callback_t callback)
+void luat_can_dummy_callback(int can_id, LUAT_CAN_CB_E cb_type, void *cb_param)
 {
-	if (!callback) return -1;
+
+}
+
+int luat_can_base_init(uint8_t can_id, uint32_t rx_msg_cache_max)
+{
+
 	if (!rx_msg_cache_max) rx_msg_cache_max = 128;
 	if(luat_mcu_iomux_is_default(LUAT_MCU_PERIPHERAL_CAN, 0))
 	{
@@ -51,10 +56,15 @@ int luat_can_base_init(uint8_t can_id, uint32_t rx_msg_cache_max, luat_can_callb
 		GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(26, 0), 7, 1, 1);
 		GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(28, 0), 6, 1, 1);
 	}
-	prv_can.callback = callback;
+	if (!prv_can.callback) prv_can.callback = luat_can_dummy_callback;
 	return CAN_BaseInit(rx_msg_cache_max, luat_can_cb);
 }
 
+int luat_can_set_callback(uint8_t can_id, luat_can_callback_t callback)
+{
+	prv_can.callback = callback?callback:luat_can_dummy_callback;
+	return 0;
+}
 
 int luat_can_set_work_mode(uint8_t can_id, LUAT_CAN_WORK_MODE_E mode)
 {
@@ -143,7 +153,7 @@ int luat_can_rx_message_from_cache(uint8_t can_id, luat_can_message_t *message)
 }
 
 
-int luat_can_recovery_bus_off(uint8_t can_id)
+int luat_can_reset(uint8_t can_id)
 {
 	int ret = CAN_EnterResetMode(1000);
 	if (ret) return ret;
@@ -158,7 +168,7 @@ int luat_can_close(uint8_t can_id)
 	return 0;
 }
 
-int luat_cat_get_state(uint8_t can_id)
+int luat_can_get_state(uint8_t can_id)
 {
 	uint8_t state = CAN_GetState();
 	if (state < CAN_STATE_NODE_ACTIVE_ERROR || state > CAN_STATE_SLEEP)
