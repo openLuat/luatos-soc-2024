@@ -16,6 +16,7 @@
 #define LUAT_USE_ZBUFF  1
 #define LUAT_USE_PACK  1
 #define LUAT_USE_MINIZ 1
+#define LUAT_USE_LIBGNSS 1
 
 #define LUAT_USE_HMETA 1
 #define LUAT_USE_FSKV 1
