@@ -20,6 +20,7 @@
 #include "luat_rtc.h"
 #include "luat_uart.h"
 #include "luat_spi.h"
+#include "luat_can.h"
 
 #include "luat_mobile.h"
 #include "luat_network_adapter.h"
