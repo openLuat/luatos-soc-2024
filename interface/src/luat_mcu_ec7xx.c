@@ -89,23 +89,39 @@ void luat_os_reboot(int code){
     ResetECSystemReset();
 }
 
+#ifdef TYPE_EC718M
+static uint8_t luat_mcu_iomux_ctrl_by_user[LUAT_MCU_PERIPHERAL_CAN + 1];
+#else
 static uint8_t luat_mcu_iomux_ctrl_by_user[LUAT_MCU_PERIPHERAL_PWM + 1];
+#endif
 
 uint8_t luat_mcu_iomux_is_default(uint8_t type, uint8_t sn)
 {
+#ifdef TYPE_EC718M
+	if (type > LUAT_MCU_PERIPHERAL_CAN) return 1;
+#else
 	if (type > LUAT_MCU_PERIPHERAL_PWM) return 1;
+#endif
 	if (sn > 7) return 1;
 	return (luat_mcu_iomux_ctrl_by_user[type] & (1 << sn))?0:1;
 }
 
 void luat_mcu_iomux_ctrl(uint8_t type, uint8_t sn, int pad_index, uint8_t alt, uint8_t is_input)
 {
+#ifdef TYPE_EC718M
+	if (type > LUAT_MCU_PERIPHERAL_CAN) return;
+#else
 	if (type > LUAT_MCU_PERIPHERAL_PWM) return;
+#endif
 	if (sn > 7) return;
 	if (pad_index != -1)
 	{
 		luat_mcu_iomux_ctrl_by_user[type] |= (1 << sn);
+#ifdef TYPE_EC718M
+		if ((LUAT_MCU_PERIPHERAL_UART == type) || (LUAT_MCU_PERIPHERAL_CAN == type))
+#else
 		if (LUAT_MCU_PERIPHERAL_UART == type)
+#endif
 		{
 			GPIO_IomuxEC7XX(pad_index, alt, 0, 0);
 			if (is_input)

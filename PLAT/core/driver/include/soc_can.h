@@ -19,8 +19,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef __CORE_UART_H__
-#define __CORE_UART_H__
+#ifndef __CORE_CAN_H__
+#define __CORE_CAN_H__
 #include "bsp_common.h"
 enum
 {
@@ -94,8 +94,8 @@ typedef struct
 
 int CAN_BaseInit(uint32_t RxMsgCacheNums, CBFuncEx_t CB);
 int CAN_SetBitRate(uint32_t BitRate, uint8_t PTS, uint8_t PBS1, uint8_t PBS2, uint8_t SJW);
-void CAN_SetFilter(uint8_t IsDual, uint8_t ACR[4], uint8_t AMR[4]);
-void CAN_SetWorkMode(uint8_t mode);
+int CAN_SetFilter(uint8_t IsDual, uint8_t ACR[4], uint8_t AMR[4]);
+int CAN_SetWorkMode(uint8_t mode);
 uint8_t CAN_GetState(void);
 void CAN_DeInit(void);
 
