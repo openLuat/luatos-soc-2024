@@ -333,7 +333,11 @@ __USER_FUNC_IN_RAM__ int luat_spi_slave_fast_transfer_in_irq(int spi_id, const c
 
 __USER_FUNC_IN_RAM__ int luat_spi_slave_transfer_fast_pause_and_read_data_in_irq(int spi_id)
 {
+#ifdef TYPE_EC718M
+	return SPI_SlaveTransferStopAndGetRxLen(spi_id);
+#else
 	return SPI_SlaveGetRxLenFast(spi_id);
+#endif
 }
 
 int luat_spi_slave_transfer_stop(int spi_id)
