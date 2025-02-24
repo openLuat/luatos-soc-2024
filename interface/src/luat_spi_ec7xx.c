@@ -324,6 +324,18 @@ __USER_FUNC_IN_RAM__ int luat_spi_slave_transfer_pause_in_irq(int spi_id)
 	SPI_SlaveFastStop(spi_id);
 	return 0;
 }
+
+__USER_FUNC_IN_RAM__ int luat_spi_slave_fast_transfer_in_irq(int spi_id, const char* send_buf,  char* recv_buf, size_t total_length)
+{
+	SPI_SlaveStartNextFast(spi_id, send_buf, recv_buf, total_length);
+	return 0;
+}
+
+__USER_FUNC_IN_RAM__ int luat_spi_slave_transfer_fast_pause_and_read_data_in_irq(int spi_id)
+{
+	return SPI_SlaveGetRxLenFast(spi_id);
+}
+
 int luat_spi_slave_transfer_stop(int spi_id)
 {
     if (!spi_exist(spi_id)) {
