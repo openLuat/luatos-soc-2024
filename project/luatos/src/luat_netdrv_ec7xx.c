@@ -5,7 +5,6 @@
 
 #include <stdlib.h>
 #include <string.h>//add for memset
-#include "bget.h"
 #include "luat_base.h"
 #include "luat_malloc.h"
 #include "luat_netdrv.h"
