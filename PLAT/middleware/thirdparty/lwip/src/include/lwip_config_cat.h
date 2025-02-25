@@ -2123,7 +2123,7 @@
  * to sys_mbox_new() when the recvmbox is created.
  */
 #if !defined DEFAULT_TCP_RECVMBOX_SIZE || defined __DOXYGEN__
-#define DEFAULT_TCP_RECVMBOX_SIZE       16
+#define DEFAULT_TCP_RECVMBOX_SIZE       36
 #endif
 
 /**

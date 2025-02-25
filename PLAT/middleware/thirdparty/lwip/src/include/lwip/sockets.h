@@ -302,6 +302,10 @@ struct linger {
 #define TCP_KEEPIDLE   0x03    /* set pcb->keep_idle  - Same as TCP_KEEPALIVE, but use seconds for get/setsockopt */
 #define TCP_KEEPINTVL  0x04    /* set pcb->keep_intvl - Use seconds for get/setsockopt */
 #define TCP_KEEPCNT    0x05    /* set pcb->keep_cnt   - Use number of probes sent for get/setsockopt */
+#ifdef __USER_CODE__
+#else
+#define TCP_WND_SETTING 0x06   /* set pcb->rcv_wnd && pcb->rcv_ann_wnd*/
+#endif
 #endif /* LWIP_TCP */
 
 #if LWIP_IPV6

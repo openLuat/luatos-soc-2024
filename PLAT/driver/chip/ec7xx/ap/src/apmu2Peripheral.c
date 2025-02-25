@@ -13,6 +13,9 @@ void usblpw_susp2vbustbl_guard_dlychk(uint32_t cur_tick);
 void usblpw_susp2hib_guard_dlychk(uint32_t cur_tick);
 void usblpw_rmtwkup_monbus_dlychk(uint32_t cur_tick, uint32_t penalty_tick);
 
+uint8_t usblpw_remote_wkup_enabled(void);
+void usblpw_slp1_laterecovery_set_procstat(uint8_t proc_stat);
+uint8_t usblpw_slp1_laterecovery_get_procstat(void);
 void usblpw_retwkup_sleep1_later_recovery(void);
 void usblpw_retwkup_sleep1_pre_recovery(void);
 #endif
@@ -73,12 +76,33 @@ void apmuPeriUsbRmtWkupMonBusDlyChk(uint32_t cur_tick)
     usblpw_rmtwkup_monbus_dlychk(cur_tick, 1000);
 }
 
-void apmuPeriUsbSleep1LateRecoverFlow(bool sleepSuccess)
+void apmuPeriUsbSleep1LateRecoverFlow(bool sleepSuccess, uint32_t before_or_after)
 {
+    //for remote wkup active, call usblpw_retwkup_sleep1_later_recovery before task resume
 #if (RTE_USB_EN == 1)
+    if (before_or_after ==0)
+    {
+        usblpw_slp1_laterecovery_set_procstat(0);
+    }
     if(sleepSuccess)
     {
-        usblpw_retwkup_sleep1_later_recovery();
+        if (before_or_after==0) 
+        {
+            if (usblpw_remote_wkup_enabled())
+            {
+                ECOMM_TRACE(UNILOG_PLA_DRIVER, apmuPeriUsbSleep1LateRecoverFlow_1, P_WARNING, 0, "usblpw_slp1_laterecovery_set_procstat 1");                
+                usblpw_retwkup_sleep1_later_recovery();
+                usblpw_slp1_laterecovery_set_procstat(1);
+            }
+        } else 
+        {
+            if (usblpw_slp1_laterecovery_get_procstat()==0)
+            {
+                ECOMM_TRACE(UNILOG_PLA_DRIVER, apmuPeriUsbSleep1LateRecoverFlow_2, P_WARNING, 0, "usblpw_slp1_laterecovery_set_procstat 2");                
+                usblpw_retwkup_sleep1_later_recovery();
+                usblpw_slp1_laterecovery_set_procstat(2);
+            }
+        }
     }
 #endif
 }

@@ -215,6 +215,7 @@ typedef enum
     CODEC_08K_SAMPLES,   // set to  8k samples per second 
     CODEC_16K_SAMPLES,   // set to 16k samples in per second 
     CODEC_22K_SAMPLES,   // set to 22.050k samples per second 
+    CODEC_24K_SAMPLES,   // set to 24k samples per second 
     CODEC_32K_SAMPLES,   // set to 32k samples in per second 
     CODEC_44K_SAMPLES,   // set to 44.1k samples per second 
     CODEC_48K_SAMPLES,   // set to 48k samples per second 
@@ -300,7 +301,7 @@ typedef struct
     HalCodecSts_e (*halCodecGetVolumeFunc)(HalCodecCfg_t* codecHalCfg, int *volume);                                         // get codec volume
     HalCodecSts_e (*halCodecSetMicVolumeFunc)(HalCodecCfg_t* codecHalCfg, uint8_t micGain, int volume);                      // set codec mic gain and volume
     HalCodecSts_e (*halCodecGetMicVolumeFunc)(HalCodecCfg_t* codecHalCfg, uint8_t* micGain, int *volume);                      // get codec mic gain and volume
-    //void          (*halCodecEnablePAFunc) (bool enable);                                         // enable pa
+    void          (*halCodecEnablePAFunc) (bool enable);                                         // enable pa
     void           *halCodecLock;                                                                // semaphore of codec
     void           *handle;                                                                      // handle of audio codec
     HalCodecCfg_t (*halCodecGetDefaultCfg)();
@@ -362,7 +363,7 @@ HalCodecSts_e halCodecIfaceCfg(HalCodecFuncList_t* codecHal, HalCodecMode_e mode
  */
 HalCodecSts_e halCodecSetMute(HalCodecFuncList_t* codecHal, HalCodecCfg_t* codecHalCfg, bool mute, bool needLock);
 
-#if 0
+#if 1
 /**
   \brief    Hal codec enable pa
   \param[in] codecHalFunc       codecHal func list

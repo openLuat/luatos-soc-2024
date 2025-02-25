@@ -41,6 +41,16 @@ extern "C" {
 #define FLASH_MIRROR_RAWDATA_SIZE                     (64)
 
 
+
+#define FUSE_CHIP_VER_EC718S                          (2)
+#define FUSE_CHIP_VER_EC718E                          (4)
+#define FUSE_CHIP_VER_EC718P                          (3)
+#define FUSE_CHIP_VER_EC718PV                         (19)
+#define FUSE_CHIP_VER_EC718U                          (5)
+#define FUSE_CHIP_VER_EC718EV                         (20)
+#define FUSE_CHIP_VER_EC718UV                         (21)
+#define FUSE_CHIP_VER_EC718H2                         (1)
+
 /*----------------------------------------------------------------------------*
  *                   DATA TYPE DEFINITION                                     *
  *----------------------------------------------------------------------------*/

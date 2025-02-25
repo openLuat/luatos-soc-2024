@@ -15,7 +15,7 @@ void apmuPeriUsbSusp2HibGuardDlyChk(uint32_t cur_tick);
 
 void apmuPeriUsbRmtWkupMonBusDlyChk(uint32_t cur_tick);
 
-void apmuPeriUsbSleep1LateRecoverFlow(bool sleepSuccess);
+void apmuPeriUsbSleep1LateRecoverFlow(bool sleepSuccess, uint32_t before_or_after);
 
 void apmuPeriUsbSleep1PreRecoverFlow(bool sleepSuccess);
 

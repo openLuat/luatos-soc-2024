@@ -305,6 +305,14 @@
 #define ATC_ECCFG_1_ANTIDETECT_VAL_MAX      (1)
 #define ATC_ECCFG_1_ANTIDETECT_VAL_DEFAULT  (0)
 
+#define ATC_ECCFG_1_CLEAR_FORBIDDEN_TAC_VAL_MIN      (0)
+#define ATC_ECCFG_1_CLEAR_FORBIDDEN_TAC_VAL_MAX      (1)
+#define ATC_ECCFG_1_CLEAR_FORBIDDEN_TAC_VAL_DEFAULT  (0)
+
+#define ATC_ECCFG_1_FORBIDDEN_TAC_TIMER_VAL_MIN         1
+#define ATC_ECCFG_1_FORBIDDEN_TAC_TIMER_VAL_MAX         43200   //max 12 hours(43200 seconds)
+#define ATC_ECCFG_1_FORBIDDEN_TAC_TIMER_VAL_DEFAULT     43200   //default 12 hours(43200 seconds)
+
 #define ATEC_ECCFG_GET_RSP_STR_LEN           512
 
 /* AT+ECMEASCFG */
@@ -425,6 +433,19 @@
 #define ATC_ECCGSN_MAX_PARM_STR_LEN             8
 #define ATC_ECCGSN_MAX_PARM_STR_DEFAULT         NULL
 
+/*AT+ECNETDEVMAC*/
+#define ATC_ECMAC_MAX_PARM_STR_LEN             32
+#define ATC_ECMAC_MAX_PARM_STR_DEFAULT         NULL
+
+#define ATC_ECMAC_LOCAL_MAC_LEN                  6
+#define ATC_ECMAC_PEER_MAC_LEN                   6
+#define ATC_ECMAC_LOCAL_MAC_BUFF_LEN             32
+#define ATC_ECMAC_PEER_MAC_BUFF_LEN              32
+
+#define ATC_ECMAC_MAC_LOCK_STR_DEF             "Lock"
+#define ATC_ECMAC_MAC_UNLOCK_STR_DEF           "unLock"
+
+
 /* AT+ECPSTEST */
 #define ATC_ECPSTEST_MAX_PARM_STR_LEN           16
 #define ATC_ECPSTEST_MAX_PARM_STR_DEFAULT       NULL
@@ -537,6 +558,7 @@ CmsRetId  devECFREQ(const AtCmdInputContext *pAtCmdReq);
 //CmsRetId  devCGSN(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  devECCGSN(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  devECCGSNLOCK(const AtCmdInputContext *pAtCmdReq);
+CmsRetId  devECNETDEVMAC(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  devECCFG(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  devECMEASCFG(const AtCmdInputContext *pAtCmdReq);
 CmsRetId  devECRMFPLMN(const AtCmdInputContext *pAtCmdReq);

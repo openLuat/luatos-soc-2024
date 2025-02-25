@@ -206,10 +206,10 @@ PLAT_PA_RAMCODE void apmuBootDbgGPIOSetRamcode(bool level)
 /**
   \fn        bool apmuGetLongSlpCfg(void)
   \brief     config the maximum sleep length.
-             1. We suggest return false to sleep no more than 36hour
+             1. We suggest return false to sleep no more than 291.2hour
              2. But when usb is disabled and you do not care about time accuracy,
-             return true to set maximum sleep time to 1165 hour
-  \note      false: sleep no more than 36.4 hour, true:  can sleep 1165 hour
+             return true to set maximum sleep time to 9320 hour
+  \note      false: sleep no more than 291.2 hour, true:  can sleep 9320 hour
  */
 #ifdef __USER_CODE__
 __attribute__((weak)) bool apmuGetLongSlpCfg(void)

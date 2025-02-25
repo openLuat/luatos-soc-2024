@@ -26,17 +26,42 @@
  * MARCO
  *****************************************************************************
 ******************************************************************************/
-#define EC_NV_DATA_LEN                  96       /* not suitable to put here, -TBD */
-#define EC_NV_DATA_IMEI_LEN             32
-#define EC_NV_DATA_SN_LEN               32
-#define EC_NV_DATA_IMEI_LOCK_LEN        16
-#define EC_NV_DATA_SN_LOCK_LEN          16
+#define EC_NV_DATA_IMEI_LEN                  32
+#define EC_NV_DATA_SN_LEN                    32
+#define EC_NV_DATA_IMEI_LOCK_LEN             16
+#define EC_NV_DATA_SN_LOCK_LEN               16
+#define EC_NV_DATA_LOCAL_MAC_LEN             16
+#define EC_NV_DATA_LOCAL_MAC_CRC_LEN         8
+#define EC_NV_DATA_LOCAL_MAC_LOCK_LEN        8
+#define EC_NV_DATA_PEER_MAC_LEN              16
+#define EC_NV_DATA_PEER_MAC_CRC_LEN          8
+#define EC_NV_DATA_PEER_MAC_LOCK_LEN         8
+
+#define EC_NV_DATA_LEN                  160       /* not suitable to put here, -TBD */
+
+
+/*----imei----|--------sn-------|----imei lock flag----|----sn lock flag----|----local mac----|----local mac crc----|----local mac lock flag---|----peer mac----|----peer mac crc----|----peer mac lock flag---|---------*/
+/*	 32byte   | 	 32byte 	|		  16byte	   |	   16byte		|	   16byte	  | 		8byte		|		   8byte		   |	  16byte	|		  8byte 	 |			8byte		   |		 */
+
+
 
 #define EC_NV_DATA_IMEI_OFFSET          0
 #define EC_NV_DATA_SN_OFFSET            32
 #define EC_NV_DATA_IMEI_LOCK_OFFSET     64
 #define EC_NV_DATA_SN_LOCK_OFFSET       80
+#define EC_NV_DATA_LOCAL_MAC_OFFSET           96
+#define EC_NV_DATA_LOCAL_MAC_CRC_OFFSET       112
+#define EC_NV_DATA_LOCAL_MAC_LOCK_OFFSET      120
+#define EC_NV_DATA_PEER_MAC_OFFSET           136
+#define EC_NV_DATA_PEER_MAC_CRC_OFFSET       144
+#define EC_NV_DATA_PEER_MAC_LOCK_OFFSET      152
 
+#define EC_NV_DATA_MAC_REAL_LEN         6
+
+#define EC_NV_DATA_MAC_LEN              16
+
+#define EC_NV_LOCAL_MAC_DEFAULT    {0x1C, 0xEC, 0x06, 0x18, 0x00, 0xC1}
+#define EC_NV_PEER_MAC_DEFAULT     {0x28, 0xEC, 0x06, 0x18, 0x00, 0x82}
 
 #define PS_APN_MAX_SIZE             (CMI_PS_MAX_APN_LEN+1)
 
@@ -785,6 +810,19 @@ CmsRetId appGetNetInfoSync(UINT32 cid, NmAtiNetifInfo *result );
 CmsRetId appGetImsiNumSync(CHAR *imsi);
 CmsRetId appGetIccidNumSync(CHAR *iccid);
 CmsRetId appGetImeiNumSync(CHAR *imei);
+CmsRetId appGetLocalMacSync(UINT8* mac);
+BOOL appSetLocalMacSync(UINT8* mac);
+BOOL appSetLocalMacClean(UINT8* mac);
+CmsRetId appGetPeerMacStatus(void);
+BOOL appGetLocalMacLockSync(UINT8* macLock);
+BOOL appSetLocalMacLockSync(UINT8* macLock);
+CmsRetId appGetPeerMacSync(UINT8* mac);
+BOOL appSetPeerMacSync(UINT8* mac);
+BOOL appSetPeerMacClean(UINT8* mac);
+CmsRetId appGetPeerMacStatus(void);
+BOOL appGetPeerMacLockSync(UINT8* macLock);
+BOOL appSetPeerMacLockSync(UINT8* macLock);
+
 CmsRetId appGetCeregStateSync(CeregGetStateParams *pCeregGetStateParams);
 CmsRetId appSetEdrxPtwSettingSync(EdrxPtwSetParamsReq *pEdrxPtwSetParams);
 CmsRetId appGetEdrxPtwSettingSync(EdrxPtwGetSettingParams *pEdrxPtwGetSettingParams);

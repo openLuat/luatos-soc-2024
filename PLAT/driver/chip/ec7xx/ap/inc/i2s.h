@@ -306,7 +306,10 @@ typedef struct
 /*----------------------------------------------------------------------------*
  *                    GLOBAL FUNCTIONS DECLEARATION                           *
  *----------------------------------------------------------------------------*/
-
+//extern uint8_t DMA_getCurrentDescritorIndex();
+//extern uint8_t DMA_isDmaRun();
+extern uint8_t gI2sTxChannel;
+extern DmaDescriptor_t i2s0DmaTxDesc[];
 
 
 #ifdef __cplusplus

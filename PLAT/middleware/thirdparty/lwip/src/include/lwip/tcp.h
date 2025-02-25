@@ -150,13 +150,21 @@ typedef err_t (*tcp_connected_fn)(void *arg, struct tcp_pcb *tpcb, err_t err);
 #define RCV_WND_SCALE(pcb, wnd) (((wnd) >> (pcb)->rcv_scale))
 #define SND_WND_SCALE(pcb, wnd) (((wnd) << (pcb)->snd_scale))
 #define TCPWND16(x)             ((u16_t)LWIP_MIN((x), 0xFFFF))
+#ifdef __USER_CODE__
 #define TCP_WND_MAX(pcb)        ((tcpwnd_size_t)(((pcb)->flags & TF_WND_SCALE) ? TCP_WND : TCPWND16(TCP_WND)))
+#else
+#define TCP_WND_MAX(pcb)        ((tcpwnd_size_t)(((pcb)->flags & TF_WND_SCALE) ? (((pcb)->rcv_wnd_max) ? ((pcb)->rcv_wnd_max) : TCP_WND) : (((pcb)->rcv_wnd_max) ? ((pcb)->rcv_wnd_max) : TCPWND16(TCP_WND))))
+#endif
 typedef u32_t tcpwnd_size_t;
 #else
 #define RCV_WND_SCALE(pcb, wnd) (wnd)
 #define SND_WND_SCALE(pcb, wnd) (wnd)
 #define TCPWND16(x)             (x)
+#ifdef __USER_CODE__
 #define TCP_WND_MAX(pcb)        TCP_WND
+#else
+#define TCP_WND_MAX(pcb)        (((pcb)->rcv_wnd_max) ? ((pcb)->rcv_wnd_max) : TCPWND16(TCP_WND))
+#endif
 typedef u16_t tcpwnd_size_t;
 #endif
 
@@ -373,6 +381,11 @@ struct tcp_pcb {
    u8_t tcp_need_report_close_complete; //report close complete event
    u16_t tcp_max_total_retry_time; //(seconds)
    u16_t close_local_abort_time; //(s)
+#endif
+#ifdef __USER_CODE__
+#else
+   //tcp recv windows max
+   tcpwnd_size_t rcv_wnd_max;
 #endif
 
 };

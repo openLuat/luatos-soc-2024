@@ -156,7 +156,12 @@ int32_t HAL_ADC_ConvertThermalRawCodeToTemperatureHighAccuracy(uint32_t input)
     input &= 0xFFFU;
 
 #ifdef CHIP_EC718
-    gain = -556 * efuseCalcodePtr->gain;
+#if defined(FEATURE_SUPPORT_EC728) || defined(TYPE_EC718M)
+        gain = -524 * efuseCalcodePtr->gain;
+#else
+        gain = -556 * efuseCalcodePtr->gain;
+#endif
+
 #elif defined CHIP_EC716
     gain = -602 * efuseCalcodePtr->gain;
 #endif

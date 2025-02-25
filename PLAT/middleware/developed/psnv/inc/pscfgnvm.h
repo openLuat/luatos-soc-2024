@@ -156,6 +156,8 @@ typedef enum _EPAT_PsConfigParamId_Enum
     CEMM_CFG_ANTIDETECT,                            /* TV,  BOOL */
 
     UICC_CFG_ISIM_DISABLE,                          /* TV,  BOOL bIsimDisable, whether disable ISIM app or not */
+    CEMM_CFG_CLEAR_FORBIDDEN_TAC,                   /* TV,  BOOL clear list of forbidden TAC when perform AT+CGATT=0 */
+    CEMM_CFG_FORBIDDEN_TAC_TIMER,                   /* TV,  UINT16 timer values of periodically remove list of forbidden TAC */
 
     /*
      * !!!!  PARAM ID !!!!

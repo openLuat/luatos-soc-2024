@@ -7,6 +7,7 @@
 #include "syslog.h"
 #endif
 #include "sctdef.h"
+#include "slpman.h"
 
 extern void lcdDrvDelay(uint32_t us);
 extern void lspiCmdSend(uint8_t cmd,uint8_t *data,uint8_t allbytes);
@@ -534,7 +535,16 @@ void lcdIoCtrl(lcdDrvFunc_t *lcd, lcdIoCtrl_t ioCtrl)
         return;
     }
 
+	// 1. preview window ctrl
 	lcdIoCtrlParam = ioCtrl;
+
+    
+#if defined TYPE_EC718M
+	// 2. int ctrl
+	lspiIntCtrl.ramWrIntCtrlEn   = ioCtrl.ramWrIntEn;
+	lspiIntCtrl.ramWrIntCtrl     = ioCtrl.ramWrIntSel;
+    //lcdDrv1->ctrl(LSPI_CTRL_INT_CTRL, 0);
+#endif    
 }
 
 void lcdConfigReg(lcdDrvFunc_t *lcd, uint8_t cmd, uint8_t *data, uint8_t dataLen)

@@ -72,19 +72,25 @@ typedef struct
     uint8_t         dummyAllowed;
 }camParamCfg_t;
 
+typedef struct
+{
+	uint32_t enableForCamera	: 1; // 0: isn't work for camera now; 1: is working for camera now
+	uint32_t enableForUsr		: 1; // 0: isn't ready for usr;       1: is ready for usr
+	uint32_t workingForUsr		: 1; // 0: usr has used this buf;     1: usr is using this buf
+	uint32_t camErrCnt			: 3; // record camera err count
+	uint32_t rsvd				: 26;
+	uint32_t timeStamp;
+	uint8_t  data[320*240*2];   // can be configed
+}CameraBuf_t;
+
+
+
 typedef void (*camCbEvent_fn) (uint32_t event); ///< Camera callback event.
 typedef void (*camIrq_fn)(void); 					///< Camera irq
 typedef void (*camErrCb)(uint32_t stats);
 
 
-/**
-  \brief Init camera, include pinMux, and enable clock.  
-  \param[in] dataAddr     Mem addr to store picture.
-  \param[in] uspCb        usp cb.
-  \param[in] dmaCb        dma cb.  
-  \return              
-*/
-void camInit(void* dataAddr, cspiCbEvent_fn uspCb, void* dmaCb);
+void camInit(void* dataAddr, cspiCbEvent_fn uspCb, void* dmaCb, camErrCb errCb);
 
 /**
   \brief Receive the picture has been taken.
@@ -116,7 +122,7 @@ uint8_t camReadReg(uint8_t regAddr);
 /**
   \brief Start or stop Camera controller.
   \param[in] startStop     If true, start camera controller. If false, stop camera controller.
-  \return              
+  \return
 */
 void camStartStop(cspiStartStop_e startStop);
 
@@ -128,27 +134,7 @@ void camStartStop(cspiStartStop_e startStop);
 */
 void camRegisterIRQ(cspiInstance_e instance, camIrq_fn irqCb);
 
-/**
-  \brief Get cspi status.
-  \param[in] instance     cspi0 or cspi1.
-  \return              
-*/
-uint32_t camGetCspiStats(cspiInstance_e instance);
-
-/**
-  \brief Clear cspi interrupt status.
-  \param[in] instance     cspi0 or cspi1.
-  \param[in] mask         which bit needs to clear.
-  \return              
-*/
-void camClearIntStats(cspiInstance_e instance, uint32_t mask);
-
-/**
-  \brief Set memory addr which is used to store picture of camera.
-  \param[in] dataAddr     data addr.
-  \return              
-*/
-void camSetMemAddr(uint32_t dataAddr);
+uint32_t camGetCspiStats();
 
 /**
   \brief Enable or disable interrupt of cspi.
@@ -157,16 +143,15 @@ void camSetMemAddr(uint32_t dataAddr);
 */
 void cspiStartIntEnable(cspiIntEnable_e intEnable);
 void cspiEndIntEnable(cspiIntEnable_e endIntEnable);
-uint32_t camGetCspiInt(cspiInstance_e instance);
 void cspi2LspiEnable(uint8_t enable);
-void camRegisterErrStatsCb(camErrCb errCb);
-void camCheckErrStats();
+int camCheckErrStats();
 #if (ENABLE_CAMERA_LDO == 1)
 void camPowerOn(uint8_t ioInitVal);
 #endif
 void camGpioPulseCfg(uint8_t padAddr, uint8_t pinInstance, uint8_t pinNum);
 void camGpioPulse(uint8_t pinInstance, uint8_t pinNum, uint32_t pulseDurationUs, uint8_t initialState, bool needLoop);
-void camRegisterSlp1Cb(cspiSlp1Cb_fn cb);
+int camPicTake();
+void camPicGive(int index);
 
 /** \} */
 

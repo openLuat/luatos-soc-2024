@@ -80,6 +80,7 @@ typedef struct
     uint8_t   codecType;
     uint16_t  freeSize;
     bool      needPlayTone;
+    uint8_t   stopToneFlag; // point that during tone and speech, don't stop codec, because codec init will cost a lot time, may miss "ninhao"
     bool      needCodecInitAgain;
     uint8_t   needRecord;
     bool      isStopRec;

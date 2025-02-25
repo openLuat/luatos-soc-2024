@@ -86,5 +86,15 @@ void halPhyGetDebugAtStringInfo(CHAR *pAtRspBuf, UINT16 bufLen);
 */
 void halPhyFlashFreqChg(UINT32 freqValue);
 
+#ifdef TYPE_EC718M
+/**
+  \fn           void halPhyXpiPsramFreqChg(UINT32 freqValue);
+  \brief        change xpi psram frequncy
+  \returns      void
+*/
+void halPhyXpiPsramFreqChg(UINT32 freqValue);
+#endif
+
+
 #endif /* _HAL_PHY_H */
 
