@@ -360,6 +360,7 @@ int luat_camera_close(int id)
 	g_s_camera[id].is_running = 0;
 	g_s_camera[id].callback = luat_camera_dummy_callback;
 #ifdef __LUATOS__
+	luat_camera_app.is_work = 0;
 	if (luat_camera_app.scan_mode)
 	{
 		luat_rtos_event_send(luat_camera_app.task_handle, LUAT_CAMERA_EVENT_STOP, 0, 0, 0, 0);
@@ -372,7 +373,6 @@ int luat_camera_close(int id)
 	luat_camera_app.p_cache[0] = NULL;
 	luat_camera_app.p_cache[1] = NULL;
 	OS_DeInitBuffer(&luat_camera_app.result_buffer);
-	luat_camera_app.is_work = 0;
 #endif
 	return 0;
 
