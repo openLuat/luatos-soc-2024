@@ -254,10 +254,22 @@ int luat_camera_setup(int id, luat_spi_camera_t *conf, void * callback, void *pa
 	if (luat_camera_app.double_buffer_mode)
 	{
 		luat_camera_app.p_cache[1] = luat_heap_opt_malloc(LUAT_HEAP_PSRAM, luat_camera_app.config.sensor_width * luat_camera_app.config.sensor_height * 2);
+		if (!luat_camera_app.p_cache[0] || !luat_camera_app.p_cache[1])
+		{
+			DBG("no mem, failed");
+			luat_camera_close(id);
+			return -1;
+		}
 	}
 	else
 	{
 		luat_camera_app.p_cache[1] = NULL;
+		if (!luat_camera_app.p_cache[0])
+		{
+			DBG("no mem, failed");
+			luat_camera_close(id);
+			return -1;
+		}
 	}
 #endif
 	return id;
@@ -420,6 +432,7 @@ static void luat_camera_task(void *param)
 		}
 		else
 		{
+			event.id = 0;
 			luat_rtos_event_recv(luat_camera_app.task_handle, 0, &event, NULL, LUAT_WAIT_FOREVER);
 		}
 		switch(event.id)
