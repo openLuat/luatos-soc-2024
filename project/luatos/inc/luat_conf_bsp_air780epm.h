@@ -24,7 +24,8 @@
 #define LUAT_USE_MQTT 1
 #define LUAT_USE_FTP 1
 #define LUAT_USE_WEBSOCKET 1
-
+#define LUAT_USE_LIBGNSS  1
+#define LUAT_USE_SENSOR  1
 
 #define LUAT_USE_IOTAUTH 1
 #define LUAT_USE_BIT64 1
