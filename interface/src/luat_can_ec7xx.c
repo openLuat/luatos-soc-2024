@@ -8,6 +8,7 @@ typedef struct
 {
 	luat_can_callback_t callback;
 	PV_Union last_error;
+	uint8_t last_tx_stop;
 }luat_can_ctrl_t;
 
 static luat_can_ctrl_t prv_can;
@@ -21,7 +22,8 @@ static int luat_can_cb(void *data, void *param)
 		prv_can.callback(0, LUAT_CAN_CB_NEW_MSG, NULL);
 		break;
 	case CAN_TX_OK:
-		prv_can.callback(0, LUAT_CAN_CB_TX_OK, NULL);
+		prv_can.callback(0, prv_can.last_tx_stop?LUAT_CAN_CB_TX_FAILED:LUAT_CAN_CB_TX_OK, NULL);
+		prv_can.last_tx_stop = 0;
 		break;
 	case CAN_TX_FAILED:
 		prv_can.callback(0, LUAT_CAN_CB_TX_FAILED, NULL);
@@ -29,6 +31,7 @@ static int luat_can_cb(void *data, void *param)
 	case CAN_ERROR_REPORT:
 		if (CAN_GetState() >= CAN_STATE_NODE_PASSIVE_ERROR)
 		{
+			prv_can.last_tx_stop = 1;
 			CAN_TxStop();
 		}
 		prv_can.last_error.u8[2] = Msg->ErrorDir;
@@ -131,6 +134,7 @@ int luat_can_tx_message(uint8_t can_id, uint32_t message_id, uint8_t is_extend_i
 
 int luat_can_tx_stop(uint8_t can_id)
 {
+	prv_can.last_tx_stop = 1;
 	CAN_TxStop();
 	return 0;
 }
@@ -186,5 +190,10 @@ int luat_can_get_state(uint8_t can_id)
 uint32_t luat_can_get_last_error(uint8_t can_id)
 {
 	return prv_can.last_error.u32;
+}
+
+void luat_can_set_debug(uint8_t on_off)
+{
+	CAN_SetDebug(on_off);
 }
 #endif
