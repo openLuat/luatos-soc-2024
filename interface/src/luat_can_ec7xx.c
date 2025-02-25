@@ -7,7 +7,7 @@
 typedef struct
 {
 	luat_can_callback_t callback;
-	CAN_ErrorMsg last_error;
+	PV_Union last_error;
 }luat_can_ctrl_t;
 
 static luat_can_ctrl_t prv_can;
@@ -31,11 +31,13 @@ static int luat_can_cb(void *data, void *param)
 		{
 			CAN_TxStop();
 		}
-		prv_can.last_error = *Msg;
-		prv_can.callback(0, LUAT_CAN_CB_ERROR_REPORT, NULL);
+		prv_can.last_error.u8[2] = Msg->ErrorDir;
+		prv_can.last_error.u8[1] = Msg->ErrorType;
+		prv_can.last_error.u8[0] = Msg->ErrorLOC;
+		prv_can.callback(0, LUAT_CAN_CB_ERROR_REPORT, prv_can.last_error.p);
 		break;
 	case CAN_STATE_CHANGE:
-		prv_can.callback(0, LUAT_CAN_CB_STATE_CHANGE, NULL);
+		prv_can.callback(0, LUAT_CAN_CB_STATE_CHANGE, (void *)luat_can_get_state(0));
 		break;
 	}
 	return 0;
@@ -179,5 +181,10 @@ int luat_can_get_state(uint8_t can_id)
 	{
 		return (state - CAN_STATE_NODE_ACTIVE_ERROR) + LUAT_CAN_ACTIVE_ERROR;
 	}
+}
+
+uint32_t luat_can_get_last_error(uint8_t can_id)
+{
+	return prv_can.last_error.u32;
 }
 #endif
