@@ -20,7 +20,7 @@
 #include "at_util.h"
 
 #define EC_CMD_BUF_LEN          640
-#define EC_PRINT_BUF_LEN        128
+#define EC_PRINT_BUF_LEN        180
 #define EC_DUMP_DATA_LEN        32
 #define EC_DUMP_DATA_BLOCK      8192
 #define ATC_ECRFTEST_STR_MAX_LEN           5000
@@ -111,8 +111,13 @@
 #define ATC_ECPCFG_USB_CTRL_VAL_DEFAULT         0
 
 #define ATC_ECPCFG_USB_SW_TRACEFLAG_VAL_MIN             0
-#define ATC_ECPCFG_USB_SW_TRACEFLAG_VAL_MAX             0x0fffffff
+#define ATC_ECPCFG_USB_SW_TRACEFLAG_VAL_MAX             0x03f
 #define ATC_ECPCFG_USB_SW_TRACEFLAG_VAL_DEFAULT          0
+
+
+#define ATC_ECPCFG_USB_SUP_SPD_RECFG_VAL_MIN             0
+#define ATC_ECPCFG_USB_SUP_SPD_RECFG_VAL_MAX             1
+#define ATC_ECPCFG_USB_SUP_SPD_RECFG_VAL_DEFAULT          0
 
 
 #define ATC_ECPCFG_USB_SLPMASK_VAL_MIN          0

@@ -1,6 +1,7 @@
 #include "cmsis_os2.h"
 #include "plat_config.h"
 #include "string.h"
+#include <stdio.h>
 #include "usbd_clscdc.h"
 #include "usbd_func_cc.h"
 #include "usbd_multi_usrcfg_common.h"
@@ -20,14 +21,45 @@
 #define CUST_DEF_TEST_TYPE1
 //#define CUST_DEF_TEST_TYPE_CCID
 
+#define USBD_ECM_MAC_CONFIG
 
-#ifdef USBD_EMC_MAC_CONFIG
+#ifdef USBD_ECM_MAC_CONFIG
+AP_PLAT_COMMON_BSS static uint8_t  ecm_permanent_hwaddr[13] = {0};
+
+extern void usbDevQueryPeerMac(uint8_t *mac);
+extern void RndisInitHwAddr(uint8_t *mac);
+
+
+static void ecm_init_hwaddr(uint8_t *mac)
+{
+    if(mac)
+    {
+        for(uint16_t i = 0; i < 6; i++)
+        {
+            sprintf((char*)&ecm_permanent_hwaddr[2*i], "%02x", mac[i]);
+        }
+        ecm_permanent_hwaddr[12] = '\0';
+    }
+}
+
+void usbcustom_init_ether_mac(void)
+{
+    uint8_t  peer_mac[6] = {0};
+    usbDevQueryPeerMac(peer_mac);
+
+    RndisInitHwAddr(peer_mac);
+    ecm_init_hwaddr(peer_mac);
+}
 
 extern uint8_t *ecm_dev_local_string[1];
 void update_ecm_mac(void)
 {
 #ifndef USB_DRV_SMALL_IMAGE
-	ecm_dev_local_string[0] = (uint8_t*)"2089846a96ab";//update  the ecm mac here
+#if 0
+    ecm_dev_local_string[0] = (uint8_t*)"2089846a96ab";//update  the ecm mac here
+#else
+    ecm_dev_local_string[0] = (uint8_t*)ecm_permanent_hwaddr;//update  the ecm mac here
+#endif
 #endif
 }
 #endif
@@ -1016,7 +1048,7 @@ uint8_t usbcustom_multidev_cfg_reset(void)
     {
         return USBD_MULTIDEV_LOAD_FAIL;
     }
-#ifdef USBD_EMC_MAC_CONFIG
+#ifdef USBD_ECM_MAC_CONFIG
     update_ecm_mac();
 #endif
 
@@ -1281,7 +1313,42 @@ addr = (volatile uint32_t*)0x4f0a0124;
 
     addr = (volatile uint32_t*)0x4f0a0124;
     * addr = (* addr &~ (0x7<<2)) | (0x5<<2);
-#endif    
+#endif
 
 }
+
+#define USB_SUPPORT_SPD_HS 0
+#define USB_SUPPORT_SPD_FS 1
+
+//USB_SUP_SPD_DEFAULT_CFG_AS_FS defined in Feature_ec7xx.inc
+#ifdef USB_SUP_SPD_DEFAULT_CFG_AS_FS
+#define CFG_DEFAULT_USB_SUP_SPD USB_SUPPORT_SPD_FS
+#else
+#define CFG_DEFAULT_USB_SUP_SPD USB_SUPPORT_SPD_HS
+#endif
+uint8_t usb_get_spd_sel_custpara(void)
+{
+#if (CFG_DEFAULT_USB_SUP_SPD==USB_SUPPORT_SPD_FS)
+    //hs: 0, fs: 1
+    if (BSP_GetPlatConfigItemValue(PLAT_CONFIG_ITEM_USB_SUP_SPD_RECFG)==1)
+    {
+        //change to USB_SUPPORT_SPD_HS
+        return USB_SUPPORT_SPD_HS;
+    }
+    return USB_SUPPORT_SPD_FS;
+#endif
+
+#if (CFG_DEFAULT_USB_SUP_SPD==USB_SUPPORT_SPD_HS)
+    //hs: 0, fs: 1
+    if (BSP_GetPlatConfigItemValue(PLAT_CONFIG_ITEM_USB_SUP_SPD_RECFG)==1)
+    {
+        //change to USB_SUPPORT_SPD_FS
+        return USB_SUPPORT_SPD_FS;
+    }
+    return USB_SUPPORT_SPD_HS;
+#endif
+
+
+}
+
 

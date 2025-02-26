@@ -904,6 +904,9 @@ PLAT_BL_CIRAM_FLASH_TEXT static void BSP_SetDefaultRawFlashPlatConfig(void)
 
     g_rawFlashPlatConfig.usbCtrl = 0;//all en
 
+    g_rawFlashPlatConfig.usbSupSpdReCfg = 0; // not reconfig current default support spd 
+
+
     g_rawFlashPlatConfig.usbSlpMask = 0;  // no mask
 
     g_rawFlashPlatConfig.usbSlpThd = 0;
@@ -1263,6 +1266,10 @@ PLAT_BL_CIRAM_FLASH_TEXT uint32_t BSP_GetPlatConfigItemValue(plat_config_id_t id
         case PLAT_CONFIG_ITEM_USB_SW_TRACE_FLAG:
             return g_rawFlashPlatConfig.usbSwTrace;
 
+        case PLAT_CONFIG_ITEM_USB_SUP_SPD_RECFG:
+            return g_rawFlashPlatConfig.usbSupSpdReCfg;
+
+
         case PLAT_CONFIG_ITEM_USB_SLEEP_MASK:
             return g_rawFlashPlatConfig.usbSlpMask;
 
@@ -1479,6 +1486,10 @@ void BSP_SetPlatConfigItemValue(plat_config_id_t id, uint32_t value)
 
         case PLAT_CONFIG_ITEM_USB_SW_TRACE_FLAG:
             g_rawFlashPlatConfig.usbSwTrace = value;
+            break;
+
+        case PLAT_CONFIG_ITEM_USB_SUP_SPD_RECFG:
+            g_rawFlashPlatConfig.usbSupSpdReCfg = value;
             break;
 
         case PLAT_CONFIG_ITEM_USB_SLEEP_MASK:

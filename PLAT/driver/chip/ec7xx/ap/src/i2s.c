@@ -41,6 +41,8 @@ AP_PLAT_COMMON_DATA static DmaTransferConfig_t g_dmaRxConfig =
     0
 };
 
+AP_PLAT_COMMON_BSS uint8_t gI2sTxChannel;
+
 
 #if (RTE_I2S0)
 AP_PLAT_COMMON_DATA static PIN i2s0PinMCLK  = {RTE_I2S0_MCLK_PAD_ADDR,   RTE_I2S0_MCLK_FUNC};
@@ -441,6 +443,8 @@ int32_t i2sInit(i2sCbEvent_fn txCbEvent, i2sCbEvent_fn rxCbEvent, I2sResources_t
             return ARM_DRIVER_ERROR;
         else
             i2s->dma->txCh = returnCode;
+
+		gI2sTxChannel = returnCode;
 
         DMA_setChannelRequestSource(i2s->dma->txInstance, i2s->dma->txCh, (DmaRequestSource_e)i2s->dma->txReq);
         DMA_rigisterChannelCallback(i2s->dma->txInstance, i2s->dma->txCh, i2s->dma->txCb);

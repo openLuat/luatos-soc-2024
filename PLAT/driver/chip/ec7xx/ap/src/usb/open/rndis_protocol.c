@@ -24,7 +24,7 @@
 static const char *rndis_vendor = RNDIS_VENDOR;
 
 
-const uint32_t OIDSupportedList[] = 
+const uint32_t OIDSupportedList[] =
 {
     OID_GEN_SUPPORTED_LIST,
     OID_GEN_HARDWARE_STATUS,
@@ -53,9 +53,19 @@ const uint32_t OIDSupportedList[] =
 #define OID_LIST_LENGTH (sizeof(OIDSupportedList) / sizeof(*OIDSupportedList))
 #define ENC_BUF_SIZE    (OID_LIST_LENGTH * 4 + 32)
 
-static const uint8_t station_hwaddr[6] = { RNDIS_HWADDR };
-static const uint8_t permanent_hwaddr[6] = { RNDIS_HWADDR };
+AP_PLAT_COMMON_DATA static uint8_t station_hwaddr[6] = { RNDIS_HWADDR };
+AP_PLAT_COMMON_DATA static uint8_t permanent_hwaddr[6] = { RNDIS_HWADDR };
 extern uint32_t connect_status;
+
+void RndisInitHwAddr(uint8_t *mac)
+{
+    if(mac)
+    {
+        memcpy(station_hwaddr, mac, 6);
+        memcpy(permanent_hwaddr, mac, 6);
+    }
+}
+
 
 //used for malloc buffer
 uint32_t RndisGetEncBufSize(void)
@@ -215,8 +225,8 @@ void RdsProSetMsgHdl(rndis_set_msg_t *msgIn, rndis_ctrl_data_st *p_ctrl_data)
             {
                 RdsProPktFilter(p_ctrl_data->oid_packet_filter);
                 p_ctrl_data->rndis_state = rndis_data_initialized;
-            } 
-            else 
+            }
+            else
             {
                 p_ctrl_data->rndis_state = rndis_initialized;
             }
@@ -247,7 +257,7 @@ void RdsProResetMsgHdl(rndis_reset_cmplt_t *m, rndis_ctrl_data_st *p_ctrl_data)
     m->MessageType = REMOTE_NDIS_RESET_CMPLT;
     m->MessageLength = sizeof(rndis_reset_cmplt_t);
     m->Status = RNDIS_STATUS_SUCCESS;
-    m->AddressingReset = 1; 
+    m->AddressingReset = 1;
 }
 
 void RdsProKeepAliveMsgHdl(rndis_keepalive_cmplt_t *m, uint32_t RequestId, rndis_ctrl_data_st *p_ctrl_data)

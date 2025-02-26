@@ -23,9 +23,9 @@
 //#include "liblwm2m.h"
 
 #ifdef WITH_MBEDTLS
-#define CTLWM2M_TASK_STACK_SIZE   1536
+#define CTLWM2M_TASK_STACK_SIZE   2560
 #else
-#define CTLWM2M_TASK_STACK_SIZE   1024
+#define CTLWM2M_TASK_STACK_SIZE   2048
 #endif
 
 #define CTLWM2M_MSG_TIMEOUT 500

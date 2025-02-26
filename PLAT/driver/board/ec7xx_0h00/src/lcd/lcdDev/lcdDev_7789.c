@@ -50,6 +50,7 @@ void st7789HandleUspIrq4Cam(lcdDrvFunc_t *lcd)
 
 void st7789HandleUspIrq4Fill(lcdDrvFunc_t *lcd)
 {
+	LSPI2->STAS |= 1<<13; // clear ram wr int end. 1,1/2,1/4...
 }
 
 
@@ -328,7 +329,7 @@ static void st7789CamPreviewStartStop(lcdDrvFunc_t *lcd, camPreviewStartStop_e p
 
 		lspiCmdCtrl.wrRdn				= 1; // 1: wr	0: rd
 		lspiCmdCtrl.ramWr				= 1; // start ramwr
-		lspiCmdCtrl.dataLen 			= 0x3fffff; // infinite data, used in camera to lspi
+		lspiCmdCtrl.dataLen 			= 0x3ffff; // infinite data, used in camera to lspi
 		lcdDrv->ctrl(LSPI_CTRL_CMD_CTRL, 0);
     }
 #endif    	

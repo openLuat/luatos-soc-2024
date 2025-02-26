@@ -89,6 +89,7 @@ typedef struct
     uint8_t  speakerSetVal;
     uint8_t  micSetGain;
     uint8_t  micSetVol;
+    uint8_t  deviceType;
 }AudioCodec_t;
 
 typedef struct
@@ -231,7 +232,7 @@ int32_t audioFreeToneMem();
   \fn          audioFastInit
   \brief      Just used for AT commands.
 */
-void audioFastInit();
+int audioFastInit();
 
 /**
   \fn          audioFastDeInit

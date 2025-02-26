@@ -881,21 +881,6 @@ static int32_t lspiSetBusSpeed(uint32_t bps, lspiRes_t *lspi)
         lspiDiv = 12;
     }
 
-  
-#if (defined CHIP_EC718)  && !(defined TYPE_EC718M) || (defined CHIP_EC716)
-    CLOCK_setClockSrc(CLK_APB_MP,CLK_APB_MP_SEL_102M);
-    CLOCK_clockEnable(CLK_HF102M);
-    CLOCK_setClockSrc(FCLK_USP2,FCLK_USP2_SEL_102M);
-    CLOCK_setClockDiv(FCLK_USP2, lspiDiv);
-    CLOCK_clockEnable(FCLK_USP2);
-#else
-    CLOCK_setClockSrc(CLK_APB_MP,CLK_APB_MP_SEL_102M);
-    CLOCK_clockEnable(CLK_HF102M);
-    CLOCK_setClockSrc(FCLK_USP2,FCLK_USP2_SEL_612M);
-    CLOCK_setClockDiv(FCLK_USP2, lspiDiv);
-    CLOCK_clockEnable(FCLK_USP2);
-#endif
-
     return ARM_DRIVER_OK;
 }
 
@@ -1084,14 +1069,28 @@ int32_t lspiPowerCtrl(lspiPowerState_e state, lspiRes_t *lspi)
             {
                 DMA_stopChannel(lspi->dma->txInstance, lspi->dma->txCh, true);
             }
+            
+            CLOCK_setClockSrc(FCLK_USP2,FCLK_USP2_SEL_26M);
 
-            GPR_clockDisable(lspiClk[instance*2]);
-            GPR_clockDisable(lspiClk[instance*2+1]);
+            CLOCK_clockDisable(lspiClk[instance*2]);
+            CLOCK_clockDisable(lspiClk[instance*2+1]);
+
+            CLOCK_clockDisable(CLK_HF102M);
             break;
 
         case LSPI_POWER_FULL:
-            GPR_clockEnable(lspiClk[instance*2]);
-            GPR_clockEnable(lspiClk[instance*2+1]);
+			CLOCK_setClockSrc(CLK_APB_MP,CLK_APB_MP_SEL_102M);
+			CLOCK_clockEnable(CLK_HF102M);
+			
+			#if (defined CHIP_EC718)  && !(defined TYPE_EC718M) || (defined CHIP_EC716)
+			CLOCK_setClockSrc(FCLK_USP2,FCLK_USP2_SEL_102M);
+			#else
+			CLOCK_setClockSrc(FCLK_USP2,FCLK_USP2_SEL_612M);
+			CLOCK_setClockDiv(FCLK_USP2, lspiDiv);
+			#endif
+			
+			CLOCK_clockEnable(lspiClk[instance*2]);
+            CLOCK_clockEnable(lspiClk[instance*2+1]);
             break;
 
         default:

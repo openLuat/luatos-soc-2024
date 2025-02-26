@@ -7,6 +7,7 @@
  * Description:  middleware NVM configuration header file
  * History:      2021/04/12, Originated by Jason
  ****************************************************************************/
+#include "sctdef.h"
 #include "osacfgnvm.h"
 #include "mw_common.h"
 #include "codecDrv.h"
@@ -39,6 +40,17 @@
  * MARCO/MARCO
  *****************************************************************************
 ******************************************************************************/
+
+#ifdef TYPE_EC718M
+#define MW_NVM_FM_RAMCODE      PLAT_FPSRAM_P0_RAMCODE
+#else   //not EC718M
+#if (defined OPEN_CPU_MODE)
+#define MW_NVM_FM_RAMCODE
+#else
+#define MW_NVM_FM_RAMCODE      PLAT_FM_RAMCODE
+#endif
+#endif
+
 
 /*
  *
@@ -123,7 +135,21 @@ typedef enum _EPAT_MidWareCfgParamId_Enum
     MW_CFG_SIM_STK_PARAM,           /* TLV,  MWNvmCfgSimStkParam */
 
     MW_CFG_PER_PLMN_PARAM,          /* TLV,  MWNvmCfgPerPlmnParam */
-    
+
+    MW_CFG_ETH_TX_CONCAT_PARAM,     /* TV,  UINT16 lanMediaPropConfig */
+
+    MW_CFG_LAN_SLP1_SEL_PARAM,      /* TV,  UINT16 lanMediaPropConfig */
+
+    // new add id for usr set codec volumn
+    MW_CFG_USR_CODEC_VOLUMN0,        /* TLV,  MWNvmCfgUsrSetCodecVolumn0 */
+    MW_CFG_USR_CODEC_VOLUMN1,        /* TLV,  MWNvmCfgUsrSetCodecVolumn1 */
+    MW_CFG_USR_CODEC_VOLUMN2,        /* TLV,  MWNvmCfgUsrSetCodecVolumn2 */
+    MW_CFG_USR_CODEC_VOLUMN3,        /* TLV,  MWNvmCfgUsrSetCodecVolumn3 */
+    MW_CFG_USR_CODEC_VOLUMN_FLG0,    /* TLV,  MWNvmCfgVolumnSetFlag0 */
+    MW_CFG_USR_CODEC_VOLUMN_FLG1,    /* TLV,  MWNvmCfgVolumnSetFlag1 */
+    MW_CFG_USR_CODEC_VOLUMN_FLG2,    /* TLV,  MWNvmCfgVolumnSetFlag2 */
+    MW_CFG_USR_CODEC_VOLUMN_FLG3,    /* TLV,  MWNvmCfgVolumnSetFlag3 */
+
     MW_CFG_PARAM_END,
     /* As need a bitmap to record which CFG is set/configed, here limit the MAX ID to 256, than 8 words bitmap is enough  */
     MW_CFG_PARAM_MAX    =   MW_CFG_PARAM_BASE + 0x100   //1280
@@ -137,6 +163,11 @@ typedef enum _EPAT_MidWareCfgParamId_Enum
 ******************************************************************************/
 typedef MWCfgAtChanConfig   MWNvmCfgAtChanConfig;
 
+typedef enum _MWNvmCfgEthLanPropId
+{
+    MW_CFG_LAN_PROP_ETH_TX_CONCAT = 0,
+    MW_CFG_LAN_PROP_SLP1_MODE_SEL
+}MWNvmCfgLanPropId;
 
 
 typedef struct _SIG_EPAT_MW_CFG_CSCS_PARAM
@@ -541,7 +572,15 @@ typedef struct MidWareNvmConfig_Tag
     * 0 - select pre-defined by AT+CGAUTH, 1 - select the AUTH parameter in PPP LCP procedure.
     */
     UINT8                   pppAuthSelectMode;
-    UINT8                   resv0[3];
+    UINT8                   resv0;
+    /*
+    * bit0: used for Tx ethernet(rndis/ecm/eos) frame, paramId: MW_CFG_ETH_TX_CONCAT_PARAM
+    *       0 - only allowed to be output one frame by another, 1 - allow to concatenate the frames and output them as a whole.
+    * bit1: used for enabling the slp1 mode when local NIC is activated, paramId: MW_CFG_LAN_SLP1_SEL_PARAM
+    *       0 - disable slp1 mode, 1 - enable slp1 mode
+    * other bits: reserved for future.
+    */
+    UINT16                  lanMediaPropConfig;
 
     /*
     * Character set, ParamId: MW_CFG_CSCS_PARAM
@@ -672,7 +711,7 @@ typedef struct MidWareNvmConfig_Tag
     * used for usr set codec speaker volumn
     */
     #ifdef FEATURE_AUDIO_ENABLE//volte
-    MWNvmCfgUsrSetCodecVolumn     usrSetCodecVolumn[4];
+    MWNvmCfgUsrSetCodecVolumn     usrSetCodecVolumn;
     MWNvmCfgVolumnSetFlag         volumnSetFlag;
     #endif
 
@@ -687,6 +726,14 @@ typedef struct MidWareNvmConfig_Tag
     MWNvmCfgSimStkParam         simStkParamCfg;
 
     MWNvmCfgPerPlmnParam        perPlmnCfg;
+
+    /*
+    * used for usr set codec speaker volumn
+    */
+    #ifdef FEATURE_AUDIO_ENABLE//volte
+    MWNvmCfgUsrSetCodecVolumn     usrSetCodecVolumnNew[4];
+    MWNvmCfgVolumnSetFlag         volumnSetFlagNew[4];
+    #endif
 }MidWareNvmConfig;
 
 
@@ -1089,6 +1136,10 @@ void mwNvmCfgSetAndSaveUrcRIOtherParam(UINT8 chanId, const MWNvmCfgUrcRIOtherPar
 void mwNvmCfgGetUrcRIOtherParam(UINT8 chanId, MWNvmCfgUrcRIOtherParam *pOtherUrcRiCfg);
 void mwNvmCfgGetPppAuthSelectMode(UINT8 *pPppAuthSelectMode);
 void mwNvmCfgSetAndSavePppAuthSelectMode(UINT8 *pPppAuthSelectMode);
+void mwNvmCfgGetEthTxConcatParam(UINT16 *pEthTxConcatParam);
+void mwNvmCfgSetAndSaveEthTxConcatParam(UINT16 *pEthTxConcatParam);
+void mwNvmCfgGetLanSlp1ModeSelParam(UINT16 *pLanSlp1ModeSelParam);
+void mwNvmCfgSetAndSaveLanSlp1ModeSelParam(UINT16 *pLanSlp1ModeSelParam);
 void mwNvmCfgGetUrcRIRingIncomingParam(UINT8 chanId, MWNvmCfgUrcRIRingIncomingParam *pRingIncomingRiCfg);
 void mwNvmCfgSetAndSaveUrcRIRingIncomingParam(UINT8 chanId, const MWNvmCfgUrcRIRingIncomingParam *pRingIncomingRiCfg);
 UINT16 mwNvmCfgGetUrcSignalTypeParam(void);
@@ -1096,9 +1147,9 @@ void mwNvmCfgSetAndSaveUrcSignalTypeParam(UINT16 usSignalType);
 
 //void mwCfgDefaultUsrCodecVolumn(MWNvmCfgUsrSetCodecVolumn *pUsrCodecVolumn);
 void mwNvmCfgGetUsrCodecVolumn(UINT8 deviceType, MWNvmCfgUsrSetCodecVolumn *pUsrCodecVolumn);
-void mwNvmCfgGetVolumnSetFlag(MWNvmCfgVolumnSetFlag *pVolumnSetFlag);
+void mwNvmCfgGetVolumnSetFlag(UINT8 deviceType, MWNvmCfgVolumnSetFlag *pVolumnSetFlag);
 void mwNvmCfgSetAndSaveUsrCodecVolumn(UINT8 deviceType, UINT16 usrDigVolumn, UINT16 usrAnaVolumn);
-void mwNvmCfgSetAndSaveUsrCodecVolumnFlag(MWNvmCfgVolumnSetFlag* pVolumnSetFlag);
+void mwNvmCfgSetAndSaveUsrCodecVolumnFlag(UINT8 deviceType, MWNvmCfgVolumnSetFlag* pVolumnSetFlag);
 
 void mwNvmCfgSetAndSaveAutoApnCfg(BOOL enable);
 BOOL mwNvmCfgGetAutoApnCfg(void);

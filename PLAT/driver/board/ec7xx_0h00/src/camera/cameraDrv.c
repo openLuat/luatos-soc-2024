@@ -17,9 +17,11 @@ extern cspiDataFmt_t        cspiDataFmt;
 extern cspiFrameProcLspi_t  cspiFrameProcLspi;
 
 #define EIGEN_CSPI(n)             ((CSPI_TypeDef *) (MP_USP0_BASE_ADDR + 0x1000*n))
-AP_PLAT_COMMON_BSS static camErrCb             camErrStatsFunc;
-AP_PLAT_COMMON_BSS static cspiCbEvent_fn userCamUspCb   = NULL;
-
+AP_PLAT_COMMON_BSS static camErrCb             	camErrStatsFunc;
+AP_PLAT_COMMON_BSS static cspiCbEvent_fn 		userCamUspCb   = NULL;
+AP_PLAT_COMMON_BSS static cspiCbEvent_fn		userCamDmaCb   = NULL;
+AP_PLAT_COMMON_BSS CameraBuf_t *camBufBak;
+void camDmaCb();
 
 #if (CAMERA_ENABLE_GC032A)
  #if (GC032A_2SDR)
@@ -159,11 +161,6 @@ void camInterfaceCfg(camParamCfg_t* config)
     cspiCtrl.scaleBytes    	= config->scaleBytes;
 }
 
-void camSetMemAddr(uint32_t dataAddr)
-{
-    cspiDrv->ctrl(CSPI_CTRL_MEM_ADDR , dataAddr); // register the recv memory
-}
-
 #if (ENABLE_CAMERA_LDO == 1)
 void camPowerOn(uint8_t ioInitVal)
 {
@@ -185,11 +182,7 @@ static void camUspCb()
 {
 	uint32_t cspiStatus;
 	
-	#if (RTE_CSPI0 == 1)
-	cspiStatus = camGetCspiStats(CSPI_0);
-	#elif (RTE_CSPI1 == 1)
-	cspiStatus = camGetCspiStats(CSPI_1);
-	#endif
+	cspiStatus = camGetCspiStats();
 	
 	if (cspiStatus & ICL_STATS_FRAME_END_Msk)
 	{
@@ -208,7 +201,7 @@ static void camUspCb()
 }
 
 
-void camInit(void* dataAddr, cspiCbEvent_fn uspCb, void* dmaCb)
+void camInit(void* dataAddr, cspiCbEvent_fn uspCb, void* dmaCb, camErrCb errCb)
 {
 	camResolution_e camResolution;
 	camParamCfg_t camParamCfg;
@@ -220,10 +213,25 @@ void camInit(void* dataAddr, cspiCbEvent_fn uspCb, void* dmaCb)
 	irqNum = PXIC0_USP1_IRQn;
 	#endif
 
+	camBufBak 					 = dataAddr;
+	camBufBak[0].enableForCamera = 1;
+	camBufBak[0].enableForUsr    = 0;
+	camBufBak[0].workingForUsr   = 0;
+
 	if(uspCb) 
     {
         userCamUspCb = uspCb;
     }
+
+	if (errCb)
+	{
+		camErrStatsFunc = errCb;
+	}
+
+	if (dmaCb)
+	{
+		userCamDmaCb = dmaCb;
+	}
 	
     XIC_SetVector(irqNum, camUspCb);
     XIC_EnableIRQ(irqNum);	
@@ -310,7 +318,7 @@ void camInit(void* dataAddr, cspiCbEvent_fn uspCb, void* dmaCb)
 
 	cspiDrv->ctrl(CSPI_CTRL_MEM_ADDR , (uint32_t)dataAddr); // register the recv memory
     cspiDrv->powerCtrl(CSPI_POWER_FULL);
-    cspiDrv->init(dmaCb);
+    cspiDrv->init(camDmaCb);
     cspiDrv->ctrl(CSPI_CTRL_DATA_FORMAT , 0);
     cspiDrv->ctrl(CSPI_CTRL_RXTOR , 0);
     cspiDrv->ctrl(CSPI_CTRL_FRAME_INFO0 , 0);
@@ -385,57 +393,64 @@ void camRegisterIRQ(cspiInstance_e instance, camIrq_fn irqCb)
     XIC_EnableIRQ(irqNum);	
 }
 
-PLAT_FM_RAMCODE void camRecv(uint8_t * dataAddr)
+void camRecv(uint8_t * dataAddr)
 {
     cspiDrv->ctrl(CSPI_CTRL_MEM_ADDR , (uint32_t)dataAddr);
     cspiDrv->recv();   
 }
 
-uint32_t camGetCspiStats(cspiInstance_e instance)
+uint32_t camGetCspiStats()
 {
-    return EIGEN_CSPI(instance)->STAS;
+	uint32_t status = 0;
+	
+#if (RTE_CSPI1 == 1)
+	{
+		status = EIGEN_CSPI(CSPI_1)->STAS;
+	}
+#else
+	{
+		status = EIGEN_CSPI(CSPI_0)->STAS;
+	}
+#endif
+
+	return status;
 }
 
-uint32_t camGetCspiInt(cspiInstance_e instance)
+void camClearErrStats()
 {
-    return EIGEN_CSPI(instance)->INTCTL;
+#if (RTE_CSPI1 == 1)
+	CSPI1->STAS 	|= 0x3<<3;
+	CSPI1->STAS 	|= 0xf<<7;
+	CSPI1->DMACTL 	|= 1<<24;
+	CSPI1->CBCTRL 	|= 2<<25;
+#else
+	CSPI0->STAS 	|= 0x3<<3;
+	CSPI0->STAS 	|= 0xf<<7;
+	CSPI0->DMACTL 	|= 1<<24;
+	CSPI0->CBCTRL 	|= 2<<25;
+#endif
 }
 
-
-void camClearIntStats(cspiInstance_e instance, uint32_t mask)
+int camCheckErrStats()
 {
-	EIGEN_CSPI(instance)->STAS = mask;
-}
+	uint32_t status = camGetCspiStats();
 
-void camRegisterErrStatsCb(camErrCb errCb)
-{
-    camErrStatsFunc = errCb;
-}
-
-void camCheckErrStats()
-{
-    if (!camErrStatsFunc)
-    {
-        return;
-    }
-
-    // check lspi error status and give cb to user
-    uint32_t status = LSPI2->STAS;
-
-    if ( (status | ICL_STATS_TX_UNDERRUN_RUN_Msk) ||
-         (status | ICL_STATS_TX_DMA_ERR_Msk) ||
-         (status | ICL_STATS_RX_OVERFLOW_Msk) ||
-         (status | ICL_STATS_RX_DMA_ERR_Msk) ||
-         (status | ICL_STATS_RX_FIFO_TIMEOUT_Msk) ||
-         (status | ICL_STATS_FS_ERR_Msk) ||
-         (status | ICL_STATS_CSPI_BUS_TIMEOUT_Msk) ||
-         (status | ICL_STATS_RX_FIFO_TIMEOUT_Msk)
+    if ( (status >> ICL_STATS_RX_OVERFLOW_Pos & 1) || 
+		(status >> ICL_STATS_RX_DMA_ERR_Pos & 1) || 
+		(status >> ICL_STATS_FS_ERR_Pos & 1)
         ) 
     {   
-        camErrStatsFunc(status);
-    }        
+		if (camErrStatsFunc)
+		{
+			camErrStatsFunc(status);
+		}
 
-    return;    
+        return -1; // has cspi err
+    }
+	else
+	{
+		return 0; 
+	}
 }
 
 void camGpioPulseCfg(uint8_t padAddr, uint8_t pinInstance, uint8_t pinNum)
@@ -488,8 +503,177 @@ void camGpioPulse(uint8_t pinInstance, uint8_t pinNum, uint32_t pulseDurationUs,
 	}
 }
 
-void camRegisterSlp1Cb(cspiSlp1Cb_fn cb)
+/************************camera rbuf*************************/
+PLAT_PM_RAMCODE void timeRead(UINT32 *sysTime)
 {
-    cspiSlp1CbFn = cb;
+    //T_TMU_BC_RD* bcRd = HW_TmuBcRd; 4f0700c4
+    UINT32 mask;
+    UINT32 hfnsfnsbn;
+
+    mask = SaveAndSetIRQMask();
+//    CLOCK_clockEnable(PCLK_TMU);
+
+    hfnsfnsbn = *(uint32_t*)0x4f0700c4;//bcRd->dbg_bc_h;
+
+    *sysTime = (hfnsfnsbn >> 4) * 10 + (hfnsfnsbn & 0xf);
+
+//    CLOCK_clockDisable(PCLK_TMU);
+    RestoreIRQMask(mask);
 }
+
+
+static uint8_t findNextCamBuf()
+{
+	int bypassIndex = -1;
+	uint8_t minIndex = 0;
+	uint32_t minVal = 0;
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (camBufBak[i].workingForUsr == 1)
+		{
+			bypassIndex = i;
+			break;
+		}
+	}
+
+	minIndex = (bypassIndex == 0)? 1 : 0;
+	minVal = camBufBak[minIndex].timeStamp;
+	
+	for (int i = (minIndex+1); i < 3; i++)
+	{
+		if ((camBufBak[i].timeStamp < minVal) && (camBufBak[i].workingForUsr == 0))
+		{
+			minVal = camBufBak[i].timeStamp;
+			minIndex = i;
+		}
+	}
+
+	return minIndex;
+}
+
+void camDmaCb(uint32_t dmaStatus)
+{
+#if (ENABLE_CAMERA_RING_BUF == 1)	
+	int ret = 0;
+
+	for (int i = 0; i < 3; i++)
+	{
+		if ((camBufBak[i].enableForCamera == 1) && (camBufBak[i].workingForUsr == 0))
+		{
+			// find out the current working buffer
+			if (camCheckErrStats() == 0) // cspi right
+			{
+				timeRead(&camBufBak[i].timeStamp);
+				camBufBak[i].enableForCamera	= 0;
+				camBufBak[i].enableForUsr		= 1;
+				camBufBak[i].workingForUsr 	= 0;
+				camBufBak[i].camErrCnt 		= 0;
+
+								
+				ret = findNextCamBuf();
+				//printf("next cam buf: %d\n", ret);
+				
+				#if (RTE_CSPI1 == 1)
+				CSPI1->CBCTRL	|= 2<<25;
+				#else
+				CSPI0->CBCTRL	|= 2<<25;
+				#endif
+				
+				camRecv(camBufBak[ret].data);
+				camBufBak[ret].enableForCamera = 1;
+				camBufBak[ret].enableForUsr    = 0;
+				camBufBak[ret].workingForUsr   = 0;
+				camBufBak[ret].camErrCnt       = 0;
+			}
+			else
+			{
+				// 1. clear cspi status
+				camClearErrStats();
+				
+				// 2. recv again
+				camRecv(camBufBak[i].data);
+				camBufBak[i].enableForCamera = 1;
+				camBufBak[i].camErrCnt 	 += 1;
+				camBufBak[i].enableForUsr    = 0;
+				camBufBak[i].workingForUsr   = 0;
+			
+				if (camBufBak[i].camErrCnt == 5)
+				{
+					// send a msg
+				}
+			}
+			
+			break;
+		}
+	}
+#endif
+
+	if (userCamDmaCb)
+	{
+		userCamDmaCb(dmaStatus);
+	}
+}
+
+static int8_t findUsrEnableBuf()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		if (camBufBak[i].enableForUsr == 1)
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+int camPicTake()
+{
+	int minIndex    = findUsrEnableBuf();
+	if (minIndex < 0)
+	{
+		return minIndex;
+	}
+	else
+	{
+		uint32_t minVal = camBufBak[minIndex].timeStamp;
+
+		for (int i = (minIndex+1); i < 3; i++)
+		{
+			if ((camBufBak[i].timeStamp > 0) && (camBufBak[i].timeStamp < minVal) && (camBufBak[i].enableForUsr == 1))
+			{
+				minVal = camBufBak[i].timeStamp;
+				minIndex = i;
+			}
+		}
+		
+		uint32_t mask = SaveAndSetIRQMask();
+		camBufBak[minIndex].workingForUsr = 1;
+		RestoreIRQMask(mask);
+	}
+
+	return minIndex;
+}
+
+void camPicGive(int index)
+{
+	if (index < 0)
+	{
+		return;
+	}
+
+	if (index >= 3)
+	{
+		EC_ASSERT(0,0,0,0);
+	}
+	
+	uint32_t mask = SaveAndSetIRQMask();
+	camBufBak[index].workingForUsr = 0;
+	camBufBak[index].enableForUsr  = 1;
+	RestoreIRQMask(mask);
+}
+
+
+/************************camera rbuf*************************/
 

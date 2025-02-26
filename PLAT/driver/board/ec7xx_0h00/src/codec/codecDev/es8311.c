@@ -75,7 +75,7 @@ AP_PLAT_COMMON_DATA HalCodecFuncList_t es8311DefaultHandle =
     .halCodecSetMuteFunc        = es8311SetMute,
     .halCodecSetVolumeFunc      = es8311SetVolume,
     .halCodecGetVolumeFunc      = es8311GetVolume,
-    //.halCodecEnablePAFunc           = es8311EnablePA,
+    .halCodecEnablePAFunc       = es8311EnablePA,
     .halCodecSetMicVolumeFunc   = es8311SetMicVolume,
     .halCodecGetMicVolumeFunc   = es8311GetMicVolume,
     .halCodecLock               = NULL,
@@ -91,7 +91,7 @@ AP_PLAT_COMMON_BSS MWNvmCfgVolumnSetFlag     volumeSetFlag;
 AP_PLAT_COMMON_BSS MWNvmCfgVolumnSetFlag     volumeSetFlag2;
 #endif
 extern void mwNvmCfgGetUsrCodecVolumn(UINT8 deviceType, MWNvmCfgUsrSetCodecVolumn *pUsrCodecVolumn);
-extern void mwNvmCfgGetVolumnSetFlag(MWNvmCfgVolumnSetFlag *pVolumnSetFlag);
+extern void mwNvmCfgGetVolumnSetFlag(UINT8 deviceType, MWNvmCfgVolumnSetFlag *pVolumnSetFlag);
 extern void mwNvmCfgSetAndSaveUsrCodecVolumn(UINT8 deviceType, UINT16 usrDigVolumn, UINT16 usrAnaVolumn);
 
 /*----------------------------------------------------------------------------*
@@ -131,6 +131,9 @@ static const struct _coeffDiv coeffDiv[] =
     {5644800 , 22050, 0x01,    0x01, 0x01,   0x01,   0x00,   0x00, 0xff, 0x04, 0x10,    0x10},
     {2822400 , 22050, 0x01,    0x02, 0x01,   0x01,   0x00,   0x00, 0xff, 0x04, 0x10,    0x10},
     {1411200 , 22050, 0x01,    0x04, 0x01,   0x01,   0x00,   0x00, 0xff, 0x04, 0x10,    0x10},
+
+    // 24k
+    {6144000,  24000, 0x01,    0x01, 0x01,   0x01,   0x00,   0x00, 0xff, 0x04, 0x10,    0x10},
 
     // 32k
     {12288000, 32000, 0x03,    0x02, 0x01,   0x01,   0x00,   0x00, 0xff, 0x04, 0x10,    0x10},
@@ -468,7 +471,7 @@ HalCodecSts_e es8311Init(HalCodecCfg_t *codecCfg)
 
 
     mwNvmCfgGetUsrCodecVolumn(0, &usrCodecVolumn);
-    mwNvmCfgGetVolumnSetFlag(&volumeSetFlag);
+    mwNvmCfgGetVolumnSetFlag(0, &volumeSetFlag);
     DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311init_10, P_DEBUG, "init get nv speaker vol. rxDigUsrSet:%d, rxAnaUsrSet:%d", usrCodecVolumn.rxDigUsrSet, usrCodecVolumn.rxAnaUsrSet);
     DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311init_11, P_DEBUG, "rxDigUsrSetFlag:%d, rxAnaUsrSetFlag:%d, txDigGainFlag%d, txAnaGainFlag:%d", volumeSetFlag.rxDigUsrSetFlag, volumeSetFlag.rxAnaUsrSetFlag, volumeSetFlag.txDigGainFlag, volumeSetFlag.txAnaGainFlag);
 #endif    
@@ -564,6 +567,9 @@ HalCodecSts_e es8311Init(HalCodecCfg_t *codecCfg)
         case CODEC_22K_SAMPLES:
             sampleFre = 22050;
             break;
+        case CODEC_24K_SAMPLES:
+            sampleFre = 24000;
+            break;            
         case CODEC_32K_SAMPLES:
             sampleFre = 32000;
             break;
@@ -688,15 +694,15 @@ HalCodecSts_e es8311Init(HalCodecCfg_t *codecCfg)
         DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311init_5, P_DEBUG, "es8311 initialize failed");
     }
     #endif
+	
+	PadConfig_t 	padConfig = {0};
+	GpioPinConfig_t pinConfig = {0};
 
     if (codecCfg->hasPA)
     {       
         isHasPA = codecCfg->hasPA;
         
-        // GPIO function select
-        PadConfig_t     padConfig = {0};
-        GpioPinConfig_t pinConfig = {0};
-        
+        // GPIO function select       
         PAD_getDefaultConfig(&padConfig);
         padConfig.mux = PAD_MUX_ALT0;
         PAD_setPinConfig(CODEC_PA_PAD_INDEX, &padConfig);
@@ -710,6 +716,18 @@ HalCodecSts_e es8311Init(HalCodecCfg_t *codecCfg)
         // enable pa power
         //es8311EnablePA(true);
     }
+
+	// mic power
+    #if (VOLTE_EC_OWN_BOARD_SUPPORT)
+	slpManAONIOPowerOn();
+	PAD_getDefaultConfig(&padConfig);
+    padConfig.mux = PAD_MUX_ALT0;
+    PAD_setPinConfig(53, &padConfig);
+
+    pinConfig.pinDirection = GPIO_DIRECTION_OUTPUT;
+    pinConfig.misc.initOutput = 1;
+    GPIO_pinConfig(1, 12, &pinConfig); // agpio8
+    #endif  
     
     return CODEC_EOK;
 }
@@ -811,10 +829,10 @@ HalCodecSts_e es8311StartStop(HalCodecMode_e mode, HalCodecCtrlState_e ctrlState
         case CODEC_CTRL_START:
         {
             ret |= es8311Start(mode);
-            if (isHasPA)
-            {
-                es8311EnablePA(true);
-            }
+            //if (isHasPA)
+            //{
+              //  es8311EnablePA(true);
+            //}
         }
         break;
 
@@ -1007,9 +1025,9 @@ HalCodecSts_e es8311SetVolume(HalCodecCfg_t* codecHalCfg, int volume)
      // 4. write into nv
     usrCodecVolumn.rxDigUsrSet &= ~0xff;
     usrCodecVolumn.rxDigUsrSet |= volume;
-    mwNvmCfgSetAndSaveUsrCodecVolumn(0, usrCodecVolumn.rxDigUsrSet, usrCodecVolumn.rxAnaUsrSet);
+    mwNvmCfgSetAndSaveUsrCodecVolumn(codecHalCfg->codecDeviceType, usrCodecVolumn.rxDigUsrSet, usrCodecVolumn.rxAnaUsrSet);
 
-    mwNvmCfgGetUsrCodecVolumn(0, &usrCodecVolumn2);
+    mwNvmCfgGetUsrCodecVolumn(codecHalCfg->codecDeviceType, &usrCodecVolumn2);
     DEBUG_PRINT(UNILOG_PLA_DRIVER, es8311SetVolume_2, P_DEBUG, "rxDigUsrSet:%d, rxAnaUsrSet:%d", usrCodecVolumn2.rxDigUsrSet, usrCodecVolumn2.rxAnaUsrSet);
 #else
     int vol = volume * 2550 / 1000; // volume * (rxDigGain100 - rxDigGain0) / 100

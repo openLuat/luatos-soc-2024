@@ -43,6 +43,7 @@ void    lcdMspiSet(uint8_t enable, uint8_t addrLane, uint8_t dataLane, uint8_t i
 void    lcdMspiHsyncSet(uint8_t hsyncAddr, uint8_t hsyncInst, uint16_t vbpNum, uint16_t vfpNum);
 void    lcdMspiVsyncSet(uint8_t vsyncEnable, uint8_t vsyncInst, uint8_t lspiDiv);
 void    lcdCsnHighCycleMin(uint8_t lspiDiv);
+void    lcdDmaLoop(lcdDrvFunc_t *lcd, void *sourceAddress, uint32_t totalLength, uint32_t dmaTrunkLen);
 
 
 #ifdef __cplusplus

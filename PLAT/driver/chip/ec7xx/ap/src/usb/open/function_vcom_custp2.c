@@ -273,6 +273,8 @@ uint8_t vcom_func_custp2_bind(usb_func_ccinst_st *p_func_ccinst,
     p_ccinst_cdc_setting->intf_1st_idx = p_bind_call_data->intf_1st_idx;
     p_ccinst_cdc_setting->intf_2nd_idx = p_bind_call_data->intf_2nd_idx;
     p_ccinst_cdc_setting->intf_str_id = p_bind_call_data->intf_str_id;
+    p_ccinst_cdc_setting->fs_iep_mps = 0x40;
+    p_ccinst_cdc_setting->fs_oep_mps = 0x40;
     p_ccinst_cdc_setting->binded = 1;
     return ret;
 }
@@ -362,9 +364,9 @@ uint8_t vcom_func_custp2_get_othspd_desc(usb_func_ccinst_st *p_func_ccinst, ccin
     p_usbd_desc_dst->cdc_doep_desc.bEndpointAddress = p_ccinst_cdc_setting->ep_dataout_num;
     p_usbd_desc_dst->intf_ctrl_desc.iInterface = p_ccinst_cdc_setting->intf_str_id;
     p_usbd_desc_dst->cdc_diep_desc.wMaxPacketSize_High = 0;
-    p_usbd_desc_dst->cdc_diep_desc.wMaxPacketSize_Low = 0x40;
+    p_usbd_desc_dst->cdc_diep_desc.wMaxPacketSize_Low = p_ccinst_cdc_setting->fs_iep_mps;
     p_usbd_desc_dst->cdc_doep_desc.wMaxPacketSize_High = 0;
-    p_usbd_desc_dst->cdc_doep_desc.wMaxPacketSize_Low = 0x40;
+    p_usbd_desc_dst->cdc_doep_desc.wMaxPacketSize_Low = p_ccinst_cdc_setting->fs_oep_mps;
 
     p_usbd_desc_dst->intf_ctrl_desc.bInterfaceNumber = p_ccinst_cdc_setting->intf_1st_idx;
     p_usbd_desc_dst->cdc_union_desc.bMasterInterface0 = p_ccinst_cdc_setting->intf_1st_idx;

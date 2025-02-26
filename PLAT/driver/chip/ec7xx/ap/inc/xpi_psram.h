@@ -679,6 +679,15 @@ void XPSRAM_csDirectCtrl(void);
 void XPSRAM_postSleepFlow(void);
 
 
+/**
+ \fn        void XPSRAM_changeFreq( uint8_t div )
+ \brief     change psram freq dynamicly
+  \param[in] div: 1843.2Mhz/(div+1)*2
+ \note      called when init and phy request
+*/
+void XPSRAM_changeFreq( uint8_t div );
+
+
 #if !defined(FEATURE_BOOTLOADER_PROJECT_ENABLE)
 uint8_t XPSRAM_enterHySlp(void);
 #endif

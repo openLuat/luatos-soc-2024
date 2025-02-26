@@ -140,10 +140,22 @@ typedef struct
 	uint16_t 			tailorBottom;
 }lcdPreviewManulItem_t;
 
+typedef enum
+{
+	INT_PER_1_FRAME 	= 0,
+	INT_PER_1_2_FRAME 	= 1,
+	INT_PER_1_4_FRAME 	= 2,
+	INT_PER_1_8_FRAME 	= 3,
+	INT_PER_1_16_FRAME 	= 4,
+}lcdRamWrIntSel_e;
+
 typedef struct
 {
 	lcdPreviewModeSel_e 	previewModeSel;
 	lcdPreviewManulItem_t	previewManulSet;
+
+	uint8_t					ramWrIntEn;
+	lcdRamWrIntSel_e		ramWrIntSel;
 }lcdIoCtrl_t;
 
 typedef struct _lcdDrvFunc_t lcdDrvFunc_t;

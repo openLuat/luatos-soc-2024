@@ -175,6 +175,12 @@
 #define ECNETCFG_1_PPP_AUTH_SELECT_MIN      0
 #define ECNETCFG_1_PPP_AUTH_SELECT_MAX      1
 #define ECNETCFG_1_PPP_AUTH_SELECT_DEF      0
+#define ECNETCFG_1_ETH_TX_CONCAT_MIN        0
+#define ECNETCFG_1_ETH_TX_CONCAT_MAX        1
+#define ECNETCFG_1_ETH_TX_CONCAT_DEF        1
+#define ECNETCFG_1_LAN_SLP1_MODE_MIN        0
+#define ECNETCFG_1_LAN_SLP1_MODE_MAX        1
+#define ECNETCFG_1_LAN_SLP1_MODE_DEF        1
 #define ECNETCFG_1_NAT_MIN                  0
 #define ECNETCFG_1_NAT_MAX                  1
 #define ECNETCFG_1_NAT_DEF                  0

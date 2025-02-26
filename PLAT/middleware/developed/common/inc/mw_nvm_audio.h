@@ -11,7 +11,6 @@
 //#include "mw_common.h"
 //#include "cmisms.h"
 #include "audioCfg.h"
-//#include "hal_codec.h"
 
 /*
  * Differences between these MW config/AON files:
@@ -828,7 +827,7 @@ BOOL mwNvmAudioCfgLogControlSet(/*AudioParaCfgCommon_t *pMwNvmAudioCfgCommon, */
   \fn           Bool mwNvmGetAudioCfgForCP(AudioConfig_t *readAudioCfgForCp, UINT8 device, UINT8 direct, UINT8 mode)
   \brief 
   \ useage:
-  \ audioCfg = mallocEc(sizeof(audioCfg));
+  \ audioCfg = malloc(sizeof(audioCfg));
   \
   \ ret = mwNvmGetAudioCfgForCP(audioCfg, device, direct, mode);
   \

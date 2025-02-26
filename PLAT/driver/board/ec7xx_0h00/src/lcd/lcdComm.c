@@ -53,6 +53,12 @@ void lcdDrvDelay(uint32_t ms)
 #endif
 }
 
+bool lcdCheckBitSet(uint32_t val, uint8_t bitPos)
+{
+	int mask = 1 << bitPos;
+	return (val & mask) != 0;
+}
+
 static void uspIrqCb(void)
 {
     LSPI2->STAS |= (1<<31);
@@ -255,9 +261,9 @@ void lcdInterfaceType(uint8_t type)
 int lspiDefaultCfg(lcdDrvFunc_t *lcd, lcdUspCb cb, uint32_t freq, uint8_t bpp)
 {
     lcdDrv->init();
+    lcdDrv->ctrl(LSPI_CTRL_BUS_SPEED, freq);
     lcdDrv->powerCtrl(LSPI_POWER_FULL);
 
-    lcdDrv->ctrl(LSPI_CTRL_BUS_SPEED, freq);
     lspiCtrl.datSrc = 1; // 0: data from camera; 1: data from memory
     
     switch (bpp)
@@ -331,6 +337,35 @@ int lspiDefaultCfg(lcdDrvFunc_t *lcd, lcdUspCb cb, uint32_t freq, uint8_t bpp)
     lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO, 0);
     lcdDrv->ctrl(LSPI_CTRL_FRAME_INFO_OUT, 0);
     return 0;
+}
+
+void lcdDmaLoop(lcdDrvFunc_t *lcd, void *sourceAddress, uint32_t totalLength, uint32_t dmaTrunkLen)
+{
+	lspiDmaCtrl.txDmaReqEn          = 1;
+    lspiDmaCtrl.dmaWorkWaitCycle    = 15;
+    lcdDrv->ctrl(LSPI_CTRL_DMA_CTRL, 0);
+    lspiCmdCtrl.wrRdn               = 1; // 1: wr   0: rd
+    lspiCmdCtrl.ramWr               = 1; // start ramwr    
+#if (defined TYPE_EC718M)
+	#if (SPI_2_DATA_LANE == 1)
+	lspiCmdCtrl.ramWrHaltMode		= 0;
+	#else
+    lspiCmdCtrl.ramWrHaltMode       = 1; // maintain cs as low between cmd and data
+    #endif
+#endif
+
+	lspiCmdCtrl.dataLen = 0x3fffff; // infinate
+	lcdDrv->ctrl(LSPI_CTRL_CMD_CTRL, 0);
+
+	uint8_t chainCnt = totalLength / dmaTrunkLen;
+	lcdDmaTxCfg.totalLength         = dmaTrunkLen;
+    lcdDmaTxCfg.addressIncrement    = DMA_ADDRESS_INCREMENT_SOURCE;
+    lcdDmaTxCfg.targetAddress       = (void *)&(LSPI2->TFIFO);
+    lcdDmaTxCfg.sourceAddress       = (void *)sourceAddress;
+	
+	DMA_buildDescriptorChain(lcdDmaTxDesc, &lcdDmaTxCfg, chainCnt, false, false, true);
+	lcdDmaTxDesc[chainCnt/2-1].CMDR |= 1<<21;
+    dmaStartStop(true);
 }
 
 int lcdDmaTrans(lcdDrvFunc_t *lcd, void *sourceAddress, uint32_t totalLength)

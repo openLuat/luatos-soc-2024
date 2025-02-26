@@ -558,9 +558,19 @@ __PACKED_STRUCT _plat_config_raw_flash
      *        1 -- enable all usb software trace
      *        others -- misc usb software trace
      */
-    uint8_t usbSwTrace;
+    uint8_t usbSwTrace:6;
 
+    /** usb  high or full speed ctrl
+     *  valid value:
+     *        depnd on  Current usb dev supported speed, when current default support high speed
+     *        0 -- no reconfig, usb support high speed dev default
+     *        1-- reconfig usb to support full speed only, the txfifo will be decreased according to mps
 
+     *        depnd on  Current usb dev supported speed, when current default support full speed
+     *        0 -- no reconfig, usb support full speed only, the txfifo will be decreased according to mps
+     *        1 -- reconfig usb to support high speed dev   
+     */
+    uint8_t usbSupSpdReCfg:2;    
 
     /** USB sleep mask
      * valid value:
@@ -718,6 +728,8 @@ typedef enum _plat_config_id
     PLAT_CONFIG_ITEM_LOG_PORT_SEL,           /**< ULG output port select */
     PLAT_CONFIG_ITEM_USB_CTRL,               /**< USB control */
     PLAT_CONFIG_ITEM_USB_SW_TRACE_FLAG,      /**< USB control */
+    PLAT_CONFIG_ITEM_USB_SUP_SPD_RECFG,      /**< USB support fs or hs speed reconfig */
+    
     PLAT_CONFIG_ITEM_USB_SLEEP_MASK,         /**< USB Sleep Vote Mask */
     PLAT_CONFIG_ITEM_USB_SLEEP_THD,          /**< USB Sleep Thread */
     PLAT_CONFIG_ITEM_PWRKEY_MODE,            /**< PWRKEY Mode */
