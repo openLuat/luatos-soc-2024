@@ -70,8 +70,10 @@ typedef struct
 	void *p_cache[2];
 	void *raw_buffer;
 	uint32_t jpeg_data_point;
-	uint16_t image_w;
-	uint16_t image_h;
+	uint16_t capture_x;
+	uint16_t capture_y;
+	uint16_t capture_w;
+	uint16_t capture_h;
 	uint8_t cur_cache;
 	uint8_t is_process_image;
 	uint8_t double_buffer_mode;
@@ -246,7 +248,7 @@ int luat_camera_setup(int id, luat_spi_camera_t *conf, void * callback, void *pa
 	luat_camera_app.camera_id = id;
 	luat_camera_app.config = *conf;
 #ifdef TYPE_EC718M
-	luat_camera_app.double_buffer_mode = 1;
+	luat_camera_app.double_buffer_mode = luat_camera_app.scan_mode;
 #else
 	luat_camera_app.double_buffer_mode = ((conf->sensor_width * conf->sensor_height) <= 80000 );
 #endif
@@ -408,6 +410,8 @@ static void luat_camera_task(void *param)
     void *stack = NULL;
     uint8_t *file_data;
     uint8_t *p_cache;
+    uint16_t *cap = NULL;
+    PV_Union uTemp;
     uint32_t i,j,k;
     int result;
 	while(1)
@@ -462,12 +466,32 @@ static void luat_camera_task(void *param)
 				}
 				luat_camera_app.p_cache[1] = luat_heap_opt_malloc(LUAT_HEAP_PSRAM, luat_camera_app.config.sensor_width * luat_camera_app.config.sensor_height);
 			}
+			if (!luat_camera_app.capture_h && !luat_camera_app.capture_w)
+			{
+				jpeg_enc.uHeight = luat_camera_app.config.sensor_height;
+				jpeg_enc.uWidth = luat_camera_app.config.sensor_width;
+				jpeg_image.uHeight = luat_camera_app.config.sensor_height;
+				jpeg_image.uWidth = luat_camera_app.config.sensor_width;
+				jpeg_image.pData[0] = luat_camera_app.p_cache[0];
+			}
+			else
+			{
+				jpeg_enc.uHeight = luat_camera_app.capture_h;
+				jpeg_enc.uWidth = luat_camera_app.capture_w;
+				jpeg_image.uHeight = luat_camera_app.capture_h;
+				jpeg_image.uWidth = luat_camera_app.capture_w;
+				cap = luat_heap_opt_malloc(LUAT_HEAP_PSRAM, luat_camera_app.capture_h * luat_camera_app.capture_w * 2);
+				uTemp.p = luat_camera_app.p_cache[0];
+				jpeg_image.pData[0] = cap;
+				for(i = 0; i < luat_camera_app.capture_h; i++)
+				{
+					for(j = 0; j < luat_camera_app.capture_w; j++)
+					{
+						cap[i * luat_camera_app.capture_w + j] = uTemp.pu16[(luat_camera_app.capture_y + i) * luat_camera_app.config.sensor_width + luat_camera_app.capture_x + j];
+					}
+				}
+			}
 
-			jpeg_enc.uHeight = luat_camera_app.config.sensor_height;
-			jpeg_enc.uWidth = luat_camera_app.config.sensor_width;
-			jpeg_image.uHeight = luat_camera_app.config.sensor_height;
-			jpeg_image.uWidth = luat_camera_app.config.sensor_width;
-			jpeg_image.pData[0] = luat_camera_app.p_cache[0];
 			JPEGEncodeHandle = JpegE_Create();
 			switch(luat_camera_app.jpeg_quality)
 			{
@@ -487,6 +511,11 @@ static void luat_camera_task(void *param)
 			luat_camera_app.jpeg_data_point = luat_camera_app.config.sensor_width * luat_camera_app.config.sensor_height;
 			JpegE_Encode(JPEGEncodeHandle, &jpeg_image, luat_camera_app.p_cache[1],&luat_camera_app.jpeg_data_point);
 			JpegE_Destroy(JPEGEncodeHandle);
+			if (cap)
+			{
+				luat_heap_free(cap);
+				cap = NULL;
+			}
 			if (luat_camera_app.buff)
 			{
 				if (luat_camera_app.buff->len < luat_camera_app.jpeg_data_point)
@@ -611,6 +640,22 @@ int luat_camera_capture(int id, uint8_t quality, const char *path)
 		DBG("device busy!");
 	}
 	return -1;
+}
+
+
+int luat_camera_capture_config(int id, uint16_t start_x, uint16_t start_y, uint16_t new_w, uint16_t new_h)
+{
+	if (luat_camera_app.capture_stage
+			|| ((start_x + new_w) >= luat_camera_app.config.sensor_width)
+			|| ((start_y + new_h) >= luat_camera_app.config.sensor_height))
+	{
+		return -1;
+	}
+	luat_camera_app.capture_x = start_x;
+	luat_camera_app.capture_y = start_y;
+	luat_camera_app.capture_w = new_w;
+	luat_camera_app.capture_h = new_h;
+	return 0;
 }
 
 int luat_camera_work_mode(int id, int mode)
