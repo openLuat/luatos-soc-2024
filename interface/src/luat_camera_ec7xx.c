@@ -645,6 +645,15 @@ int luat_camera_capture(int id, uint8_t quality, const char *path)
 
 int luat_camera_capture_config(int id, uint16_t start_x, uint16_t start_y, uint16_t new_w, uint16_t new_h)
 {
+	if (new_w & 0x0f)
+	{
+		new_w = ((new_w >> 4) + 1) << 4;
+	}
+	if (new_h & 0x0f)
+	{
+		new_h = ((new_h >> 4) + 1) << 4;
+	}
+	DBG("%d,%d,%d,%d", start_x, start_y, new_w, new_h);
 	if (luat_camera_app.capture_stage
 			|| ((start_x + new_w) >= luat_camera_app.config.sensor_width)
 			|| ((start_y + new_h) >= luat_camera_app.config.sensor_height))
