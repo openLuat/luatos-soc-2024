@@ -94,9 +94,11 @@ static uint8_t luat_mcu_iomux_ctrl_by_user[LUAT_MCU_PERIPHERAL_CAN + 1];
 #else
 static uint8_t luat_mcu_iomux_ctrl_by_user[LUAT_MCU_PERIPHERAL_PWM + 1];
 #endif
+static uint8_t luat_mcu_wire_iomux_ctrl_by_user;
 
 uint8_t luat_mcu_iomux_is_default(uint8_t type, uint8_t sn)
 {
+	if (type == LUAT_MCU_PERIPHERAL_ONEWIRE) return luat_mcu_wire_iomux_ctrl_by_user;
 #ifdef TYPE_EC718M
 	if (type > LUAT_MCU_PERIPHERAL_CAN) return 1;
 #else
@@ -108,6 +110,18 @@ uint8_t luat_mcu_iomux_is_default(uint8_t type, uint8_t sn)
 
 void luat_mcu_iomux_ctrl(uint8_t type, uint8_t sn, int pad_index, uint8_t alt, uint8_t is_input)
 {
+	if (type == LUAT_MCU_PERIPHERAL_ONEWIRE)
+	{
+		if (pad_index != -1)
+		{
+			GPIO_IomuxEC7XX(pad_index, alt, 0, 0);
+			luat_mcu_wire_iomux_ctrl_by_user = 1;
+		}
+		else
+		{
+			luat_mcu_wire_iomux_ctrl_by_user = 0;
+		}
+	}
 #ifdef TYPE_EC718M
 	if (type > LUAT_MCU_PERIPHERAL_CAN) return;
 #else
