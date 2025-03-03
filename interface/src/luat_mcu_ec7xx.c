@@ -98,7 +98,7 @@ static uint8_t luat_mcu_wire_iomux_ctrl_by_user;
 
 uint8_t luat_mcu_iomux_is_default(uint8_t type, uint8_t sn)
 {
-	if (type == LUAT_MCU_PERIPHERAL_ONEWIRE) return luat_mcu_wire_iomux_ctrl_by_user;
+	if (type == LUAT_MCU_PERIPHERAL_ONEWIRE) return !luat_mcu_wire_iomux_ctrl_by_user;
 #ifdef TYPE_EC718M
 	if (type > LUAT_MCU_PERIPHERAL_CAN) return 1;
 #else
