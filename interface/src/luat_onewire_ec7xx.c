@@ -279,7 +279,10 @@ void luat_onewire_write_bit(int id, uint8_t level)
     OW->OCR = OW_OCR_CMD_WRITE_Msk;
 	while(!(OW->IIR & OW_IIR_INT_WRITE_Msk)) {
 		timeout--;
-		if (!timeout) return;
+		if (!timeout)
+		{
+			break;
+		}
 	}
 	OW->OCR = OW_OCR_CMD_FLUSH_Msk;
 }
