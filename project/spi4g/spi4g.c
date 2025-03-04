@@ -4,6 +4,9 @@
 #include "ps_lib_api.h"
 #include "networkmgr.h"
 #include "eth.h"
+#include "luat_netdrv.h"
+#include "luat_netdrv_napt.h"
+#include "luat_network_adapter.h"
 
 #define SPI4G_CMD_HEAD 0x454D4341
 #define SPI4G_PKT_HEAD 0x4153
@@ -17,6 +20,12 @@
 #define DBG_PIN HAL_GPIO_30
 
 #define ALIGN_UP(v, n) (((unsigned long)(v) + (n)-1) & ~((n)-1))
+
+#define SPI4G_IP4 "192.168.1.2"
+#define SPI4G_IP4_GW "192.168.1.1"
+#define SPI4G_IP4_MASK "255.255.255.0"
+
+#define SPI4G_NW_ADAPTER_INDEX NW_ADAPTER_INDEX_LWIP_USER0
 
 static uint8_t dbg_pin_level = 1;
 
@@ -78,6 +87,12 @@ typedef struct
     uint16_t vif_idx;
     uint8_t link_state;
 } query_link_status_rsp_t;
+
+typedef struct
+{
+    uint16_t vif_idx;
+    uint8_t state;
+} link_status_ind_t;
 
 typedef struct
 {
@@ -178,6 +193,10 @@ extern void GPIO_Output(uint32_t Pin, uint8_t Level);
 extern void WDT_kick(void);
 extern void slpManAonWdtFeed(void);
 #endif
+extern void luat_napt_native_init(void);
+extern struct netif * net_lwip_get_netif(uint8_t adapter_index);
+extern luat_netdrv_t netdrv_gprs;
+extern int luat_netdrv_gw_adapter_id;
 
 static luat_rtos_task_handle slave_handle;
 static luat_rtos_task_handle cmd_handle;
@@ -191,6 +210,7 @@ static luat_rtos_mutex_t tx_queue_mutex;
 static luat_rtos_mutex_t rx_queue_mutex;
 static luat_rtos_timer_t tx_notify_timer;
 static luat_rtos_timer_t rx_decode_timer;
+static luat_netdrv_t *netdrv;
 
 static spi_cmd_info_t cmd_info[SPI_CMD_MAX] = {
     {0, sizeof(query_rsp_t)},
@@ -201,15 +221,15 @@ static spi_cmd_info_t cmd_info[SPI_CMD_MAX] = {
     {0, sizeof(pm_rsp_t)}
 };
 
-static uint8_t host_mac[ETH_HWADDR_LEN] = {0};
-static uint8_t dev_mac[ETH_HWADDR_LEN] = {0xfa, 0x32, 0x47, 0x15, 0xe1, 0x88};
+static uint8_t master_mac[ETH_HWADDR_LEN] = {0};
+static uint8_t slave_mac[ETH_HWADDR_LEN] = {0xfa, 0x32, 0x47, 0x15, 0xe1, 0x88};
 
 static uint8_t state = SPI_IDLE;
 static bool notify_send = false;
 
 static int32_t spi_irq(void *pData, void *pParam)
 {
-    // LUAT_DEBUG_PRINT("spi transfer done");
+    LUAT_DEBUG_PRINT("spi transfer done");
     return 0;
 }
 
@@ -227,7 +247,7 @@ __USER_FUNC_IN_RAM__ static int int0_irq(int pin, void *params)
     }
     else
     {
-        // LUAT_DEBUG_PRINT("error state %d", state);
+        LUAT_DEBUG_PRINT("error state %d", state);
     }
 
     // luat_rtos_event_send(slave_handle, SPI_INT0, 0, 0, 0, 0);
@@ -334,38 +354,6 @@ __USER_FUNC_IN_RAM__ spi4g_node_t *spi_alloc_tx_node(uint16_t flag, uint16_t cha
     return node;
 }
 
-__USER_FUNC_IN_RAM__ void soc_netif_input_to_user(struct pbuf *p)
-{
-    spi4g_node_t *node = spi_alloc_tx_node(SPI_FLAG_NET, 0, sizeof(struct eth_hdr) + p->tot_len);
-
-    if (node)
-    {
-        struct eth_hdr eth_hdr;
-        memcpy(&eth_hdr.dest, host_mac, ETH_HWADDR_LEN);
-        memcpy(&eth_hdr.src, dev_mac, ETH_HWADDR_LEN);
-        uint8_t *ipdata = (uint8_t *)p->payload;
-        if ((ipdata[0] & 0xF0) == 0x40)
-            eth_hdr.type = __htons(ETHTYPE_IP);
-        else if ((ipdata[0] & 0xF0) == 0x60)
-            eth_hdr.type = __htons(ETHTYPE_IPV6);
-
-        memcpy(node->data + sizeof(spi4g_pkt_t), &eth_hdr, sizeof(struct eth_hdr));
-
-        uint16_t pos = sizeof(struct eth_hdr);
-        for (struct pbuf *q = p; q != NULL; q = q->next) {
-            memcpy(node->data + sizeof(spi4g_pkt_t) + pos, q->payload, q->len);
-            pos += q->len;
-        }
-
-        spi_add_tx_node(&node->node);
-    }
-}
-
-__USER_FUNC_IN_RAM__ BOOL soc_netif_output_from_user(uint8_t *data, uint32_t len)
-{
-	return PsifRawUlOutput(1, data, len);
-}
-
 static __USER_FUNC_IN_RAM__ void spi_netif_upload(void *param)
 {
     luat_rtos_mutex_lock(rx_queue_mutex, LUAT_WAIT_FOREVER);
@@ -381,44 +369,70 @@ static __USER_FUNC_IN_RAM__ void spi_netif_upload(void *param)
 
         luat_rtos_mutex_unlock(rx_queue_mutex);
 
-        ethPacket_t *pkt = (ethPacket_t *)node->data;
-        uint32_t len = node->len;
+        NETDRV_STAT_IN(netdrv, node->len);
 
-        if (isARPPackage(pkt, len))
+        int ret = luat_netdrv_napt_pkg_input(SPI4G_NW_ADAPTER_INDEX, node->data, node->len);
+
+        if (ret == 0)
         {
-            // LUAT_DEBUG_PRINT("arp package");
+            ethPacket_t *pkt = (ethPacket_t *)node->data;
+            uint32_t len = node->len;
+            bool arp = false;
+            uint8_t *reply = NULL;
+            uint32_t reply_len = 0;
 
-            netif_dump_ul_packet(pkt->data, len, 5);
+            if (isARPPackage(pkt, len))
+            {
+                LUAT_DEBUG_PRINT("arp package");
 
-            struct etharp_hdr *reply = ARP_reply(pkt, dev_mac);
+                struct etharp_hdr *arp_reply = ARP_reply(pkt, slave_mac, netdrv->netif);
+                if (arp_reply)
+                {
+                    arp = true;
+                    reply = arp_reply;
+                    reply_len = sizeof(struct etharp_hdr);
+                }
+            }
+            else if (isDhcpPackage(pkt, len))
+            {
+                LUAT_DEBUG_PRINT("dhcp package");
+
+                netif_dump_ul_packet(pkt->data, node->len - sizeof(struct eth_hdr), 5);
+
+                memcpy(&master_mac, &pkt->hdr.src, ETH_HWADDR_LEN);
+
+                dhcpsPacket_t *dhcps_reply = DHCPS_reply(pkt, len, netdrv->netif);
+                if (dhcps_reply)
+                {
+                    netif_dump_ul_packet(dhcps_reply, sizeof(dhcpsPacket_t), 5);
+
+                    reply = dhcps_reply;
+                    reply_len = sizeof(dhcpsPacket_t);
+                }
+            }
+
             if (reply)
             {
-                // LUAT_DEBUG_PRINT("arp reply");
-
-                memcpy(&host_mac, &reply->dhwaddr, ETH_HWADDR_LEN);
-
-                spi4g_node_t *tmp = spi_alloc_tx_node(SPI_FLAG_NET, 0, sizeof(struct eth_hdr) + sizeof(struct etharp_hdr));
+                spi4g_node_t *tmp = spi_alloc_tx_node(SPI_FLAG_NET, 0, sizeof(struct eth_hdr) + reply_len);
                 if (tmp)
                 {
                     struct eth_hdr eth_hdr;
-                    memcpy(&eth_hdr.dest, host_mac, ETH_HWADDR_LEN);
-                    memcpy(&eth_hdr.src, dev_mac, ETH_HWADDR_LEN);
-                    eth_hdr.type = __htons(ETHTYPE_ARP);
+                    memcpy(&eth_hdr.dest, master_mac, ETH_HWADDR_LEN);
+                    memcpy(&eth_hdr.src, slave_mac, ETH_HWADDR_LEN);
+                    if (arp)
+                        eth_hdr.type = __htons(ETHTYPE_ARP);
+                    else
+                        eth_hdr.type = __htons(ETHTYPE_IP);
                     memcpy(tmp->data + sizeof(spi4g_pkt_t), &eth_hdr, sizeof(struct eth_hdr));
-
-                    memcpy(tmp->data + sizeof(spi4g_pkt_t) + sizeof(struct eth_hdr), reply, sizeof(struct etharp_hdr));
+                    memcpy(tmp->data + sizeof(spi4g_pkt_t) + sizeof(struct eth_hdr), reply, reply_len);
 
                     spi_add_tx_node(&tmp->node);
                 }
             }
-        }
-        else if (isNeighborSolicitationPackage((ethPacket_t *)pkt, len))
-        {
-            // LUAT_DEBUG_PRINT("neighbor solicitation");
-        }
-        else
-        {
-            soc_netif_output_from_user(pkt->data, len - sizeof(struct eth_hdr));
+            else
+            {
+                LUAT_DEBUG_PRINT("discard %d bytes data", node->len);
+            }
         }
 
         free(node);
@@ -493,17 +507,64 @@ __USER_FUNC_IN_RAM__ static void rx_decode()
         }
         else
         {
-            // LUAT_DEBUG_PRINT("error flag %d", pkt->flag);
+            LUAT_DEBUG_PRINT("error flag %d", pkt->flag);
         }
     }
 
     rx_bak_len = 0;
 }
 
+__USER_FUNC_IN_RAM__ static void netdrv_dataout(void *userdata, uint8_t *buff, uint16_t len)
+{
+    spi4g_node_t *node = spi_alloc_tx_node(SPI_FLAG_NET, 0, len);
+
+    if (node)
+    {
+        memcpy(node->data + sizeof(spi4g_pkt_t), buff, len);
+        spi_add_tx_node(&node->node);
+    }
+}
+
+__USER_FUNC_IN_RAM__ static err_t spi4g_netif_init(struct netif *netif) 
+{
+    netif->name[0] = 'N';
+    netif->name[1] = 'C';
+    netif->mtu = 1460;
+    netif->flags = NETIF_FLAG_ETHARP;
+    return ERR_OK;
+}
+
+__USER_FUNC_IN_RAM__ static void netdrv_init()
+{
+    struct netif *netif = luat_heap_malloc(sizeof(struct netif));
+    memset(netif, 0, sizeof(struct netif));
+
+    ip_addr_t ip, mask, gw;
+    ipaddr_aton(SPI4G_IP4, &ip);
+    ipaddr_aton(SPI4G_IP4_MASK, &mask);
+    ipaddr_aton(SPI4G_IP4_GW, &gw);
+    netif_add(netif, &ip, &mask, &gw, NULL, spi4g_netif_init, tcpip_input);
+
+    netdrv = luat_heap_malloc(sizeof(luat_netdrv_t));
+    memset(netdrv, 0, sizeof(luat_netdrv_t));
+
+    netdrv->id = SPI4G_NW_ADAPTER_INDEX;
+    netdrv->netif = netif;
+    netdrv->dataout = netdrv_dataout;
+    netdrv->userdata = NULL;
+    netdrv->boot = NULL;
+    netdrv->dhcp = NULL;
+    luat_netdrv_register(SPI4G_NW_ADAPTER_INDEX, netdrv);
+}
+
 __USER_FUNC_IN_RAM__ static void slave_task(void *param)
 {
     // luat_debug_set_fault_mode(LUAT_DEBUG_FAULT_HANG);
-    luat_mobile_data_ip_mode(0xa7); // IPV4包全部透传给主机，且不给本地LWIP。如果从机也要能收发，需要改成0x01，且主机使用的端口 >= 100, < 50000
+
+    luat_napt_native_init();
+    luat_netdrv_gw_adapter_id = NW_ADAPTER_INDEX_LWIP_GPRS;
+
+    netdrv_init();
 
     hw_init();
 
@@ -522,7 +583,7 @@ __USER_FUNC_IN_RAM__ static void slave_task(void *param)
         luat_event_t event = {0};
         luat_rtos_event_recv(slave_handle, 0, &event, NULL, 0);
 
-        // LUAT_DEBUG_PRINT("event id %d, state %d", event.id, state);
+        LUAT_DEBUG_PRINT("event id %d, state %d", event.id, state);
         dbg_pin_level = !dbg_pin_level;
         luat_gpio_set(DBG_PIN, dbg_pin_level);
 
@@ -551,7 +612,7 @@ __USER_FUNC_IN_RAM__ static void slave_task(void *param)
                         }
                         else
                         {
-                            // LUAT_DEBUG_PRINT("error rx len %d", rx_len);
+                            LUAT_DEBUG_PRINT("error rx len %d", rx_len);
                         }
                     }
 
@@ -620,7 +681,7 @@ __USER_FUNC_IN_RAM__ static void slave_task(void *param)
                                     {
                                         cmd->len  = 0;
 
-                                        // LUAT_DEBUG_PRINT("no data");
+                                        LUAT_DEBUG_PRINT("no data");
                                     }
 
                                     ul = cmd->len;
@@ -634,21 +695,21 @@ __USER_FUNC_IN_RAM__ static void slave_task(void *param)
                             }
                             else
                             {
-                                // LUAT_DEBUG_PRINT("cmd head error");
+                                LUAT_DEBUG_PRINT("cmd head error");
     
                                 state = SPI_IDLE;
                             }
                         }
                         else
                         {
-                            // LUAT_DEBUG_PRINT("cmd len error");
+                            LUAT_DEBUG_PRINT("cmd len error");
     
                             state = SPI_IDLE;
                         }
                     }
                     else
                     {
-                        // LUAT_DEBUG_PRINT("error state %d", state);
+                        LUAT_DEBUG_PRINT("error state %d", state);
 
                         state = SPI_IDLE;
                     }
@@ -721,6 +782,7 @@ __USER_FUNC_IN_RAM__ static void slave_task(void *param)
 static void mobile_event_cb(LUAT_MOBILE_EVENT_E event, uint8_t index, uint8_t status)
 {
     NmAtiNetifInfo net_info;
+    spi4g_node_t *node;
 
     switch (event)
     {
@@ -728,10 +790,33 @@ static void mobile_event_cb(LUAT_MOBILE_EVENT_E event, uint8_t index, uint8_t st
         {
             if (status == LUAT_MOBILE_NETIF_LINK_ON)
             {
+                netdrv_gprs.netif = net_lwip_get_netif(NW_ADAPTER_INDEX_LWIP_GPRS);
+
                 appGetNetInfoSync(0, &net_info);
 
                 LUAT_DEBUG_PRINT("ip addr %s", inet_ntoa(net_info.ipv4Info.ipv4Addr));
             }
+
+            node = calloc(1, sizeof(spi4g_node_t) + sizeof(spi4g_pkt_t) + sizeof(link_status_ind_t));
+            if (node)
+            {
+                node->data = (uint8_t *)(node + 1);
+                node->len  = sizeof(spi4g_pkt_t) + sizeof(link_status_ind_t);
+    
+                spi4g_pkt_t *pkt = (spi4g_pkt_t *)node->data;
+                pkt->head = SPI4G_PKT_HEAD;
+                pkt->flag = SPI_FLAG_IND;
+                pkt->len  = sizeof(link_status_ind_t);
+                pkt->chan = 0;
+
+                link_status_ind_t link_status_ind = {0};
+                link_status_ind.vif_idx = 0;
+                link_status_ind.state = (status == LUAT_MOBILE_NETIF_LINK_ON);
+                memcpy(pkt + 1, &link_status_ind, sizeof(link_status_ind));
+    
+                spi_add_tx_node(&node->node);
+            }
+
             break;
         }
 
@@ -861,13 +946,13 @@ static void cmd_task(void *param)
         uint16_t cmd = pkt->chan;
         if (cmd >= SPI_CMD_MAX)
         {
-            // LUAT_DEBUG_PRINT("cmd >= SPI_CMD_MAX");
+            LUAT_DEBUG_PRINT("cmd >= SPI_CMD_MAX");
             continue;
         }
 
         if (pkt->len != cmd_info[cmd].spi_cmd_size)
         {
-            // LUAT_DEBUG_PRINT("pkt->len(%d) != %d", pkt->len, cmd_info[cmd].spi_cmd_size);
+            LUAT_DEBUG_PRINT("pkt->len(%d) != %d", pkt->len, cmd_info[cmd].spi_cmd_size);
             continue;
         }
 
@@ -911,11 +996,6 @@ static void spinet_netif_slave_init(void)
 {
     luat_rtos_mutex_create(&tx_queue_mutex);
     luat_rtos_mutex_create(&rx_queue_mutex);
-
-    // TODO 按ch390的逻辑,新增netif设备
-    // TODO 调用 luat_napt_native_init
-    // TODO 按情况开启NAPT功能
-    // TODO 修改收发IP包的逻辑, 走netdrv的API
 
     luat_mobile_event_register_handler(mobile_event_cb);
     rx_decode_timer = luat_create_rtos_timer(rx_decode_timer_cb, NULL, NULL);

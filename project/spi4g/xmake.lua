@@ -19,11 +19,8 @@ target(project_name,function()
     add_defines("LUAT_USE_TLS",{public = true})
 
     -- ulwip
-    -- add_defines("LUAT_USE_ULWIP=1",{public = true})
     add_includedirs(luatos_root.."/components/network/ulwip/include",{public = true})
-    -- add_files(luatos_root.."/components/network/ulwip/src/*.c")
     add_includedirs(luatos_root.."/components/network/adapter_lwip2",{public = true})
-    -- add_files(luatos_root.."/components/network/adapter_lwip2/*.c")
 
     -- netdrv
     add_defines("LUAT_USE_NETDRV=1",{public = true})
