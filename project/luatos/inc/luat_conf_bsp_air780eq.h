@@ -1,5 +1,6 @@
 #define LUAT_USE_UART 1
 #define LUAT_USE_GPIO 1
+#define LUAT_USE_ADC 1
 #define LUAT_USE_WDT  1
 #define LUAT_USE_PM  1
 #define LUAT_USE_MCU  1
