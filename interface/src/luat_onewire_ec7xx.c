@@ -3,6 +3,7 @@
 #include "clock.h"
 #include "luat_onewire.h"
 #include "driver_gpio.h"
+#include "soc_service.h"
 #define BASE_CLK (26000000)
 enum
 {
@@ -13,19 +14,6 @@ enum
 	OW_OP_READ_WITH_CMD,
 };
 
-typedef struct
-{
-	HANDLE finish_sem;
-	Buffer_Struct data_buf;
-	uint8_t op;
-	uint8_t is_init;
-	uint8_t wait_finish;
-	uint8_t cmd;
-	uint8_t check_ack;
-	uint8_t ack_result;
-	uint8_t is_debug;
-}luat_onewire_ctrl_t;
-static luat_onewire_ctrl_t prv_ow;
 typedef union
 {
 	uint32_t v;
@@ -49,6 +37,24 @@ typedef union
 		uint32_t read_start_time:8;
 	};
 }_ATCR;
+
+typedef struct
+{
+	HANDLE finish_sem;
+	Buffer_Struct data_buf;
+    _RTCR RTCR;
+    _ATCR ATCR;
+    uint8_t CDR;
+	uint8_t op;
+	uint8_t is_init;
+	uint8_t wait_finish;
+	uint8_t cmd;
+	uint8_t check_ack;
+	uint8_t ack_result;
+	uint8_t is_debug;
+}luat_onewire_ctrl_t;
+static luat_onewire_ctrl_t prv_ow;
+
 
 static __CORE_FUNC_IN_RAM__ void OW_ISR(void)
 {
@@ -194,49 +200,57 @@ void luat_onewire_init(int id)
 	prv_ow.is_init = 1;
 	OW->IOR = 0;
 	OW->ECR = OW_ECR_ENABLE_Msk|OW_ECR_CLK_EN_Msk|OW_ECR_AUTO_CGEN_Msk;
+	prv_ow.CDR = OW->CDR;
+	prv_ow.ATCR.v = OW->ATCR;
+	prv_ow.RTCR.v = OW->RTCR;
     XIC_SetVector(PXIC0_ONEW_IRQn, OW_ISR);
     XIC_EnableIRQ(PXIC0_ONEW_IRQn);
 }
 
+void luat_onewire_close(int id)
+{
+	if (!prv_ow.is_init) return;
+	GPR_clockDisable(PCLK_ONEW);
+	prv_ow.is_init = 0;
+}
+
 void luat_onewire_setup_timing(int id, onewire_timing_t *timing)
 {
-    _RTCR RTCR;
-    _ATCR ATCR;
+	if (!prv_ow.is_init) return;
 	if (timing->type)
 	{
 		if (timing->timing_tick.clock_div)
 		{
-			OW->CDR = timing->timing_tick.clock_div - 1;
+			prv_ow.CDR = timing->timing_tick.clock_div - 1;
 		}
 		else
 		{
-			OW->CDR = 25;
+			prv_ow.CDR = 25;
 		}
-		RTCR.send_time_div10 = timing->timing_tick.reset_keep_low_tick/10;
-		RTCR.wait_time_div10 = timing->timing_tick.reset_wait_ack_tick/10;
-		RTCR.read_time_min = timing->timing_tick.reset_read_ack_before_tick;
-		RTCR.read_time_max = (timing->timing_tick.reset_read_ack_tick + timing->timing_tick.reset_read_ack_before_tick)/10;
-		ATCR.recovery_time = timing->timing_tick.wr_recovery_tick;
-		ATCR.slot_time_div10 = timing->timing_tick.wr_slot_tick/10;
-		ATCR.start_time = timing->timing_tick.wr_start_tick;
-		ATCR.write_start_time = timing->timing_tick.wr_write_start_tick;
-		ATCR.read_start_time = timing->timing_tick.wr_read_start_tick;
+		prv_ow.RTCR.send_time_div10 = timing->timing_tick.reset_keep_low_tick/10;
+		prv_ow.RTCR.wait_time_div10 = timing->timing_tick.reset_wait_ack_tick/10;
+		prv_ow.RTCR.read_time_min = timing->timing_tick.reset_read_ack_before_tick;
+		prv_ow.RTCR.read_time_max = (timing->timing_tick.reset_read_ack_tick + timing->timing_tick.reset_read_ack_before_tick)/10;
+		prv_ow.ATCR.recovery_time = timing->timing_tick.wr_recovery_tick;
+		prv_ow.ATCR.slot_time_div10 = timing->timing_tick.wr_slot_tick/10;
+		prv_ow.ATCR.start_time = timing->timing_tick.wr_start_tick;
+		prv_ow.ATCR.write_start_time = timing->timing_tick.wr_write_start_tick;
+		prv_ow.ATCR.read_start_time = timing->timing_tick.wr_read_start_tick;
 	}
 	else
 	{
-		OW->CDR = 25;
-		RTCR.send_time_div10 = timing->timing_us.reset_keep_low_time/10;
-		RTCR.wait_time_div10 = timing->timing_us.reset_wait_ack_time/10;
-		RTCR.read_time_min = timing->timing_us.reset_read_ack_before_time;
-		RTCR.read_time_max = (timing->timing_us.reset_read_ack_time + timing->timing_us.reset_read_ack_before_time)/10;
-		ATCR.recovery_time = timing->timing_us.wr_recovery_time;
-		ATCR.slot_time_div10 = timing->timing_us.wr_slot_time/10;
-		ATCR.start_time = timing->timing_us.wr_start_time;
-		ATCR.write_start_time = timing->timing_us.wr_write_start_time;
-		ATCR.read_start_time = timing->timing_us.wr_read_start_time;
+		prv_ow.CDR = 25;
+		prv_ow.RTCR.send_time_div10 = timing->timing_us.reset_keep_low_time/10;
+		prv_ow.RTCR.wait_time_div10 = timing->timing_us.reset_wait_ack_time/10;
+		prv_ow.RTCR.read_time_min = timing->timing_us.reset_read_ack_before_time;
+		prv_ow.RTCR.read_time_max = (timing->timing_us.reset_read_ack_time + timing->timing_us.reset_read_ack_before_time)/10;
+		prv_ow.ATCR.recovery_time = timing->timing_us.wr_recovery_time;
+		prv_ow.ATCR.slot_time_div10 = timing->timing_us.wr_slot_time/10;
+		prv_ow.ATCR.start_time = timing->timing_us.wr_start_time;
+		prv_ow.ATCR.write_start_time = timing->timing_us.wr_write_start_time;
+		prv_ow.ATCR.read_start_time = timing->timing_us.wr_read_start_time;
 	}
-	OW->RTCR = RTCR.v;
-	OW->ATCR = ATCR.v;
+
 }
 
 static void luat_onewire_wait_timeout(uint32_t timeout)
@@ -249,14 +263,27 @@ static void luat_onewire_wait_timeout(uint32_t timeout)
 		prv_ow.wait_finish = 0;
 		prv_ow.check_ack = 0;
 	}
+	soc_sys_force_wakeup_on_off(SOC_SYS_CTRL_USER - 1, 0);
+}
+
+static void luat_onewire_prepare(void)
+{
+	GPR_clockEnable(PCLK_ONEW);
+	OW->ECR = OW_ECR_ENABLE_Msk|OW_ECR_CLK_EN_Msk|OW_ECR_AUTO_CGEN_Msk;
+	OW->CDR = prv_ow.CDR;
+	OW->RTCR = prv_ow.RTCR.v;
+	OW->ATCR = prv_ow.ATCR.v;
+	soc_sys_force_wakeup_on_off(SOC_SYS_CTRL_USER - 1, 1);
 }
 
 int luat_onewire_reset(int id, uint8_t check_ack)
 {
+	if (!prv_ow.is_init) return -ERROR_PERMISSION_DENIED;
 	prv_ow.op = OW_OP_RESET;
 	prv_ow.wait_finish = 1;
 	prv_ow.ack_result = 0;
 	prv_ow.check_ack = check_ack;
+	luat_onewire_prepare();
 	OW->IER = 0x0f;
 	OW->OCR = OW_OCR_CMD_RESET_Msk;
 	luat_onewire_wait_timeout(100);
@@ -272,7 +299,9 @@ int luat_onewire_reset(int id, uint8_t check_ack)
 
 void luat_onewire_write_bit(int id, uint8_t level)
 {
+	if (!prv_ow.is_init) return ;
 	uint16_t timeout = 20000;
+	luat_onewire_prepare();
     OW->DFR = 0;
     OW->TBR = level;
     OW->IER = 0;
@@ -286,11 +315,14 @@ void luat_onewire_write_bit(int id, uint8_t level)
 		}
 	}
 	OW->OCR = OW_OCR_CMD_FLUSH_Msk;
+	soc_sys_force_wakeup_on_off(SOC_SYS_CTRL_USER - 1, 0);
 }
 
 uint8_t luat_onewire_read_bit(int id)
 {
+	if (!prv_ow.is_init) return 0;
 	uint16_t timeout = 20000;
+	luat_onewire_prepare();
     OW->DFR = 0;
     OW->IER = 0;
     OW->OCR = OW_OCR_CMD_READ_Msk;
@@ -304,16 +336,19 @@ uint8_t luat_onewire_read_bit(int id)
 	}
 	uint8_t res = OW->RBR;
 	OW->OCR = OW_OCR_CMD_FLUSH_Msk;
+	soc_sys_force_wakeup_on_off(SOC_SYS_CTRL_USER - 1, 0);
 	return res;
 }
 
 int luat_onewire_write_byte(int id, const uint8_t *data, uint32_t len, uint8_t is_msb, uint8_t need_reset, uint8_t check_ack)
 {
+	if (!prv_ow.is_init) return -ERROR_PERMISSION_DENIED;
 	prv_ow.wait_finish = 1;
 	prv_ow.ack_result = 0;
 	prv_ow.check_ack = check_ack;
 	Buffer_StaticInit(&prv_ow.data_buf, data, len);
 	prv_ow.op = OW_OP_WRITE;
+	luat_onewire_prepare();
 	OW->DFR = OW_DFR_MODE_BYTE_Msk|(is_msb?OW_DFR_MODE_ENDIAN_Msk:0);
 	OW->IER = OW_IER_INTEN_RESET_Msk|OW_IER_INTEN_RESET_PD_Msk|OW_IER_INTEN_WRITE_Msk|OW_IER_INTEN_READ_Msk;
 	if (need_reset)
@@ -338,12 +373,14 @@ int luat_onewire_write_byte(int id, const uint8_t *data, uint32_t len, uint8_t i
 
 int luat_onewire_read_byte_with_cmd(int id, const uint8_t cmd, uint8_t *data, uint32_t len, uint8_t is_msb, uint8_t need_reset, uint8_t check_ack)
 {
+	if (!prv_ow.is_init) return -ERROR_PERMISSION_DENIED;
 	prv_ow.wait_finish = 1;
 	prv_ow.ack_result = 0;
 	prv_ow.check_ack = check_ack;
 	Buffer_StaticInit(&prv_ow.data_buf, data, len);
 	uint32_t timeout = (len + 1);
 	prv_ow.op = OW_OP_READ_WITH_CMD;
+	luat_onewire_prepare();
 	OW->DFR = OW_DFR_MODE_BYTE_Msk|(is_msb?OW_DFR_MODE_ENDIAN_Msk:0);
 	OW->IER = OW_IER_INTEN_RESET_Msk|OW_IER_INTEN_RESET_PD_Msk|OW_IER_INTEN_WRITE_Msk|OW_IER_INTEN_READ_Msk;
 	if (need_reset)
@@ -369,12 +406,14 @@ int luat_onewire_read_byte_with_cmd(int id, const uint8_t cmd, uint8_t *data, ui
 
 int luat_onewire_read_byte(int id, uint8_t *data, uint32_t len, uint8_t is_msb, uint8_t need_reset, uint8_t check_ack)
 {
+	if (!prv_ow.is_init) return -ERROR_PERMISSION_DENIED;
 	prv_ow.wait_finish = 1;
 	prv_ow.ack_result = 0;
 	prv_ow.check_ack = check_ack;
 	Buffer_StaticInit(&prv_ow.data_buf, data, len);
 	uint32_t timeout = len + 10;
 	prv_ow.op = OW_OP_READ;
+	luat_onewire_prepare();
 	OW->DFR = OW_DFR_MODE_BYTE_Msk|(is_msb?OW_DFR_MODE_ENDIAN_Msk:0);
 	OW->IER = OW_IER_INTEN_RESET_Msk|OW_IER_INTEN_RESET_PD_Msk|OW_IER_INTEN_WRITE_Msk|OW_IER_INTEN_READ_Msk;
 	if (need_reset)
