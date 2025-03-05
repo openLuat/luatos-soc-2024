@@ -101,6 +101,9 @@ static const luaL_Reg loadedlibs[] = {
 #ifdef LUAT_USE_CAN
   {"can",     luaopen_can},               // CAN操作
 #endif
+#ifdef LUAT_USE_ONEWIRE
+  {"onewire",     luaopen_onewire},               // CAN操作
+#endif
 #ifdef LUAT_USE_WDT
   {"wdt",     luaopen_wdt},               // watchdog模块
 #endif
