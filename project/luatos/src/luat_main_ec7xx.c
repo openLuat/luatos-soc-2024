@@ -127,10 +127,12 @@ static void luatos_task(void *param)
 {
 	(void)param;
 	BSP_SetPlatConfigItemValue(PLAT_CONFIG_ITEM_FAULT_ACTION, EXCEP_OPTION_DUMP_FLASH_EPAT_RESET);
-    if(BSP_GetPlatConfigItemValue(PLAT_CONFIG_ITEM_FAULT_ACTION) == EXCEP_OPTION_SILENT_RESET)
+    if(BSP_GetPlatConfigItemValue(PLAT_CONFIG_ITEM_FAULT_ACTION) == EXCEP_OPTION_SILENT_RESET) {
         ResetLockupCfg(true, true);
-    else
+	}
+    else {
         ResetLockupCfg(false, false);
+	}
 	luat_heap_init();
     ShareInfoWakeupCP4Version();
 	self_info();
