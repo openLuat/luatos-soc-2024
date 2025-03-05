@@ -281,6 +281,7 @@ void luat_onewire_write_bit(int id, uint8_t level)
 		timeout--;
 		if (!timeout)
 		{
+			DBG("to");
 			break;
 		}
 	}
@@ -297,10 +298,11 @@ uint8_t luat_onewire_read_bit(int id)
 		timeout--;
 		if (!timeout)
 		{
+			DBG("to");
 			break;
 		}
 	}
-	uint8_t res = OW->TBR;
+	uint8_t res = OW->RBR;
 	OW->OCR = OW_OCR_CMD_FLUSH_Msk;
 	return res;
 }
