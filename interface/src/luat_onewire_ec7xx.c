@@ -207,7 +207,7 @@ void luat_onewire_init(int id)
     XIC_EnableIRQ(PXIC0_ONEW_IRQn);
 }
 
-void luat_onewire_close(int id)
+void luat_onewire_deinit(int id)
 {
 	if (!prv_ow.is_init) return;
 	GPR_clockDisable(PCLK_ONEW);

@@ -330,6 +330,8 @@ target(project_name,function()
     add_includedirs(luatos_root.."/components/airlink/include",{public = true})
     add_files(luatos_root.."/components/airlink/src/*.c")
     add_files(luatos_root.."/components/airlink/binding/*.c")
+    -- onewire
+    add_files(luatos_root.."/components/onewire/binding/*.c")
 
     -- 开启网络IP包拦截
     if chip_target == "ec718um" or chip_target == "ec718hm" or chip_target == "ec718pm" then
