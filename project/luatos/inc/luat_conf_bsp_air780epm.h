@@ -52,4 +52,4 @@
 
 #define LUAT_USE_NETDRV 1
 #define LUAT_USE_ULWIP 1
-
+#define LUAT_USE_AIRLINK 1

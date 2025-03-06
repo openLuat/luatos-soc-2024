@@ -326,6 +326,11 @@ target(project_name,function()
     add_files(luatos_root.."/components/network/iperf/src/*.c")
     add_files(luatos_root.."/components/network/iperf/binding/*.c")
 
+    -- airlink
+    add_includedirs(luatos_root.."/components/airlink/include",{public = true})
+    add_files(luatos_root.."/components/airlink/src/*.c")
+    add_files(luatos_root.."/components/airlink/binding/*.c")
+
     -- 开启网络IP包拦截
     if chip_target == "ec718um" or chip_target == "ec718hm" or chip_target == "ec718pm" then
         add_defines("LUAT_NET_IP_INTERCEPT=1")

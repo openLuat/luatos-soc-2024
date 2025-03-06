@@ -279,6 +279,9 @@ static const luaL_Reg loadedlibs[] = {
 #ifdef LUAT_USE_NETDRV
   {"netdrv", luaopen_netdrv},
   {"iperf", luaopen_iperf},
+  #ifdef LUAT_USE_AIRLINK
+  {"airlink", luaopen_airlink},
+  #endif
 #endif
   {NULL, NULL}
 };
