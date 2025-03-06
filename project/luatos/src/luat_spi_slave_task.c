@@ -12,7 +12,6 @@
 #include "luat_network_adapter.h"
 #include "luat_gpio.h"
 #include "soc_spi.h"
-#include "luat_spinet.h"
 #include "luat_spi.h"
 #include "driver_gpio.h"
 
