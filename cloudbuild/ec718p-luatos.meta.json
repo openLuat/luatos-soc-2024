@@ -320,6 +320,20 @@
                         "rsize": 60240,
                         "fsize": 288052,
                         "dft": false
+                    },
+                    {
+                        "name": "can",
+                        "content": "CAN总线,当前仅Air780EPM支持,其他模组不要选!!!",
+                        "rsize": 4096,
+                        "fsize": 288052,
+                        "dft": false
+                    },
+                    {
+                        "name": "onewire",
+                        "content": "单总线协议,当前仅支持DS18B20,底层硬件驱动,非软件模拟,当前仅Air780EPM支持",
+                        "rsize": 4096,
+                        "fsize": 288052,
+                        "dft": false
                     }
                 ],
                 "fsize": 287420,
