@@ -328,7 +328,7 @@ CUST_HEAP_6_RAMCODE static void prvHeapInitCust( void )
 }
 
 #ifdef __USER_CODE__
-#ifdef TYPE_EC718U
+#if 0
 
 CUST_HEAP_6_RAMCODE void *pvPortMallocEC_Psram( size_t xWantedSize, unsigned int funcPtr )
 {

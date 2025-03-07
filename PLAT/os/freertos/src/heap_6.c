@@ -425,7 +425,8 @@ FREERTOS_HEAP6_TEXT_SECTION void  vPortFreeCust( void *pv )
 }
 #endif
 
-#ifdef TYPE_EC718U
+//#ifdef TYPE_EC718U
+#if 0
 FREERTOS_HEAP6_TEXT_SECTION bool vPortGetHeapInfo(uint8_t type, int *mem_range)
 {
 	return vPortGetHeapInfoEc(type, mem_range);

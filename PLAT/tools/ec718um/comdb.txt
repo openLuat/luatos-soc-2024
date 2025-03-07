@@ -1,8 +1,8 @@
 DbVersion
-1391269548,100
+1710109511,100
 <end>
 BuildInfo
-The current data file was built by the Application Ver. 2.2.81.216, Tue Feb 25 16:26:40 2025
+The current data file was built by the Application Ver. 2.2.81.216, Fri Mar  7 10:33:30 2025
 <end>
 EnumVals
 0,0,0,0,PHY_ONLINE,PHY_ICS_MODULE,PhyIcsMeasMainEntrance_0,P_INFO,swLogPrintf("ICS MEAS of euArfcn %d will be started ");
@@ -218,18 +218,19 @@ EnumVals
 9216,18882559,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAtcAdjustDelayCheck_0,P_WARNING,swLogPrintf("ATC adjustment will be frozen due to neighbor cell measurment ");
 9216,18884607,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAtcAdjustDelayCheck_1,P_WARNING,swLogPrintf("ATC adjustment will be delayed caused by RX_PAUSE ");
 9216,18884608,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAtcAdjustDelayCheck_2,P_WARNING,swLogPrintf("ATC adjustment will be delayed because time of CIRQ%d is very close ");
-9216,18886656,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAtcAdjustProc_0,P_WARNING,swLogPrintf("RxTimingAdjust while TxTiming do not adjust! rxAdjAcc = %d ");
-9216,18888704,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAtcPostProc_1,P_WARNING,swLogPrintf("clear previous non-zero ATC adjusted info. ( 0x%X ) ");
-9216,18892799,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAtcStatusGetInTaskCfg_11,P_WARNING,swLogPrintf("CE_BIT of ATC is delayed to RX_RESUME after 1st inter PSS MEAS STEP1 ");
-9216,18894847,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAtcStatusGetInTaskCfg_12,P_WARNING,swLogPrintf("CE_BIT of ATC is delayed to SCELL HW tasks in CDRX INACT duration ");
-9216,18896895,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAtcStatusGetInTaskCfg_21,P_WARNING,swLogPrintf("timeOfstAdj of sys_RT has NOT been loaded when ICS flow starts to work ");
-9216,18898943,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAtcStatusGetInTaskCfg_22,P_WARNING,swLogPrintf("only timeOfstAdj of CE has NOT been taken effect when ICS flow starts to work ");
-9216,18898944,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAxcCtrlParaGen_0,P_WARNING,swLogPrintf("afcAntNum of blind MIB is set to %d ");
-9216,18903039,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAxcSpdEstDataStore_1,P_WARNING,swLogPrintf("new speed est. data is invalid ");
-9216,18903040,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAxcSpdEstDataStore_2,P_WARNING,swLogPrintf("speed est. array overflow ( arrIdx = %d ) ");
-9216,18905088,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAxcSpdLvlDeterm_1,P_WARNING,swLogPrintf("data array of speed estimation ( lastEstTime is 0x%X ) is full!!! ");
-9216,18907392,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAxcSpdLvlDeterm_2,P_INFO,swLogPrintf("currSpdLvl = %d , nextSpdLvl = %d ");
-9216,18909440,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyCeSnrLvlSet_1,P_INFO,swLogPrintf("currSnrLvl = %d , nextSnrLvl = %d ");
+9216,18888703,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAtcAdjustDelayCheck_3,P_WARNING,swLogPrintf("ATC adjustment will be delayed because header of HW task list is NCSIB1 ");
+9216,18888704,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAtcAdjustProc_0,P_WARNING,swLogPrintf("RxTimingAdjust while TxTiming do not adjust! rxAdjAcc = %d ");
+9216,18890752,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAtcPostProc_1,P_WARNING,swLogPrintf("clear previous non-zero ATC adjusted info. ( 0x%X ) ");
+9216,18894847,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAtcStatusGetInTaskCfg_11,P_WARNING,swLogPrintf("CE_BIT of ATC is delayed to RX_RESUME after 1st inter PSS MEAS STEP1 ");
+9216,18896895,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAtcStatusGetInTaskCfg_12,P_WARNING,swLogPrintf("CE_BIT of ATC is delayed to SCELL HW tasks in CDRX INACT duration ");
+9216,18898943,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAtcStatusGetInTaskCfg_21,P_WARNING,swLogPrintf("timeOfstAdj of sys_RT has NOT been loaded when ICS flow starts to work ");
+9216,18900991,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAtcStatusGetInTaskCfg_22,P_WARNING,swLogPrintf("only timeOfstAdj of CE has NOT been taken effect when ICS flow starts to work ");
+9216,18900992,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAxcCtrlParaGen_0,P_WARNING,swLogPrintf("afcAntNum of blind MIB is set to %d ");
+9216,18905087,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAxcSpdEstDataStore_1,P_WARNING,swLogPrintf("new speed est. data is invalid ");
+9216,18905088,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAxcSpdEstDataStore_2,P_WARNING,swLogPrintf("speed est. array overflow ( arrIdx = %d ) ");
+9216,18907136,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAxcSpdLvlDeterm_1,P_WARNING,swLogPrintf("data array of speed estimation ( lastEstTime is 0x%X ) is full!!! ");
+9216,18909440,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyAxcSpdLvlDeterm_2,P_INFO,swLogPrintf("currSpdLvl = %d , nextSpdLvl = %d ");
+9216,18911488,0,0,PHY_ONLINE,PHY_AXC_MODULE,PhyCeSnrLvlSet_1,P_INFO,swLogPrintf("currSnrLvl = %d , nextSnrLvl = %d ");
 10240,20971520,0,0,PHY_ONLINE,PHY_RF_MODULE,RfUnitTest_1,P_SIG,swLogPrintf("data : 0x%x ");
 10240,20974080,0,0,PHY_ONLINE,PHY_RF_MODULE,RfUnitTest_wr_rd_regs,P_SIG,swLogPrintf("regAddr = 0x%x , WrVal = 0x%x , RdVal = 0x%x ");
 10240,20975872,0,0,PHY_ONLINE,PHY_RF_MODULE,RfFcRxOnOff1ms,P_SIG,swLogPrintf("freq100KHz = %d , rssi = %d ");
@@ -10002,5 +10003,5 @@ MW_INFO_PHY_EDRX_PARAM,midWareNvmInfoPhyEdrxParam
 plat_config,plat_config_fs_t
 <end>
 OptionalSegment
-optional_sk_01,AB9D4A42AAA15A776732EA0F2B156C2925648C3791B96A741322F091B64E344D
+optional_sk_01,0B7437D7BC520B381DF7C7747E68C1D0480C95D03E484F05F7458B214F7AAFC4
 <end>

@@ -1386,9 +1386,3 @@ uint32_t BL_MemAddress(void) {return (PSRAM_P2_START_ADDR);}
 uint32_t BL_MemAddress(void) {return (MSMB_START_ADDR);}
 #endif
 
-#ifdef TYPE_EC718U
-uint8_t  FLASH_writeBl(uint8_t* pData, uint32_t WriteAddr, uint32_t Size)
-{
-	return FLASH_write(pData, WriteAddr, Size);
-}
-#endif
