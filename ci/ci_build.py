@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 
-"""
+'''
 本脚本用于CI构建project目录下的项目, 并输出编译成功与否的统计数据
 
 基本规则:
@@ -13,7 +13,7 @@
 python ci_build.py ec716s
 
 # 编译指定项目
-python ci_build.py ec718p ..\project\example_rndis\
+python ci_build.py ec718p ..\\project\\example_rndis\\
 
 # 忽略指定的target
 例如luatos项目只能在部分chip_target上运行, 则需要在项目根目录添加一个 ci_conf.json文件, 内容如下
@@ -24,7 +24,7 @@ python ci_build.py ec718p ..\project\example_rndis\
     }
 }
 
-"""
+'''
 
 import os, struct, sys, logging, subprocess, shutil
 import traceback, json
