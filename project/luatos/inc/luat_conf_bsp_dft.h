@@ -10,6 +10,7 @@
 #if defined TYPE_EC718M
 #define LUAT_USE_CAN  1
 #define LUAT_USE_ONEWIRE 1
+#define LUAT_USE_TP		1
 #endif
 #define LUAT_USE_WDT  1
 #define LUAT_USE_PM  1

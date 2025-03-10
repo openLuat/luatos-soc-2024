@@ -402,6 +402,75 @@ int luat_gpio_ctrl(int pin, LUAT_GPIO_CTRL_CMD_E cmd, int param)
 	return 0;
 }
 
+int luat_gpio_irq_enable(int pin, uint8_t enabled, uint8_t irq_type, void *arg)
+{
+
+	if (((uint32_t)(pin)) >= HAL_GPIO_QTY) return -1;
+
+	GPIO_GlobalInit(NULL);
+
+	if (pin >= HAL_GPIO_MAX)
+	{
+		uint8_t IsRiseHigh = 0;
+		uint8_t IsFallLow = 0;
+		switch (irq_type)
+		{
+		case LUAT_GPIO_RISING_IRQ:
+			IsRiseHigh = 1;
+			break;
+		case LUAT_GPIO_FALLING_IRQ:
+			IsFallLow = 1;
+			break;
+		case LUAT_GPIO_BOTH_IRQ:
+			IsRiseHigh = 1;
+			IsFallLow = 1;
+			break;
+		default:
+			break;
+		}
+		if (enabled)
+		{
+			GPIO_WakeupPadConfig(pin, true, IsRiseHigh, IsFallLow, false, false);
+		}
+		else
+		{
+			GPIO_WakeupPadConfig(pin, false, false, false, false, false);
+		}
+
+		if (HAL_WAKEUP_PWRKEY == pin)
+		{
+			pwrKeySetSWOn();
+		}
+		return 0;
+	}
+	if (enabled)
+	{
+		switch (irq_type)
+		{
+		case LUAT_GPIO_RISING_IRQ:
+			GPIO_ExtiConfig(pin, 0,1,0);
+			break;
+		case LUAT_GPIO_FALLING_IRQ:
+			GPIO_ExtiConfig(pin, 0,0,1);
+			break;
+		case LUAT_GPIO_BOTH_IRQ:
+			GPIO_ExtiConfig(pin, 0,1,1);
+			break;
+		case LUAT_GPIO_HIGH_IRQ:
+			GPIO_ExtiConfig(pin, 1,1,0);
+			break;
+		case LUAT_GPIO_LOW_IRQ:
+			GPIO_ExtiConfig(pin, 1,0,1);
+			break;
+		}
+	}
+	else
+	{
+		GPIO_ExtiConfig(pin, 0,0,0);
+	}
+    return 0;
+}
+
 #ifndef __LUATOS__
 void luat_gpio_mode(int pin, int mode, int pull, int initOutput) {
     if (pin == 255) return;

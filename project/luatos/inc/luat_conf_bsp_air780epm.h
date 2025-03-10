@@ -4,6 +4,7 @@
 #define LUAT_USE_SPI  1
 #define LUAT_USE_CAN  1
 #define LUAT_USE_ONEWIRE 1
+#define LUAT_USE_TP		1
 #define LUAT_USE_ADC  1
 #define LUAT_USE_PWM  1
 #define LUAT_USE_WDT  1
@@ -12,6 +13,7 @@
 #define LUAT_USE_WLAN 1
 #define LUAT_USE_SMS 1
 #define LUAT_USE_MCU  1
+
 
 #define LUAT_USE_CRYPTO  1
 #define LUAT_USE_CJSON  1
