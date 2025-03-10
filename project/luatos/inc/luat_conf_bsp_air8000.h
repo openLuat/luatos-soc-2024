@@ -42,6 +42,7 @@
 #define LUAT_USE_TTS_ONCHIP    1
 
 #define LUAT_USE_LCD
+#define LUAT_USE_TP
 #define LUAT_USE_TJPGD
 #define LUAT_USE_EINK
 

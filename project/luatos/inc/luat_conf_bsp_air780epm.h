@@ -4,7 +4,6 @@
 #define LUAT_USE_SPI  1
 #define LUAT_USE_CAN  1
 #define LUAT_USE_ONEWIRE 1
-#define LUAT_USE_TP		1
 #define LUAT_USE_ADC  1
 #define LUAT_USE_PWM  1
 #define LUAT_USE_WDT  1
@@ -42,6 +41,7 @@
 #define LUAT_USE_CAMERA 1
 
 #define LUAT_USE_LCD
+#define LUAT_USE_TP
 #define LUAT_USE_TJPGD
 #define LUAT_USE_EINK
 

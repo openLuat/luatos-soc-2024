@@ -10,7 +10,6 @@
 #if defined TYPE_EC718M
 #define LUAT_USE_CAN  1
 #define LUAT_USE_ONEWIRE 1
-#define LUAT_USE_TP		1
 #endif
 #define LUAT_USE_WDT  1
 #define LUAT_USE_PM  1
@@ -125,6 +124,7 @@
 // UI
 // LCD  是彩屏, 若使用LVGL就必须启用LCD
 #define LUAT_USE_LCD
+#define LUAT_USE_TP
 #define LUAT_USE_TJPGD
 // EINK 是墨水屏
 #define LUAT_USE_EINK
