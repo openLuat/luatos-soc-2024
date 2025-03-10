@@ -111,6 +111,11 @@ def do_build_project(chip_target, project):
                 "name": project["name"],
                 "result": "skip",
             }
+    elif project["name"] == "spinet":
+        return {
+                "name": project["name"],
+                "result": "skip",
+        }
 
     # 执行构建
     try :
