@@ -13,6 +13,7 @@
 #define LUAT_USE_SMS 1
 #define LUAT_USE_MCU  1
 
+
 #define LUAT_USE_CRYPTO  1
 #define LUAT_USE_CJSON  1
 #define LUAT_USE_ZBUFF  1
@@ -40,6 +41,7 @@
 #define LUAT_USE_CAMERA 1
 
 #define LUAT_USE_LCD
+#define LUAT_USE_TP
 #define LUAT_USE_TJPGD
 #define LUAT_USE_EINK
 
