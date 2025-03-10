@@ -40,10 +40,11 @@
 
 #define LUAT_USE_CAMERA 1
 
-#define LUAT_USE_LCD
-#define LUAT_USE_TP
-#define LUAT_USE_TJPGD
-#define LUAT_USE_EINK
+#define LUAT_USE_LCD 1
+#define LUAT_USE_TP 1
+#define LUAT_USE_TJPGD 1
+#define LUAT_USE_EINK 1
+#define LUAT_USE_U8G2 1
 
 #define LUAT_USE_FONTS
 #define USE_U8G2_OPPOSANSM_ENGLISH 1
