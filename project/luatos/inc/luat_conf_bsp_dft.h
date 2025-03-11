@@ -9,8 +9,8 @@
 #define LUAT_USE_PWM  1
 #if defined TYPE_EC718M
 #define LUAT_USE_CAN  1
-#define LUAT_USE_ONEWIRE 1
 #endif
+#define LUAT_USE_ONEWIRE 1
 #define LUAT_USE_WDT  1
 #define LUAT_USE_PM  1
 #define LUAT_USE_MCU  1
@@ -115,7 +115,7 @@
 // 4. 使用8k的资源文件可节省100k,音质见仁见智,可选
 // ------------------------------
 #define LUAT_USE_MEDIA    1
-// #define LUAT_USE_RECORD     1
+#define LUAT_USE_RECORD     1
 // #define LUAT_USE_TTS    1
 // #define LUAT_USE_TTS_ONCHIP    1
 // // 仅开启TTS, 禁用AMR/MP3的解码
