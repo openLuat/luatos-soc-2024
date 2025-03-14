@@ -203,6 +203,13 @@
                         "rsize": 0,
                         "fsize": 1024,
                         "dft": false
+                    },
+                    {
+                        "name": "@rev_release_v2004",
+                        "content": "选用V2004发行版的代码进行编译, 发布日期 2025.3.13",
+                        "rsize": 0,
+                        "fsize": 1024,
+                        "dft": false
                     }
                 ]
             },
