@@ -12,4 +12,13 @@ uint8_t user_io_sel(uint8_t io_sel)
 	return 1;
 }
 #endif
+
+#ifdef LUAT_MODEL_AIR8000
+#include "slpman.h"
+uint8_t user_io_sel(uint8_t io_sel)
+{
+	slpManNormalIOVoltSet(IOVOLT_3_30V);
+	return 1;
+}
+#endif
 #endif
