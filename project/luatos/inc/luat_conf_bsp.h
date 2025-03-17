@@ -125,7 +125,12 @@
 #define LV_VER_RES_MAX          (80)
 #define LV_COLOR_DEPTH          16
 
+#if defined TYPE_EC718HM
+#define LV_COLOR_16_SWAP   0
+#else
 #define LV_COLOR_16_SWAP   1
+#endif
+
 #define __LVGL_SLEEP_ENABLE__
 
 #undef LV_DISP_DEF_REFR_PERIOD
