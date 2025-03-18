@@ -28,6 +28,9 @@ target(project_name,function()
     add_files(luatos_root.."/components/network/netdrv/src/luat_netdrv_napt*.c")
     add_files(luatos_root.."/components/network/netdrv/src/luat_netdrv.c")
 
+    -- airlink
+    add_includedirs(luatos_root.."/components/airlink/include",{public = true})
+
     add_defines("LUAT_NET_IP_INTERCEPT=1",{public = true})
     add_ldflags("-Wl,--wrap=ps_ip_input",{force = true})
     add_files("../luatos/src/wrap_ip_input.c")
