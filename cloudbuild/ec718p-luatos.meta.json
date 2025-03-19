@@ -407,6 +407,20 @@
                        "rsize":34928,
                        "fsize":418304,
                        "dft":false
+                    },
+                    {
+                       "name":"airlink",
+                       "content":"跨芯片传输协议",
+                       "rsize":24928,
+                       "fsize":418304,
+                       "dft":false
+                    },
+                    {
+                       "name":"iperf",
+                       "content":"吞吐量测试(试用版本,性能有限)",
+                       "rsize":24928,
+                       "fsize":418304,
+                       "dft":false
                     }
                 ]
             },
