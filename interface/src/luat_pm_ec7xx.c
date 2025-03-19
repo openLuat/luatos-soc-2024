@@ -327,7 +327,7 @@ int luat_pm_power_ctrl(int id, uint8_t onoff)
 #ifdef TYPE_EC718HM
 			GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(HAL_GPIO_25, 0), 0, 0, 0);
 			GPIO_Config(HAL_GPIO_25, 0, 1);
-			GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(HAL_GPIO_17, 4), 4, 0, 0);
+			GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(HAL_GPIO_24, 0), 4, 0, 0);
 			GPIO_Config(HAL_GPIO_24, 0, 1);
 #else
 			GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(HAL_GPIO_23, 0), 0, 0, 0);
