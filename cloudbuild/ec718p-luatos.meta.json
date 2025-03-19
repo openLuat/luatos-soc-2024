@@ -400,6 +400,13 @@
                        "rsize":14928,
                        "fsize":418304,
                        "dft":false
+                    },
+                    {
+                       "name":"netdrv",
+                       "content":"网络设备管理器",
+                       "rsize":34928,
+                       "fsize":418304,
+                       "dft":false
                     }
                 ]
             },
