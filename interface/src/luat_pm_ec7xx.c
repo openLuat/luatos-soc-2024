@@ -324,10 +324,17 @@ int luat_pm_power_ctrl(int id, uint8_t onoff)
 			GPIO_Config(HAL_GPIO_13, 0, 1);
 #endif
 #ifdef CHIP_EC718
+#ifdef TYPE_EC718HM
+			GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(HAL_GPIO_25, 0), 0, 0, 0);
+			GPIO_Config(HAL_GPIO_25, 0, 1);
+			GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(HAL_GPIO_17, 4), 4, 0, 0);
+			GPIO_Config(HAL_GPIO_24, 0, 1);
+#else
 			GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(HAL_GPIO_23, 0), 0, 0, 0);
 			GPIO_Config(HAL_GPIO_23, 0, 1);
 			GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(HAL_GPIO_17, 4), 4, 0, 0);
 			GPIO_Config(HAL_GPIO_17, 0, 1);
+#endif
 #endif
 		}
 		else
@@ -338,8 +345,13 @@ int luat_pm_power_ctrl(int id, uint8_t onoff)
 			slpManDCXOOutputEn(0);
 #endif
 #ifdef CHIP_EC718
+#ifdef TYPE_EC718HM
+			GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(HAL_GPIO_25, 0), 0, 0, 0);
+			GPIO_Config(HAL_GPIO_25, 0, 0);
+#else
 			GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(HAL_GPIO_17, 4), 4, 0, 0);
 			GPIO_Config(HAL_GPIO_17, 0, 0);
+#endif
 			slpManDCXOOutputEn(0);
 #endif
 		}
