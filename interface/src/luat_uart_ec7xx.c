@@ -231,9 +231,15 @@ int luat_uart_setup(luat_uart_t* uart) {
 	        GPIO_PullConfig(33, 1, 1);
             break;
         case UART_ID2:
+			#ifdef TYPE_EC718HM
+            GPIO_IomuxEC7XX(21, 2, 0, 0);
+		    GPIO_IomuxEC7XX(22, 2, 0, 0);
+		    GPIO_PullConfig(21, 1, 1);
+			#else
             GPIO_IomuxEC7XX(27, 3, 0, 0);
 		    GPIO_IomuxEC7XX(28, 3, 0, 0);
 		    GPIO_PullConfig(27, 1, 1);
+			#endif
             break;
         case UART_ID3:
             GPIO_IomuxEC7XX(29, 3, 0, 0);
