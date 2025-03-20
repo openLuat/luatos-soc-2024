@@ -345,7 +345,7 @@ int luat_pm_power_ctrl(int id, uint8_t onoff)
 			slpManDCXOOutputEn(0);
 #endif
 #ifdef CHIP_EC718
-#ifdef TYPE_EC718HM
+#ifdef LUAT_MODEL_AIR8000
 			GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(HAL_GPIO_25, 0), 0, 0, 0);
 			GPIO_Config(HAL_GPIO_25, 0, 0);
 #else
