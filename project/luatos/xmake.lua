@@ -328,7 +328,7 @@ target(project_name,function()
 
     -- airlink
     add_includedirs(luatos_root.."/components/airlink/include",{public = true})
-    add_files(luatos_root.."/components/airlink/src/*.c")
+    add_files(luatos_root.."/components/airlink/src/**.c")
     add_files(luatos_root.."/components/airlink/binding/*.c")
     -- onewire
     add_files(luatos_root.."/components/onewire/binding/*.c")
