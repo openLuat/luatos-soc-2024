@@ -119,5 +119,9 @@
 
 #define LUAT_USE_NETDRV 1
 #define LUAT_USE_NETDRV_NAPT 1
-#define LUAT_USE_ULWIP 1
+
 #define LUAT_USE_AIRLINK 1
+// 使用DRV框架调用GPIO
+#define LUAT_USE_DRV_GPIO 1
+// 执行类的数据
+#define LUAT_USE_AIRLINK_EXEC_SDATA 1

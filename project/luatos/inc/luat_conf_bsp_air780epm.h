@@ -56,3 +56,26 @@
 
 #define LUAT_USE_NETDRV 1
 #define LUAT_USE_AIRLINK 1
+
+// 使用DRV框架调用GPIO
+#define LUAT_USE_DRV_GPIO 1
+// 执行类的数据
+#define LUAT_USE_AIRLINK_EXEC_SDATA 1
+
+// 基准大小 67144
+// 减去摄像头 202048, 132k
+// 减去GMSSL 230936, 30k
+// 减去elink 277776, 48k
+// 减去lcd jpeg 283552, 6k
+// 减去lcd 300512, 18k
+// 减去tp 304784, 4k
+// 减去fonts 329160, 25k
+// 减去u8g2 360976, 32k
+// 减去iconv 397080, 36k
+// 减去xxtea 398080, 1k
+// 减去RSA 399792, 1k
+// 减去protobuf 414048, 16k
+// 减去ulwip 420416, 6k
+// 减去airlink 424144, 4k
+// 减去netdrv 454972, 32k
+// 减去libgnss 466072, 12k
