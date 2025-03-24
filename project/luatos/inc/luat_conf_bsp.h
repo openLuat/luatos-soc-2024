@@ -159,7 +159,9 @@
 #define LUAT_USE_FOTA 1
 #define LUAT_USE_MOBILE 1
 #define LUAT_USE_SNTP 1
+#ifndef LUAT_USE_DRV_WLAN
 #define LUAT_USE_WLAN_SCANONLY 1
+#endif
 //目前没用到的宏，但是得写在这里
 #define LUAT_USE_I2S
 #ifdef LUAT_USE_MEDIA
@@ -172,7 +174,7 @@
 // MCU引脚复用
 #define LUAT_MCU_IOMUX_CTRL 1
 
-#if (defined TYPE_EC718P && defined (FEATURE_IMS_ENABLE)) || (defined (TYPE_EC718U) && defined (FEATURE_IMS_ENABLE) )
+#if (defined(TYPE_EC718P) && defined(FEATURE_IMS_ENABLE)) || (defined(TYPE_EC718U) && defined(FEATURE_IMS_ENABLE) )
 #ifndef LUAT_USE_VOLTE
 #define LUAT_USE_VOLTE
 #endif
