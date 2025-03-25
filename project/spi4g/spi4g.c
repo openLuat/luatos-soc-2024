@@ -336,7 +336,7 @@ __USER_FUNC_IN_RAM__ void spi_add_tx_node(llist_head *node)
 
 __USER_FUNC_IN_RAM__ spi4g_node_t *spi_alloc_tx_node(uint16_t flag, uint16_t chan, uint16_t len)
 {
-    spi4g_node_t *node = malloc(sizeof(spi4g_node_t) + sizeof(spi4g_pkt_t) + len);
+    spi4g_node_t *node = luat_heap_opt_malloc(LUAT_HEAP_AUTO, sizeof(spi4g_node_t) + sizeof(spi4g_pkt_t) + len);
     if (node == NULL)
     {
         return NULL;
@@ -467,7 +467,7 @@ __USER_FUNC_IN_RAM__ static void rx_decode()
 
         if (pkt->flag == SPI_FLAG_CTRL)
         {
-            void *mem = malloc(sizeof(spi4g_pkt_t) + pkt->len);
+            void *mem = luat_heap_opt_malloc(LUAT_HEAP_AUTO, sizeof(spi4g_pkt_t) + pkt->len);
             if (mem)
             {
                 memcpy(mem, pkt, sizeof(spi4g_pkt_t) + pkt->len);
@@ -476,7 +476,7 @@ __USER_FUNC_IN_RAM__ static void rx_decode()
         }
         else if (pkt->flag == SPI_FLAG_NET)
         {
-            spi4g_node_t *node = (spi4g_node_t *)malloc(sizeof(spi4g_node_t) + pkt->len);
+            spi4g_node_t *node = (spi4g_node_t *)luat_heap_opt_malloc(LUAT_HEAP_AUTO, sizeof(spi4g_node_t) + pkt->len);
             if (node)
             {
                 node->len = pkt->len;
@@ -514,7 +514,7 @@ __USER_FUNC_IN_RAM__ static void rx_decode()
     rx_bak_len = 0;
 }
 
-__USER_FUNC_IN_RAM__ static void netdrv_dataout(void *userdata, uint8_t *buff, uint16_t len)
+__USER_FUNC_IN_RAM__ static void netdrv_dataout(struct luat_netdrv *drv, void *userdata, uint8_t *buff, uint16_t len)
 {
     spi4g_node_t *node = spi_alloc_tx_node(SPI_FLAG_NET, 0, len);
 
@@ -536,7 +536,7 @@ __USER_FUNC_IN_RAM__ static err_t spi4g_netif_init(struct netif *netif)
 
 __USER_FUNC_IN_RAM__ static void netdrv_init()
 {
-    struct netif *netif = luat_heap_malloc(sizeof(struct netif));
+    struct netif *netif = luat_heap_opt_malloc(LUAT_HEAP_AUTO, sizeof(struct netif));
     memset(netif, 0, sizeof(struct netif));
 
     ip_addr_t ip, mask, gw;
@@ -545,7 +545,7 @@ __USER_FUNC_IN_RAM__ static void netdrv_init()
     ipaddr_aton(SPI4G_IP4_GW, &gw);
     netif_add(netif, &ip, &mask, &gw, NULL, spi4g_netif_init, tcpip_input);
 
-    netdrv = luat_heap_malloc(sizeof(luat_netdrv_t));
+    netdrv = luat_heap_opt_malloc(LUAT_HEAP_AUTO, sizeof(luat_netdrv_t));
     memset(netdrv, 0, sizeof(luat_netdrv_t));
 
     netdrv->id = SPI4G_NW_ADAPTER_INDEX;
