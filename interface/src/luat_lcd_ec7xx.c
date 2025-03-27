@@ -321,6 +321,7 @@ void luat_lcd_IF_init(luat_lcd_conf_t* conf)
 	conf->opts->write_cmd_data = luat_lcd_IF_write_cmd_data;
 	conf->opts->read_cmd_data = luat_lcd_IF_read_cmd_data;
 	conf->opts->lcd_draw = luat_lcd_IF_draw;
+	conf->opts->sleep_ctrl = luat_lcd_IF_sleep;
 }
 int luat_lcd_IF_write_cmd_data(luat_lcd_conf_t* conf,const uint8_t cmd, const uint8_t *data, uint8_t data_len)
 {
@@ -425,6 +426,43 @@ int luat_lcd_IF_draw(luat_lcd_conf_t* conf, int16_t x1, int16_t y1, int16_t x2, 
 		GPIO_Output(conf->lcd_cs_pin, 1);
 	}
 
+	return 0;
+}
+
+int luat_lcd_IF_sleep(luat_lcd_conf_t* conf, uint8_t on_off)
+{
+	if (on_off)
+	{
+		if (conf->opts->sleep_cmd && conf->opts->sleep_cmd != 0xff)
+		{
+			lcd_write_cmd_data(conf,conf->opts->sleep_cmd, NULL, 0);
+		}
+		else if (!conf->opts->sleep_cmd)
+		{
+			lcd_write_cmd_data(conf,LUAT_LCD_DEFAULT_SLEEP, NULL, 0);
+		}
+		if (LUAT_LCD_IM_QSPI_MODE == conf->interface_mode)
+		{
+			luat_lcd_qspi_auto_flush_on_off(conf, 0);
+		}
+		LSPI_Sleep(USP_ID2, 1);
+	}
+	else
+	{
+		if (conf->opts->wakeup_cmd && conf->opts->wakeup_cmd != 0xff)
+		{
+			lcd_write_cmd_data(conf,conf->opts->wakeup_cmd, NULL, 0);
+		}
+		else if (!conf->opts->sleep_cmd)
+		{
+			lcd_write_cmd_data(conf,LUAT_LCD_DEFAULT_WAKEUP, NULL, 0);
+		}
+		LSPI_Sleep(USP_ID2, 0);
+		if (LUAT_LCD_IM_QSPI_MODE == conf->interface_mode)
+		{
+			luat_lcd_qspi_auto_flush_on_off(conf, 1);
+		}
+	}
 	return 0;
 }
 
