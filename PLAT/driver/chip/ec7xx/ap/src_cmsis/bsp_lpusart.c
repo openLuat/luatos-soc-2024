@@ -1449,6 +1449,9 @@ IRQ_HANDLE:
             // clear autobaud enable bit
             lpusart->aon_regs->CR1 &= ~LPUSARTAON_CR1_AUTO_BAUD_Msk;
 
+            // Shall disable normal uart rx in case of receiving interference signal after wakeup(esp. sleep1)
+            lpusart->core_regs->ENR &= ~USART_ENR_RX_EN_Msk;
+
         }
         else
         {

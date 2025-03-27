@@ -198,16 +198,16 @@ void usbDevNotifySerlEvent(uint32_t flags, void *args);
 void usbDevNotifyTxDoneToSct(uint32_t evt);
 
 /**
- * @brief usbDevNotifyStateToSct(uint32_t stateEvt)
+ * @brief usbDevNotifyStateToSct(uint32_t stateEvt, uint32_t extras)
  * @details notify sct that usb device state is changed
  *
  * @param stateEvt  state event id of usb device
  * @return void.
  */
-void usbDevNotifyStateToSct(uint32_t stateEvt);
+void usbDevNotifyStateToSct(uint32_t stateEvt, uint32_t extras);
 
 uint8_t usbDevGetEpNumFromIf(UsbIfIdx_e ifIdx);
-void usbDevGetIfRbAddrLen(UsbIfIdx_e ifIdx, uint32_t *len, uint32_t *addr );
+void    usbDevGetIfRbAddrLen(UsbIfIdx_e ifIdx, uint32_t *len, uint32_t *addr );
 int32_t usbDevCfgOutXfer(UsbIfIdx_e ifIdx);
 uint8_t usbDevGetUlgInEpNum( void );
 uint8_t usbDevGetLogIfIdx( void );

@@ -39,10 +39,10 @@
 #elif (defined TYPE_EC718S) || (defined TYPE_EC718P) || (defined TYPE_EC718U) || (defined TYPE_EC716S) || (defined TYPE_EC716E) || (defined TYPE_EC718U) || (defined TYPE_EC718M)
 #ifdef FEATURE_BOOTLOADER_PROJECT_ENABLE
 #define nvram_flash_earse(a)        FLASH_eraseSectorSafe(a)
-#define nvram_flash_write(a,b,c)    FLASH_write(a,b,c)
+#define nvram_flash_write(a,b,c)    FLASH_writeBl(a,b,c)
 #define nvram_flash_read(a,b,c)     FLASH_XIPRead(a,b,c)
 #define cp_nvram_flash_earse(a)     FLASH_eraseSectorSafe(a)
-#define cp_nvram_flash_write(a,b,c) FLASH_write(a,b,c)
+#define cp_nvram_flash_write(a,b,c) FLASH_writeBl(a,b,c)
 #else
 #define nvram_flash_earse(a)        FLASH_eraseSafe(a, 0x1000)
 #define nvram_flash_write(a,b,c)    FLASH_writeSafe(a,b,c)
@@ -58,7 +58,7 @@ extern uint8_t  CPXIP_QSPI_Write(uint8_t* pData, uint32_t WriteAddr, uint32_t Si
 
 #else
 extern uint8_t FLASH_XIPRead(uint8_t* pData, uint32_t ReadAddr, uint32_t Size);
-extern uint8_t FLASH_write(uint8_t* pData, uint32_t WriteAddr, uint32_t Size);
+extern uint8_t FLASH_writeBl(uint8_t* pData, uint32_t WriteAddr, uint32_t Size);
 extern uint8_t FLASH_eraseSectorSafe(uint32_t SectorAddress);
 extern uint8_t CPFLASH_write(uint8_t* pData, uint32_t ReadAddr, uint32_t Size);
 extern uint8_t CPFLASH_eraseSector(uint32_t SectorAddress);

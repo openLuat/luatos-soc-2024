@@ -311,7 +311,15 @@ void camInit(void* dataAddr, cspiCbEvent_fn uspCb, void* dmaCb, camErrCb errCb)
     camParamCfg.rowScaleRatio       = 0;
     camParamCfg.colScaleRatio       = 0;
     camParamCfg.scaleBytes          = 0;
-	camResolution 			= CAM_CHAIN_COUNT;		
+	camResolution 			= CAM_CHAIN_COUNT;	
+
+    if (CAM_CHAIN_COUNT == CAM_8W_COLOR)
+    {    
+	    camParamCfg.yOnly               = 0;
+	    camParamCfg.rowScaleRatio       = 0;
+	    camParamCfg.colScaleRatio       = 0;
+	    camParamCfg.scaleBytes          = 3;
+	}	
 #endif
 
     camInterfaceCfg(&camParamCfg);

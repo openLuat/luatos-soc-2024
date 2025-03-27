@@ -613,7 +613,6 @@ static void lspiEnterLpStatePrepare(void* pdata, slpManLpState state)
                     lspiDataBase[i].regsBackup.DMACTL      		= lspiInstance[i]->DMACTL;
                     lspiDataBase[i].regsBackup.INTCTL       	= lspiInstance[i]->INTCTL;
                     lspiDataBase[i].regsBackup.STAS       		= lspiInstance[i]->STAS;
-                    lspiDataBase[i].regsBackup.INTCTL       	= lspiInstance[i]->INTCTL;
                     lspiDataBase[i].regsBackup.CSPICTL   		= lspiInstance[i]->CSPICTL;
                     lspiDataBase[i].regsBackup.LSPI_CTRL      	= lspiInstance[i]->LSPI_CTRL;
                     lspiDataBase[i].regsBackup.LSPI_CCTRL   	= lspiInstance[i]->LSPI_CCTRL;
@@ -639,7 +638,6 @@ static void lspiEnterLpStatePrepare(void* pdata, slpManLpState state)
                     lspiDataBase[i].regsBackup.DMACTL      		= lspiInstance[i]->DMACTL;
                     lspiDataBase[i].regsBackup.INTCTL       	= lspiInstance[i]->INTCTL;
                     lspiDataBase[i].regsBackup.STAS       		= lspiInstance[i]->STAS;
-                    lspiDataBase[i].regsBackup.INTCTL       	= lspiInstance[i]->INTCTL;
                     lspiDataBase[i].regsBackup.CSPICTL   		= lspiInstance[i]->CSPICTL;
                     lspiDataBase[i].regsBackup.LSPI_CTRL    	= lspiInstance[i]->LSPI_CTRL;
                     lspiDataBase[i].regsBackup.LSPI_CCTRL   	= lspiInstance[i]->LSPI_CCTRL;
@@ -713,7 +711,6 @@ static void lspiExitLpStateRestore(void* pdata, slpManLpState state)
                     lspiInstance[i]->DMACTL 					= lspiDataBase[i].regsBackup.DMACTL;
                     lspiInstance[i]->INTCTL 					= lspiDataBase[i].regsBackup.INTCTL;
                     lspiInstance[i]->STAS 						= lspiDataBase[i].regsBackup.STAS;
-                    lspiInstance[i]->INTCTL 					= lspiDataBase[i].regsBackup.INTCTL;
                     lspiInstance[i]->CSPICTL 					= lspiDataBase[i].regsBackup.CSPICTL;
                     lspiInstance[i]->LSPI_CTRL 					= lspiDataBase[i].regsBackup.LSPI_CTRL;
                     lspiInstance[i]->LSPI_CCTRL					= lspiDataBase[i].regsBackup.LSPI_CCTRL;
@@ -739,7 +736,6 @@ static void lspiExitLpStateRestore(void* pdata, slpManLpState state)
                     lspiInstance[i]->DMACTL 					= lspiDataBase[i].regsBackup.DMACTL;
                     lspiInstance[i]->INTCTL 					= lspiDataBase[i].regsBackup.INTCTL;
                     lspiInstance[i]->STAS 						= lspiDataBase[i].regsBackup.STAS;
-                    lspiInstance[i]->INTCTL 					= lspiDataBase[i].regsBackup.INTCTL;
                     lspiInstance[i]->CSPICTL 					= lspiDataBase[i].regsBackup.CSPICTL;
                     lspiInstance[i]->LSPI_CTRL 					= lspiDataBase[i].regsBackup.LSPI_CTRL;
                     lspiInstance[i]->LSPI_CCTRL					= lspiDataBase[i].regsBackup.LSPI_CCTRL;
@@ -1084,6 +1080,7 @@ int32_t lspiPowerCtrl(lspiPowerState_e state, lspiRes_t *lspi)
 			
 			#if (defined CHIP_EC718)  && !(defined TYPE_EC718M) || (defined CHIP_EC716)
 			CLOCK_setClockSrc(FCLK_USP2,FCLK_USP2_SEL_102M);
+			CLOCK_setClockDiv(FCLK_USP2, lspiDiv/6);
 			#else
 			CLOCK_setClockSrc(FCLK_USP2,FCLK_USP2_SEL_612M);
 			CLOCK_setClockDiv(FCLK_USP2, lspiDiv);

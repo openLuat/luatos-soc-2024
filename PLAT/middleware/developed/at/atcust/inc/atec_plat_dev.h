@@ -19,6 +19,14 @@
 
 #include "at_util.h"
 
+typedef struct ecPerforInfoStrMapping_Tag
+{
+    UINT8  errId;
+    const CHAR *pStr;
+}ecPerforInfoStrMapping;
+
+
+
 #define EC_CMD_BUF_LEN          640
 #define EC_PRINT_BUF_LEN        180
 #define EC_DUMP_DATA_LEN        32
@@ -342,12 +350,14 @@
 #define SIMO08_CFG_MAGIC                   0xacceacce
 
 
-/* AT+ECIDLEP */
-#define ATC_ECIDLEP_VAL_MIN                          0
-#define ATC_ECIDLEP_APM_VAL_MAX                      7
-#define ATC_ECIDLEP_VAL_MAX                          6
-#define ATC_ECIDLEP_VAL_DEFAULT                      0
-
+/* AT+ECPRFINFO */
+#define ATC_ECPRFINFO_VAL_MIN                          20
+#define ATC_ECPRFINFO_VAL_MAX                          (5000)
+#define ATC_ECPRFINFO_VAL_DEFAULT                      20
+#define ATC_ECPRFINFO_APM_VAL_MAX                      (10*1000)
+#define ATC_ECPRFINFO_APM_MODE_MIN                          0
+#define ATC_ECPRFINFO_APM_MODE_MAX                          8
+#define ATC_ECPRFINFO_APM_MODE_DEF                          0
 
 /* AT+CMUX */
 //mode: 0-basic, 1-advanced
@@ -492,7 +502,7 @@ CmsRetId pdevBTOFFSETDBG(const AtCmdInputContext *pAtCmdReq);
 CmsRetId pdevRLCHK(const AtCmdInputContext *pAtCmdReq);
 CmsRetId pdevECFUSEMR(const AtCmdInputContext *pAtCmdReq);
 CmsRetId pdevECSIMO(const AtCmdInputContext *pAtCmdReq);
-CmsRetId pdevECIDLEP(const AtCmdInputContext *pAtCmdReq);
+CmsRetId pdevECMIPS(const AtCmdInputContext *pAtCmdReq);
 CmsRetId pdevECFUSEWR(const AtCmdInputContext *pAtCmdReq);
 CmsRetId pdevECPERTEST(const AtCmdInputContext *pAtCmdReq); // for internal test only
 CmsRetId pdevCMUX(const AtCmdInputContext *pAtCmdReq);

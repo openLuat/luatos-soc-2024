@@ -241,8 +241,13 @@
 #define ATC_ECCFG_1_STATIC_CONFIG_VAL_MAX        (1)
 #define ATC_ECCFG_1_STATIC_CONFIG_VAL_DEFAULT    (0)
 
+/* AT+ECCFG="DisableCDRX"
+ * 0 - Enable both short DRX and long DRX.
+ * 1 - Disable both short DRX and long DRX.
+ * 2 - Disable short DRX but enable long DRX.
+ */
 #define ATC_ECCFG_1_DISABLE_CDRX_VAL_MIN         (0)
-#define ATC_ECCFG_1_DISABLE_CDRX_VAL_MAX         (1)
+#define ATC_ECCFG_1_DISABLE_CDRX_VAL_MAX         (2)
 #define ATC_ECCFG_1_DISABLE_CDRX_VAL_DEFAULT     (0)
 
 #define ATC_ECCFG_1_IGNORE_EMM_CAUSE_VAL_MIN     (0)
@@ -312,6 +317,19 @@
 #define ATC_ECCFG_1_FORBIDDEN_TAC_TIMER_VAL_MIN         1
 #define ATC_ECCFG_1_FORBIDDEN_TAC_TIMER_VAL_MAX         43200   //max 12 hours(43200 seconds)
 #define ATC_ECCFG_1_FORBIDDEN_TAC_TIMER_VAL_DEFAULT     43200   //default 12 hours(43200 seconds)
+
+/* AT+ECCFG="AsUeCapaBitmap"
+ * BIT0: Capability defined for UESpecificRefSigSupported
+ * BIT1: Capability defined for RachReport
+ * BIT2: Capability defined for FGI17-IntraFreqANR.
+ * BIT3: Capability defined for FGI18-InterFreqANR.
+ * BIT4: Capability defined for FGI102-Type1Srs.
+ * BIT5: Capability defined for FGI115-TimeDomainSfRestricServCell.
+ */
+
+#define ATC_ECCFG_1_AS_UE_CAPA_BITMAP_VAL_MIN        (0)
+#define ATC_ECCFG_1_AS_UE_CAPA_BITMAP_VAL_MAX        (0x0000003F)
+#define ATC_ECCFG_1_AS_UE_CAPA_BITMAP_VAL_DEFAULT    (0x0000003F)
 
 #define ATEC_ECCFG_GET_RSP_STR_LEN           512
 

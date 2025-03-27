@@ -742,6 +742,7 @@ void netif_disable_oos_state(struct netif *netif);
 void netif_enable_all_psif_oos_state(void);
 void netif_disable_all_psif_oos_state(void);
 void netif_set_ps_mtu(struct netif *netif, u16_t mtu);
+UINT32 netif_get_link_change_timeout(void);
 
 #if LWIP_TIMER_ON_DEMOND
 

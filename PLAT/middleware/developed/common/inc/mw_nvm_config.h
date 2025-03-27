@@ -163,7 +163,7 @@ typedef enum _EPAT_MidWareCfgParamId_Enum
 ******************************************************************************/
 typedef MWCfgAtChanConfig   MWNvmCfgAtChanConfig;
 
-typedef enum _MWNvmCfgEthLanPropId
+typedef enum _MWNvmCfgLanPropId
 {
     MW_CFG_LAN_PROP_ETH_TX_CONCAT = 0,
     MW_CFG_LAN_PROP_SLP1_MODE_SEL

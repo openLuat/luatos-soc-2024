@@ -490,7 +490,7 @@ typedef enum
 #define PLAT_CFG_FOTA_URC_UART_PORT_IDX_MAX   1
 
 
-#define PLAT_CFG_RAW_FLASH_RSVD_SIZE    16
+#define PLAT_CFG_RAW_FLASH_RSVD_SIZE    10
 
 /** \brief typedef of platform configuration stored in raw flash */
 __PACKED_STRUCT _plat_config_raw_flash
@@ -676,12 +676,16 @@ __PACKED_STRUCT _plat_config_raw_flash
     /** wfi mode, do not enter doze */
     uint8_t wfiMode;
 
-    /** ECIDLEP config
+    /** ECPRFINFO config
     *  valid value:
-    *        0 -- print flag set to 0
-    *        1 -- print flag set to 1
+    *        bit 0 -- cache mode
+    *        bit 1 -- heap mode
+    *        bit 2 -- idle task mode
+    *        bit 3 -- apm mode0
+    *        bit 4 -- apm mode1 
+    *        bit 5 -- apm mode2    
     */
-    uint8_t apIdlePercentPrintMode;
+    uint8_t apPerformanceInfoMode;
 
     /** cpSlpTest
     *   0: disable sleep test
@@ -694,6 +698,11 @@ __PACKED_STRUCT _plat_config_raw_flash
     */
     uint8_t cpSlpTest;
 
+    /* max value 10*1000 = 0x2710 */
+    uint16_t apPerformanceInfoApmPeriod;
+    /* max value 3*60*1000 = 0xA4CB80 */
+    uint32_t apPerformanceInfoPeriod;
+    
     /* 'PLAT_CFG_RAW_FLASH_RSVD_SIZE' bytes rsvd for future */
     uint8_t resv[PLAT_CFG_RAW_FLASH_RSVD_SIZE];
 };
@@ -745,7 +754,9 @@ typedef enum _plat_config_id
     PLAT_CONFIG_ITEM_SLP_LIMIT_EN,           /**< enable sleep time limit*/
     PLAT_CONFIG_ITEM_SLP_LIMIT_TIME,         /**< set maximum sleep time in mili second*/
     PLAT_CONFIG_ITEM_WFI_MODE,               /**< WFI Mode */
-    PLAT_CONFIG_ITEM_IDLEPERCENT_PRINT_MODE, /**< PRINT IDLE PERCENT MODE */
+    PLAT_CONFIG_ITEM_PERFORMANCE_INFO_MODE,  /**< performance info MODE */
+    PLAT_CONFIG_ITEM_PERFORMANCE_INFO_PERIOD, /**< performance info period */
+    PLAT_CONFIG_ITEM_PERFORMANCE_INFO_APM_PERIOD, /**< performance info apm period */
     PLAT_CONFIG_ITEM_CPSLPTEST_MODE,         /**< CP Sleep Mode Test */
     PLAT_CONFIG_ITEM_TOTAL_NUMBER,           /**< total number of items */
     PLAT_CONFIG_ITEM_LOG_OWNER_AND_LEVEL,    /**< log Owner and logLevel for this Owner item */

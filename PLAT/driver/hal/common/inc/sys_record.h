@@ -3,13 +3,28 @@
 
 #include "commontypedef.h"
 
+typedef enum ecPerformanceInfoType_enum
+{
+    EC_PER_INFO_NONE          = 0x0,
+    EC_PER_INFO_CACHE         = 0x1,
+    EC_PER_INFO_HEAP          = 0x2,
+    EC_PER_INFO_IDLETASK      = 0x4,
+    EC_PER_INFO_APM0          = 0x8,
+    EC_PER_INFO_APM1          = 0x10,
+    EC_PER_INFO_APM2          = 0x20,
+    EC_PER_INFO_CP_MIPS       = 0x40,
+    EC_PER_INFO_MAX           = 0x80,
+}ecPerformanceInfoType;
+
 #define EC_TRACE_SCHEDULE_RECORD  1
 
 #define EC_TRACE_SCHEDULE_PRINT   1
 
-
+#if defined CHIP_EC718
 #define XP_IDLE_TIME_STATIS       1
-
+#else
+#define XP_IDLE_TIME_STATIS       0
+#endif
 
 #define RECORD_LIST_LEN        30
 #define RECORD_LIST_NAME_LEN   4
@@ -67,10 +82,10 @@ typedef struct XpIdleTimeStatisTag
     // we need to statis all time cost in ISR during idle task, because for ISR, IdleTask not switch out
     BOOL   idleTaskState;
 
-    // record nuber enter idleTask during statis period
+    // record number enter idleTask during statis period
     UINT16 idleTaskCnt;
 
-    // record nuber enter isr during idleTask in statis period
+    // record number enter isr during idleTask in statis period
     UINT8  isrCnt;
 
     // should clear 0 when switch in idle task, and accumulate in IC handler during IDLE task is running
@@ -83,6 +98,7 @@ typedef struct XpIdleTimeStatisTag
     // time when enter MXIC
     UINT32 isrInHfnSfnSbn;
     UINT32 isrInSpn;
+    UINT32 performanceMode;
 }XpIdleTimeStatis;
 
 

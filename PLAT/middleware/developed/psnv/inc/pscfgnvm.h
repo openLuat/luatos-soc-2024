@@ -133,7 +133,7 @@ typedef enum _EPAT_PsConfigParamId_Enum
                                                      * 1 - default bearer/PDP is need to re-act if APN/IP type changes, when CGACT
                                                     */
     CERRC_CFG_STATIC_CONFIG,                        /* TV,  BOOL staticConfig */
-    CERRC_CFG_DISABLE_CDRX_CONFIG,                  /* TV,  BOOL disableCDRX */
+    CERRC_CFG_DISABLE_CDRX_CONFIG,                  /* TV,  UINT8 disableCDRX */
     CERRC_CFG_USER_DRX_CYCLE,                       /* TV,  UINT8 userDrxCycle */
 
     PS_CFG_IMS_SOLUTION_TYPE,                       /* TV,  UINT8 psImsSolutionType PsImsSolutionType
@@ -158,6 +158,7 @@ typedef enum _EPAT_PsConfigParamId_Enum
     UICC_CFG_ISIM_DISABLE,                          /* TV,  BOOL bIsimDisable, whether disable ISIM app or not */
     CEMM_CFG_CLEAR_FORBIDDEN_TAC,                   /* TV,  BOOL clear list of forbidden TAC when perform AT+CGATT=0 */
     CEMM_CFG_FORBIDDEN_TAC_TIMER,                   /* TV,  UINT16 timer values of periodically remove list of forbidden TAC */
+    CERRC_CFG_AS_UE_CAPA_BITMAP,                    /* TLV,  UINT32,AS UE capability definition,via bitmap. */
 
     /*
      * !!!!  PARAM ID !!!!
@@ -547,6 +548,7 @@ void PsCfgDefaultCemmEdrxSetting(PsCfgCemmEdrxSetting *pCemmEdrxSetting);
 void PsCfgDefaultCemmUserMaxT3324Setting(PsCfgCemmUserMaxT3324Setting *pUserMaxT3324Setting);
 void PsCfgDefaultCemmCiotSetting(PsCfgCemmCiotSetting *pCemmCiotSetting);
 void PsCfgDefaultCerrcUePowerClassSetting(PsCfgCerrcUePowerClassSetting *pCerrcUePowerClassSetting);
+void PsCfgDefaultAsUeCapaSetting(UINT32 *pCerrcAsUeCapaSetting);
 
 
 /*

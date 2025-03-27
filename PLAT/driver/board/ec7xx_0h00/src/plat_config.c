@@ -880,7 +880,7 @@ PLAT_BL_CIRAM_FLASH_TEXT static void BSP_SetDefaultRawFlashPlatConfig(void)
     g_rawFlashPlatConfig.slpLimitEn = 0;
     g_rawFlashPlatConfig.slpLimitTime = 0;
     g_rawFlashPlatConfig.wfiMode = soc_user_wfi_mode();
-    g_rawFlashPlatConfig.apIdlePercentPrintMode = 0;
+    g_rawFlashPlatConfig.apPerformanceInfoMode = 0;
     g_rawFlashPlatConfig.cpSlpTest = 0;
 #else	//__USER_CODE__
 #ifdef SDK_REL_BUILD
@@ -940,7 +940,7 @@ PLAT_BL_CIRAM_FLASH_TEXT static void BSP_SetDefaultRawFlashPlatConfig(void)
 
     g_rawFlashPlatConfig.wfiMode = 0;
 
-    g_rawFlashPlatConfig.apIdlePercentPrintMode = 0;
+    g_rawFlashPlatConfig.apPerformanceInfoMode = 0;
 
     g_rawFlashPlatConfig.cpSlpTest = 0;
 #endif //__USER_CODE__
@@ -1303,7 +1303,7 @@ PLAT_BL_CIRAM_FLASH_TEXT uint32_t BSP_GetPlatConfigItemValue(plat_config_id_t id
 
         case PLAT_CONFIG_ITEM_USB_VCOM_EN_BMP:
             return g_rawFlashPlatConfig.usbVcomEnBitMap;
-		
+        
         case PLAT_CONFIG_ITEM_FOTA_CONTROL:
             return g_rawFlashPlatConfig.fotaCtrl;
 
@@ -1316,7 +1316,7 @@ PLAT_BL_CIRAM_FLASH_TEXT uint32_t BSP_GetPlatConfigItemValue(plat_config_id_t id
         case PLAT_CONFIG_ITEM_PMUINCDRX:
         	return g_rawFlashPlatConfig.pmuInCdrx;
 
-		case PLAT_CONFIG_ITEM_SLP_LIMIT_EN:
+        case PLAT_CONFIG_ITEM_SLP_LIMIT_EN:
             return g_rawFlashPlatConfig.slpLimitEn;
 
         case PLAT_CONFIG_ITEM_SLP_LIMIT_TIME:
@@ -1329,8 +1329,14 @@ PLAT_BL_CIRAM_FLASH_TEXT uint32_t BSP_GetPlatConfigItemValue(plat_config_id_t id
             return g_rawFlashPlatConfig.wfiMode;
 #endif
 
-		case PLAT_CONFIG_ITEM_IDLEPERCENT_PRINT_MODE:
-			return g_rawFlashPlatConfig.apIdlePercentPrintMode;
+        case PLAT_CONFIG_ITEM_PERFORMANCE_INFO_MODE:
+            return g_rawFlashPlatConfig.apPerformanceInfoMode;
+        
+        case PLAT_CONFIG_ITEM_PERFORMANCE_INFO_APM_PERIOD:
+            return g_rawFlashPlatConfig.apPerformanceInfoApmPeriod;
+
+        case PLAT_CONFIG_ITEM_PERFORMANCE_INFO_PERIOD:
+            return g_rawFlashPlatConfig.apPerformanceInfoPeriod;
 
         case PLAT_CONFIG_ITEM_CPSLPTEST_MODE:
             return g_rawFlashPlatConfig.cpSlpTest;
@@ -1557,9 +1563,17 @@ void BSP_SetPlatConfigItemValue(plat_config_id_t id, uint32_t value)
             g_rawFlashPlatConfig.wfiMode = value;
             break;
 
-		case PLAT_CONFIG_ITEM_IDLEPERCENT_PRINT_MODE:
-			g_rawFlashPlatConfig.apIdlePercentPrintMode = value;
-       		break;
+        case PLAT_CONFIG_ITEM_PERFORMANCE_INFO_MODE:
+            g_rawFlashPlatConfig.apPerformanceInfoMode = value;
+            break;
+        
+        case PLAT_CONFIG_ITEM_PERFORMANCE_INFO_APM_PERIOD:
+            g_rawFlashPlatConfig.apPerformanceInfoApmPeriod = value;
+            break;
+
+        case PLAT_CONFIG_ITEM_PERFORMANCE_INFO_PERIOD:
+            g_rawFlashPlatConfig.apPerformanceInfoPeriod = value;
+            break;
 
         case PLAT_CONFIG_ITEM_CPSLPTEST_MODE:
             g_rawFlashPlatConfig.cpSlpTest = value;
