@@ -2813,7 +2813,7 @@ extern uint32_t luat_get_utc(uint32_t *tamp);
  * This module enables the AES-GCM and CAMELLIA-GCM ciphersuites, if other
  * requisites are enabled as well.
  */
-// #define MBEDTLS_GCM_C
+#define MBEDTLS_GCM_C
 
 /**
  * \def MBEDTLS_HAVEGE_C
@@ -3951,7 +3951,7 @@ extern uint32_t luat_get_utc(uint32_t *tamp);
 
 #ifndef LUAT_SSL_USE_ECP
 #if defined(TYPE_EC716S) || defined(TYPE_EC718S)
-
+#undef MBEDTLS_GCM_C
 // 禁用全部椭圆算法, 节省10k
 #undef MBEDTLS_ECP_C
 #undef MBEDTLS_ECDSA_C
