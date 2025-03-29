@@ -18,6 +18,8 @@ enum
 	CSPI_FRAME_END,
 	CSPI_FRAME_SUCC,
 	CSPI_FRAME_ERROR,
+
+	LSPI_FRAME_DONE = 0,
 };
 void I2S_GetConfig(uint8_t I2SID, I2sDataFmt_t *DataFmt, I2sSlotCtrl_t *SlotCtrl, I2sBclkFsCtrl_t *BclkFsCtrl, I2sDmaCtrl_t *DmaCtrl);
 void I2S_FullConfig(uint8_t I2SID, I2sDataFmt_t DataFmt, I2sSlotCtrl_t SlotCtrl, I2sBclkFsCtrl_t BclkFsCtrl, I2sDmaCtrl_t DmaCtrl);
@@ -62,6 +64,7 @@ enum
 	LCD_COLOR_MODE_RGB888 = 0x01,
 };
 int LSPI_Setup(uint8_t ID, uint32_t BusSpeed, uint8_t InterfaceMode, CBFuncEx_t cb, void *param);
+int LSPI_SetCallback(uint8_t ID, CBFuncEx_t cb, void *param);
 void LSPI_SetColorMode(uint8_t ID, uint8_t ColorMode);
 void LSPI_SetQspiLaneConfig(uint8_t ID, uint8_t Address, uint8_t Data, uint8_t CmdInst);
 void LSPI_HsyncConfig(uint8_t ID, uint8_t hsyncAddr, uint8_t hsyncInst, uint16_t vbpNum, uint16_t vfpNum);

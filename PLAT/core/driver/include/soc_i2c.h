@@ -62,4 +62,6 @@ void I2C_ChangeBR(uint8_t I2CID, uint32_t Baudrate);
 void I2C_Reset(uint8_t I2CID);
 
 void I2C_UsePollingMode(uint8_t I2CID, uint8_t OnOff);
+
+void I2C_DebugOnOff(uint8_t I2CID, uint8_t OnOff);
 #endif
