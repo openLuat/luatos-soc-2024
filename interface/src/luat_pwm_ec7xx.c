@@ -230,14 +230,18 @@ int luat_pwm_open(int channel, size_t freq,  size_t pulse, int pnum) {
         	case 1:
         	    GPIO_IomuxEC7XX(49, 5, 1, 0);
         	    break;
+#ifdef TYPE_EC718M
+        	case 2:
+        	    GPIO_IomuxEC7XX(37, 5, 1, 0);
+        	    break;
+        	case 4:
+        		GPIO_IomuxEC7XX(39, 5, 1, 0);
+#else
         	case 2:
         	    GPIO_IomuxEC7XX(50, 5, 1, 0);
         	    break;
         	case 4:
-#ifdef TYPE_EC718M
-        		GPIO_IomuxEC7XX(39, 5, 1, 0);
-#else
-        	    GPIO_IomuxEC7XX(52, 5, 1, 0);
+        		GPIO_IomuxEC7XX(52, 5, 1, 0);
 #endif
         	    break;
         	default:
