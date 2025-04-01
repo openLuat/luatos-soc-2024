@@ -3,6 +3,16 @@
 
 [![Github Actions](https://github.com/openLuat/luatos-soc-2024/actions/workflows/ci.yaml/badge.svg)](https://github.com/openLuat/luatos-soc-2024/actions/workflows/ci.yaml)
 
+**本仓库将在4月15日关闭，请谨慎决定是否仍然基于本仓库CSDK进行开发。**
+
+**待合宙有能力将CSDK做成精品，且有足够的能力提供详尽的API和文档时，我们再考虑适时开放，但时间无法确定。**
+
+**推荐您选择合宙LuatOS进行二次开发，合宙会举全公司之力持续的将LuatOS的API和文档做完善，进一步降低您的开发难度。**
+
+**感谢您一直以来对合宙的信任和支持，也再次请您原谅由于我们的能力不足而将CSDK关闭的决定。**
+
+**谢谢！**
+
 
 
 **注意：CSDK无技术支持，使用前详细阅读每一句话自行评估是否使用！！！**
