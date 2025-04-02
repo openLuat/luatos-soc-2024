@@ -13,18 +13,22 @@ target(project_name,function()
 
     local chip_target = nil
     if has_config("chip_target") then chip_target = get_config("chip_target") end
-    -- 程序区缩小到1b7000，剩余2c2000 - 1b7000 = 10b000
-    -- 780EPM 程序区缩小到197000，剩余2c5000 - 197000 = 12E000
-    if chip_target == "ec718p" or chip_target == "ec718pm" or chip_target == "ec716e" or chip_target == "ec718e" then
-        add_defines("AP_FLASH_LOAD_SIZE=0x1b7000",{public = true})
-        add_defines("AP_PKGIMG_LIMIT_SIZE=0x1b7000",{public = true})
-        add_defines("FULL_OTA_SAVE_ADDR=0x235000",{public = true})
+    
+    if chip_target == "ec718p" or chip_target == "ec716e" or chip_target == "ec718e" then
+        add_defines("AP_FLASH_LOAD_SIZE=0x1b7000",{public = true}) -- 程序区缩小到1b7000，可以适当再缩小
+        add_defines("AP_PKGIMG_LIMIT_SIZE=0x1b7000",{public = true}) -- AP_PKGIMG_LIMIT_SIZE和AP_FLASH_LOAD_SIZE必须一致
+        add_defines("FULL_OTA_SAVE_ADDR=0x235000",{public = true}) -- FULL_OTA_SAVE_ADDR=AP_FLASH_LOAD_ADDR-AP_FLASH_XIP_ADDR+AP_FLASH_LOAD_SIZE
     end
 	if chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718hm" then
-        add_defines("AP_FLASH_LOAD_SIZE=0x40b000",{public = true})
-        add_defines("AP_PKGIMG_LIMIT_SIZE=0x40b000",{public = true})
-        add_defines("FULL_OTA_SAVE_ADDR=0x49C000",{public = true})
+        add_defines("AP_FLASH_LOAD_SIZE=0x40b000",{public = true}) -- 程序区缩小到40b000，可以适当再缩小
+        add_defines("AP_PKGIMG_LIMIT_SIZE=0x40b000",{public = true}) -- AP_PKGIMG_LIMIT_SIZE和AP_FLASH_LOAD_SIZE必须一致
+        add_defines("FULL_OTA_SAVE_ADDR=0x49C000",{public = true}) -- FULL_OTA_SAVE_ADDR=AP_FLASH_LOAD_ADDR-AP_FLASH_XIP_ADDR+AP_FLASH_LOAD_SIZE
     end
+    if chip_target == "ec718pm" then
+        add_defines("AP_FLASH_LOAD_SIZE=0x1e0000",{public = true}) -- 程序区缩小到1E0000，可以适当再缩小
+        add_defines("AP_PKGIMG_LIMIT_SIZE=0x1e0000",{public = true}) -- AP_PKGIMG_LIMIT_SIZE和AP_FLASH_LOAD_SIZE必须一致
+        add_defines("FULL_OTA_SAVE_ADDR=0x262000",{public = true}) -- FULL_OTA_SAVE_ADDR=AP_FLASH_LOAD_ADDR-AP_FLASH_XIP_ADDR+AP_FLASH_LOAD_SIZE
+    end	
     --加入代码和头文件
     add_includedirs("./inc",{public = true})
     add_files("./src/*.c",{public = true})

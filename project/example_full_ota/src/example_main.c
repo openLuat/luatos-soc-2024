@@ -55,7 +55,7 @@ luat_rtos_task_handle g_s_task_handle;
 luat_rtos_task_handle g_s_version_print_task_handle;
 
 
-#define PROJECT_VERSION  "1.0.1"                  		 //使用合宙iot升级的话此字段必须存在，并且强制固定格式为x.x.x, x可以为任意的数字
+#define PROJECT_VERSION  "1.0.0"                  		 //使用合宙iot升级的话此字段必须存在，并且强制固定格式为x.x.x, x可以为任意的数字
 
 #ifdef OTA_BY_IOT
 #define PROJECT_KEY "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"  //修改为自己iot上面的PRODUCT_KEY，这里是一个错误的，使用合宙iot升级的话此字段必须存在
@@ -217,7 +217,7 @@ static void luat_test_task(void *param)
     luat_fota_init(0,0,NULL,NULL,0);
     while(1)
     {
-    	if (luat_rtos_event_recv(g_s_task_handle, OTA_NEW_DATA, &event, NULL, 250))
+    	if (luat_rtos_event_recv(g_s_task_handle, OTA_NEW_DATA, &event, NULL, 500))
     	{
     		DBG("!");
     		luat_ymodem_reset(ymodem_handler);
