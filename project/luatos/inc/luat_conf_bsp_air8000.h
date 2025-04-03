@@ -10,6 +10,7 @@
 #define LUAT_USE_WLAN 1
 #define LUAT_USE_SMS 1
 #define LUAT_USE_MCU  1
+#define LUAT_USE_ONEWIRE 1
 
 #define LUAT_USE_CRYPTO  1
 #define LUAT_USE_CJSON  1
@@ -29,6 +30,7 @@
 #define LUAT_USE_IOTAUTH 1
 #define LUAT_USE_BIT64 1
 #define LUAT_USE_ICONV 1
+#define LUAT_USE_FATFS 1
 
 #define LUAT_USE_PROTOBUF 1
 #define LUAT_USE_RSA      1
