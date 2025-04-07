@@ -170,6 +170,9 @@
 #ifndef LUAT_USE_HMETA
 #define LUAT_USE_HMETA 1
 #endif
+#ifndef LUAT_USE_FS
+#define LUAT_USE_FS 1
+#endif
 
 // MCU引脚复用
 #define LUAT_MCU_IOMUX_CTRL 1
