@@ -728,7 +728,7 @@ ARM_ENCODE:
 			else
 			{
 				amr_times++;
-				if (luat_mcu_tick64_ms() >= (check_time + (amr_times + 1) * 20))
+				if (luat_mcu_tick64_ms() >= (check_time + (amr_times + 1) * 20 * PCM_ONE_FRAME_BLOCK_NUM))
 				{
 					LUAT_DEBUG_PRINT("amr codec timeout! %llu", amr_times);
 				}
