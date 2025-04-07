@@ -311,7 +311,7 @@ const char* luat_os_bsp(void) {
   #if defined(LUAT_MODEL_AIR201)
   memcpy(model_name_buff, "Air201", strlen("Air201") + 1);
   return model_name_buff;
-  #elif defined(LUAT_MODEL_AIR780EPS) || defined(LUAT_MODEL_AIR780EP) || defined(LUAT_MODEL_AIR780EQ) || defined(LUAT_MODEL_AIR700ECQ) || defined(LUAT_MODEL_AIR700EAQ) || defined(LUAT_MODEL_AIR700EMQ) || defined(LUAT_MODEL_AIR780EPM)
+  #elif defined(LUAT_MODEL_AIR780EPS) || defined(LUAT_MODEL_AIR780EP) || defined(LUAT_MODEL_AIR780EQ) || defined(LUAT_MODEL_AIR700ECQ) || defined(LUAT_MODEL_AIR700EAQ) || defined(LUAT_MODEL_AIR700EMQ) || defined(LUAT_MODEL_AIR780EPM)|| defined(LUAT_MODEL_AIR8000)
   memset(model_name_buff, 0, sizeof(model_name_buff));
   luat_hmeta_model_name(model_name_buff);
   return model_name_buff;
