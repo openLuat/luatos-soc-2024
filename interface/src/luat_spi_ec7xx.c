@@ -31,11 +31,19 @@
 #include "driver_gpio.h"
 #include "soc_service.h"
 #include "mem_map.h"
-#include "platform_define.h"
-static uint8_t g_s_luat_spi_mode[SPI_MAX] ={0};
+#include "csdk.h"
+static luat_rtos_mutex_t luat_spi_mutex[SPI_MAX];
+static uint8_t g_s_luat_spi_mode[SPI_MAX];
 
 static int spi_exist(int id) {
-	if (id < SPI_MAX) return 1;
+	if (id < SPI_MAX)
+	{
+		if (!luat_spi_mutex[id])
+		{
+			luat_spi_mutex[id] = luat_mutex_create();
+		}
+		return 1;
+	}
     return 0;
 }
 
@@ -347,4 +355,20 @@ int luat_spi_slave_transfer_stop(int spi_id)
 	}
     SPI_TransferStop(spi_id);
     return 0;
+}
+
+int luat_spi_lock(int spi_id)
+{
+    if (!spi_exist(spi_id)) {
+        return -1;
+	}
+	return luat_mutex_lock(luat_spi_mutex[spi_id]);
+}
+
+int luat_spi_unlock(int spi_id)
+{
+    if (!spi_exist(spi_id)) {
+        return -1;
+	}
+	return luat_mutex_unlock(luat_spi_mutex[spi_id]);
 }
