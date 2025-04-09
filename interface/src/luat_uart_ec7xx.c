@@ -1,8 +1,6 @@
 #include "common_api.h"
 #include "platform_define.h"
-#include "luat_uart.h"
-#include "luat_mcu.h"
-#include "luat_rtos.h"
+#include "csdk.h"
 #include "driver_gpio.h"
 #include "driver_uart.h"
 #include "cms_def.h"
@@ -167,6 +165,7 @@ static int32_t luat_uart_cb(void *pData, void *pParam){
 }
 
 int luat_uart_exist(int uartid) {
+	if (!uartid) return 0;
     if (uartid >= LUAT_VUART_ID_0) uartid = MAX_DEVICE_COUNT - 1;
     return (uartid >= MAX_DEVICE_COUNT)?0:1;
 }
@@ -193,7 +192,8 @@ int luat_uart_setup(luat_uart_t* uart) {
     char model[40] = {0};
     Uart_SetDebug(uart->id, (uart->debug_enable == LUAT_UART_DEBUG_ENABLE)?1:0);
     Uart_SetErrorDropData(uart->id, (uart->error_drop == LUAT_UART_RX_ERROR_DROP_DATA)?1:0);
-    if(luat_mcu_iomux_is_default(LUAT_MCU_PERIPHERAL_UART, uart->id))
+#if 0
+//    if(luat_mcu_iomux_is_default(LUAT_MCU_PERIPHERAL_UART, uart->id))
     {
 
 #ifdef CHIP_EC716
@@ -251,6 +251,12 @@ int luat_uart_setup(luat_uart_t* uart) {
         }
 #endif
     }
+#endif
+	peripheral_iomux_info iomux_info;
+	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_UART, uart->id, &iomux_info);
+	luat_pin_iomux_config(iomux_info.uart.rx, 0, 0);
+	luat_pin_iomux_config(iomux_info.uart.tx, 0, 0);
+	GPIO_PullConfig(GPIO_ToPadEC7XX(iomux_info.uart.rx.uid.ec_gpio_id, iomux_info.uart.rx.uid.ec_gpio_is_altfun4?4:0), 1, 1);
     int parity = 0;
      if (uart->parity == 1)parity = UART_PARITY_ODD;
      else if (uart->parity == 2)parity = UART_PARITY_EVEN;
@@ -280,15 +286,18 @@ int luat_uart_setup(luat_uart_t* uart) {
           	if (!g_s_serials[uart->id].rs485_timer) {
           		g_s_serials[uart->id].rs485_timer = luat_create_rtos_timer(luat_uart_wait_timer_cb, uart->id, NULL);
           	}
-          	if (g_s_serials[uart->id].rs485_pin >= HAL_GPIO_16 && g_s_serials[uart->id].rs485_pin <= HAL_GPIO_17)
-          	{
-          		GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(g_s_serials[uart->id].rs485_pin, 4), 0, 0, 0);
-          	}
-          	else
-          	{
-          		GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(g_s_serials[uart->id].rs485_pin, 0), 0, 0, 0);
-          	}
-          	//GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(g_s_serials[uart->id].rs485_pin, 0), 0, 0, 0);
+        	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_GPIO, g_s_serials[uart->id].rs485_pin, &iomux_info);
+        	GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(g_s_serials[uart->id].rs485_pin, 4), 0, 0, 0);
+        	luat_pin_iomux_config(iomux_info.gpio.io, 0, 0);
+//          	if (g_s_serials[uart->id].rs485_pin >= HAL_GPIO_16 && g_s_serials[uart->id].rs485_pin <= HAL_GPIO_17)
+//          	{
+//          		GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(g_s_serials[uart->id].rs485_pin, 4), 0, 0, 0);
+//          	}
+//          	else
+//          	{
+//          		GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(g_s_serials[uart->id].rs485_pin, 0), 0, 0, 0);
+//          	}
+//          	//GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(g_s_serials[uart->id].rs485_pin, 0), 0, 0, 0);
           	GPIO_Config(g_s_serials[uart->id].rs485_pin, 0, g_s_serials[uart->id].rs485_param_bit.rx_level);
  		 }
     }
@@ -464,7 +473,8 @@ int luat_uart_setup_flow_ctrl(int uart_id, luat_uart_cts_callback_t  cts_callbac
 		{
 			Uart_SetupFlowCtrl(uart_id, 0);
 		}
-		if(luat_mcu_iomux_is_default(LUAT_MCU_PERIPHERAL_UART, uart_id))
+#if 0
+//		if(luat_mcu_iomux_is_default(LUAT_MCU_PERIPHERAL_UART, uart_id))
 		{
 	#ifdef CHIP_EC716
 			switch (uart_id)
@@ -508,8 +518,15 @@ int luat_uart_setup_flow_ctrl(int uart_id, luat_uart_cts_callback_t  cts_callbac
 			}
 	#endif
 		}
+#endif
+		peripheral_iomux_info iomux_info;
+		luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_UART, uart_id, &iomux_info);
+		luat_pin_iomux_config(iomux_info.uart.rts, 0, 0);
+		luat_pin_iomux_config(iomux_info.uart.cts, 0, 0);
 		return 0;
+
 	}
+
 	return -1;
 }
 

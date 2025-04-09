@@ -5,9 +5,7 @@
 #include "ic.h"
 #include "common_api.h"
 #include "driver_gpio.h"
-#include "luat_debug.h"
-#include "luat_pwm.h"
-#include "luat_mcu.h"
+#include "csdk.h"
 #include "slpman.h"
 #include "core_hwtimer.h"
 
@@ -199,7 +197,8 @@ int luat_pwm_open(int channel, size_t freq,  size_t pulse, int pnum) {
         XIC_EnableIRQ(g_s_pwm_table[channel].irq_line);
         XIC_SuppressOvfIRQ(g_s_pwm_table[channel].irq_line);
     }
-	if(0 == g_s_pwm_table[channel].reverse)
+#if 0
+//	if(0 == g_s_pwm_table[channel].reverse)
 	{
     	if (luat_mcu_iomux_is_default(LUAT_MCU_PERIPHERAL_PWM, channel))
     	{
@@ -250,6 +249,10 @@ int luat_pwm_open(int channel, size_t freq,  size_t pulse, int pnum) {
 #endif
     	}
 	}
+#endif
+	peripheral_iomux_info iomux_info;
+	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_PWM, channel, &iomux_info);
+	luat_pin_iomux_config(iomux_info.pwm.pwm_p, 1, 1);
 #if defined(TIMER_IP_VERSION_B1)
     EIGEN_TIMER(channel)->TCUMR = TIMER_TCUMR_MODE_Msk;
     EIGEN_TIMER(channel)->TCUR = TIMER_TCUR_UPDATE_Msk;
@@ -385,63 +388,13 @@ static int32_t __USER_FUNC_IN_RAM__ prvHWTimer_OperationQueuExti(void *pData, vo
 	prvHWTimer_StartOperationQueue(HWTimerID, &prvHWTimer[HWTimerID], (uint32_t)pData);
 	return 0;
 }
-extern uint8_t luat_gpio_get_alt(uint8_t GPIO);
-__USER_FUNC_IN_RAM__ uint32_t prvGPIO_ToPadEC7XXFast(uint32_t Pin)
+
+__USER_FUNC_IN_RAM__ void prvGPIO_PullFast(uint32_t Pin, uint8_t IsPull, uint8_t IsUp)
 {
-#ifdef CHIP_EC716
-	if (Pin <= HAL_GPIO_16) return Pin + 12;
-	if (Pin <= HAL_GPIO_20) return Pin - 9;
-#else
-	if (Pin < HAL_GPIO_16) return Pin + 15;
-	if (Pin <= HAL_GPIO_19)
-	{
-		if (luat_gpio_get_alt(Pin))
-		{
-			return Pin - 5;
-		}
-		else
-		{
-			return Pin + 15;
-		}
-
-	}
-	if (Pin <= HAL_GPIO_28) return Pin + 25;
-	if (Pin <= HAL_GPIO_38) return Pin + 6;
-#endif
-	return 0;
-
-}
-
-typedef union
-{
-	PadConfig_t Config;
-	__IO uint32_t Value;
-}PadConfig_u;
-
-__USER_FUNC_IN_RAM__ uint32_t prvGPIO_PullFast(uint32_t Pin, uint8_t IsPull, uint8_t IsUp)
-{
-	uint32_t Pad = prvGPIO_ToPadEC7XXFast(Pin);
-	PadConfig_u uConfig;
-	CLOCK_clockEnable(PCLK_PAD);
-	uConfig.Value = PAD->PCR[Pad];
-	uConfig.Config.pullSelect = PAD_PULL_INTERNAL;
-	uConfig.Config.pullUpEnable = PAD_PULL_UP_DISABLE;
-	uConfig.Config.pullDownEnable = PAD_PULL_DOWN_DISABLE;
-	if (IsPull)
-	{
-		if (IsUp)
-		{
-			uConfig.Config.pullUpEnable = PAD_PULL_UP_ENABLE;
-		}
-		else
-		{
-			uConfig.Config.pullDownEnable = PAD_PULL_DOWN_ENABLE;
-		}
-	}
-
-	PAD->PCR[Pad] = uConfig.Value;
-	CLOCK_clockDisable(PCLK_PAD);
-	return 0;
+	peripheral_iomux_info iomux_info;
+	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_GPIO, Pin, &iomux_info);
+	uint32_t pad = GPIO_ToPadEC7XX(iomux_info.gpio.io.uid.ec_gpio_id, iomux_info.gpio.io.uid.ec_gpio_is_altfun4?4:0);
+	GPIO_PullConfig(pad, IsPull, IsUp);
 }
 
 

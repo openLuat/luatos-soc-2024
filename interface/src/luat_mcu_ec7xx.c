@@ -89,6 +89,7 @@ void luat_os_reboot(int code){
     ResetECSystemReset();
 }
 
+#if 0 //luat_pin_get_iomux_info luat_pin_set_iomux_info
 #ifdef TYPE_EC718M
 static uint8_t luat_mcu_iomux_ctrl_by_user[LUAT_MCU_PERIPHERAL_CAN + 1];
 #else
@@ -153,6 +154,9 @@ void luat_mcu_iomux_ctrl(uint8_t type, uint8_t sn, int pad_index, uint8_t alt, u
 		luat_mcu_iomux_ctrl_by_user[type] &= ~(1 << sn);
 	}
 }
+#else
+void luat_mcu_iomux_ctrl(uint8_t type, uint8_t sn, int pad_index, uint8_t alt, uint8_t is_input) {;}
+#endif
 
 void luat_mcu_set_hardfault_mode(int mode)
 {

@@ -1,6 +1,4 @@
-#include "common_api.h"
-#include "luat_can.h"
-#include "luat_mcu.h"
+#include "csdk.h"
 #include "soc_can.h"
 #include "driver_gpio.h"
 #ifdef TYPE_EC718M
@@ -53,13 +51,14 @@ void luat_can_dummy_callback(int can_id, LUAT_CAN_CB_E cb_type, void *cb_param)
 
 int luat_can_base_init(uint8_t can_id, uint32_t rx_msg_cache_max)
 {
-
+	peripheral_iomux_info iomux_info;
+	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_CAN, 0, &iomux_info);
 	if (!rx_msg_cache_max) rx_msg_cache_max = 128;
-	if(luat_mcu_iomux_is_default(LUAT_MCU_PERIPHERAL_CAN, 0))
+//	if(luat_mcu_iomux_is_default(LUAT_MCU_PERIPHERAL_CAN, 0))
 	{
-		GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(25, 0), 7, 1, 1);
-		GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(26, 0), 7, 1, 1);
-		GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(28, 0), 6, 1, 1);
+		luat_pin_iomux_config(iomux_info.can.rx, 1, 1);
+		luat_pin_iomux_config(iomux_info.can.tx, 1, 1);
+		luat_pin_iomux_config(iomux_info.can.stb, 1, 1);
 	}
 	if (!prv_can.callback) prv_can.callback = luat_can_dummy_callback;
 	return CAN_BaseInit(rx_msg_cache_max, luat_can_cb);

@@ -192,10 +192,15 @@ void luat_onewire_init(int id)
 {
 	if (prv_ow.is_init) return;
 	GPR_clockEnable(PCLK_ONEW);
+#if 0
 	if (luat_mcu_iomux_is_default(LUAT_MCU_PERIPHERAL_ONEWIRE, 0))
 	{
 		GPIO_IomuxEC7XX(17, 4, 0, 1);
 	}
+#endif
+	peripheral_iomux_info iomux_info;
+	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_ONEWIRE, 0, &iomux_info);
+	luat_pin_iomux_config(iomux_info.onewire.io, 0, 1);
 	prv_ow.finish_sem = OS_MutexCreate();
 	prv_ow.is_init = 1;
 	OW->IOR = 0;

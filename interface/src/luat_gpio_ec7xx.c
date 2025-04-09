@@ -18,7 +18,7 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-#include "common_api.h"
+#include "csdk.h"
 #include "luat_gpio.h"
 #include "luat_rtos.h"
 #include "driver_gpio.h"
@@ -46,20 +46,6 @@ void luat_gpio_set_default_cfg(luat_gpio_cfg_t* gpio)
 {
 	memset(gpio, 0, sizeof(luat_gpio_cfg_t));
 }
-
-
-typedef struct
-{
-	uint8_t pin;
-	uint8_t alt;
-}luat_gpio_alt_table_t;
-
-static luat_gpio_alt_table_t gpio_alt[GPIO_ALT_MAX] = {
-	{HAL_GPIO_16, 4},
-	{HAL_GPIO_17, 4},
-	{HAL_GPIO_18, 0},
-	{HAL_GPIO_19, 0},
-};
 
 int luat_gpio_open(luat_gpio_cfg_t* gpio)
 {
@@ -160,7 +146,10 @@ int luat_gpio_open(luat_gpio_cfg_t* gpio)
 		break;
     }
     GPIO_Config(gpio->pin, is_input, gpio->output_level);
-    GPIO_PullConfig(GPIO_ToPadEC7XX(gpio->pin, gpio->alt_fun), is_pull, is_pullup);
+    peripheral_iomux_info pin_iomux_info;
+    luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_GPIO, gpio->pin, &pin_iomux_info);
+
+    GPIO_PullConfig(GPIO_ToPadEC7XX(gpio->pin, pin_iomux_info.gpio.io.uid.ec_gpio_is_altfun4?4:0), is_pull, is_pullup);
 
     if (LUAT_GPIO_IRQ == gpio->mode)
     {
@@ -200,27 +189,15 @@ int luat_gpio_open(luat_gpio_cfg_t* gpio)
     	GPIO_ExtiSetCB(gpio->pin, NULL, NULL);
     }
 
-    GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(gpio->pin, gpio->alt_fun), gpio->alt_fun, 0, 0);
-#ifndef __LUATOS__
-	for (uint8_t i = 0; i < GPIO_ALT_MAX; i++)
-	{
-		if (gpio->pin == gpio_alt[i].pin)
-		{
-			gpio_alt[i].alt = gpio->alt_fun;
-			break;
-		}
-	}
-#endif
+    GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(gpio->pin, pin_iomux_info.gpio.io.uid.ec_gpio_is_altfun4?4:0), pin_iomux_info.gpio.io.altfun_id, 0, 0);
+
     return 0;
 }
 
 
-__USER_FUNC_IN_RAM__ uint8_t luat_gpio_get_alt(uint8_t GPIO) {return gpio_alt[GPIO - HAL_GPIO_16].alt;}
-
 int luat_gpio_setup(luat_gpio_t *gpio){
 	luat_gpio_cfg_t cfg = {0};
 	cfg.pin = gpio->pin;
-	cfg.alt_fun = gpio->alt_func;
 	cfg.irq_cb = gpio->irq_cb;
 	cfg.irq_args = gpio->irq_args;
 	cfg.irq_type = gpio->irq;
@@ -228,28 +205,6 @@ int luat_gpio_setup(luat_gpio_t *gpio){
 	cfg.pull = gpio->pull;
 	if (LUAT_GPIO_PULLUP == cfg.pull)
 		cfg.output_level = 1;
-	if (gpio->alt_func == -1) {
-		cfg.alt_fun = 0;
-		for (uint8_t i = 0; i < GPIO_ALT_MAX; i++)
-		{
-			if (gpio->pin == gpio_alt[i].pin)
-			{
-				cfg.alt_fun = gpio_alt[i].alt;
-				break;
-			}
-		}
-	}
-	else
-	{
-		for (uint8_t i = 0; i < GPIO_ALT_MAX; i++)
-		{
-			if (gpio->pin == gpio_alt[i].pin)
-			{
-				gpio_alt[i].alt = cfg.alt_fun;
-				break;
-			}
-		}
-	}
 	return luat_gpio_open(&cfg);
 }
 
@@ -312,16 +267,9 @@ void luat_gpio_close(int pin){
     {
     	GPIO_ExtiConfig(pin, 0,0,0);
     }
-    uint8_t alt_fun = 0;
-	for (uint8_t i = 0; i < GPIO_ALT_MAX; i++)
-	{
-		if (pin == gpio_alt[i].pin)
-		{
-			alt_fun = gpio_alt[i].alt;
-			break;
-		}
-	}
-    PAD_setInputOutputDisable(GPIO_ToPadEC7XX(pin, alt_fun));
+    peripheral_iomux_info pin_iomux_info;
+    luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_GPIO, pin, &pin_iomux_info);
+    PAD_setInputOutputDisable(GPIO_ToPadEC7XX(pin, pin_iomux_info.gpio.io.uid.ec_gpio_is_altfun4?4:0));
 #if defined LUAT_USE_AGPIO_KEEP
     soc_aon_gpio_save_state_enable(1);
 #endif
@@ -356,20 +304,21 @@ void luat_gpio_pulse(int pin, uint8_t *level, uint16_t len, uint16_t delay_ns)
 int luat_gpio_ctrl(int pin, LUAT_GPIO_CTRL_CMD_E cmd, int param)
 {
 	if (((uint32_t)(pin)) >= HAL_GPIO_MAX) return -1;
-	uint8_t alt_fun = (param >> 28);
+    peripheral_iomux_info pin_iomux_info;
+    luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_GPIO, pin, &pin_iomux_info);
 	switch(cmd)
 	{
 	case LUAT_GPIO_CMD_SET_PULL_MODE:
 		switch(param)
 		{
 		case LUAT_GPIO_PULLUP:
-			GPIO_Config(GPIO_ToPadEC7XX(pin, alt_fun), 1, 1);
+			GPIO_Config(GPIO_ToPadEC7XX(pin, pin_iomux_info.gpio.io.uid.ec_gpio_is_altfun4?4:0), 1, 1);
 			break;
 		case LUAT_GPIO_PULLDOWN:
-			GPIO_Config(GPIO_ToPadEC7XX(pin, alt_fun), 1, 0);
+			GPIO_Config(GPIO_ToPadEC7XX(pin, pin_iomux_info.gpio.io.uid.ec_gpio_is_altfun4?4:0), 1, 0);
 			break;
 		default:
-			GPIO_Config(GPIO_ToPadEC7XX(pin, alt_fun), 0, 0);
+			GPIO_Config(GPIO_ToPadEC7XX(pin, pin_iomux_info.gpio.io.uid.ec_gpio_is_altfun4?4:0), 0, 0);
 			break;
 		}
 		break;
