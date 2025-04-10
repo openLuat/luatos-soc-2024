@@ -46,7 +46,7 @@ void luat_uart_recv_cb(int uart_id, uint32_t data_len){
 
 static void uart_iomux(void)
 {
-	uart_pin_iomux_t uart_iomux = {0};
+	luat_uart_pin_iomux_t uart_iomux = {0};
 	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_UART, 2, uart_iomux.pin_list); //读出当前的复用配置
 	uart_iomux.pin_list[LUAT_PIN_UART_RX].altfun_id = 3;
 	uart_iomux.pin_list[LUAT_PIN_UART_TX].altfun_id = 3;

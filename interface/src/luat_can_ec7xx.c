@@ -51,7 +51,7 @@ void luat_can_dummy_callback(int can_id, LUAT_CAN_CB_E cb_type, void *cb_param)
 
 int luat_can_base_init(uint8_t can_id, uint32_t rx_msg_cache_max)
 {
-	can_pin_iomux_t iomux_info;
+	luat_can_pin_iomux_t iomux_info;
 	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_CAN, 0, iomux_info.pin_list);
 	if (!rx_msg_cache_max) rx_msg_cache_max = 128;
 //	if(luat_mcu_iomux_is_default(LUAT_MCU_PERIPHERAL_CAN, 0))

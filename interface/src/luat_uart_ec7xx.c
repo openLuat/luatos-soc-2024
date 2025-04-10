@@ -252,7 +252,7 @@ int luat_uart_setup(luat_uart_t* uart) {
 #endif
     }
 #endif
-    uart_pin_iomux_t iomux_info;
+    luat_uart_pin_iomux_t iomux_info;
 	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_UART, uart->id, iomux_info.pin_list);
 	luat_pin_iomux_print(iomux_info.pin_list, LUAT_PIN_UART_QTY);
 
@@ -521,7 +521,7 @@ int luat_uart_setup_flow_ctrl(int uart_id, luat_uart_cts_callback_t  cts_callbac
 	#endif
 		}
 #endif
-	    uart_pin_iomux_t iomux_info;
+	    luat_uart_pin_iomux_t iomux_info;
 		luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_UART, uart_id, iomux_info.pin_list);
 		luat_pin_iomux_config(iomux_info.pin_list[LUAT_PIN_UART_RTS], 0, 0);
 		luat_pin_iomux_config(iomux_info.pin_list[LUAT_PIN_UART_CTS], 0, 0);

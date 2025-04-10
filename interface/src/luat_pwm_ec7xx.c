@@ -250,7 +250,7 @@ int luat_pwm_open(int channel, size_t freq,  size_t pulse, int pnum) {
     	}
 	}
 #endif
-	pwm_pin_iomux_t iomux_info;
+	luat_pwm_pin_iomux_t iomux_info;
 	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_PWM, channel, &iomux_info);
 	luat_pin_iomux_print(iomux_info.pin_list, LUAT_PIN_PWM_QTY);
 	luat_pin_iomux_config(iomux_info.pin_list[LUAT_PIN_PWM_P], 1, 1);

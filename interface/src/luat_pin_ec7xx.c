@@ -3,7 +3,7 @@
 #include "csdk.h"
 #include "driver_gpio.h"
 #ifdef CHIP_EC718
-static uart_pin_iomux_t prv_uart_iomux[UART_MAX] =
+static luat_uart_pin_iomux_t prv_uart_iomux[UART_MAX] =
 {
 		{},
 		{
@@ -109,7 +109,7 @@ static uart_pin_iomux_t prv_uart_iomux[UART_MAX] =
 				},
 		},
 };
-static i2c_pin_iomux_t prv_i2c_iomux[I2C_MAX] =
+static luat_i2c_pin_iomux_t prv_i2c_iomux[I2C_MAX] =
 {
 		{
 				.pin_list[LUAT_PIN_I2C_SCL] =
@@ -150,7 +150,7 @@ static i2c_pin_iomux_t prv_i2c_iomux[I2C_MAX] =
 				},
 		},
 };
-static pwm_pin_iomux_t prv_pwm_iomux[HW_TIMER_MAX - 1] =
+static luat_pwm_pin_iomux_t prv_pwm_iomux[HW_TIMER_MAX - 1] =
 {
 		{	//0
 				.pin_list[LUAT_PIN_PWM_P] =
@@ -244,7 +244,7 @@ static pwm_pin_iomux_t prv_pwm_iomux[HW_TIMER_MAX - 1] =
 		},
 };
 #ifdef TYPE_EC718M
-static can_pin_iomux_t prv_can_iomux[1] =
+static luat_can_pin_iomux_t prv_can_iomux[1] =
 {
 		{//0
 				.pin_list[LUAT_PIN_CAN_RX] =
@@ -326,7 +326,7 @@ static pin_iomux_info prv_onewire_iomux =
 		},
 };
 #else
-static uart_pin_iomux_t prv_uart_iomux[UART_MAX] =
+static luat_uart_pin_iomux_t prv_uart_iomux[UART_MAX] =
 {
 		{},
 		{
@@ -403,7 +403,7 @@ static uart_pin_iomux_t prv_uart_iomux[UART_MAX] =
 		},
 };
 
-static i2c_pin_iomux_t prv_i2c_iomux[I2C_MAX] =
+static luat_i2c_pin_iomux_t prv_i2c_iomux[I2C_MAX] =
 {
 		{
 				.pin_list[LUAT_PIN_I2C_SCL] =
@@ -446,7 +446,7 @@ static i2c_pin_iomux_t prv_i2c_iomux[I2C_MAX] =
 				},
 		},
 };
-static pwm_pin_iomux_t prv_pwm_iomux[HW_TIMER_MAX - 1] =
+static luat_pwm_pin_iomux_t prv_pwm_iomux[HW_TIMER_MAX - 1] =
 {
 		{	//0
 				.pin_list[LUAT_PIN_PWM_P] =
@@ -581,19 +581,19 @@ __USER_FUNC_IN_RAM__ int luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_E type, uin
 	{
 	case LUAT_MCU_PERIPHERAL_UART:
 		if (id >= UART_MAX) return -1;
-		memcpy(pin_list, &prv_uart_iomux[id], sizeof(uart_pin_iomux_t));
+		memcpy(pin_list, &prv_uart_iomux[id], sizeof(luat_uart_pin_iomux_t));
 		break;
 	case LUAT_MCU_PERIPHERAL_I2C:
 		if (id >= I2C_MAX) return -1;
-		memcpy(pin_list, &prv_i2c_iomux[id], sizeof(i2c_pin_iomux_t));
+		memcpy(pin_list, &prv_i2c_iomux[id], sizeof(luat_i2c_pin_iomux_t));
 		break;
 	case LUAT_MCU_PERIPHERAL_PWM:
 		if (id >= HW_TIMER_MAX) return -1;
-		memcpy(pin_list, &prv_pwm_iomux[id], sizeof(pwm_pin_iomux_t));
+		memcpy(pin_list, &prv_pwm_iomux[id], sizeof(luat_pwm_pin_iomux_t));
 		break;
 #ifdef TYPE_EC718M
 	case LUAT_MCU_PERIPHERAL_CAN:
-		memcpy(pin_list, &prv_can_iomux, sizeof(can_pin_iomux_t));
+		memcpy(pin_list, &prv_can_iomux, sizeof(luat_can_pin_iomux_t));
 		break;
 #endif
 	case LUAT_MCU_PERIPHERAL_GPIO:
@@ -619,15 +619,15 @@ __USER_FUNC_IN_RAM__ int luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_E type, uin
 	{
 	case LUAT_MCU_PERIPHERAL_UART:
 		if (id >= UART_MAX) return -1;
-		memcpy(pin_list, &prv_uart_iomux[id], sizeof(uart_pin_iomux_t));
+		memcpy(pin_list, &prv_uart_iomux[id], sizeof(luat_uart_pin_iomux_t));
 		break;
 	case LUAT_MCU_PERIPHERAL_I2C:
 		if (id >= I2C_MAX) return -1;
-		memcpy(pin_list, &prv_i2c_iomux[id], sizeof(i2c_pin_iomux_t));
+		memcpy(pin_list, &prv_i2c_iomux[id], sizeof(luat_i2c_pin_iomux_t));
 		break;
 	case LUAT_MCU_PERIPHERAL_PWM:
 		if (id >= (HW_TIMER_MAX - 1)) return -1;
-		memcpy(pin_list, &prv_pwm_iomux[id], sizeof(pwm_pin_iomux_t));
+		memcpy(pin_list, &prv_pwm_iomux[id], sizeof(luat_pwm_pin_iomux_t));
 		break;
 	case LUAT_MCU_PERIPHERAL_GPIO:
 		pin_list[0].uid.ec_gpio_id = id;
@@ -659,19 +659,19 @@ __USER_FUNC_IN_RAM__ int luat_pin_set_iomux_info(LUAT_MCU_PERIPHERAL_E type, uin
 	{
 	case LUAT_MCU_PERIPHERAL_UART:
 		if (id < 2 || id >= UART_MAX) return -1;
-		memcpy(&prv_uart_iomux[id], pin_list, sizeof(uart_pin_iomux_t));
+		memcpy(&prv_uart_iomux[id], pin_list, sizeof(luat_uart_pin_iomux_t));
 		break;
 	case LUAT_MCU_PERIPHERAL_I2C:
 		if (id >= I2C_MAX) return -1;
-		memcpy(&prv_i2c_iomux[id], pin_list, sizeof(i2c_pin_iomux_t));
+		memcpy(&prv_i2c_iomux[id], pin_list, sizeof(luat_i2c_pin_iomux_t));
 		break;
 	case LUAT_MCU_PERIPHERAL_PWM:
 		if (id >= (HW_TIMER_MAX - 1)) return -1;
-		memcpy(&prv_pwm_iomux[id], pin_list, sizeof(pwm_pin_iomux_t));
+		memcpy(&prv_pwm_iomux[id], pin_list, sizeof(luat_pwm_pin_iomux_t));
 		break;
 #ifdef TYPE_EC718M
 	case LUAT_MCU_PERIPHERAL_CAN:
-		memcpy(&prv_can_iomux, pin_list, sizeof(can_pin_iomux_t));
+		memcpy(&prv_can_iomux, pin_list, sizeof(luat_can_pin_iomux_t));
 		break;
 #endif
 	case LUAT_MCU_PERIPHERAL_GPIO:
@@ -695,11 +695,11 @@ __USER_FUNC_IN_RAM__ int luat_pin_set_iomux_info(LUAT_MCU_PERIPHERAL_E type, uin
 	{
 	case LUAT_MCU_PERIPHERAL_I2C:
 		if (id != 1) return -1;
-		memcpy(&prv_i2c_iomux[id], pin_list, sizeof(i2c_pin_iomux_t));
+		memcpy(&prv_i2c_iomux[id], pin_list, sizeof(luat_i2c_pin_iomux_t));
 		break;
 	case LUAT_MCU_PERIPHERAL_PWM:
 		if (id >= (HW_TIMER_MAX - 1)) return -1;
-		memcpy(&prv_pwm_iomux[id], pin_list, sizeof(pwm_pin_iomux_t));
+		memcpy(&prv_pwm_iomux[id], pin_list, sizeof(luat_pwm_pin_iomux_t));
 		break;
 	case LUAT_MCU_PERIPHERAL_ONEWIRE:
 		prv_onewire_iomux = pin_list[0];
@@ -742,5 +742,4 @@ void luat_pin_iomux_print(pin_iomux_info *pin_list, uint8_t num)
 		}
 
 	}
-
 }
