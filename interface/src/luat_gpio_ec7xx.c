@@ -146,10 +146,10 @@ int luat_gpio_open(luat_gpio_cfg_t* gpio)
 		break;
     }
     GPIO_Config(gpio->pin, is_input, gpio->output_level);
-    pin_iomux_info pins;
+    luat_pin_iomux_info pins;
     luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_GPIO, gpio->pin, &pins);
 
-    GPIO_PullConfig(GPIO_ToPadEC7XX(gpio->pin, pins.uid.ec_gpio_is_altfun4?4:0), is_pull, is_pullup);
+    GPIO_PullConfig(pins.uid, is_pull, is_pullup);
 
     if (LUAT_GPIO_IRQ == gpio->mode)
     {
@@ -189,7 +189,7 @@ int luat_gpio_open(luat_gpio_cfg_t* gpio)
     	GPIO_ExtiSetCB(gpio->pin, NULL, NULL);
     }
 
-    GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(gpio->pin, pins.uid.ec_gpio_is_altfun4?4:0), pins.altfun_id, 0, 0);
+    GPIO_IomuxEC7XX(pins.uid, pins.altfun_id, 0, 0);
 
     return 0;
 }
@@ -267,9 +267,9 @@ void luat_gpio_close(int pin){
     {
     	GPIO_ExtiConfig(pin, 0,0,0);
     }
-    pin_iomux_info pins;
+    luat_pin_iomux_info pins;
     luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_GPIO, pin, &pins);
-    PAD_setInputOutputDisable(GPIO_ToPadEC7XX(pin, pins.uid.ec_gpio_is_altfun4?4:0));
+    PAD_setInputOutputDisable(pins.uid);
 #if defined LUAT_USE_AGPIO_KEEP
     soc_aon_gpio_save_state_enable(1);
 #endif
@@ -304,7 +304,7 @@ void luat_gpio_pulse(int pin, uint8_t *level, uint16_t len, uint16_t delay_ns)
 int luat_gpio_ctrl(int pin, LUAT_GPIO_CTRL_CMD_E cmd, int param)
 {
 	if (((uint32_t)(pin)) >= HAL_GPIO_MAX) return -1;
-	pin_iomux_info pins;
+	luat_pin_iomux_info pins;
     luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_GPIO, pin, &pins);
 	switch(cmd)
 	{
@@ -312,13 +312,13 @@ int luat_gpio_ctrl(int pin, LUAT_GPIO_CTRL_CMD_E cmd, int param)
 		switch(param)
 		{
 		case LUAT_GPIO_PULLUP:
-			GPIO_Config(GPIO_ToPadEC7XX(pin, pins.uid.ec_gpio_is_altfun4?4:0), 1, 1);
+			GPIO_Config(pins.uid, 1, 1);
 			break;
 		case LUAT_GPIO_PULLDOWN:
-			GPIO_Config(GPIO_ToPadEC7XX(pin, pins.uid.ec_gpio_is_altfun4?4:0), 1, 0);
+			GPIO_Config(pins.uid, 1, 0);
 			break;
 		default:
-			GPIO_Config(GPIO_ToPadEC7XX(pin, pins.uid.ec_gpio_is_altfun4?4:0), 0, 0);
+			GPIO_Config(pins.uid, 0, 0);
 			break;
 		}
 		break;

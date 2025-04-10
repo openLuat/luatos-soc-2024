@@ -19,6 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 #include "csdk.h"
+#include "driver_gpio.h"
 
 #define UART_ID 2
 
@@ -50,8 +51,8 @@ static void uart_iomux(void)
 	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_UART, 2, uart_iomux.pin_list); //读出当前的复用配置
 	uart_iomux.pin_list[LUAT_PIN_UART_RX].altfun_id = 3;
 	uart_iomux.pin_list[LUAT_PIN_UART_TX].altfun_id = 3;
-	uart_iomux.pin_list[LUAT_PIN_UART_RX].uid.ec_gpio_id = HAL_GPIO_10;
-	uart_iomux.pin_list[LUAT_PIN_UART_TX].uid.ec_gpio_id = HAL_GPIO_11;
+	uart_iomux.pin_list[LUAT_PIN_UART_RX].uid = GPIO_ToPadEC7XX(HAL_GPIO_10, 0);
+	uart_iomux.pin_list[LUAT_PIN_UART_TX].uid = GPIO_ToPadEC7XX(HAL_GPIO_11, 0);
 	luat_pin_set_iomux_info(LUAT_MCU_PERIPHERAL_UART, 2, uart_iomux.pin_list);//写入修改之后的复用配置
 }
 

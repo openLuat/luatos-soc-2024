@@ -198,7 +198,7 @@ void luat_onewire_init(int id)
 		GPIO_IomuxEC7XX(17, 4, 0, 1);
 	}
 #endif
-	pin_iomux_info iomux_info;
+	luat_pin_iomux_info iomux_info;
 	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_ONEWIRE, 0, &iomux_info);
 	luat_pin_iomux_print(&iomux_info, 1);
 	luat_pin_iomux_config(iomux_info, 0, 1);

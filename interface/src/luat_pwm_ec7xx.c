@@ -254,10 +254,7 @@ int luat_pwm_open(int channel, size_t freq,  size_t pulse, int pnum) {
 	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_PWM, channel, &iomux_info);
 	luat_pin_iomux_print(iomux_info.pin_list, LUAT_PIN_PWM_QTY);
 	luat_pin_iomux_config(iomux_info.pin_list[LUAT_PIN_PWM_P], 1, 1);
-	if (iomux_info.pin_list[LUAT_PIN_PWM_N].altfun_id != 0xff && iomux_info.pin_list[LUAT_PIN_PWM_N].uid.common_gpio_id != 0xff)
-	{
-		luat_pin_iomux_config(iomux_info.pin_list[LUAT_PIN_PWM_N], 1, 1);
-	}
+	luat_pin_iomux_config(iomux_info.pin_list[LUAT_PIN_PWM_N], 1, 1);
 #if defined(TIMER_IP_VERSION_B1)
     EIGEN_TIMER(channel)->TCUMR = TIMER_TCUMR_MODE_Msk;
     EIGEN_TIMER(channel)->TCUR = TIMER_TCUR_UPDATE_Msk;
@@ -396,10 +393,9 @@ static int32_t __USER_FUNC_IN_RAM__ prvHWTimer_OperationQueuExti(void *pData, vo
 
 __USER_FUNC_IN_RAM__ void prvGPIO_PullFast(uint32_t Pin, uint8_t IsPull, uint8_t IsUp)
 {
-	pin_iomux_info iomux_info;
+	luat_pin_iomux_info iomux_info;
 	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_GPIO, Pin, &iomux_info);
-	uint32_t pad = GPIO_ToPadEC7XX(iomux_info.uid.ec_gpio_id, iomux_info.uid.ec_gpio_is_altfun4?4:0);
-	GPIO_PullConfig(pad, IsPull, IsUp);
+	GPIO_PullConfig(iomux_info.uid, IsPull, IsUp);
 }
 
 

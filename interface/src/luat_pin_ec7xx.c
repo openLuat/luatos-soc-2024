@@ -10,102 +10,66 @@ static luat_uart_pin_iomux_t prv_uart_iomux[UART_MAX] =
 				.pin_list[LUAT_PIN_UART_RX] =
 				{
 						.altfun_id = 1,
-						.uid =
-						{
-								.ec_gpio_id = 18,
-						},
+						.uid = 33,
 				},
 				.pin_list[LUAT_PIN_UART_TX] =
 				{
 						.altfun_id = 1,
-						.uid =
-						{
-								.ec_gpio_id = 19,
-						},
+						.uid = 34,
 				},
 				.pin_list[LUAT_PIN_UART_RTS] =
 				{
 						.altfun_id = 3,
-						.uid =
-						{
-								.ec_gpio_id = 1,
-						},
+						.uid = 16,
 				},
 				.pin_list[LUAT_PIN_UART_CTS] =
 				{
 						.altfun_id = 3,
-						.uid =
-						{
-								.ec_gpio_id = 2,
-						},
+						.uid = 17,
 				},
 		},
 		{
 				.pin_list[LUAT_PIN_UART_RX] =
 				{
 						.altfun_id = 3,
-						.uid =
-						{
-								.ec_gpio_id = 12,
-						},
+						.uid = 27,
 				},
 				.pin_list[LUAT_PIN_UART_TX] =
 				{
 						.altfun_id = 3,
-						.uid =
-						{
-								.ec_gpio_id = 13,
-						},
+						.uid = 28,
 				},
 				.pin_list[LUAT_PIN_UART_RTS] =
 				{
 						.altfun_id = 3,
-						.uid =
-						{
-								.ec_gpio_id = 8,
-						},
+						.uid = 23,
 				},
 				.pin_list[LUAT_PIN_UART_CTS] =
 				{
 						.altfun_id = 3,
-						.uid =
-						{
-								.ec_gpio_id = 9,
-						},
+						.uid = 24,
 				},
 		},
 		{
 				.pin_list[LUAT_PIN_UART_RX] =
 				{
 						.altfun_id = 3,
-						.uid =
-						{
-								.ec_gpio_id = 14,
-						},
+						.uid = 29,
 				},
 				.pin_list[LUAT_PIN_UART_TX] =
 				{
 						.altfun_id = 3,
-						.uid =
-						{
-								.ec_gpio_id = 15,
-						},
+						.uid = 30,
 				},
 				.pin_list[LUAT_PIN_UART_RTS] =
 				{
 						.altfun_id = 5,
-						.uid =
-						{
-								.ec_gpio_id = 12,
-						},
+						.uid = 27,
 				},
 				.pin_list[LUAT_PIN_UART_CTS] =
 				{
 						.altfun_id = 5,
-						.uid =
-						{
-								.ec_gpio_id = 13,
-						},
+						.uid = 28,
 				},
 		},
 };
@@ -115,38 +79,24 @@ static luat_i2c_pin_iomux_t prv_i2c_iomux[I2C_MAX] =
 				.pin_list[LUAT_PIN_I2C_SCL] =
 				{
 						.altfun_id = 1,
-						.uid =
-						{
-								.ec_gpio_id = 14,
-						},
+						.uid = 29,
 				},
 				.pin_list[LUAT_PIN_I2C_SDA] =
 				{
 						.altfun_id = 1,
-						.uid =
-						{
-								.ec_gpio_id = 15,
-						},
+						.uid = 30,
 				},
 		},
 		{
 				.pin_list[LUAT_PIN_I2C_SCL] =
 				{
 						.altfun_id = 3,
-						.uid =
-						{
-								.ec_gpio_id = 18,
-								.ec_gpio_is_altfun4 = 1,
-						},
+						.uid = 13,
 				},
 				.pin_list[LUAT_PIN_I2C_SDA] =
 				{
 						.altfun_id = 3,
-						.uid =
-						{
-								.ec_gpio_id = 19,
-								.ec_gpio_is_altfun4 = 1,
-						},
+						.uid = 14,
 				},
 		},
 };
@@ -156,90 +106,61 @@ static luat_pwm_pin_iomux_t prv_pwm_iomux[HW_TIMER_MAX - 1] =
 				.pin_list[LUAT_PIN_PWM_P] =
 				{
 						.altfun_id = 5,
-						.uid =
-						{
-								.ec_gpio_id = 1,
-						},
+						.uid = 16,
 				},
 				.pin_list[LUAT_PIN_PWM_N] =
 				{
 						.altfun_id = 0xff,
-						.uid =
-						{
-							.common_gpio_id = 0xff,
-						},
+						.uid = 0xff,
+
 				},
 		},
 		{	//1
 				.pin_list[LUAT_PIN_PWM_P] =
 				{
 						.altfun_id = 5,
-						.uid =
-						{
-								.ec_gpio_id = 24,
-						},
+						.uid = 49,
 				},
 				.pin_list[LUAT_PIN_PWM_N] =
 				{
 						.altfun_id = 0xff,
-						.uid =
-						{
-							.common_gpio_id = 0xff,
-						},
+						.uid = 0xff,
 				},
 		},
 		{	//2
 				.pin_list[LUAT_PIN_PWM_P] =
 				{
 						.altfun_id = 5,
-						.uid =
-						{
-								.ec_gpio_id = 25,
-						},
+						.uid = 50,
 				},
 				.pin_list[LUAT_PIN_PWM_N] =
 				{
 						.altfun_id = 0xff,
-						.uid =
-						{
-							.common_gpio_id = 0xff,
-						},
+						.uid = 0xff,
 				},
 		},
 		{	//3
 				.pin_list[LUAT_PIN_PWM_P] =
 				{
 						.altfun_id = 0xff,
-						.uid =
-						{
-							.common_gpio_id = 0xff,
-						},
+						.uid = 0xff,
 				},
 				.pin_list[LUAT_PIN_PWM_N] =
 				{
 						.altfun_id = 0xff,
-						.uid =
-						{
-							.common_gpio_id = 0xff,
-						},
+						.uid = 0xff,
 				},
 		},
 		{	//4
 				.pin_list[LUAT_PIN_PWM_P] =
 				{
 						.altfun_id = 5,
-						.uid =
-						{
-								.ec_gpio_id = 27,
-						},
+						.uid = 52,
 				},
 				.pin_list[LUAT_PIN_PWM_N] =
 				{
 						.altfun_id = 0xff,
-						.uid =
-						{
-							.common_gpio_id = 0xff,
-						},
+						.uid = 0xff,
 				},
 		},
 };
@@ -250,80 +171,52 @@ static luat_can_pin_iomux_t prv_can_iomux[1] =
 				.pin_list[LUAT_PIN_CAN_RX] =
 				{
 						.altfun_id = 7,
-						.uid =
-						{
-								.ec_gpio_id = 25,
-						},
+						.uid = 50,
+
 				},
 				.pin_list[LUAT_PIN_CAN_TX] =
 				{
 						.altfun_id = 7,
-						.uid =
-						{
-								.ec_gpio_id = 26,
-						},
+						.uid = 51,
 				},
 				.pin_list[LUAT_PIN_CAN_STB] =
 				{
 						.altfun_id = 6,
-						.uid =
-						{
-								.ec_gpio_id = 28,
-						},
+						.uid = 53,
 				},
 		}
 };
 #endif
-static pin_iomux_info prv_gpio_iomux[4] =
+static luat_pin_iomux_info prv_gpio_iomux[4] =
 {
 		{	//16
 
 				.altfun_id = 4,
-				.uid =
-				{
-						.ec_gpio_id = 16,
-						.ec_gpio_is_altfun4 = 1,
-				},
+				.uid = 11,
 
 		},
 		{	//17
 
 				.altfun_id = 4,
-				.uid =
-				{
-						.ec_gpio_id = 17,
-						.ec_gpio_is_altfun4 = 1,
-				},
+				.uid = 13,
 
 		},
 		{	//18
 
 				.altfun_id = 0,
-				.uid =
-				{
-						.ec_gpio_id = 18,
-						.ec_gpio_is_altfun4 = 0,
-				},
+				.uid = 33,
 
 		},
 		{	//19
 
 				.altfun_id = 0,
-				.uid =
-				{
-						.ec_gpio_id = 19,
-						.ec_gpio_is_altfun4 = 0,
-				},
-
+				.uid = 34,
 		},
 };
-static pin_iomux_info prv_onewire_iomux =
+static luat_pin_iomux_info prv_onewire_iomux =
 {
 		.altfun_id = 4,
-		.uid =
-		{
-				.ec_gpio_id = 2,
-		},
+		.uid = 17,
 };
 #else
 static luat_uart_pin_iomux_t prv_uart_iomux[UART_MAX] =
@@ -333,72 +226,44 @@ static luat_uart_pin_iomux_t prv_uart_iomux[UART_MAX] =
 				.pin_list[LUAT_PIN_UART_RX] =
 				{ //rx
 						.altfun_id = 1,
-						.uid =
-						{
-								.ec_gpio_id = 8,
-						},
+						.uid = 20,
 				},
 				.pin_list[LUAT_PIN_UART_TX] =
 				{ //tx
 						.altfun_id = 1,
-						.uid =
-						{
-								.ec_gpio_id = 9,
-						},
+						.uid = 21,
 				},
 				.pin_list[LUAT_PIN_UART_RTS] =
 				{ //rts
 						.altfun_id = 5,
-						.uid =
-						{
-								.ec_gpio_id = 19,
-								.ec_gpio_is_altfun4 = 1,
-						},
+						.uid = 10,
 				},
 				.pin_list[LUAT_PIN_UART_CTS] =
 				{ //cts
 						.altfun_id = 5,
-						.uid =
-						{
-								.ec_gpio_id = 20,
-								.ec_gpio_is_altfun4 = 1,
-						},
+						.uid = 11,
 				},
 		},
 		{
 				.pin_list[LUAT_PIN_UART_RX] =
 				{
 						.altfun_id = 2,
-						.uid =
-						{
-								.ec_gpio_id = 4,
-						},
+						.uid = 16,
 				},
 				.pin_list[LUAT_PIN_UART_TX] =
 				{
 						.altfun_id = 2,
-						.uid =
-						{
-								.ec_gpio_id = 5,
-						},
+						.uid = 17,
 				},
 				.pin_list[LUAT_PIN_UART_RTS] =
 				{
 						.altfun_id = 2,
-						.uid =
-						{
-								.ec_gpio_id = 19,
-								.ec_gpio_is_altfun4 = 1,
-						},
+						.uid = 10,
 				},
 				.pin_list[LUAT_PIN_UART_CTS] =
 				{
 						.altfun_id = 2,
-						.uid =
-						{
-								.ec_gpio_id = 20,
-								.ec_gpio_is_altfun4 = 1,
-						},
+						.uid = 11,
 				},
 		},
 };
@@ -409,40 +274,24 @@ static luat_i2c_pin_iomux_t prv_i2c_iomux[I2C_MAX] =
 				.pin_list[LUAT_PIN_I2C_SCL] =
 				{
 						.altfun_id = 1,
-						.uid =
-						{
-								.ec_gpio_id = 17,
-								.ec_gpio_is_altfun4 = 1,
-						},
+						.uid = 8,
 				},
 				.pin_list[LUAT_PIN_I2C_SDA] =
 				{
 						.altfun_id = 1,
-						.uid =
-						{
-								.ec_gpio_id = 18,
-								.ec_gpio_is_altfun4 = 1,
-						},
+						.uid = 9,
 				},
 		},
 		{
 				.pin_list[LUAT_PIN_I2C_SCL] =
 				{
 						.altfun_id = 1,
-						.uid =
-						{
-								.ec_gpio_id = 19,
-								.ec_gpio_is_altfun4 = 1,
-						},
+						.uid = 10,
 				},
 				.pin_list[LUAT_PIN_I2C_SDA] =
 				{
 						.altfun_id = 1,
-						.uid =
-						{
-								.ec_gpio_id = 20,
-								.ec_gpio_is_altfun4 = 1,
-						},
+						.uid = 11,
 				},
 		},
 };
@@ -452,100 +301,67 @@ static luat_pwm_pin_iomux_t prv_pwm_iomux[HW_TIMER_MAX - 1] =
 				.pin_list[LUAT_PIN_PWM_P] =
 				{
 						.altfun_id = 3,
-						.uid =
-						{
-								.ec_gpio_id = 10,
-						},
+						.uid = 22,
 				},
 				.pin_list[LUAT_PIN_PWM_N] =
 				{
 						.altfun_id = 0xff,
-						.uid =
-						{
-							.common_gpio_id = 0xff,
-						},
+						.uid = 0xff,
 				},
 		},
 		{	//1
 				.pin_list[LUAT_PIN_PWM_P] =
 				{
 						.altfun_id = 3,
-						.uid =
-						{
-								.ec_gpio_id = 11,
-						},
+						.uid = 23,
 				},
 				.pin_list[LUAT_PIN_PWM_N] =
 				{
 						.altfun_id = 0xff,
-						.uid =
-						{
-							.common_gpio_id = 0xff,
-						},
+						.uid = 0xff,
 				},
 		},
 		{	//2
 				.pin_list[LUAT_PIN_PWM_P] =
 				{
 						.altfun_id = 3,
-						.uid =
-						{
-								.ec_gpio_id = 12,
-						},
+						.uid = 24,
 				},
 				.pin_list[LUAT_PIN_PWM_N] =
 				{
 						.altfun_id = 0xff,
-						.uid =
-						{
-							.common_gpio_id = 0xff,
-						},
+						.uid = 0xff,
 				},
 		},
 		{	//3
 				.pin_list[LUAT_PIN_PWM_P] =
 				{
 						.altfun_id = 0xff,
-						.uid =
-						{
-							.common_gpio_id = 0xff,
-						},
+						.uid = 0xff,
 				},
 				.pin_list[LUAT_PIN_PWM_N] =
 				{
 						.altfun_id = 0xff,
-						.uid =
-						{
-							.common_gpio_id = 0xff,
-						},
+						.uid = 0xff,
 				},
 		},
 		{	//4
 				.pin_list[LUAT_PIN_PWM_P] =
 				{
 						.altfun_id = 3,
-						.uid =
-						{
-								.ec_gpio_id = 14,
-						},
+						.uid = 26,
 				},
 				.pin_list[LUAT_PIN_PWM_N] =
 				{
 						.altfun_id = 0xff,
-						.uid =
-						{
-							.common_gpio_id = 0xff,
-						},
+						.uid = 0xff,
 				},
 		},
 };
-static pin_iomux_info prv_onewire_iomux =
+static luat_pin_iomux_info prv_onewire_iomux =
 {
 	.altfun_id = 2,
-	.uid =
-	{
-			.ec_gpio_id = 1,
-	},
+	.uid = 13,
 };
 #endif
 
@@ -562,19 +378,19 @@ void luat_pin_init(void)
 	{
 		prv_uart_iomux[2].pin_list[LUAT_PIN_UART_RX].altfun_id = 2;
 		prv_uart_iomux[2].pin_list[LUAT_PIN_UART_TX].altfun_id = 2;
-		prv_uart_iomux[2].pin_list[LUAT_PIN_UART_RX].uid.ec_gpio_id = 6;
-		prv_uart_iomux[2].pin_list[LUAT_PIN_UART_TX].uid.ec_gpio_id = 7;
+		prv_uart_iomux[2].pin_list[LUAT_PIN_UART_RX].uid = GPIO_ToPadEC7XX(6, 0);
+		prv_uart_iomux[2].pin_list[LUAT_PIN_UART_TX].uid = GPIO_ToPadEC7XX(7, 0);
 	}
 
 	if (!memcmp(name + 3, "780EPM", 6))
 	{
-		prv_pwm_iomux[2].pin_list[LUAT_PIN_PWM_P].uid.ec_gpio_id = 31;
-		prv_pwm_iomux[4].pin_list[LUAT_PIN_PWM_P].uid.ec_gpio_id = 33;
+		prv_pwm_iomux[2].pin_list[LUAT_PIN_PWM_P].uid = GPIO_ToPadEC7XX(31, 0);
+		prv_pwm_iomux[4].pin_list[LUAT_PIN_PWM_P].uid = GPIO_ToPadEC7XX(33, 0);
 	}
 #endif
 }
 
-__USER_FUNC_IN_RAM__ int luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_E type, uint8_t id, pin_iomux_info *pin_list)
+__USER_FUNC_IN_RAM__ int luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_E type, uint8_t id, luat_pin_iomux_info *pin_list)
 {
 #ifdef CHIP_EC718
 	switch (type)
@@ -604,8 +420,7 @@ __USER_FUNC_IN_RAM__ int luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_E type, uin
 		else
 		{
 			pin_list[0].altfun_id = 0;
-			pin_list[0].uid.ec_gpio_id = id;
-			pin_list[0].uid.ec_gpio_is_altfun4 = 0;
+			pin_list[0].uid = GPIO_ToPadEC7XX(id, 0);
 		}
 		break;
 	case LUAT_MCU_PERIPHERAL_ONEWIRE:
@@ -630,16 +445,15 @@ __USER_FUNC_IN_RAM__ int luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_E type, uin
 		memcpy(pin_list, &prv_pwm_iomux[id], sizeof(luat_pwm_pin_iomux_t));
 		break;
 	case LUAT_MCU_PERIPHERAL_GPIO:
-		pin_list[0].uid.ec_gpio_id = id;
 		if (id >= 17 && id <= 20)
 		{
 			pin_list[0].altfun_id = 4;
-			pin_list[0].uid.ec_gpio_is_altfun4 = 1;
+			pin_list[0].uid = GPIO_ToPadEC7XX(id, 4);
 		}
 		else
 		{
 			pin_list[0].altfun_id = 0;
-			pin_list[0].uid.ec_gpio_is_altfun4 = 0;
+			pin_list[0].uid = GPIO_ToPadEC7XX(id, 0);
 		}
 		break;
 	case LUAT_MCU_PERIPHERAL_ONEWIRE:
@@ -652,7 +466,7 @@ __USER_FUNC_IN_RAM__ int luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_E type, uin
 	return 0;
 }
 
-__USER_FUNC_IN_RAM__ int luat_pin_set_iomux_info(LUAT_MCU_PERIPHERAL_E type, uint8_t id, pin_iomux_info *pin_list)
+__USER_FUNC_IN_RAM__ int luat_pin_set_iomux_info(LUAT_MCU_PERIPHERAL_E type, uint8_t id, luat_pin_iomux_info *pin_list)
 {
 #ifdef CHIP_EC718
 	switch (type)
@@ -711,34 +525,29 @@ __USER_FUNC_IN_RAM__ int luat_pin_set_iomux_info(LUAT_MCU_PERIPHERAL_E type, uin
 	return 0;
 }
 
-iomux_uid_u luat_pin_get_from_num(uint32_t num)
+int luat_pin_get_description_from_num(uint32_t num, luat_pin_function_description_t *pin_function)
 {
-	iomux_uid_u uid;
-	uid.common_gpio_id = 0xff;
-	return uid;
+	return -1;
 }
 
-void luat_pin_iomux_config(pin_iomux_info pin, uint8_t use_altfunction_pull, uint8_t driver_strength)
+void luat_pin_iomux_config(luat_pin_iomux_info pin, uint8_t use_altfunction_pull, uint8_t driver_strength)
 {
-	if (pin.altfun_id == 0xff || pin.uid.common_gpio_id == 0xff) return;
-	uint32_t pad = GPIO_ToPadEC7XX(pin.uid.ec_gpio_id, pin.uid.ec_gpio_is_altfun4?4:0);
-//	DBG("gpio %d, altfun %d, pad %d", pin.uid.ec_gpio_id, pin.altfun_id, pad);
-	GPIO_IomuxEC7XX(pad, pin.altfun_id, use_altfunction_pull, driver_strength);
+	if (pin.altfun_id == 0xff || pin.uid == 0xff) return;
+	GPIO_IomuxEC7XX(pin.uid, pin.altfun_id, use_altfunction_pull, driver_strength);
 }
 
-void luat_pin_iomux_print(pin_iomux_info *pin_list, uint8_t num)
+void luat_pin_iomux_print(luat_pin_iomux_info *pin_list, uint8_t num)
 {
 	uint32_t pad;
 	for(uint8_t i = 0; i < num; i++)
 	{
-		if (pin_list[i].altfun_id == 0xff || pin_list[i].uid.common_gpio_id == 0xff)
+		if (pin_list[i].altfun_id == 0xff || pin_list[i].uid == 0xff)
 		{
-			DBG("index %d no pin %x,%x", i, pin_list[i].altfun_id, pin_list[i].uid.common_gpio_id);
+			DBG("index %d no pin %x,%x", i, pin_list[i].altfun_id, pin_list[i].uid);
 		}
 		else
 		{
-			pad = GPIO_ToPadEC7XX(pin_list[i].uid.ec_gpio_id, pin_list[i].uid.ec_gpio_is_altfun4?4:0);
-			DBG("index %d gpio %d, altfun %d, pad %d", i, pin_list[i].uid.ec_gpio_id, pin_list[i].altfun_id, pad);
+			DBG("index %d pad %d altfun %d", i, pin_list[i].uid, pin_list[i].altfun_id);
 		}
 
 	}
