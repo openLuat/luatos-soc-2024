@@ -83,11 +83,11 @@ int luat_i2c_setup(int id, int speed) {
 #endif
     }
 #endif
-	peripheral_iomux_info iomux_info;
-	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_I2C, id, &iomux_info);
-	luat_pin_iomux_config(iomux_info.i2c.scl, 1, 1);
-	luat_pin_iomux_config(iomux_info.i2c.sda, 1, 1);
-
+    i2c_pin_iomux_t iomux_info;
+	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_I2C, id, iomux_info.pin_list);
+	luat_pin_iomux_print(iomux_info.pin_list, LUAT_PIN_I2C_QTY);
+	luat_pin_iomux_config(iomux_info.pin_list[LUAT_PIN_I2C_SCL], 1, 1);
+	luat_pin_iomux_config(iomux_info.pin_list[LUAT_PIN_I2C_SDA], 1, 1);
 	I2C_MasterSetup(id, speed);
     return 0;
 }

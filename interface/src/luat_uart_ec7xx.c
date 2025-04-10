@@ -252,11 +252,13 @@ int luat_uart_setup(luat_uart_t* uart) {
 #endif
     }
 #endif
-	peripheral_iomux_info iomux_info;
-	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_UART, uart->id, &iomux_info);
-	luat_pin_iomux_config(iomux_info.uart.rx, 0, 0);
-	luat_pin_iomux_config(iomux_info.uart.tx, 0, 0);
-	GPIO_PullConfig(GPIO_ToPadEC7XX(iomux_info.uart.rx.uid.ec_gpio_id, iomux_info.uart.rx.uid.ec_gpio_is_altfun4?4:0), 1, 1);
+    uart_pin_iomux_t iomux_info;
+	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_UART, uart->id, iomux_info.pin_list);
+	luat_pin_iomux_print(iomux_info.pin_list, LUAT_PIN_UART_QTY);
+
+	luat_pin_iomux_config(iomux_info.pin_list[LUAT_PIN_UART_RX], 0, 1);
+	luat_pin_iomux_config(iomux_info.pin_list[LUAT_PIN_UART_TX], 0, 1);
+	GPIO_PullConfig(GPIO_ToPadEC7XX(iomux_info.pin_list[LUAT_PIN_UART_RX].uid.ec_gpio_id, iomux_info.pin_list[LUAT_PIN_UART_RX].uid.ec_gpio_is_altfun4?4:0), 1, 1);
     int parity = 0;
      if (uart->parity == 1)parity = UART_PARITY_ODD;
      else if (uart->parity == 2)parity = UART_PARITY_EVEN;
@@ -286,9 +288,9 @@ int luat_uart_setup(luat_uart_t* uart) {
           	if (!g_s_serials[uart->id].rs485_timer) {
           		g_s_serials[uart->id].rs485_timer = luat_create_rtos_timer(luat_uart_wait_timer_cb, uart->id, NULL);
           	}
-        	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_GPIO, g_s_serials[uart->id].rs485_pin, &iomux_info);
+        	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_GPIO, g_s_serials[uart->id].rs485_pin, iomux_info.pin_list);
         	GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(g_s_serials[uart->id].rs485_pin, 4), 0, 0, 0);
-        	luat_pin_iomux_config(iomux_info.gpio.io, 0, 0);
+        	luat_pin_iomux_config(iomux_info.pin_list[0], 0, 0);
 //          	if (g_s_serials[uart->id].rs485_pin >= HAL_GPIO_16 && g_s_serials[uart->id].rs485_pin <= HAL_GPIO_17)
 //          	{
 //          		GPIO_IomuxEC7XX(GPIO_ToPadEC7XX(g_s_serials[uart->id].rs485_pin, 4), 0, 0, 0);
@@ -519,10 +521,10 @@ int luat_uart_setup_flow_ctrl(int uart_id, luat_uart_cts_callback_t  cts_callbac
 	#endif
 		}
 #endif
-		peripheral_iomux_info iomux_info;
-		luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_UART, uart_id, &iomux_info);
-		luat_pin_iomux_config(iomux_info.uart.rts, 0, 0);
-		luat_pin_iomux_config(iomux_info.uart.cts, 0, 0);
+	    uart_pin_iomux_t iomux_info;
+		luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_UART, uart_id, iomux_info.pin_list);
+		luat_pin_iomux_config(iomux_info.pin_list[LUAT_PIN_UART_RTS], 0, 0);
+		luat_pin_iomux_config(iomux_info.pin_list[LUAT_PIN_UART_CTS], 0, 0);
 		return 0;
 
 	}

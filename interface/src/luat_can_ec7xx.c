@@ -51,14 +51,15 @@ void luat_can_dummy_callback(int can_id, LUAT_CAN_CB_E cb_type, void *cb_param)
 
 int luat_can_base_init(uint8_t can_id, uint32_t rx_msg_cache_max)
 {
-	peripheral_iomux_info iomux_info;
-	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_CAN, 0, &iomux_info);
+	can_pin_iomux_t iomux_info;
+	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_CAN, 0, iomux_info.pin_list);
 	if (!rx_msg_cache_max) rx_msg_cache_max = 128;
 //	if(luat_mcu_iomux_is_default(LUAT_MCU_PERIPHERAL_CAN, 0))
+	luat_pin_iomux_print(iomux_info.pin_list, LUAT_PIN_CAN_QTY);
 	{
-		luat_pin_iomux_config(iomux_info.can.rx, 1, 1);
-		luat_pin_iomux_config(iomux_info.can.tx, 1, 1);
-		luat_pin_iomux_config(iomux_info.can.stb, 1, 1);
+		luat_pin_iomux_config(iomux_info.pin_list[LUAT_PIN_CAN_RX], 1, 1);
+		luat_pin_iomux_config(iomux_info.pin_list[LUAT_PIN_CAN_TX], 1, 1);
+		luat_pin_iomux_config(iomux_info.pin_list[LUAT_PIN_CAN_STB], 1, 1);
 	}
 	if (!prv_can.callback) prv_can.callback = luat_can_dummy_callback;
 	return CAN_BaseInit(rx_msg_cache_max, luat_can_cb);

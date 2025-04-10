@@ -256,11 +256,11 @@ void luat_io_queue_get_data(uint8_t hw_timer_id, uint8_t *input_buff, uint32_t *
 void luat_io_queue_capture_start_with_sys_tick(uint8_t pin, uint8_t pull_mode, uint8_t irq_mode)
 {
 	GPIO_GlobalInit(NULL);
-    peripheral_iomux_info pin_iomux_info;
+	pin_iomux_info pin_iomux_info;
     luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_GPIO, pin, &pin_iomux_info);
-    uint32_t pad = GPIO_ToPadEC7XX(pin_iomux_info.gpio.io.uid.ec_gpio_id, pin_iomux_info.gpio.io.uid.ec_gpio_is_altfun4?4:0);
+    uint32_t pad = GPIO_ToPadEC7XX(pin_iomux_info.uid.ec_gpio_id, pin_iomux_info.uid.ec_gpio_is_altfun4?4:0);
 	GPIO_PullConfig(pad, pull_mode, (pull_mode > 1)?0:1);
-	GPIO_IomuxEC7XX(pad, pin_iomux_info.gpio.io.altfun_id, 0, 7);
+	GPIO_IomuxEC7XX(pad, pin_iomux_info.altfun_id, 0, 7);
 	GPIO_Config(pin, 1, 0);
 	GPIO_ExtiSetCB(pin, luat_io_queue_capture_cb, NULL);
 	switch(irq_mode)
