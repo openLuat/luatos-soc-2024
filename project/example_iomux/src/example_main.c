@@ -48,11 +48,14 @@ void luat_uart_recv_cb(int uart_id, uint32_t data_len){
 static void uart_iomux(void)
 {
 	luat_uart_pin_iomux_t uart_iomux = {0};
+	luat_pin_function_description_t pin_decs;
 	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_UART, 2, uart_iomux.pin_list); //读出当前的复用配置
 	uart_iomux.pin_list[LUAT_PIN_UART_RX].altfun_id = 3;
 	uart_iomux.pin_list[LUAT_PIN_UART_TX].altfun_id = 3;
-	uart_iomux.pin_list[LUAT_PIN_UART_RX].uid = GPIO_ToPadEC7XX(HAL_GPIO_10, 0);
-	uart_iomux.pin_list[LUAT_PIN_UART_TX].uid = GPIO_ToPadEC7XX(HAL_GPIO_11, 0);
+	luat_pin_get_description_from_num(84, &pin_decs);	//模块84复用uart2rx
+	uart_iomux.pin_list[LUAT_PIN_UART_RX].uid = pin_decs.uid;
+	luat_pin_get_description_from_num(86, &pin_decs);	//模块86复用uart2tx
+	uart_iomux.pin_list[LUAT_PIN_UART_TX].uid = pin_decs.uid;
 	luat_pin_set_iomux_info(LUAT_MCU_PERIPHERAL_UART, 2, uart_iomux.pin_list);//写入修改之后的复用配置
 }
 
