@@ -114,14 +114,6 @@ static void task_demo_uart(void)
     luat_rtos_task_create(&uart_task_handle, 8*1024, 20, "uart", task_test_uart, NULL, 0);
 }
 
-// 除非你已经非常清楚uart0作为普通串口给用户使用所带来的的后果，否则不要打开以下注释掉的代码
-// extern void soc_uart0_set_log_off(uint8_t is_off);
-// static void uart0_init(void)
-// {
-//     soc_uart0_set_log_off(1);
-// }
-// INIT_TASK_EXPORT(uart0_init,"1");
-
 INIT_TASK_EXPORT(task_demo_uart,"1");
 
 

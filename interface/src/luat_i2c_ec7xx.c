@@ -20,11 +20,9 @@
  */
 
 
-#include "luat_i2c.h"
-#include "common_api.h"
+#include "csdk.h"
 #include "soc_i2c.h"
 #include "driver_gpio.h"
-#include "luat_mcu.h"
 #include "gpr_common.h"
 static uint32_t luat_i2c_global_timeout = 100;
 //static uint8_t luat_i2c_iomux[I2C_MAX];
@@ -57,6 +55,7 @@ int luat_i2c_setup(int id, int speed) {
         speed = 1000 * 1000; // SuperFast
     }
     if (!luat_i2c_exist(id)) return -1;
+#if 0
     if (luat_mcu_iomux_is_default(LUAT_MCU_PERIPHERAL_I2C, id))
     {
 #ifdef CHIP_EC716
@@ -83,12 +82,19 @@ int luat_i2c_setup(int id, int speed) {
     	}
 #endif
     }
+#endif
+    luat_i2c_pin_iomux_t iomux_info;
+	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_I2C, id, iomux_info.pin_list);
+	luat_pin_iomux_print(iomux_info.pin_list, LUAT_PIN_I2C_QTY);
+	luat_pin_iomux_config(iomux_info.pin_list[LUAT_PIN_I2C_SCL], 1, 1);
+	luat_pin_iomux_config(iomux_info.pin_list[LUAT_PIN_I2C_SDA], 1, 1);
 	I2C_MasterSetup(id, speed);
     return 0;
 }
 
 int luat_i2c_close(int id) {
     if (!luat_i2c_exist(id)) return -1;
+#if 0
     if (luat_mcu_iomux_is_default(LUAT_MCU_PERIPHERAL_I2C, id))
     {
     	if (id)
@@ -102,6 +108,7 @@ int luat_i2c_close(int id) {
     		GPIO_IomuxEC7XX(30, 0, 0, 0);
     	}
     }
+#endif
     return 0;
 }
 

@@ -1,24 +1,23 @@
-//只是为了不出现warning，没有其它作用
+#include "slpman.h"
+#ifdef TYPE_EC718M
+
 #ifdef __LUATOS__
 #include "luat_conf_bsp.h"
-#ifdef LUAT_MODEL_AIR780EPM
-#include "slpman.h"
+#endif
+
 uint8_t user_io_sel(uint8_t io_sel)
 {
+#ifdef LUAT_MODEL_AIR8000
+	slpManNormalIOVoltSet(IOVOLT_3_30V);
+#else
 	if (io_sel)
 	{
 		slpManNormalIOVoltSet(IOVOLT_3_00V);
 	}
+#endif
 	return 1;
 }
 #endif
 
-#ifdef LUAT_MODEL_AIR8000
-#include "slpman.h"
-uint8_t user_io_sel(uint8_t io_sel)
-{
-	slpManNormalIOVoltSet(IOVOLT_3_30V);
-	return 1;
-}
-#endif
-#endif
+
+

@@ -21,7 +21,8 @@
 #include "luat_uart.h"
 #include "luat_spi.h"
 #include "luat_can.h"
-
+#include "luat_pin.h"
+#include "luat_pwm.h"
 #include "luat_mobile.h"
 #include "luat_network_adapter.h"
 #include "net_lwip.h"

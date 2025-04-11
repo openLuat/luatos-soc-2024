@@ -107,7 +107,7 @@ enum
 	UART_ID0 = 0,
 	UART_ID1,
 	UART_ID2,
-#if defined TYPE_EC716S
+#if defined CHIP_EC716
 #else
 	UART_ID3,
 #endif
@@ -128,7 +128,7 @@ enum
 	USP_MAX,
 
 	I2S_ID0 = USP_ID0,
-#if defined TYPE_EC716S
+#if defined CHIP_EC716
 #else
 	I2S_ID1,
 #endif

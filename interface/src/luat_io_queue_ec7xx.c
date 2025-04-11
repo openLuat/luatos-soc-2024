@@ -20,7 +20,7 @@
  */
 
 #include "luat_base.h"
-#include "common_api.h"
+#include "csdk.h"
 #include "luat_lib_io_queue.h"
 #include "driver_gpio.h"
 #include "core_hwtimer.h"
@@ -252,20 +252,14 @@ void luat_io_queue_get_data(uint8_t hw_timer_id, uint8_t *input_buff, uint32_t *
 
 }
 #ifdef __LUATOS__
-extern uint8_t luat_gpio_get_alt(uint8_t GPIO);
-extern uint32_t prvGPIO_ToPadEC7XXFast(uint32_t Pin);
+
 void luat_io_queue_capture_start_with_sys_tick(uint8_t pin, uint8_t pull_mode, uint8_t irq_mode)
 {
 	GPIO_GlobalInit(NULL);
-	GPIO_PullConfig(prvGPIO_ToPadEC7XXFast(pin), pull_mode, (pull_mode > 1)?0:1);
-	if (pin > HAL_GPIO_16 && pin <= HAL_GPIO_19)
-	{
-		GPIO_IomuxEC7XX(prvGPIO_ToPadEC7XXFast(pin), luat_gpio_get_alt(pin), 0, 7);
-	}
-	else
-	{
-		GPIO_IomuxEC7XX(prvGPIO_ToPadEC7XXFast(pin), 0, 0, 7);
-	}
+	luat_pin_iomux_info luat_pin_iomux_info;
+    luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_GPIO, pin, &luat_pin_iomux_info);
+	GPIO_PullConfig(luat_pin_iomux_info.uid, pull_mode, (pull_mode > 1)?0:1);
+	GPIO_IomuxEC7XX(luat_pin_iomux_info.uid, luat_pin_iomux_info.altfun_id, 0, 7);
 	GPIO_Config(pin, 1, 0);
 	GPIO_ExtiSetCB(pin, luat_io_queue_capture_cb, NULL);
 	switch(irq_mode)

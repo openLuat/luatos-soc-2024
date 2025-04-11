@@ -50,6 +50,7 @@ static const luaL_Reg loadedlibs[] = {
   {"timer",   luaopen_timer},             // 延时库
 //-----------------------------------------------------------------------
   {"mobile", luaopen_mobile},
+  {"pins", luaopen_pins},				//io复用配置库
 #ifdef LUAT_USE_NETWORK 
   {"errDump",luaopen_errdump},
   {"socket", luaopen_socket_adapter},
