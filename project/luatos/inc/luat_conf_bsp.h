@@ -20,6 +20,7 @@
 // #define LUAT_MODEL_AIR780EPM 1
 // #define LUAT_MODEL_AIR780EUN 1
 // #define LUAT_MODEL_AIR780EUS 1
+// #define LUAT_MODEL_AIR780EHM 1
 // #define LUAT_MODEL_AIR8000 1
 
 #if defined(LUAT_MODEL_AIR780EPS)
@@ -38,6 +39,8 @@
 #include "luat_conf_bsp_air780eun.h"
 #elif defined(LUAT_MODEL_AIR8000)
 #include "luat_conf_bsp_air8000.h"
+#elif defined(LUAT_MODEL_AIR780EHM)
+#include "luat_conf_bsp_air780ehm.h"
 #else
 #include "luat_conf_bsp_dft.h"
 #endif
