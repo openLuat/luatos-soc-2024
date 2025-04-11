@@ -283,12 +283,33 @@ function description_common()
         import("net.http")
         import("utils.archive")
 
+        local project_name = target:values("project_name")
+        local project_dir = target:values("project_dir")
         local csdk_root = target:values("csdk_root")
         local chip_target = get_config("chip_target")
+        
+
         assert (chip_target == "ec718u" or chip_target == "ec718um" or chip_target == "ec718hm" or chip_target == "ec718pm" or chip_target == "ec718e" or chip_target == "ec718p" or chip_target == "ec718pv" or chip_target == "ec718s" or chip_target == "ec716s" or chip_target == "ec716e" ,
                 "target only support ec718u/ec718um/ec718hm/ec718pm/ec718e/ec718p/ec718pv/ec718s/ec716s/ec716e")
-        
-        if target:name()== target:values("project_name") then
+
+        if project_name == "luatos" then
+            local conf_data = io.readfile(project_dir .."/inc/luat_conf_bsp.h")
+            local bsp_air = nil
+            if conf_data:find("\n#define LUAT_MODEL_AIR780EHM") or conf_data:find("\r\n#define LUAT_MODEL_AIR780EHM") then
+                bsp_air = project_dir .."/inc/luat_conf_bsp_air780ehm.h"
+            elseif conf_data:find("\n#define LUAT_MODEL_AIR8000") or conf_data:find("\r\n#define LUAT_MODEL_AIR8000") then
+                bsp_air = project_dir .."/inc/luat_conf_bsp_air8000.h"
+            end
+            if bsp_air then
+                local conf_data_bsp_air = io.readfile(bsp_air)
+                if conf_data_bsp_air:find("\n#define LUAT_USE_VOLTE") or conf_data_bsp_air:find("\r\n#define LUAT_USE_VOLTE") then
+                    target:values_set("lib_ps_plat", "ims")
+                    target:values_set("lib_fw", "audio")
+                end
+            end
+        end
+
+        if target:name()== project_name then
             cprint(format("${cyan}CPU : ${red}%s",os.cpuinfo("model_name")))
             cprint(format("${cyan}MEM : ${red}%sG",math.ceil(os.meminfo("totalsize")/1024)))
             cprint(format("${cyan}HOST : ${red}%s",os.host()))
@@ -303,14 +324,13 @@ function description_common()
                 cprint(format("${cyan}OS VERSION : ${red}%s",macosx.version()))
             end
 
-            cprint(format("${cyan}project_name : ${red}%s",target:values("project_name")))
+            cprint(format("${cyan}project_name : ${red}%s",project_name))
             cprint(format("${cyan}chip_target : ${red}%s",chip_target))
             cprint(format("${cyan}lspd_mode : ${red}%s",get_config("lspd_mode")))
             cprint(format("${cyan}denoise_force : ${red}%s",get_config("denoise_force")))
             cprint(format("${cyan}lib_ps_plat : ${red}%s",target:values("lib_ps_plat")))
             cprint(format("${cyan}lib_fw : ${red}%s",target:values("lib_fw")))
 
-            local project_dir = target:values("project_dir")
             if project_dir:find("@") or project_dir:find("%%")  or project_dir:find("~") or project_dir:find(" ") then
                 error("project_dir should not contain special characters")
             end
@@ -320,7 +340,7 @@ function description_common()
         end
         -----------------------------------------------------------------
         assert(os.isdir(target:values("luatos_root")),"luatos_root:"..target:values("luatos_root").." not exist")
-        local plat_url = "http://xmake.vue2.cn/xmake/libs/%s/%s.7z"
+        local plat_url = "http://xmake.oss-ap-northeast-1.aliyuncs.com/xmake/libs/%s/%s.7z"
         local libs_plat = (chip_target=="ec718e"and"ec718p"or chip_target)..(target:values("lib_ps_plat")=="mid"and"-mid"or"")
         if chip_target=="ec718u" and target:values("lib_ps_plat")=="ims" then
             libs_plat = "ec718u-ims"
@@ -383,7 +403,7 @@ function description_common()
         end
         -----------------------------------------------------------------
         for _, filepath in ipairs(os.files(target:values("project_dir").."/**/mem_map_7xx.h")) do
-            if target:name()== target:values("project_name") then
+            if target:name()== project_name then
                 print("mem_map_7xx.h found in ",filepath)
             end
             if path.filename(filepath) == "mem_map_7xx.h" then
