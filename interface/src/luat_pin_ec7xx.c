@@ -576,9 +576,9 @@ __USER_FUNC_IN_RAM__ int luat_pin_set_iomux_info(LUAT_MCU_PERIPHERAL_E type, uin
 	return 0;
 }
 
-int luat_pin_get_description_from_num(uint32_t num, luat_pin_function_description_t *pin_function)
+int luat_pin_get_description_from_num(uint32_t num, luat_pin_function_description_t *description)
 {
-	pin_function->uid = 0xff;
+	description->uid = 0xff;
 	if (!prv_pin_table)
 	{
 		return -ERROR_PERMISSION_DENIED;
@@ -587,11 +587,24 @@ int luat_pin_get_description_from_num(uint32_t num, luat_pin_function_descriptio
 	{
 		if (prv_pin_table[i].index == num)
 		{
-			*pin_function = prv_pin_table[i];
+			*description = prv_pin_table[i];
 			return 0;
 		}
 	}
 	return -ERROR_ID_INVALID;
+}
+
+uint8_t luat_pin_get_altfun_id_from_description(uint16_t code, luat_pin_function_description_t *description)
+{
+	uint8_t altfun_id;
+	for(altfun_id = 0; altfun_id < LUAT_PIN_ALT_FUNCTION_MAX; altfun_id++)
+	{
+		if (description->function_code[altfun_id] == code)
+		{
+			return altfun_id;
+		}
+	}
+	return 0xff;
 }
 
 void luat_pin_iomux_config(luat_pin_iomux_info pin, uint8_t use_altfunction_pull, uint8_t driver_strength)

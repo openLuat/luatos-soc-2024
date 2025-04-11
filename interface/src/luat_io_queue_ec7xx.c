@@ -258,9 +258,8 @@ void luat_io_queue_capture_start_with_sys_tick(uint8_t pin, uint8_t pull_mode, u
 	GPIO_GlobalInit(NULL);
 	luat_pin_iomux_info luat_pin_iomux_info;
     luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_GPIO, pin, &luat_pin_iomux_info);
-    uint32_t pad = GPIO_ToPadEC7XX(luat_pin_iomux_info.uid.ec_gpio_id, luat_pin_iomux_info.uid.ec_gpio_is_altfun4?4:0);
-	GPIO_PullConfig(pad, pull_mode, (pull_mode > 1)?0:1);
-	GPIO_IomuxEC7XX(pad, luat_pin_iomux_info.altfun_id, 0, 7);
+	GPIO_PullConfig(luat_pin_iomux_info.uid, pull_mode, (pull_mode > 1)?0:1);
+	GPIO_IomuxEC7XX(luat_pin_iomux_info.uid, luat_pin_iomux_info.altfun_id, 0, 7);
 	GPIO_Config(pin, 1, 0);
 	GPIO_ExtiSetCB(pin, luat_io_queue_capture_cb, NULL);
 	switch(irq_mode)
