@@ -340,7 +340,7 @@ function description_common()
         end
         -----------------------------------------------------------------
         assert(os.isdir(target:values("luatos_root")),"luatos_root:"..target:values("luatos_root").." not exist")
-        local plat_url = "http://xmake.oss-ap-northeast-1.aliyuncs.com/xmake/libs/%s/%s.7z"
+        local plat_url = "http://xmake.vue2.cn/xmake/libs/%s/%s.7z"
         local libs_plat = (chip_target=="ec718e"and"ec718p"or chip_target)..(target:values("lib_ps_plat")=="mid"and"-mid"or"")
         if chip_target=="ec718u" and target:values("lib_ps_plat")=="ims" then
             libs_plat = "ec718u-ims"
