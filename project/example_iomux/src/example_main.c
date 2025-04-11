@@ -49,12 +49,21 @@ static void uart_iomux(void)
 {
 	luat_uart_pin_iomux_t uart_iomux = {0};
 	luat_pin_function_description_t pin_decs;
+	luat_pin_peripheral_function_description_u function_desc;
 	luat_pin_get_iomux_info(LUAT_MCU_PERIPHERAL_UART, 2, uart_iomux.pin_list); //读出当前的复用配置
-	uart_iomux.pin_list[LUAT_PIN_UART_RX].altfun_id = 3;
-	uart_iomux.pin_list[LUAT_PIN_UART_TX].altfun_id = 3;
-	luat_pin_get_description_from_num(84, &pin_decs);	//模块84复用uart2rx
+	//如果你知道了新复用所需的altfun_id和uid，可以不用get，直接填写
+	//组合出UART2_RX这个功能描述
+	function_desc.function_id = LUAT_PIN_UART_RX;
+	function_desc.peripheral_type = LUAT_MCU_PERIPHERAL_UART;
+	function_desc.peripheral_id = 2;
+	function_desc.is_no_use = 0;
+	luat_pin_get_description_from_num(84, &pin_decs);	//拿出模块pin84的全功能描述
+	uart_iomux.pin_list[LUAT_PIN_UART_RX].altfun_id = luat_pin_get_altfun_id_from_description(function_desc.code, &pin_decs); //找出UART2_RX的altfun_id
 	uart_iomux.pin_list[LUAT_PIN_UART_RX].uid = pin_decs.uid;
-	luat_pin_get_description_from_num(86, &pin_decs);	//模块86复用uart2tx
+	//组合出UART2_TX这个功能描述
+	function_desc.function_id = LUAT_PIN_UART_TX;
+	luat_pin_get_description_from_num(86, &pin_decs);	//拿出模块pin86的全功能描述
+	uart_iomux.pin_list[LUAT_PIN_UART_RX].altfun_id = luat_pin_get_altfun_id_from_description(function_desc.code, &pin_decs); //找出UART2_TX的altfun_id
 	uart_iomux.pin_list[LUAT_PIN_UART_TX].uid = pin_decs.uid;
 	luat_pin_set_iomux_info(LUAT_MCU_PERIPHERAL_UART, 2, uart_iomux.pin_list);//写入修改之后的复用配置
 }
